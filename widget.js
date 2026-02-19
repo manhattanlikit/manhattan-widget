@@ -3,7 +3,7 @@
 var s=document.createElement('style');
 s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 :root{--mltp:#1d1d1f;--mlts:#6e6e73;--mltt:#aeaeb2;--mlbg:#fff;--mlbg2:#f5f5f7;--mlbgh:#f0f0f2;--mlbd:rgba(0,0,0,.06);--mlr:20px;--mlg:#af8c3e;--mlgl:#f7f0de}
-.ml-trigger{position:fixed;bottom:24px;right:24px;height:48px;padding:0 20px 0 16px;border-radius:24px;background:linear-gradient(135deg,#af8c3e,#d4b05e);border:none;cursor:pointer;z-index:999999;display:flex;align-items:center;gap:8px;color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;font-weight:600;letter-spacing:-.1px;box-shadow:0 2px 12px rgba(175,140,62,.3);transition:all .4s ease;overflow:hidden}
+.ml-trigger{position:fixed;bottom:24px;right:24px;height:48px;padding:0 20px 0 16px;border-radius:24px;background:linear-gradient(135deg,#af8c3e,#d4b05e);border:none;cursor:pointer;z-index:999999;display:flex;align-items:center;gap:8px;color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;font-weight:600;letter-spacing:-.1px;box-shadow:0 2px 12px rgba(175,140,62,.3);transition:all .8s cubic-bezier(.25,0,0,1);overflow:hidden}
 .ml-trigger::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite}
 @keyframes mlsweep{0%,100%{left:-100%}50%{left:100%}}
 .ml-trigger:hover{transform:scale(1.04);box-shadow:0 4px 20px rgba(175,140,62,.4)}.ml-trigger:active{transform:scale(.98)}.ml-trigger svg{width:18px;height:18px;stroke-width:1.8}
@@ -71,7 +71,8 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-greeting b{color:var(--mltp);font-weight:700}
 .ml-cta{display:block;width:100%;padding:11px;background:var(--mltp);color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:10px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box}
 .ml-cta:hover{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;opacity:1}.ml-cta:active{transform:scale(.98)}
-.ml-cta-gold{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff !important}
+.ml-cta-gold{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff !important;position:relative;overflow:hidden}
+.ml-cta-gold::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite}
 .ml-max-msg{text-align:center;padding:8px 0 16px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6;letter-spacing:-.1px}
 .ml-btns{display:flex;gap:10px}
 .ml-btns .ml-cta,.ml-btns .ml-cta-secondary{flex:1}
@@ -97,7 +98,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 @keyframes mlpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 .ml-burst{position:fixed;pointer-events:none;z-index:1000000}
 .ml-burst i{position:absolute;width:4px;height:4px;border-radius:50%;animation:mlbst .5s ease-out forwards}
-@keyframes mlbst{0%{transform:translate(0,0) scale(1);opacity:1}100%{opacity:0}}
+@keyframes mlbst{0%{transform:translate(0,0) scale(1);opacity:1}70%{opacity:.8}100%{opacity:0}}
 .ml-flash{background:linear-gradient(135deg,#1d1d1f,#2c2c2e);border-radius:8px;padding:7px 10px;margin-bottom:8px;display:flex;align-items:center;gap:8px;color:#fff}
 .ml-flash-ico{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#af8c3e,#d4b05e);display:flex;align-items:center;justify-content:center;flex-shrink:0;animation:mlpulse 1.5s ease infinite}
 .ml-flash-ico svg{width:12px;height:12px;stroke:#fff;stroke-width:2;fill:none}
@@ -123,7 +124,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-tier-share svg{width:8px;height:8px;stroke:#fff;stroke-width:2;fill:none}
 .ml-trigger.collapsed{width:48px;height:48px;padding:0;border-radius:50%;justify-content:center;gap:0}
 .ml-trigger.collapsed .ml-trigger-txt{max-width:0;opacity:0;overflow:hidden}
-.ml-trigger .ml-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .4s ease,opacity .3s ease}
+.ml-trigger .ml-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .8s ease,opacity .6s ease}
 .ml-trigger.collapsed svg{margin:0}
 @media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:18px}.ml-tier-name{font-size:22px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:18px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:13px}.ml-prog-val{font-size:13px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
 @media(max-width:1024px){.ml-card{border-radius:16px;max-width:94vw}.ml-inner{padding:0 18px 16px}.ml-tier-badge{width:56px;height:56px}.ml-tier-badge svg{width:24px;height:24px}.ml-tier-name{font-size:20px}.ml-head-title{font-size:17px}.ml-stat-num{font-size:15px}.ml-stats{gap:6px}.ml-stat{padding:10px 8px}.ml-prog-hint{font-size:11px}.ml-btns{flex-direction:column;gap:6px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:5px 8px}.ml-tr-ico{width:24px;height:24px}.ml-tr-ico svg{width:11px;height:11px}.ml-tr-name{font-size:11px}.ml-tr-desc{font-size:9px}.ml-tr-discount{font-size:12px}}`;
@@ -198,8 +199,8 @@ function go(d){
 if(!d.loggedIn){
 var tt='';
 T.forEach(function(ti){
-var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş'+(ti.r?' · <%'+ti.r+' iade':'');
-tt+='<div class="ml-tier-row locked"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+'</div><div class="ml-tr-desc">'+desc+'</div></div><div class="ml-tr-discount">%'+ti.d+'</div></div>';
+var lockIco='<svg viewBox="0 0 24 24" fill="none" stroke="var(--mltt)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
+tt+='<div class="ml-tier-row locked"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+'</div></div><div class="ml-tr-discount">'+lockIco+'</div></div>';
 });
 document.getElementById('ct').innerHTML='<div class="ml-locked-msg">İndirim seviyenizi görmek için<br><a href="https://manhattandan.com/account" style="color:var(--mlg);font-weight:700;text-decoration:underline">giriş yapın</a>.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div><div class="ml-btns"><a href="https://manhattandan.com/account" class="ml-cta ml-cta-gold">Giriş Yap</a><a href="https://manhattandan.com/" class="ml-cta-secondary">Mağazaya Git</a></div>';
 return;
@@ -473,11 +474,11 @@ document.body.appendChild(bst);
 bst.querySelectorAll('i').forEach(function(p){
 var dx=parseFloat(p.style.getPropertyValue('--dx'));
 var dy=parseFloat(p.style.getPropertyValue('--dy'));
-p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale(0)',opacity:0}],{duration:500,easing:'ease-out'});
+p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale(0)',opacity:0}],{duration:900,easing:'ease-out'});
 });
-setTimeout(function(){bst.remove();},600);
+setTimeout(function(){bst.remove();},1200);
 // Collapse
-trig.classList.add('collapsed');
+setTimeout(function(){trig.classList.add('collapsed');},800);
 },{passive:true});
 
 document.addEventListener('keydown',function(e){if(e.key==='Escape')window.mlClose();});
