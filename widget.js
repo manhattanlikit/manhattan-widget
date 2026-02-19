@@ -14,7 +14,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-x{position:sticky;top:12px;float:right;margin:12px 12px 0 0;width:30px;height:30px;border:none;background:var(--mlbg2);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:background .15s}
 .ml-x:hover{background:var(--mlbgh)}.ml-x svg{width:12px;height:12px;stroke:var(--mlts);stroke-width:2.5}
 .ml-inner{padding:0 22px 16px}
-.ml-head{text-align:center;padding-top:2px;margin-bottom:8px}
+.ml-head{text-align:center;padding-top:0;margin-bottom:2px}
 .ml-head-sub{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mltt);margin-bottom:2px}
 .ml-head-title{font-size:17px;font-weight:800;letter-spacing:-.5px;color:var(--mltp)}
 .ml-tier{text-align:center;margin-bottom:10px}
@@ -258,7 +258,7 @@ if(luStatus==='levelup'){luHtml='<div class="ml-levelup"><div class="ml-levelup-
 var projHtml='';
 if(nx&&d.orders>1&&d.spend>0){
 var avgPerMonth=d.spend/12;
-if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var targetDate=new Date();targetDate.setMonth(targetDate.getMonth()+monthsLeft);var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];projHtml='<div style="text-align:center;font-size:10px;color:var(--mlts);margin-top:4px">Bu hızda giderseniz <b>'+nx.n+'</b> seviyesi <b>'+monthNames[targetDate.getMonth()]+' '+targetDate.getFullYear()+'</b></div>';}
+if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var targetDate=new Date();targetDate.setMonth(targetDate.getMonth()+monthsLeft);var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];projHtml='<div style="text-align:center;font-size:10px;color:var(--mlts);margin:4px 0 8px">Bu hızda giderseniz <b>'+nx.n+'</b> seviyesi <b>'+monthNames[targetDate.getMonth()]+' '+targetDate.getFullYear()+'</b></div>';}
 }
 // Sürpriz indirimler linki
 var surpriseHtml='<div class="ml-surprise"><a href="javascript:void(0)" onclick="mlBday()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Sürpriz İndirimler</a></div>';
@@ -278,8 +278,8 @@ document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c
 setTimeout(function(){
 var card=document.querySelector('.ml-card');
 if(card){
-if(luStatus==='levelup'){mlConfetti(card,true);mlSound('levelup');}
-else if(i>0){mlConfetti(card,false);mlSound('open');}
+if(luStatus==='levelup'){mlConfetti(card,true);}
+else if(i>0){mlConfetti(card,false);}
 }
 var pf=document.getElementById('pf');
 if(pf)pf.style.width=pf.dataset.p+'%';
@@ -429,24 +429,6 @@ setTimeout(function(){var a=document.getElementById('ml-bday-area');if(a)a.inner
 };
 
 // Micro-sound (Web Audio API, low volume)
-function mlSound(type){
-try{
-var ac=new(window.AudioContext||window.webkitAudioContext)();
-var g=ac.createGain();g.gain.value=0.08;g.connect(ac.destination);
-var o1=ac.createOscillator();o1.type='sine';o1.connect(g);
-if(type==='levelup'){
-o1.frequency.setValueAtTime(523,ac.currentTime);
-o1.frequency.setValueAtTime(659,ac.currentTime+0.1);
-o1.frequency.setValueAtTime(784,ac.currentTime+0.2);
-o1.start(ac.currentTime);o1.stop(ac.currentTime+0.35);
-}else{
-o1.frequency.setValueAtTime(440,ac.currentTime);
-o1.frequency.setValueAtTime(554,ac.currentTime+0.08);
-o1.start(ac.currentTime);o1.stop(ac.currentTime+0.15);
-}
-}catch(e){}
-}
-
 // Scroll burst + collapse trigger
 var _mlScrolled=false;
 var _mlScrollStart=null;
