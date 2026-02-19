@@ -77,6 +77,22 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-cta-secondary{display:block;padding:13px;background:var(--mlbg2);color:var(--mltp);font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box}
 .ml-cta-secondary:hover{background:var(--mlbgh)}
 .ml-locked-msg{text-align:center;padding:16px 0 8px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6}
+.ml-confetti{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:3}
+.ml-confetti i{position:absolute;width:6px;height:6px;border-radius:50%;top:-10px;animation:mlconf 1.8s ease-out forwards}
+.ml-confetti i:nth-child(odd){border-radius:1px;width:5px;height:8px}
+@keyframes mlconf{0%{transform:translateY(0) rotate(0) scale(1);opacity:1}100%{transform:translateY(280px) rotate(720deg) scale(0);opacity:0}}
+.ml-savings{background:linear-gradient(135deg,#faf3e0,#f7f0de);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;border:1px solid rgba(175,140,62,.12)}
+.ml-savings-ico{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#af8c3e,#d4b05e);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ml-savings-ico svg{width:18px;height:18px;stroke:#fff;stroke-width:2;fill:none}
+.ml-savings-txt{font-size:12px;color:var(--mlts);line-height:1.4;letter-spacing:-.1px}
+.ml-savings-txt b{color:var(--mltp);font-size:16px;font-weight:800}
+.ml-warn{background:linear-gradient(135deg,#fef2f2,#fde8e8);border:1px solid rgba(229,62,62,.12);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.ml-warn-ico{width:32px;height:32px;border-radius:50%;background:#e53e3e;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;color:#fff}
+.ml-warn-txt{font-size:12px;color:#9b2c2c;line-height:1.4}
+.ml-warn-txt b{font-weight:700;color:#c53030}
+.ml-levelup{text-align:center;margin-bottom:12px;animation:mlpulse 1s ease 2}
+.ml-levelup-txt{font-size:14px;font-weight:700;color:var(--mlg);letter-spacing:-.2px}
+@keyframes mlpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 .ml-trigger.collapsed{width:48px;height:48px;padding:0;border-radius:50%;justify-content:center}
 .ml-trigger.collapsed .ml-trigger-txt{display:none}
 .ml-trigger.collapsed svg{margin:0}
@@ -119,6 +135,33 @@ function f$(n){return new Intl.NumberFormat('tr-TR').format(Math.round(n))}
 function tierFromSpend(spend){
 for(var i=T.length-1;i>=0;i--){if(spend>=T[i].mn)return T[i].n;}
 return 'Starter';
+}
+
+var CONFETTI_COLORS=['#af8c3e','#d4b05e','#f0e2b8','#8b6234','#636366','#4a6fa5','#e53e3e','#48bb78'];
+function mlConfetti(card,intense){
+var con=document.createElement('div');con.className='ml-confetti';
+var count=intense?40:20;
+for(var k=0;k<count;k++){
+var p=document.createElement('i');
+p.style.left=Math.random()*100+'%';
+p.style.background=CONFETTI_COLORS[Math.floor(Math.random()*CONFETTI_COLORS.length)];
+p.style.animationDelay=(Math.random()*0.8)+'s';
+p.style.animationDuration=(1.2+Math.random()*1)+'s';
+con.appendChild(p);
+}
+card.appendChild(con);
+setTimeout(function(){con.remove();},3000);
+}
+
+function checkLevelUp(tier){
+var key='ml_last_tier';
+try{
+var prev=localStorage.getItem(key);
+localStorage.setItem(key,tier);
+if(!prev)return 'first';
+if(prev!==tier){var pi=T.findIndex(function(t){return t.n===prev});var ci=T.findIndex(function(t){return t.n===tier});return ci>pi?'levelup':'same';}
+return 'same';
+}catch(e){return 'same';}
 }
 
 function go(d){
@@ -165,9 +208,30 @@ if(typeof d.returnRate==='number'){
 rateBox='<div class="ml-stat"><div class="ml-stat-num" style="color:'+(d.returnRate>(t.r||100)?'#e53e3e':'var(--mltp)')+'">%'+d.returnRate.toFixed(1)+'</div><div class="ml-stat-lbl">İade Oranı</div></div>';
 statCols='1fr 1fr 1fr';
 }
+// Tasarruf hesapla
+var savings=Math.round(d.spend*(t.d/100));
+var savingsHtml=savings>0?'<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">Bu seviyede toplam<br><b>'+f$(savings)+' ₺</b> tasarruf ettiniz!</div></div>':'';
+// İade uyarısı
+var warnHtml='';
+if(typeof d.returnRate==='number'&&t.r>0){
+var limit=t.r;
+var diff=limit-d.returnRate;
+if(diff<=3&&diff>0){warnHtml='<div class="ml-warn"><div class="ml-warn-ico">⚠️</div><div class="ml-warn-txt">İade oranınız <b>%'+d.returnRate.toFixed(1)+'</b> — <b>%'+limit+'</b> limitine yaklaşıyorsunuz.<br>Seviyenizi korumak için dikkatli olun!</div></div>';}
+else if(diff<=0){warnHtml='<div class="ml-warn"><div class="ml-warn-ico">🚨</div><div class="ml-warn-txt">İade oranınız <b>%'+d.returnRate.toFixed(1)+'</b> ile <b>%'+limit+'</b> limitini aştınız.<br>Seviye düşüşü riski var!</div></div>';}
+}
+// Level-up kontrol
+var luStatus=checkLevelUp(d.tier);
+var luHtml='';
+if(luStatus==='levelup'){luHtml='<div class="ml-levelup"><div class="ml-levelup-txt">🎉 Tebrikler! '+d.tier+' seviyesine yükseldiniz!</div></div>';}
 var btns='<a href="/store" class="ml-cta">Alışverişe Devam Et</a>';
-document.getElementById('ct').innerHTML=greeting+'<div class="ml-tier '+c+'"><div class="ml-tier-badge"><div class="ml-tier-ring"></div>'+IC[d.tier]+'</div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+prog+'<div class="ml-stats" style="grid-template-columns:'+statCols+'"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Alışveriş</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div>'+rateBox+'</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+btns;
+document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge"><div class="ml-tier-ring"></div>'+IC[d.tier]+'</div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+prog+warnHtml+savingsHtml+'<div class="ml-stats" style="grid-template-columns:'+statCols+'"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Alışveriş</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div>'+rateBox+'</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+btns;
+// Confetti
 setTimeout(function(){
+var card=document.querySelector('.ml-card');
+if(card){
+if(luStatus==='levelup'){mlConfetti(card,true);}
+else if(i>0){mlConfetti(card,false);}
+}
 var pf=document.getElementById('pf');
 if(pf)pf.style.width=pf.dataset.p+'%';
 document.querySelectorAll('[data-count]').forEach(function(el){
