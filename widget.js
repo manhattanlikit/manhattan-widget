@@ -124,7 +124,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-tier-share svg{width:8px;height:8px;stroke:#fff;stroke-width:2;fill:none}
 .ml-trigger.collapsed{width:48px;height:48px;padding:0;border-radius:50%;justify-content:center;gap:0}
 .ml-trigger.collapsed .ml-trigger-txt{max-width:0;opacity:0;overflow:hidden}
-.ml-trigger .ml-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .8s ease,opacity .6s ease}
+.ml-trigger .ml-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .9s ease,opacity .7s ease}
 .ml-trigger.collapsed svg{margin:0}
 @media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:18px}.ml-tier-name{font-size:22px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:18px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:13px}.ml-prog-val{font-size:13px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
 @media(max-width:1024px){.ml-card{border-radius:16px;max-width:94vw}.ml-inner{padding:0 18px 16px}.ml-tier-badge{width:56px;height:56px}.ml-tier-badge svg{width:24px;height:24px}.ml-tier-name{font-size:20px}.ml-head-title{font-size:17px}.ml-stat-num{font-size:15px}.ml-stats{gap:6px}.ml-stat{padding:10px 8px}.ml-prog-hint{font-size:11px}.ml-btns{flex-direction:column;gap:6px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:5px 8px}.ml-tr-ico{width:24px;height:24px}.ml-tr-ico svg{width:11px;height:11px}.ml-tr-name{font-size:11px}.ml-tr-desc{font-size:9px}.ml-tr-discount{font-size:12px}}`;
@@ -202,7 +202,7 @@ T.forEach(function(ti){
 var lockIco='<svg viewBox="0 0 24 24" fill="none" stroke="var(--mltt)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
 tt+='<div class="ml-tier-row locked"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+'</div></div><div class="ml-tr-discount">'+lockIco+'</div></div>';
 });
-document.getElementById('ct').innerHTML='<div class="ml-locked-msg">İndirim seviyenizi görmek için<br><a href="https://manhattandan.com/account" style="color:var(--mlg);font-weight:700;text-decoration:underline">giriş yapın</a>.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div><div class="ml-btns"><a href="https://manhattandan.com/account" class="ml-cta ml-cta-gold">Giriş Yap</a><a href="https://manhattandan.com/" class="ml-cta-secondary">Mağazaya Git</a></div>';
+document.getElementById('ct').innerHTML='<div class="ml-locked-msg">İndirim seviyenizi görmek için<br><a href="https://manhattandan.com/account" style="color:var(--mlg);font-weight:700;text-decoration:underline">giriş yapın</a>.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div><div class="ml-btns"><a href="https://manhattandan.com/account" class="ml-cta ml-cta-gold">Giriş Yap</a><button onclick="mlClose()" class="ml-cta-secondary">Mağazaya Git</button></div>';
 return;
 }
 // LOGGED IN
@@ -272,7 +272,7 @@ var rem=Math.max(0,Math.floor((end-now)/1000));
 var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
 flashHtml='<div class="ml-flash"><div class="ml-flash-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="ml-flash-txt"><b>Flash Bonus +%2.5</b><br>Hafta sonu özel ek indirim</div><div class="ml-flash-timer" id="ml-ft">'+String(fh).padStart(2,'0')+':'+String(fm).padStart(2,'0')+':'+String(fs).padStart(2,'0')+'</div></div>';
 }
-var btns='<a href="https://manhattandan.com/" class="ml-cta">Alışverişe Devam Et</a>';
+var btns='<button onclick="mlClose()" class="ml-cta">Alışverişe Devam Et</button>';
 document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+'<div class="ml-stats" style="grid-template-columns:'+statCols+'"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Alışveriş</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div>'+rateBox+'</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+btns;
 // Confetti
 setTimeout(function(){
@@ -449,8 +449,11 @@ o1.start(ac.currentTime);o1.stop(ac.currentTime+0.15);
 
 // Scroll burst + collapse trigger
 var _mlScrolled=false;
+var _mlScrollStart=null;
 window.addEventListener('scroll',function(){
 if(_mlScrolled)return;
+if(_mlScrollStart===null)_mlScrollStart=window.scrollY;
+if(window.scrollY-_mlScrollStart<250)return;
 var trig=document.querySelector('.ml-trigger');
 if(!trig||trig.classList.contains('collapsed'))return;
 _mlScrolled=true;
@@ -474,11 +477,11 @@ document.body.appendChild(bst);
 bst.querySelectorAll('i').forEach(function(p){
 var dx=parseFloat(p.style.getPropertyValue('--dx'));
 var dy=parseFloat(p.style.getPropertyValue('--dy'));
-p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale(0)',opacity:0}],{duration:900,easing:'ease-out'});
+p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:'translate('+dx+'px,'+dy+'px) scale(0)',opacity:0}],{duration:1100,easing:'ease-out'});
 });
-setTimeout(function(){bst.remove();},1200);
+setTimeout(function(){bst.remove();},1500);
 // Collapse
-setTimeout(function(){trig.classList.add('collapsed');},800);
+setTimeout(function(){trig.classList.add('collapsed');},1600);
 },{passive:true});
 
 document.addEventListener('keydown',function(e){if(e.key==='Escape')window.mlClose();});
