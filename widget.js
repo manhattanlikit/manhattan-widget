@@ -53,25 +53,32 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-tr-name{font-size:12px;font-weight:700;color:var(--mltp);letter-spacing:-.1px}
 .ml-tr-desc{font-size:10px;font-weight:500;color:var(--mltt)}
 .ml-tr-discount{font-size:13px;font-weight:800;color:var(--mltp);letter-spacing:-.3px;flex-shrink:0;display:flex;align-items:center;gap:4px}
-.ml-tier-row.locked .ml-tr-name,.ml-tier-row.locked .ml-tr-discount{color:var(--mlts)}
-.ml-tier-row.locked .ml-tr-ico{opacity:.6}.ml-tier-row.locked .ml-tr-desc{color:var(--mltt)}
+.ml-tier-row.locked{opacity:.4}
+.ml-tier-row.locked .ml-tr-name,.ml-tier-row.locked .ml-tr-discount{color:var(--mltt)}
+.ml-tier-row.locked .ml-tr-ico{opacity:.5}.ml-tier-row.locked .ml-tr-desc{color:var(--mltt)}
 .ml-tier-row.passed{opacity:.55}.ml-tier-row.passed .ml-tr-name{color:var(--mlts)}
 .ml-tr-check{width:22px;height:22px;border-radius:50%;background:#af8c3e;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ml-tr-check svg{width:12px;height:12px;stroke:#fff;stroke-width:2.5}
 .ml-greeting{text-align:center;font-size:13px;font-weight:500;color:var(--mlts);margin-bottom:4px;letter-spacing:-.1px}
 .ml-greeting b{color:var(--mltp);font-weight:700}
-.ml-cta{display:flex;align-items:center;justify-content:center;flex:1;width:100%;padding:13px;background:var(--mltp);color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s}
+.ml-cta{display:block;width:100%;padding:13px;background:var(--mltp);color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box}
 .ml-cta:hover{opacity:.88}.ml-cta:active{transform:scale(.98)}
 .ml-max-msg{text-align:center;padding:8px 0 16px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6;letter-spacing:-.1px}
 .ml-btns{display:flex;gap:10px}
-.ml-cta-secondary{display:flex;align-items:center;justify-content:center;flex:1;padding:15px;background:var(--mlbg2);color:var(--mltp);font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:14px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s}
+.ml-btns .ml-cta,.ml-btns .ml-cta-secondary{flex:1}
+.ml-cta-secondary{display:block;padding:13px;background:var(--mlbg2);color:var(--mltp);font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box}
 .ml-cta-secondary:hover{background:var(--mlbgh)}
-@media(max-width:480px){.ml-card{border-radius:16px}.ml-inner{padding:0 20px 24px}.ml-tier-badge{width:72px;height:72px}.ml-tier-badge svg{width:32px;height:32px}.ml-tier-name{font-size:24px}.ml-head-title{font-size:19px}.ml-stat-num{font-size:18px}.ml-stats{gap:8px}.ml-stat{padding:14px 12px}.ml-prog-hint{font-size:13px}.ml-btns{flex-direction:column;gap:8px}.ml-trigger{bottom:16px;right:16px;height:44px;padding:0 16px 0 14px;font-size:13px}.ml-trigger svg{width:16px;height:16px}.ml-tier-row{padding:8px 10px}.ml-tr-ico{width:26px;height:26px}.ml-tr-ico svg{width:12px;height:12px}.ml-tr-name{font-size:12px}.ml-tr-desc{font-size:10px}.ml-tr-discount{font-size:13px}}`;
+.ml-locked-msg{text-align:center;padding:16px 0 8px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6}
+.ml-trigger.collapsed{width:48px;height:48px;padding:0;border-radius:50%;justify-content:center}
+.ml-trigger.collapsed .ml-trigger-txt{display:none}
+.ml-trigger.collapsed svg{margin:0}
+@media(min-width:481px){.ml-card{width:440px}}
+@media(max-width:480px){.ml-card{border-radius:16px}.ml-inner{padding:0 20px 24px}.ml-tier-badge{width:72px;height:72px}.ml-tier-badge svg{width:32px;height:32px}.ml-tier-name{font-size:24px}.ml-head-title{font-size:19px}.ml-stat-num{font-size:18px}.ml-stats{gap:8px}.ml-stat{padding:14px 12px}.ml-prog-hint{font-size:13px}.ml-btns{flex-direction:column;gap:8px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:8px 10px}.ml-tr-ico{width:26px;height:26px}.ml-tr-ico svg{width:12px;height:12px}.ml-tr-name{font-size:12px}.ml-tr-desc{font-size:10px}.ml-tr-discount{font-size:13px}}`;
 document.head.appendChild(s);
 
 // HTML enjekte
 var w=document.createElement('div');
-w.innerHTML='<button class="ml-trigger" onclick="mlOpen()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Sadakat Seviyem</button><div class="ml-overlay" id="ov" onclick="mlClose(event)"><div class="ml-card"><button class="ml-x" onclick="mlClose()"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="ml-inner"><div class="ml-head"><div class="ml-head-sub">Manhattan Likit</div><div class="ml-head-title">Sadakat Programı</div></div><div id="ct"></div></div></div></div>';
+w.innerHTML='<button class="ml-trigger" onclick="mlOpen()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="ml-trigger-txt">Sadakat Seviyem</span></button><div class="ml-overlay" id="ov" onclick="mlClose(event)"><div class="ml-card"><button class="ml-x" onclick="mlClose()"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="ml-inner"><div class="ml-head"><div class="ml-head-sub">Manhattan Likit</div><div class="ml-head-title">Sadakat Programı</div></div><div id="ct"></div></div></div></div>';
 document.body.appendChild(w);
 
 var T=[
@@ -100,7 +107,24 @@ var DEMO={tier:'Gold',spend:14250,orders:18,name:'Tamer',loggedIn:true};
 
 function f$(n){return new Intl.NumberFormat('tr-TR').format(Math.round(n))}
 
+// Spend'den tier hesapla (Ecwid group'a güvenme)
+function tierFromSpend(spend){
+for(var i=T.length-1;i>=0;i--){if(spend>=T[i].mn)return T[i].n;}
+return 'Starter';
+}
+
 function go(d){
+// LOGGED OUT: kilitli görünüm
+if(!d.loggedIn){
+var tt='';
+T.forEach(function(ti){
+var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş';
+tt+='<div class="ml-tier-row locked"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+'</div><div class="ml-tr-desc">'+desc+'</div></div><div class="ml-tr-discount">%'+ti.d+'</div></div>';
+});
+document.getElementById('ct').innerHTML='<div class="ml-locked-msg">Sadakat seviyenizi görmek için<br>giriş yapın.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div><div class="ml-btns"><a href="https://manhattandan.com/account" class="ml-cta">Giriş Yap</a><a href="/store" class="ml-cta-secondary">Mağazaya Git</a></div>';
+return;
+}
+// LOGGED IN
 var i=T.findIndex(function(t){return t.n===d.tier});
 var t=T[i],nx=i<T.length-1?T[i+1]:null;
 var c='t-'+d.tier.toLowerCase();
@@ -121,10 +145,8 @@ var badge=ic?'<span class="ml-tr-badge">SİZ</span>':'';
 var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">%'+ti.d+'</div>';
 tt+='<div class="ml-tier-row '+cls+'"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+' '+badge+'</div><div class="ml-tr-desc">'+desc+'</div></div>'+cod+'</div>';
 });
-var btns='';
-if(d.loggedIn){btns='<a href="/store" class="ml-cta">Alışverişe Devam Et</a>';}
-else{btns='<div class="ml-btns"><a href="https://manhattandan.com/account" class="ml-cta">Giriş Yap</a><a href="/store" class="ml-cta-secondary">Mağazaya Git</a></div>';}
-document.getElementById('ct').innerHTML=greeting+'<div class="ml-tier '+c+'"><div class="ml-tier-badge"><div class="ml-tier-ring"></div>'+IC[d.tier]+'</div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+prog+'<div class="ml-stats"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Alışverişiniz</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div></div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+btns;
+var btns='<a href="/store" class="ml-cta">Alışverişe Devam Et</a>';
+document.getElementById('ct').innerHTML=greeting+'<div class="ml-tier '+c+'"><div class="ml-tier-badge"><div class="ml-tier-ring"></div>'+IC[d.tier]+'</div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+prog+'<div class="ml-stats"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Harcama</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div></div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+btns;
 setTimeout(function(){
 var pf=document.getElementById('pf');
 if(pf)pf.style.width=pf.dataset.p+'%';
@@ -137,13 +159,22 @@ var tm=setInterval(function(){cur+=inc;if(cur>=target){cur=target;clearInterval(
 
 window.mlOpen=function(){
 document.getElementById('ov').classList.add('open');
+document.getElementById('ct').innerHTML='<div style="text-align:center;padding:40px 0"><div style="width:28px;height:28px;border:2.5px solid #f0f0f2;border-top-color:#1d1d1f;border-radius:50%;margin:0 auto;animation:mlspin .6s linear infinite"></div></div>';
+if(!document.getElementById('mlspincss')){var sc=document.createElement('style');sc.id='mlspincss';sc.textContent='@keyframes mlspin{to{transform:rotate(360deg)}}';document.head.appendChild(sc);}
 if(typeof Ecwid!=='undefined'&&Ecwid.Customer){
 try{Ecwid.Customer.get(function(c){
 if(c){
-var tier=GM[c.customerGroupId]||'Starter',name=c.name?c.name.split(' ')[0]:'',email=c.email||'';
+var name=c.name?c.name.split(' ')[0]:'',email=c.email||'';
 if(WEB_APP&&email){
-fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){go({tier:tier,spend:d.spend||0,orders:d.orders||0,name:name,loggedIn:true})}).catch(function(){var td=T.find(function(t){return t.n===tier});go({tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true})});
-}else{var td=T.find(function(t){return t.n===tier});go({tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true});}
+fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
+var tier=tierFromSpend(d.spend||0);
+go({tier:tier,spend:d.spend||0,orders:d.orders||0,name:name,loggedIn:true});
+}).catch(function(){
+var tier=GM[c.customerGroupId]||'Starter';
+var td=T.find(function(t){return t.n===tier});
+go({tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true});
+});
+}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});go({tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true});}
 }else{go({tier:'Starter',spend:0,orders:0,name:'',loggedIn:false});}
 });}catch(e){go(DEMO);}
 }else{go(DEMO);}
@@ -152,6 +183,8 @@ fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.jso
 window.mlClose=function(e){
 if(e&&e.target!==document.getElementById('ov')&&!e.target.closest('.ml-x'))return;
 document.getElementById('ov').classList.remove('open');
+var trig=document.querySelector('.ml-trigger');
+if(trig&&!trig.classList.contains('collapsed'))trig.classList.add('collapsed');
 };
 
 document.addEventListener('keydown',function(e){if(e.key==='Escape')window.mlClose();});
