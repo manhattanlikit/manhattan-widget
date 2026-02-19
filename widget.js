@@ -41,8 +41,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-stat-lbl{font-size:11px;font-weight:600;color:var(--mltt);letter-spacing:.5px;text-transform:uppercase;margin-top:2px}
 .ml-label{font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mltt);margin-bottom:8px}
 .ml-tiers-table{margin-bottom:16px}
-.ml-tier-row{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:10px;margin-bottom:1px;cursor:pointer;transition:background .15s;position:relative}
-.ml-tier-row:hover{background:var(--mlbg2)}
+.ml-tier-row{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:10px;margin-bottom:1px;position:relative}
 .ml-tier-row.current{background:var(--mlbg2);border:1.5px solid rgba(0,0,0,.08)}
 .ml-tr-badge{display:inline-block;font-size:8px;font-weight:800;letter-spacing:1px;color:#fff;background:var(--mltp);padding:1px 6px;border-radius:4px;vertical-align:middle;margin-left:4px}
 .ml-tr-ico{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -63,6 +62,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-greeting b{color:var(--mltp);font-weight:700}
 .ml-cta{display:block;width:100%;padding:13px;background:var(--mltp);color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:12px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box}
 .ml-cta:hover{opacity:.88}.ml-cta:active{transform:scale(.98)}
+.ml-cta-gold{background:linear-gradient(135deg,#af8c3e,#d4b05e)}
 .ml-max-msg{text-align:center;padding:8px 0 16px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6;letter-spacing:-.1px}
 .ml-btns{display:flex;gap:10px}
 .ml-btns .ml-cta,.ml-btns .ml-cta-secondary{flex:1}
@@ -82,12 +82,12 @@ w.innerHTML='<button class="ml-trigger" onclick="mlOpen()"><svg viewBox="0 0 24 
 document.body.appendChild(w);
 
 var T=[
-{n:'Starter',mn:0,d:0,s:false},
-{n:'Bronze',mn:2000,d:2.5,s:false},
-{n:'Silver',mn:5000,d:5,s:false},
-{n:'Gold',mn:10000,d:7.5,s:false},
-{n:'Platinum',mn:20000,d:10,s:false},
-{n:'Diamond',mn:40000,d:15,s:true}
+{n:'Starter',mn:0,d:0,r:0,s:false},
+{n:'Bronze',mn:2000,d:2.5,r:20,s:false},
+{n:'Silver',mn:5000,d:5,r:15,s:false},
+{n:'Gold',mn:10000,d:7.5,r:12,s:false},
+{n:'Platinum',mn:20000,d:10,r:10,s:false},
+{n:'Diamond',mn:40000,d:15,r:5,s:true}
 ];
 
 var IC={
@@ -103,7 +103,7 @@ chk:'<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin
 var WEB_APP='https://script.google.com/macros/s/AKfycbxJKzibWzYOmapPvghMPxbt9u5vjGQyxCXZae4FKfUEsjCMIWEqkyI2CM_CovOGrzTbXQ/exec';
 var GM={0:null,7957004:'Starter',24166501:'Bronze',24166502:'Silver',24166503:'Gold',24166504:'Platinum',24166505:'Diamond'};
 var TB={Starter:'#f5f5f7',Bronze:'linear-gradient(145deg,#f2e8da,#e8d5be)',Silver:'linear-gradient(145deg,#f0f0f2,#e4e4e8)',Gold:'linear-gradient(145deg,#faf3e0,#f0e2b8)',Platinum:'linear-gradient(145deg,#e8e8ed,#d8d8de)',Diamond:'linear-gradient(145deg,#e0e8f5,#c8d8f0)'};
-var DEMO={tier:'Gold',spend:14250,orders:18,name:'Tamer',loggedIn:true};
+var DEMO={tier:'Gold',spend:14250,orders:18,returnRate:4.2,name:'Tamer',loggedIn:true};
 
 function f$(n){return new Intl.NumberFormat('tr-TR').format(Math.round(n))}
 
@@ -118,10 +118,10 @@ function go(d){
 if(!d.loggedIn){
 var tt='';
 T.forEach(function(ti){
-var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş';
+var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş'+(ti.r?' · <%'+ti.r+' iade/iptal':'');
 tt+='<div class="ml-tier-row locked"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+'</div><div class="ml-tr-desc">'+desc+'</div></div><div class="ml-tr-discount">%'+ti.d+'</div></div>';
 });
-document.getElementById('ct').innerHTML='<div class="ml-locked-msg">Sadakat seviyenizi görmek için<br>giriş yapın.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div><div class="ml-btns"><a href="https://manhattandan.com/account" class="ml-cta">Giriş Yap</a><a href="/store" class="ml-cta-secondary">Mağazaya Git</a></div>';
+document.getElementById('ct').innerHTML='<div class="ml-locked-msg">İndirim seviyenizi görmek için<br><a href="https://manhattandan.com/account" style="color:var(--mlg);font-weight:700;text-decoration:underline">giriş yapın</a>.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div><div class="ml-btns"><a href="https://manhattandan.com/account" class="ml-cta ml-cta-gold">Giriş Yap</a><a href="/store" class="ml-cta-secondary">Mağazaya Git</a></div>';
 return;
 }
 // LOGGED IN
@@ -133,20 +133,26 @@ var prog='';
 if(nx){
 var p=Math.min((d.spend/nx.mn)*100,100);
 var r=nx.mn-d.spend;
-prog='<div class="ml-prog"><div class="ml-prog-row"><span class="ml-prog-label">Sonraki: '+nx.n+'</span><span class="ml-prog-val">'+f$(d.spend)+' / '+f$(nx.mn)+' ₺</span></div><div class="ml-prog-bar"><div class="ml-prog-fill" id="pf" data-p="'+p+'" style="width:0%"></div></div><div class="ml-prog-hint"><b>'+nx.n+'</b> seviyesine <b>'+f$(r)+' ₺</b> kaldı</div></div>';
+prog='<div class="ml-prog"><div class="ml-prog-row"><span class="ml-prog-label">Sonraki: '+nx.n+'</span><span class="ml-prog-val">'+f$(d.spend)+' / '+f$(nx.mn)+' ₺</span></div><div class="ml-prog-bar"><div class="ml-prog-fill" id="pf" data-p="'+p+'" style="width:0%"></div></div><div class="ml-prog-hint"><b>'+nx.n+'</b> seviyesine <b>'+f$(r)+' ₺</b> kaldı'+(nx.r?' · İade/iptal oranı <%'+nx.r+' olmalı':'')+'</div></div>';
 }else{
 prog='<div class="ml-max-msg">En yüksek seviyedesiniz.<br>Tüm ayrıcalıklarınız aktif.</div>';
 }
 var tt='';
 T.forEach(function(ti,j){
 var ip=j<i,ic=j===i,cls=ic?'current':ip?'passed':'locked';
-var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş';
+var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş'+(ti.r?' · <%'+ti.r+' iade/iptal':'');
 var badge=ic?'<span class="ml-tr-badge">SİZ</span>':'';
 var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">%'+ti.d+'</div>';
 tt+='<div class="ml-tier-row '+cls+'"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+' '+badge+'</div><div class="ml-tr-desc">'+desc+'</div></div>'+cod+'</div>';
 });
+var rateBox='';
+var statCols='1fr 1fr';
+if(typeof d.returnRate==='number'){
+rateBox='<div class="ml-stat"><div class="ml-stat-num" style="color:'+(d.returnRate>(t.r||100)?'#e53e3e':'var(--mltp)')+'">%'+d.returnRate.toFixed(1)+'</div><div class="ml-stat-lbl">İade/İptal</div></div>';
+statCols='1fr 1fr 1fr';
+}
 var btns='<a href="/store" class="ml-cta">Alışverişe Devam Et</a>';
-document.getElementById('ct').innerHTML=greeting+'<div class="ml-tier '+c+'"><div class="ml-tier-badge"><div class="ml-tier-ring"></div>'+IC[d.tier]+'</div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+prog+'<div class="ml-stats"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Harcama</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div></div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+btns;
+document.getElementById('ct').innerHTML=greeting+'<div class="ml-tier '+c+'"><div class="ml-tier-badge"><div class="ml-tier-ring"></div>'+IC[d.tier]+'</div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+prog+'<div class="ml-stats" style="grid-template-columns:'+statCols+'"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Alışveriş</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div>'+rateBox+'</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+btns;
 setTimeout(function(){
 var pf=document.getElementById('pf');
 if(pf)pf.style.width=pf.dataset.p+'%';
@@ -157,8 +163,32 @@ var tm=setInterval(function(){cur+=inc;if(cur>=target){cur=target;clearInterval(
 },120);
 }
 
+var _mlCache=null;
+
+// Sayfa yüklendiğinde arka planda veriyi çek
+if(typeof Ecwid!=='undefined'&&Ecwid.OnAPILoaded){
+Ecwid.OnAPILoaded.add(function(){
+try{Ecwid.Customer.get(function(c){
+if(c){
+var name=c.name?c.name.split(' ')[0]:'',email=c.email||'';
+if(WEB_APP&&email){
+fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
+var tier=tierFromSpend(d.spend||0);
+_mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,loggedIn:true};
+}).catch(function(){
+var tier=GM[c.customerGroupId]||'Starter';
+var td=T.find(function(t){return t.n===tier});
+_mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true};
+});
+}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true};}
+}else{_mlCache={tier:'Starter',spend:0,orders:0,name:'',loggedIn:false};}
+});}catch(e){}
+});
+}
+
 window.mlOpen=function(){
 document.getElementById('ov').classList.add('open');
+if(_mlCache){go(_mlCache);return;}
 document.getElementById('ct').innerHTML='<div style="text-align:center;padding:40px 0"><div style="width:28px;height:28px;border:2.5px solid #f0f0f2;border-top-color:#1d1d1f;border-radius:50%;margin:0 auto;animation:mlspin .6s linear infinite"></div></div>';
 if(!document.getElementById('mlspincss')){var sc=document.createElement('style');sc.id='mlspincss';sc.textContent='@keyframes mlspin{to{transform:rotate(360deg)}}';document.head.appendChild(sc);}
 if(typeof Ecwid!=='undefined'&&Ecwid.Customer){
@@ -168,14 +198,16 @@ var name=c.name?c.name.split(' ')[0]:'',email=c.email||'';
 if(WEB_APP&&email){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
-go({tier:tier,spend:d.spend||0,orders:d.orders||0,name:name,loggedIn:true});
+_mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,loggedIn:true};
+go(_mlCache);
 }).catch(function(){
 var tier=GM[c.customerGroupId]||'Starter';
 var td=T.find(function(t){return t.n===tier});
-go({tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true});
+_mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true};
+go(_mlCache);
 });
-}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});go({tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true});}
-}else{go({tier:'Starter',spend:0,orders:0,name:'',loggedIn:false});}
+}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,loggedIn:true};go(_mlCache);}
+}else{_mlCache={tier:'Starter',spend:0,orders:0,name:'',loggedIn:false};go(_mlCache);}
 });}catch(e){go(DEMO);}
 }else{go(DEMO);}
 };
