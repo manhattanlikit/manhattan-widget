@@ -33,7 +33,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-prog{margin-bottom:10px}
 .ml-prog-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
 .ml-prog-label{font-size:13px;font-weight:500;color:var(--mlts)}
-.ml-prog-val{font-size:13px;font-weight:700;color:var(--mltp);letter-spacing:-.2px}
+.ml-prog-val{font-size:11px;font-weight:500;color:var(--mlts);letter-spacing:-.1px}
 .ml-prog-bar{width:100%;height:8px;background:var(--mlbg2);border-radius:4px;overflow:hidden}
 .ml-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#af8c3e,#d4b05e);transition:width .8s cubic-bezier(.25,0,0,1);position:relative;overflow:hidden}
 .ml-prog-fill::after{content:'';position:absolute;top:0;left:-50%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:mlshimmer 2s linear infinite}
@@ -140,7 +140,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-trigger.collapsed .ml-trigger-txt{max-width:0;opacity:0;overflow:hidden}
 .ml-trigger .ml-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .9s ease,opacity .7s ease}
 .ml-trigger.collapsed svg{margin:0}
-@media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:18px}.ml-tier-name{font-size:22px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:15px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:13px}.ml-prog-val{font-size:13px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
+@media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:18px}.ml-tier-name{font-size:22px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:15px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:12px}.ml-prog-val{font-size:11px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
 @media(max-width:1024px){.ml-card{border-radius:16px;max-width:94vw}.ml-inner{padding:0 18px 16px}.ml-tier-badge{width:56px;height:56px}.ml-tier-badge svg{width:24px;height:24px}.ml-tier-name{font-size:20px}.ml-head-title{font-size:17px}.ml-stat-num{font-size:15px}.ml-stats{gap:6px}.ml-stat{padding:10px 8px}.ml-prog-hint{font-size:11px}.ml-btns{flex-direction:column;gap:6px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:5px 8px}.ml-tr-ico{width:24px;height:24px}.ml-tr-ico svg{width:11px;height:11px}.ml-tr-name{font-size:11px}.ml-tr-desc{font-size:9px}.ml-tr-discount{font-size:12px}}`;
 document.head.appendChild(s);
 
@@ -239,7 +239,8 @@ var ip=j<i,ic=j===i,cls=ic?'current':ip?'passed':'locked';
 var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş'+(ti.r?' · <%'+ti.r+' iade':'');
 var badge=ic?'<span class="ml-tr-badge">SİZ</span>':'';
 var refIco=(!ip&&REF_RATES[ti.n])?'<svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;margin-left:3px;vertical-align:-1px;opacity:.7"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>':'';
-var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">%'+ti.d+'</div>';
+var refDiscIco=REF_RATES[ti.n]?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;vertical-align:-1px;margin-left:2px;opacity:.5"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>':'';
+var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">%'+ti.d+refDiscIco+'</div>';
 var clickAttr=(!ip&&!ic)?' onclick="mlTip(this)"':'';
 var tip='';
 if(!ip&&!ic){
@@ -281,7 +282,15 @@ if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var 
 var surpriseHtml='<div class="ml-surprise"><a href="javascript:void(0)" onclick="mlBday()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Doğum Günü Hediyenizi Alın</a></div>';
 var refHtml='';
 if(REF_RATES[d.tier]){
-refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub">Arkadaşınıza <b>%'+REF_RATES[d.tier]+'</b> indirim hediye edin, sipariş verdiğinde siz de kazanın</div><div id="ml-ref-area"><div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div></div></div>';
+var refTiers=['Silver','Gold','Platinum','Diamond'];
+var refProgHtml='<div style="display:flex;justify-content:center;gap:6px;margin-top:8px">';
+refTiers.forEach(function(rn){
+var rate=REF_RATES[rn];if(!rate)return;
+var isActive=rn===d.tier;
+refProgHtml+='<div style="text-align:center;padding:4px 8px;border-radius:6px;font-size:9px;line-height:1.3;'+(isActive?'background:rgba(175,140,62,.12);color:var(--mlg);font-weight:700':'color:var(--mlts);opacity:.6')+'"><div style="font-weight:'+(isActive?'700':'500')+'">'+rn+'</div><div style="font-size:10px">%'+rate+'</div></div>';
+});
+refProgHtml+='</div>';
+refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub">Arkadaşınıza <b>%'+REF_RATES[d.tier]+'</b> indirim hediye edin, sipariş verdiğinde siz de kazanın</div>'+refProgHtml+'<div id="ml-ref-area"><div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div></div></div>';
 }
 // Flash bonus (Cuma 22:00 - Cumartesi 22:00)
 var flashHtml='';
@@ -294,7 +303,7 @@ var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
 flashHtml='<div class="ml-flash"><div class="ml-flash-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="ml-flash-txt"><b>Flash Bonus +%2.5</b><br>Hafta sonu özel ek indirim</div><div class="ml-flash-timer" id="ml-ft">'+String(fh).padStart(2,'0')+':'+String(fm).padStart(2,'0')+':'+String(fs).padStart(2,'0')+'</div></div>';
 }
 var btns='<button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta">Alışverişe Devam Et</button>';
-document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+'<div class="ml-stats" style="grid-template-columns:'+statCols+'"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Alışveriş</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div>'+rateBox+'</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+refHtml+btns;
+document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Exclusive Member</div></div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+'<div class="ml-stats" style="grid-template-columns:'+statCols+'"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Alışveriş</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div>'+rateBox+'</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+refHtml+btns;
 // Confetti
 setTimeout(function(){
 var card=document.querySelector('.ml-card');
@@ -384,7 +393,7 @@ var ti=T.findIndex(function(t){return t.n===d.tier});
 var t=T[ti];
 // 2x resolution for sharp rendering
 var S=2;
-var W=600,H=360;
+var W=600,H=400;
 var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width=W+'px';c.style.height=H+'px';
 var ctx=c.getContext('2d');ctx.scale(S,S);
 // Background
@@ -393,49 +402,58 @@ bg.addColorStop(0,'#0d0d0f');bg.addColorStop(0.5,'#1a1a1f');bg.addColorStop(1,'#
 ctx.fillStyle=bg;
 ctx.beginPath();ctx.roundRect(0,0,W,H,16);ctx.fill();
 // Subtle border
-ctx.strokeStyle='rgba(175,140,62,.15)';ctx.lineWidth=1;
+ctx.strokeStyle='rgba(175,140,62,.2)';ctx.lineWidth=1;
 ctx.beginPath();ctx.roundRect(0.5,0.5,W-1,H-1,16);ctx.stroke();
 // Top gold line
 var gl=ctx.createLinearGradient(80,0,W-80,0);
 gl.addColorStop(0,'transparent');gl.addColorStop(0.2,'#af8c3e');gl.addColorStop(0.5,'#f0e2b8');gl.addColorStop(0.8,'#af8c3e');gl.addColorStop(1,'transparent');
-ctx.fillStyle=gl;ctx.fillRect(80,32,W-160,1.5);
+ctx.fillStyle=gl;ctx.fillRect(80,28,W-160,1.5);
 // MANHATTAN
 ctx.textAlign='center';ctx.textBaseline='middle';
 ctx.font='700 10px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#6e6e73';ctx.letterSpacing='3px';
-ctx.fillText('M A N H A T T A N',W/2,58);
-// Tier name
-ctx.font='800 44px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#8e8e93';
+ctx.fillText('M A N H A T T A N',W/2,52);
+// Tier name — large hero
+ctx.font='800 46px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#ffffff';
-ctx.fillText(d.tier,W/2,108);
-// Sadakat Seviyesi
-ctx.font='400 13px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#636366';
-ctx.fillText('Sadakat Seviyesi',W/2,138);
+ctx.fillText(d.tier,W/2,100);
+// Member line with gold accent
+ctx.font='500 12px -apple-system,BlinkMacSystemFont,sans-serif';
+var memberGl=ctx.createLinearGradient(W/2-60,0,W/2+60,0);
+memberGl.addColorStop(0,'#af8c3e');memberGl.addColorStop(0.5,'#f0e2b8');memberGl.addColorStop(1,'#af8c3e');
+ctx.fillStyle=memberGl;
+ctx.fillText('Exclusive Member',W/2,130);
+// Customer name
+if(d.name){
+ctx.font='400 14px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#aeaeb2';
+ctx.fillText(d.name,W/2,158);
+}
 // Discount circle with glow
+var circY=d.name?218:205;
 ctx.save();
-ctx.shadowColor='rgba(175,140,62,.3)';ctx.shadowBlur=24;
-ctx.beginPath();ctx.arc(W/2,205,36,0,Math.PI*2);
-var cg=ctx.createRadialGradient(W/2-8,205-8,4,W/2,205,36);
+ctx.shadowColor='rgba(175,140,62,.35)';ctx.shadowBlur=28;
+ctx.beginPath();ctx.arc(W/2,circY,38,0,Math.PI*2);
+var cg=ctx.createRadialGradient(W/2-8,circY-8,4,W/2,circY,38);
 cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.4,'#d4b05e');cg.addColorStop(1,'#af8c3e');
 ctx.fillStyle=cg;ctx.fill();
 ctx.restore();
 // Discount ring
-ctx.strokeStyle='rgba(240,226,184,.3)';ctx.lineWidth=1;
-ctx.beginPath();ctx.arc(W/2,205,42,0,Math.PI*2);ctx.stroke();
+ctx.strokeStyle='rgba(240,226,184,.25)';ctx.lineWidth=1;
+ctx.beginPath();ctx.arc(W/2,circY,44,0,Math.PI*2);ctx.stroke();
 // Discount text
-ctx.font='800 20px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.font='800 22px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#fff';
-ctx.fillText('%'+t.d,W/2,208);
+ctx.fillText('%'+t.d,W/2,circY+3);
 // İndirim Oranı
 ctx.font='500 11px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#4a4a4e';
-ctx.fillText('İndirim Oranı',W/2,262);
+ctx.fillStyle='#8e8e93';
+ctx.fillText('Kişiye Özel İndirim',W/2,circY+60);
 // Bottom gold line
-ctx.fillStyle=gl;ctx.fillRect(80,H-50,W-160,1.5);
+ctx.fillStyle=gl;ctx.fillRect(80,H-52,W-160,1.5);
 // manhattandan.com
 ctx.font='500 10px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#3a3a3e';
+ctx.fillStyle='#636366';
 ctx.fillText('manhattandan.com',W/2,H-28);
 // Preview overlay
 var ov=document.createElement('div');ov.className='ml-share-preview';
