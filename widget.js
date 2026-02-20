@@ -219,7 +219,7 @@ setTimeout(function(){con.remove();},3000);
 }
 
 function checkLevelUp(tier){
-var key='ml_last_tier';
+var key='ml_tier_'+((_mlCache&&_mlCache.email)?_mlCache.email:'guest');
 try{
 var prev=localStorage.getItem(key);
 localStorage.setItem(key,tier);
@@ -517,10 +517,11 @@ window.mlBday=function(){
 var area=document.getElementById('ml-bday-area');
 if(!area)return;
 if(area.innerHTML){area.innerHTML='';return;}
-var saved=null;try{saved=localStorage.getItem('ml_bday_saved');}catch(e){}
+var bdayKey='ml_bday_'+((_mlCache&&_mlCache.email)?_mlCache.email:'guest');
+var saved=null;try{saved=localStorage.getItem(bdayKey);}catch(e){}
 if(saved){
 var sd=new Date(saved);var diff=Date.now()-sd.getTime();
-if(diff<365*24*60*60*1000){area.innerHTML='<div class="ml-bday-form" ondblclick="try{localStorage.removeItem(\'ml_bday_saved\')}catch(e){};this.parentElement.innerHTML=\'\';mlBday()"><div style="font-size:11px;font-weight:600;color:var(--mltp)">🎂 Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde indirim kodunuz e-posta ile gelecek</div><div style="font-size:8px;color:var(--mltt);margin-top:4px">Değiştirmek için çift tıklayın</div></div>';return;}
+if(diff<365*24*60*60*1000){area.innerHTML='<div class="ml-bday-form" ondblclick="try{localStorage.removeItem(\'ml_bday_\'+((_mlCache&&_mlCache.email)?_mlCache.email:\'guest\'))}catch(e){};this.parentElement.innerHTML=\'\';mlBday()"><div style="font-size:11px;font-weight:600;color:var(--mltp)">🎂 Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde indirim kodunuz e-posta ile gelecek</div><div style="font-size:8px;color:var(--mltt);margin-top:4px">Değiştirmek için çift tıklayın</div></div>';return;}
 }
 area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:3px">Doğum gününüzü kaydedin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:6px">Özel gününüzde e-posta ile indirim kodu göndereceğiz</div><input type="date" id="ml-bday-input" onchange="document.getElementById(\'ml-bday-btn\').style.display=\'inline-block\'"><button id="ml-bday-btn" style="display:none" onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';
 };
@@ -537,7 +538,7 @@ fetch(WEB_APP+'?action=birthday&email='+encodeURIComponent(email)+'&birthday='+e
 if(d.success){
 var area=document.getElementById('ml-bday-area');
 if(area)area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:#38a169">✓ Kaydedildi!</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Doğum gününüzde sürpriz indiriminiz gelecek</div></div>';
-try{localStorage.setItem('ml_bday_saved',new Date().toISOString());}catch(e){}
+try{localStorage.setItem('ml_bday_'+((_mlCache&&_mlCache.email)?_mlCache.email:'guest'),new Date().toISOString());}catch(e){}
 setTimeout(function(){var a=document.getElementById('ml-bday-area');if(a)a.innerHTML='';},3000);
 }else{if(msg){msg.textContent=d.error||'Bir hata oluştu';msg.style.color='#e53e3e';}if(btn){btn.disabled=false;btn.textContent='Kaydet';}}
 }).catch(function(){if(msg)msg.textContent='Bağlantı hatası';if(btn){btn.disabled=false;btn.textContent='Kaydet';}});
