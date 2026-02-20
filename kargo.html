@@ -344,56 +344,68 @@ async function fetchOrders(){
     var preview=[];
 
     allOrders.forEach(function(o){
-      var fullAddr=o.street;
-      if(o.city&&!o.street.toUpperCase().includes(o.city.toUpperCase())){
-        fullAddr+=' '+o.city;
-      }
+      var isYurtici=/yurtici|yurtiçi|yurti/i.test(o.shippingMethod||'');
+      
+      if(isYurtici){
+        var fullAddr=o.street;
+        if(o.city&&!o.street.toUpperCase().includes(o.city.toUpperCase())){
+          fullAddr+=' '+o.city;
+        }
 
-      var row=[
-        o.name,                    // A: Kişi/Kurum
-        fullAddr.toUpperCase(),    // B: Adres
-        (o.state||'').toUpperCase(),// C: İl
-        (o.city||'').toUpperCase(),// D: İlçe
-        '',                        // E: Telefon Ev/İş
-        normPhone(o.phone),        // F: Telefon Cep
-        '',                        // G: E-Mail
-        '',                        // H: Vergi No
-        CARGO_DEFAULTS.kargoTuru,  // I: 0=DOSYA
-        CARGO_DEFAULTS.odemeTipi,  // J: 1=GÖNDERİCİ
-        '',                        // K: İrsaliye No
-        '',                        // L: Referans No (boş)
-        CARGO_DEFAULTS.adet,       // M: 1
-        CARGO_DEFAULTS.icerik,     // N: BODY BUTTER
-        '',                        // O: Tahsilat Tipi
-        '',                        // P: Fatura No
-        '',                        // Q: Fatura Tutarı
-        '',                        // R: Dosya/Poşet No
-        '',                        // S: Kampanya No
-        ''                         // T: Kampanya Kodu
-      ];
-      rows.push(row);
-      preview.push({name:o.name,state:o.state,city:o.city,phone:normPhone(o.phone),orderId:o.id,orderNum:o.orderNumber});
-      log('log-export','#'+o.orderNumber+' · '+o.name+' · '+(o.state||'')+' / '+(o.city||''),'ok');
+        var row=[
+          o.name,                    // A: Kişi/Kurum
+          fullAddr.toUpperCase(),    // B: Adres
+          (o.state||'').toUpperCase(),// C: İl
+          (o.city||'').toUpperCase(),// D: İlçe
+          '',                        // E: Telefon Ev/İş
+          normPhone(o.phone),        // F: Telefon Cep
+          '',                        // G: E-Mail
+          '',                        // H: Vergi No
+          CARGO_DEFAULTS.kargoTuru,  // I: 0=DOSYA
+          CARGO_DEFAULTS.odemeTipi,  // J: 1=GÖNDERİCİ
+          '',                        // K: İrsaliye No
+          '',                        // L: Referans No (boş)
+          CARGO_DEFAULTS.adet,       // M: 1
+          CARGO_DEFAULTS.icerik,     // N: BODY BUTTER
+          '',                        // O: Tahsilat Tipi
+          '',                        // P: Fatura No
+          '',                        // Q: Fatura Tutarı
+          '',                        // R: Dosya/Poşet No
+          '',                        // S: Kampanya No
+          ''                         // T: Kampanya Kodu
+        ];
+        rows.push(row);
+      }
+      preview.push({name:o.name,state:o.state,city:o.city,phone:normPhone(o.phone),orderId:o.id,orderNum:o.orderNumber,shippingMethod:o.shippingMethod||'Belirtilmemiş',isYurtici:isYurtici});
+      log('log-export','#'+o.orderNumber+' · '+o.name+' · '+(o.state||'')+' / '+(o.city||'')+(!isYurtici?' · ⚠ '+o.shippingMethod:''),'ok');
     });
 
     setProgress('pbar-export',80);
 
-    // Generate Excel
+    // Generate Excel (only if Yurtiçi orders exist)
     var wb=XLSX.utils.book_new();
     var ws=XLSX.utils.aoa_to_sheet(rows);
     ws['!cols']=[{wch:30},{wch:50},{wch:15},{wch:15},{wch:15},{wch:15},{wch:25},{wch:12},{wch:10},{wch:10},{wch:15},{wch:15},{wch:8},{wch:15},{wch:10},{wch:12},{wch:12},{wch:12},{wch:12},{wch:12}];
     XLSX.utils.book_append_sheet(wb,ws,'Sheet1');
     var fname='YK_Kargo_'+ts()+'.xlsx';
-    XLSX.writeFile(wb,fname);
     
+    var yurticiCount=rows.length-1;
+    if(yurticiCount>0){
+      XLSX.writeFile(wb,fname);
+      log('log-export','✓ '+fname+' indirildi — '+yurticiCount+' Yurtiçi sipariş','ok');
+    }else{
+      log('log-export','Yurtiçi Kargo siparişi bulunamadı. Excel oluşturulmadı.','skip');
+    }
     setProgress('pbar-export',100);
-    log('log-export','✓ '+fname+' indirildi — '+allOrders.length+' sipariş','ok');
 
     // Preview table
-    var html='<div class="stats"><div class="stat"><div class="stat-val">'+allOrders.length+'</div><div class="stat-label">Sipariş</div></div></div>';
-    html+='<div class="table-wrap"><table><tr><th>Sipariş</th><th>Müşteri</th><th>İl</th><th>İlçe</th><th>Telefon</th></tr>';
+    var otherCount=preview.length-yurticiCount;
+    var html='<div class="stats"><div class="stat"><div class="stat-val">'+allOrders.length+'</div><div class="stat-label">Toplam Sipariş</div></div><div class="stat"><div class="stat-val" style="color:var(--green)">'+yurticiCount+'</div><div class="stat-label">Yurtiçi Kargo</div></div>'+(otherCount?'<div class="stat"><div class="stat-val" style="color:var(--red)">'+otherCount+'</div><div class="stat-label">Diğer Kargo</div></div>':'')+'</div>';
+    html+='<div class="table-wrap"><table><tr><th>Sipariş</th><th>Müşteri</th><th>İl</th><th>İlçe</th><th>Telefon</th><th>Kargo</th></tr>';
     preview.forEach(function(p){
-      html+='<tr><td>#'+p.orderNum+'</td><td>'+p.name+'</td><td>'+(p.state||'')+'</td><td>'+(p.city||'')+'</td><td>'+p.phone+'</td></tr>';
+      var rowStyle=p.isYurtici?'':'style="background:rgba(231,76,60,.08);color:#c0392b"';
+      var kargoLabel=p.isYurtici?'<span style="color:#27ae60;font-weight:600">Yurtiçi</span>':'<span style="color:#c0392b;font-weight:600">'+p.shippingMethod+'</span>';
+      html+='<tr '+rowStyle+'><td>#'+p.orderNum+'</td><td>'+p.name+'</td><td>'+(p.state||'')+'</td><td>'+(p.city||'')+'</td><td>'+p.phone+'</td><td>'+kargoLabel+'</td></tr>';
     });
     html+='</table></div>';
     document.getElementById('export-preview').innerHTML=html;
