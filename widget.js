@@ -35,8 +35,8 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-prog-label{font-size:13px;font-weight:500;color:var(--mlts)}
 .ml-prog-val{font-size:13px;font-weight:700;color:var(--mltp);letter-spacing:-.2px}
 .ml-prog-bar{width:100%;height:8px;background:var(--mlbg2);border-radius:4px;overflow:hidden}
-.ml-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#f0e2b8,#d4b05e);background-size:200% 100%;transition:width .8s cubic-bezier(.25,0,0,1);animation:mlshimmer 2s ease infinite}
-@keyframes mlshimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.ml-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#f0e2b8,#d4b05e,#af8c3e);background-size:200% 100%;transition:width .8s cubic-bezier(.25,0,0,1);animation:mlshimmer 2s linear infinite}
+@keyframes mlshimmer{from{background-position:100% 50%}to{background-position:0% 50%}}
 .ml-prog-hint{margin-top:6px;text-align:center;font-size:12px;font-weight:500;color:var(--mlts);line-height:1.3;letter-spacing:-.1px}
 .ml-prog-hint b{color:var(--mltp);font-weight:700}
 .ml-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
@@ -119,6 +119,19 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-bday-form input{border:1px solid rgba(0,0,0,.1);border-radius:6px;padding:5px 8px;font-size:11px;font-family:inherit;text-align:center;width:130px;margin:4px 0}
 .ml-bday-form button{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:10px;font-weight:700;font-family:inherit;cursor:pointer;margin-left:4px}
 .ml-bday-form .ml-bday-msg{font-size:10px;color:var(--mlts);margin-top:4px}
+.ml-ref{background:var(--mlbg2);border-radius:10px;padding:10px 12px;margin-bottom:10px;text-align:center}
+.ml-ref-title{font-size:11px;font-weight:700;color:var(--mltp);margin-bottom:2px;display:flex;align-items:center;justify-content:center;gap:4px}
+.ml-ref-title svg{width:14px;height:14px;stroke:var(--mlg);stroke-width:2;fill:none}
+.ml-ref-sub{font-size:10px;color:var(--mlts);margin-bottom:6px;line-height:1.4}
+.ml-ref-form{display:flex;gap:4px;align-items:center}
+.ml-ref-form input{flex:1;border:1px solid var(--mlbd);border-radius:6px;padding:6px 8px;font-size:11px;font-family:inherit;outline:none;transition:border-color .2s}
+.ml-ref-form input:focus{border-color:var(--mlg)}
+.ml-ref-form button{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:10px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;transition:opacity .2s}
+.ml-ref-form button:disabled{opacity:.5;cursor:not-allowed}
+.ml-ref-msg{font-size:10px;margin-top:4px;line-height:1.3}
+.ml-ref-msg.ok{color:#38a169}.ml-ref-msg.err{color:#e53e3e}
+.ml-ref-teaser{font-size:10px;color:var(--mlts);text-align:center;margin-bottom:8px;padding:6px 10px;background:var(--mlbg2);border-radius:8px;line-height:1.4}
+.ml-ref-teaser b{color:var(--mlg);font-weight:700}
 .ml-tier-share{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:var(--mltp);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.7);transition:all .2s;cursor:pointer}
 .ml-tier-badge:hover .ml-tier-share{opacity:1;transform:scale(1)}
 .ml-tier-share svg{width:8px;height:8px;stroke:#fff;stroke-width:2;fill:none}
@@ -157,7 +170,8 @@ chk:'<svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin
 var WEB_APP='https://script.google.com/macros/s/AKfycbxJKzibWzYOmapPvghMPxbt9u5vjGQyxCXZae4FKfUEsjCMIWEqkyI2CM_CovOGrzTbXQ/exec';
 var GM={0:null,7957004:'Starter',24166501:'Bronze',24166502:'Silver',24166503:'Gold',24166504:'Platinum',24166505:'Diamond'};
 var TB={Starter:'#f5f5f7',Bronze:'linear-gradient(145deg,#f2e8da,#e8d5be)',Silver:'linear-gradient(145deg,#f0f0f2,#e4e4e8)',Gold:'linear-gradient(145deg,#faf3e0,#f0e2b8)',Platinum:'linear-gradient(145deg,#e8e8ed,#d8d8de)',Diamond:'linear-gradient(145deg,#e0e8f5,#c8d8f0)'};
-var DEMO={tier:'Gold',spend:14250,orders:18,returnRate:4.2,name:'Tamer',loggedIn:true};
+var DEMO={tier:'Gold',spend:14250,orders:18,returnRate:4.2,name:'Kullanıcı',loggedIn:true};
+var REF_RATES={Gold:7.5,Platinum:10,Diamond:15};
 
 function f$(n){return new Intl.NumberFormat('tr-TR').format(Math.round(n))}
 
@@ -262,6 +276,12 @@ if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var 
 }
 // Sürpriz indirimler linki
 var surpriseHtml='<div class="ml-surprise"><a href="javascript:void(0)" onclick="mlBday()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Sürpriz İndirimler</a></div>';
+var refHtml='';
+if(REF_RATES[d.tier]){
+refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub">Arkadaşınıza <b>%'+REF_RATES[d.tier]+'</b> indirim hediye edin, sipariş verdiğinde siz de kazanın</div><div id="ml-ref-area"><div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div></div></div>';
+}else if(T.findIndex(function(x){return x.n===d.tier})<3){
+refHtml='<div class="ml-ref-teaser"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:2px"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> <b>Gold</b> seviyesinden itibaren arkadaşlarınızı davet edip birlikte kazanabilirsiniz</div>';
+}
 // Flash bonus (Cuma 22:00 - Cumartesi 22:00)
 var flashHtml='';
 var now=new Date();var dow=now.getDay(),hr=now.getHours();
@@ -273,7 +293,7 @@ var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
 flashHtml='<div class="ml-flash"><div class="ml-flash-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="ml-flash-txt"><b>Flash Bonus +%2.5</b><br>Hafta sonu özel ek indirim</div><div class="ml-flash-timer" id="ml-ft">'+String(fh).padStart(2,'0')+':'+String(fm).padStart(2,'0')+':'+String(fs).padStart(2,'0')+'</div></div>';
 }
 var btns='<button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta">Alışverişe Devam Et</button>';
-document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+'<div class="ml-stats" style="grid-template-columns:'+statCols+'"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Alışveriş</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div>'+rateBox+'</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+btns;
+document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Mevcut Seviyeniz</div></div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+'<div class="ml-stats" style="grid-template-columns:'+statCols+'"><div class="ml-stat"><div class="ml-stat-num" data-count="'+Math.round(d.spend)+'">0 ₺</div><div class="ml-stat-lbl">Son 12 Ay Alışveriş</div></div><div class="ml-stat"><div class="ml-stat-num" data-count="'+d.orders+'">0</div><div class="ml-stat-lbl">Sipariş</div></div>'+rateBox+'</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+refHtml+btns;
 // Confetti
 setTimeout(function(){
 var card=document.querySelector('.ml-card');
@@ -397,6 +417,20 @@ if(navigator.share){var f=new File([blob],'manhattan-seviye.png',{type:'image/pn
 else{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='manhattan-seviye.png';a.click();}
 ov.remove();
 },'image/png');};
+};
+
+// Referral gönder
+window.mlRefSend=function(){
+var inp=document.getElementById('ml-ref-email');
+var area=document.getElementById('ml-ref-area');
+if(!inp||!inp.value||!area)return;
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value)){area.innerHTML='<div class="ml-ref-msg err">Geçerli bir e-posta girin</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';return;}
+if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
+var btn=area.querySelector('button');if(btn){btn.disabled=true;btn.textContent='Gönderiliyor...';}
+fetch(WEB_APP,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'referral',referrerEmail:_mlCache.email,friendEmail:inp.value.trim()})}).then(function(r){return r.json()}).then(function(d){
+if(d.success){area.innerHTML='<div class="ml-ref-msg ok">✓ '+d.message+'</div>';setTimeout(function(){area.innerHTML='<div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Başka bir arkadaş davet edin"><button onclick="mlRefSend()">Gönder</button></div>';},3000);}
+else{area.innerHTML='<div class="ml-ref-msg err">'+(d.error||'Bir hata oluştu')+'</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';}
+}).catch(function(){area.innerHTML='<div class="ml-ref-msg err">Bağlantı hatası, tekrar deneyin</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';});
 };
 
 // Doğum günü formu
