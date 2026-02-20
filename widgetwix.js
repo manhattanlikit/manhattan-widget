@@ -1,4 +1,5 @@
 (function(){
+function _mlInit(){
 // CSS enjekte
 var s=document.createElement('style');
 s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -773,4 +774,7 @@ setTimeout(function(){trig.classList.add('collapsed');},1600);
 },{passive:true});
 
 document.addEventListener('keydown',function(e){if(e.key==='Escape')window.mlClose();});
+}
+// Wix uyumu: body hazır olana kadar bekle
+if(document.body){_mlInit();}else{document.addEventListener('DOMContentLoaded',_mlInit);}
 })();
