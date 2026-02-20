@@ -71,8 +71,9 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-tr-check svg{width:12px;height:12px;stroke:#fff;stroke-width:2.5}
 .ml-greeting{text-align:center;font-size:11px;font-weight:500;color:var(--mlts);margin-bottom:0;letter-spacing:-.1px}
 .ml-greeting b{color:var(--mltp);font-weight:600}
-.ml-cta{display:flex;align-items:center;justify-content:center;width:100%;padding:13px;background:var(--mltp);color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:10px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box}
-.ml-cta:hover{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;opacity:1}.ml-cta:active{transform:scale(.98)}
+.ml-cta{display:flex;align-items:center;justify-content:center;width:100%;padding:13px;background:var(--mltp);color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:10px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box;position:relative;overflow:hidden}
+.ml-cta::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(175,140,62,.3),transparent);transition:none}
+.ml-cta:hover{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;opacity:1}.ml-cta:hover::after{animation:mlsweep 2s ease-in-out infinite}.ml-cta:active{transform:scale(.98)}
 .ml-cta-gold{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff !important;position:relative;overflow:hidden}
 .ml-cta-gold::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite}
 .ml-max-msg{text-align:center;padding:8px 0 16px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6;letter-spacing:-.1px}
@@ -275,7 +276,7 @@ tt+='<div class="ml-tier-row '+cls+'"'+clickAttr+'><div class="ml-tr-ico t-'+ti.
 });
 // Tasarruf hesapla
 var savings=Math.round(d.spend*(t.d/100));
-var savingsHtml=savings>0?'<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">Bugüne kadar toplam<br><b>'+f$(savings)+' ₺</b> tasarruf ettiniz</div><div class="ml-savings-orders"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>':'<div class="ml-savings ml-savings-only"><div class="ml-savings-orders" style="margin:0"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>';
+var savingsHtml='<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">'+(savings>0?'Bugüne kadar toplam<br><b>'+f$(savings)+' ₺</b> tasarruf ettiniz':'İlk alışverişinizde<br><b>tasarruf etmeye başlayın</b>')+'</div><div class="ml-savings-orders"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>';
 // İade compact (only if exists)
 var compactStats='';
 if(typeof d.returnRate==='number'){compactStats='<div class="ml-stats-compact"><div class="ml-sc-item"><div class="ml-sc-val" style="color:'+(d.returnRate>(t.r||100)?'#e53e3e':'var(--mlts)')+'">%'+d.returnRate.toFixed(1)+'</div><div class="ml-sc-lbl">İade Oranı</div></div></div>';}
@@ -311,6 +312,8 @@ refProgHtml+='<div style="text-align:center;padding:4px 8px;border-radius:6px;fo
 });
 refProgHtml+='</div>';
 refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub">Arkadaşınıza <b>%'+REF_RATES[d.tier]+'</b> hoş geldin indirimi hediye edin.<br>Alışveriş yaptığında <b>size de %'+REF_RATES[d.tier]+' ek indirim kuponu</b> gelsin!<br><span style="font-size:9px;color:var(--mltt)">Mevcut seviye indiriminize ek olarak geçerlidir.</span></div>'+refProgHtml+'<div id="ml-ref-area" style="margin-top:10px"><div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div></div></div>';
+} else {
+refHtml='<div class="ml-ref" style="opacity:.7"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub"><b>Silver</b> seviyesine ulaştığınızda arkadaşlarınızı davet edip <b>ek indirim</b> kazanabilirsiniz!<br><span style="font-size:9px;color:var(--mltt)">Silver: %5 · Gold: %7.5 · Platinum: %10 · Diamond: %15</span></div></div>';
 }
 // Flash bonus (Cuma 22:00 - Cumartesi 22:00)
 var flashHtml='';
@@ -333,7 +336,7 @@ if(luStatus==='levelup'){mlConfetti(card,true);}
 else if(i>0){mlConfetti(card,false);}
 }
 var pf=document.getElementById('pf');
-if(pf)pf.style.width=pf.dataset.p+'%';
+if(pf)pf.style.width=Math.max(parseFloat(pf.dataset.p),3)+'%';
 document.querySelectorAll('[data-count]').forEach(function(el){
 var target=parseInt(el.dataset.count),isMoney=target>100,inc=target/40,cur=0;
 var tm=setInterval(function(){cur+=inc;if(cur>=target){cur=target;clearInterval(tm);}el.textContent=isMoney?f$(Math.round(cur))+' ₺':Math.round(cur);},30);
@@ -420,69 +423,84 @@ if(!_mlCache||!_mlCache.loggedIn)return;
 var d=_mlCache;
 var ti=T.findIndex(function(t){return t.n===d.tier});
 var t=T[ti];
-// 2x resolution for sharp rendering
-var S=2;
-var W=600,H=360;
+// 3x resolution for ultra-sharp rendering
+var S=3;
+var W=600,H=380;
 var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';c.style.aspectRatio=W+'/'+H;
 var ctx=c.getContext('2d');ctx.scale(S,S);
-// Background — deep dark
+// Background — deep dark gradient
 var bg=ctx.createLinearGradient(0,0,W,H);
-bg.addColorStop(0,'#0a0a0c');bg.addColorStop(0.5,'#141418');bg.addColorStop(1,'#0a0a0c');
+bg.addColorStop(0,'#08080a');bg.addColorStop(0.5,'#111115');bg.addColorStop(1,'#08080a');
 ctx.fillStyle=bg;
 ctx.beginPath();ctx.roundRect(0,0,W,H,16);ctx.fill();
-// Subtle gold border
-ctx.strokeStyle='rgba(175,140,62,.15)';ctx.lineWidth=1;
+// Gold border
+ctx.strokeStyle='rgba(175,140,62,.18)';ctx.lineWidth=1;
 ctx.beginPath();ctx.roundRect(0.5,0.5,W-1,H-1,16);ctx.stroke();
+// Corner motifs — premium diamond shapes
+function drawMotif(cx,cy,s){
+ctx.save();ctx.strokeStyle='rgba(175,140,62,.12)';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s,cy);ctx.lineTo(cx,cy+s);ctx.lineTo(cx-s,cy);ctx.closePath();ctx.stroke();
+ctx.beginPath();ctx.moveTo(cx,cy-s*0.5);ctx.lineTo(cx+s*0.5,cy);ctx.lineTo(cx,cy+s*0.5);ctx.lineTo(cx-s*0.5,cy);ctx.closePath();ctx.stroke();
+ctx.restore();
+}
+drawMotif(50,50,18);drawMotif(W-50,50,18);drawMotif(50,H-50,18);drawMotif(W-50,H-50,18);
+// Side decorative lines
+ctx.strokeStyle='rgba(175,140,62,.06)';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.moveTo(30,80);ctx.lineTo(30,H-80);ctx.stroke();
+ctx.beginPath();ctx.moveTo(W-30,80);ctx.lineTo(W-30,H-80);ctx.stroke();
 // Top gold accent line
-var gl=ctx.createLinearGradient(100,0,W-100,0);
-gl.addColorStop(0,'transparent');gl.addColorStop(0.3,'rgba(175,140,62,.4)');gl.addColorStop(0.5,'rgba(240,226,184,.6)');gl.addColorStop(0.7,'rgba(175,140,62,.4)');gl.addColorStop(1,'transparent');
-ctx.fillStyle=gl;ctx.fillRect(100,0,W-200,1);
+var gl=ctx.createLinearGradient(80,0,W-80,0);
+gl.addColorStop(0,'transparent');gl.addColorStop(0.2,'rgba(175,140,62,.3)');gl.addColorStop(0.5,'rgba(240,226,184,.5)');gl.addColorStop(0.8,'rgba(175,140,62,.3)');gl.addColorStop(1,'transparent');
+ctx.fillStyle=gl;ctx.fillRect(80,0,W-160,1);
 // Crown
 drawCrown(ctx,W/2,28,14,'#af8c3e');
-// MANHATTAN
+// MANHATTAN — whiter
 ctx.textAlign='center';ctx.textBaseline='middle';
 ctx.font='600 9px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#636366';
+ctx.fillStyle='#9e9ea3';
 ctx.fillText('M A N H A T T A N',W/2,46);
 // Tier name — hero
-ctx.font='800 38px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.font='800 40px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#ffffff';
-ctx.fillText(d.tier,W/2,86);
-// Customer name — gold gradient
-var displayName=d.fullName||d.name||'';
-if(displayName){
-var nameGl=ctx.createLinearGradient(W/2-80,0,W/2+80,0);
-nameGl.addColorStop(0,'#af8c3e');nameGl.addColorStop(0.5,'#f0e2b8');nameGl.addColorStop(1,'#af8c3e');
-ctx.font='500 13px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle=nameGl;
-ctx.fillText(displayName,W/2,116);
-}
+ctx.fillText(d.tier,W/2,90);
 // Discount circle — centered, premium glow
-var circY=displayName?185:170;
+var circY=165;
 ctx.save();
-ctx.shadowColor='rgba(175,140,62,.3)';ctx.shadowBlur=30;
-ctx.beginPath();ctx.arc(W/2,circY,36,0,Math.PI*2);
-var cg=ctx.createRadialGradient(W/2-8,circY-8,4,W/2,circY,36);
-cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.4,'#d4b05e');cg.addColorStop(1,'#af8c3e');
+ctx.shadowColor='rgba(175,140,62,.35)';ctx.shadowBlur=35;
+ctx.beginPath();ctx.arc(W/2,circY,38,0,Math.PI*2);
+var cg=ctx.createRadialGradient(W/2-10,circY-10,4,W/2,circY,38);
+cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
 ctx.fillStyle=cg;ctx.fill();
 ctx.restore();
 // Outer ring
-ctx.strokeStyle='rgba(240,226,184,.12)';ctx.lineWidth=0.5;
-ctx.beginPath();ctx.arc(W/2,circY,44,0,Math.PI*2);ctx.stroke();
+ctx.strokeStyle='rgba(240,226,184,.1)';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.arc(W/2,circY,46,0,Math.PI*2);ctx.stroke();
+// Second outer ring
+ctx.strokeStyle='rgba(175,140,62,.05)';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.arc(W/2,circY,54,0,Math.PI*2);ctx.stroke();
 // Discount text
-ctx.font='800 22px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.font='800 24px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#fff';
 ctx.fillText('%'+t.d,W/2,circY+2);
 // Label below circle
-ctx.font='400 10px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#4a4a4e';
-ctx.fillText('Özel İndirim',W/2,circY+56);
-// Bottom gold accent line
-ctx.fillStyle=gl;ctx.fillRect(100,H-32,W-200,1);
-// manhattandan.com
 ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#3a3a3e';
-ctx.fillText('manhattandan.com',W/2,H-14);
+ctx.fillStyle='#636366';
+ctx.fillText('Özel İndirim',W/2,circY+58);
+// Customer name — large, gold gradient, just above bottom line
+var displayName=d.fullName||d.name||'';
+if(displayName){
+var nameGl=ctx.createLinearGradient(W/2-100,0,W/2+100,0);
+nameGl.addColorStop(0,'#af8c3e');nameGl.addColorStop(0.5,'#f0e2b8');nameGl.addColorStop(1,'#af8c3e');
+ctx.font='600 18px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle=nameGl;
+ctx.fillText(displayName,W/2,H-62);
+}
+// Bottom gold accent line
+ctx.fillStyle=gl;ctx.fillRect(80,H-38,W-160,1);
+// manhattandan.com — whiter
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#7c7c80';
+ctx.fillText('manhattandan.com',W/2,H-18);
 // Preview overlay
 var ov=document.createElement('div');ov.className='ml-share-preview';
 ov.onclick=function(e){if(e.target===ov)ov.remove();};
@@ -521,9 +539,11 @@ var bdayKey='ml_bday_'+((_mlCache&&_mlCache.email)?_mlCache.email:'guest');
 var saved=null;try{saved=localStorage.getItem(bdayKey);}catch(e){}
 if(saved){
 var sd=new Date(saved);var diff=Date.now()-sd.getTime();
-if(diff<365*24*60*60*1000){area.innerHTML='<div class="ml-bday-form" ondblclick="try{localStorage.removeItem(\'ml_bday_\'+((_mlCache&&_mlCache.email)?_mlCache.email:\'guest\'))}catch(e){};this.parentElement.innerHTML=\'\';mlBday()"><div style="font-size:11px;font-weight:600;color:var(--mltp)">🎂 Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde indirim kodunuz e-posta ile gelecek</div><div style="font-size:8px;color:var(--mltt);margin-top:4px">Değiştirmek için çift tıklayın</div></div>';return;}
+var canEdit=diff<30*60*1000;
+var editInfo=canEdit?'<div style="font-size:8px;color:var(--mlg);margin-top:4px;cursor:pointer" onclick="try{localStorage.removeItem(\'ml_bday_\'+((_mlCache&&_mlCache.email)?_mlCache.email:\'guest\'))}catch(e){};this.closest(\'.ml-bday-form\').parentElement.innerHTML=\'\';mlBday()">✏️ Değiştir ('+Math.ceil((30*60*1000-diff)/60000)+' dk kaldı)</div>':'<div style="font-size:8px;color:var(--mltt);margin-top:4px">Yılda 1 kez değiştirilebilir</div>';
+area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp)">🎂 Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde <b>%5 indirim kodu</b> e-posta ile gelecek</div>'+editInfo+'</div>';return;
 }
-area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:3px">Doğum gününüzü kaydedin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:6px">Özel gününüzde e-posta ile indirim kodu göndereceğiz</div><input type="date" id="ml-bday-input" onchange="document.getElementById(\'ml-bday-btn\').style.display=\'inline-block\'"><button id="ml-bday-btn" style="display:none" onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';
+area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:3px">Doğum gününüzü kaydedin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:6px">Özel gününüzde e-posta ile <b>%5 indirim kodu</b> göndereceğiz</div><input type="date" id="ml-bday-input" onchange="document.getElementById(\'ml-bday-btn\').style.display=\'inline-block\'"><button id="ml-bday-btn" style="display:none" onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';
 };
 
 window.mlBdaySave=function(){
@@ -534,12 +554,15 @@ if(!inp||!inp.value){if(msg)msg.textContent='Lütfen tarih seçin';return;}
 if(!_mlCache||!_mlCache.loggedIn)return;
 if(btn){btn.disabled=true;btn.textContent='Kaydediliyor...';}
 var email=_mlCache.email||'';
+var bdayDate=new Date(inp.value);
+var today=new Date();
+var daysUntil=Math.ceil((new Date(today.getFullYear(),bdayDate.getMonth(),bdayDate.getDate())-today)/(1000*60*60*24));
+if(daysUntil<0)daysUntil+=365;
 fetch(WEB_APP+'?action=birthday&email='+encodeURIComponent(email)+'&birthday='+encodeURIComponent(inp.value)).then(function(r){return r.json()}).then(function(d){
 if(d.success){
 var area=document.getElementById('ml-bday-area');
-if(area)area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:#38a169">✓ Kaydedildi!</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Doğum gününüzde sürpriz indiriminiz gelecek</div></div>';
+if(area)area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:#38a169">✓ Kaydedildi!</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Doğum gününüzde <b>%5 indirim kodu</b> e-posta ile gelecek</div><div style="font-size:8px;color:var(--mltt);margin-top:3px">'+(daysUntil===0?'Bugün doğum gününüz! 🎉':daysUntil+' gün sonra hediyeniz gelecek')+'</div><div style="font-size:8px;color:var(--mlg);margin-top:3px;cursor:pointer" onclick="try{localStorage.removeItem(\'ml_bday_\'+((_mlCache&&_mlCache.email)?_mlCache.email:\'guest\'))}catch(e){};this.closest(\'.ml-bday-form\').parentElement.innerHTML=\'\';mlBday()">✏️ Değiştir (30 dk içinde)</div></div>';
 try{localStorage.setItem('ml_bday_'+((_mlCache&&_mlCache.email)?_mlCache.email:'guest'),new Date().toISOString());}catch(e){}
-setTimeout(function(){var a=document.getElementById('ml-bday-area');if(a)a.innerHTML='';},3000);
 }else{if(msg){msg.textContent=d.error||'Bir hata oluştu';msg.style.color='#e53e3e';}if(btn){btn.disabled=false;btn.textContent='Kaydet';}}
 }).catch(function(){if(msg)msg.textContent='Bağlantı hatası';if(btn){btn.disabled=false;btn.textContent='Kaydet';}});
 };
