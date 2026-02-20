@@ -420,34 +420,27 @@ if(!wasExpanded)el.classList.add('expanded');
 // Paylaş — premium share card
 // === SHARED CARD HELPERS ===
 window._mlCardBg=function(ctx,W,H){
-var bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#08080a');bg.addColorStop(0.5,'#111115');bg.addColorStop(1,'#08080a');
-ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(0,0,W,H,16);ctx.fill();
-// Gold gradient border — bright and visible
-var gb;
-// Top
-gb=ctx.createLinearGradient(0,0,W,0);gb.addColorStop(0,'rgba(175,140,62,.1)');gb.addColorStop(0.3,'rgba(212,176,94,.7)');gb.addColorStop(0.5,'rgba(240,226,184,.9)');gb.addColorStop(0.7,'rgba(212,176,94,.7)');gb.addColorStop(1,'rgba(175,140,62,.1)');
-ctx.fillStyle=gb;ctx.fillRect(16,0,W-32,2);
-// Bottom
-ctx.fillRect(16,H-2,W-32,2);
-// Left
-gb=ctx.createLinearGradient(0,0,0,H);gb.addColorStop(0,'rgba(175,140,62,.1)');gb.addColorStop(0.3,'rgba(212,176,94,.5)');gb.addColorStop(0.5,'rgba(240,226,184,.7)');gb.addColorStop(0.7,'rgba(212,176,94,.5)');gb.addColorStop(1,'rgba(175,140,62,.1)');
-ctx.fillStyle=gb;ctx.fillRect(0,16,2,H-32);
-// Right
-ctx.fillRect(W-2,16,2,H-32);
-// Corner glow dots
-ctx.save();ctx.shadowColor='rgba(240,226,184,.5)';ctx.shadowBlur=8;
-ctx.fillStyle='rgba(212,176,94,.6)';
-ctx.beginPath();ctx.arc(16,16,2,0,Math.PI*2);ctx.fill();
-ctx.beginPath();ctx.arc(W-16,16,2,0,Math.PI*2);ctx.fill();
-ctx.beginPath();ctx.arc(16,H-16,2,0,Math.PI*2);ctx.fill();
-ctx.beginPath();ctx.arc(W-16,H-16,2,0,Math.PI*2);ctx.fill();
+// Background — deep premium gradient
+var bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#0c0c0e');bg.addColorStop(0.4,'#141418');bg.addColorStop(1,'#0a0a0c');
+ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(0,0,W,H,20);ctx.fill();
+// Inner subtle gradient overlay for depth
+var ig=ctx.createRadialGradient(W*0.3,H*0.3,0,W*0.5,H*0.5,W*0.7);
+ig.addColorStop(0,'rgba(175,140,62,.03)');ig.addColorStop(1,'transparent');
+ctx.fillStyle=ig;ctx.beginPath();ctx.roundRect(0,0,W,H,20);ctx.fill();
+// Gold gradient stroke — single smooth roundRect
+ctx.save();
+var gs=ctx.createLinearGradient(0,0,W,H);
+gs.addColorStop(0,'rgba(175,140,62,.15)');gs.addColorStop(0.2,'rgba(212,176,94,.6)');gs.addColorStop(0.4,'rgba(240,226,184,.8)');gs.addColorStop(0.5,'rgba(212,176,94,.6)');gs.addColorStop(0.6,'rgba(240,226,184,.8)');gs.addColorStop(0.8,'rgba(212,176,94,.6)');gs.addColorStop(1,'rgba(175,140,62,.15)');
+ctx.strokeStyle=gs;ctx.lineWidth=1.5;
+ctx.beginPath();ctx.roundRect(0.75,0.75,W-1.5,H-1.5,20);ctx.stroke();
 ctx.restore();
-// Corner motifs
-function dm(cx,cy,s){ctx.save();ctx.strokeStyle='rgba(175,140,62,.15)';ctx.lineWidth=0.5;
-ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s,cy);ctx.lineTo(cx,cy+s);ctx.lineTo(cx-s,cy);ctx.closePath();ctx.stroke();
-ctx.beginPath();ctx.moveTo(cx,cy-s*0.5);ctx.lineTo(cx+s*0.5,cy);ctx.lineTo(cx,cy+s*0.5);ctx.lineTo(cx-s*0.5,cy);ctx.closePath();ctx.stroke();ctx.restore();}
-dm(46,46,16);dm(W-46,46,16);dm(46,H-46,16);dm(W-46,H-46,16);
-// Top accent line
+// Inner edge highlight — subtle inset glow
+ctx.save();
+var ih=ctx.createLinearGradient(0,0,W,0);
+ih.addColorStop(0,'transparent');ih.addColorStop(0.3,'rgba(240,226,184,.06)');ih.addColorStop(0.5,'rgba(240,226,184,.1)');ih.addColorStop(0.7,'rgba(240,226,184,.06)');ih.addColorStop(1,'transparent');
+ctx.fillStyle=ih;ctx.fillRect(20,2,W-40,0.5);
+ctx.restore();
+// Gold accent line helper
 var gl=ctx.createLinearGradient(80,0,W-80,0);gl.addColorStop(0,'transparent');gl.addColorStop(0.2,'rgba(175,140,62,.3)');gl.addColorStop(0.5,'rgba(240,226,184,.5)');gl.addColorStop(0.8,'rgba(175,140,62,.3)');gl.addColorStop(1,'transparent');
 return gl;
 }
@@ -481,7 +474,7 @@ ov.onclick=function(e){if(e.target===ov)ov.remove();};
 var html='<div style="background:#16161a;border-radius:16px;padding:24px 20px;max-width:340px;width:90vw;text-align:center;cursor:default;border:1px solid rgba(175,140,62,.2);box-shadow:0 20px 60px rgba(0,0,0,.5)">';
 html+='<svg viewBox="0 0 24 24" fill="none" stroke="#af8c3e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;margin-bottom:8px"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>';
 html+='<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Arkadaşına hediye gönder</div>';
-html+='<div style="font-size:11px;color:#9e9ea3;margin-bottom:14px;line-height:1.5">Arkadaşına <b style="color:#d4b05e">%'+refRate+' indirim</b> hediye et,<br>alışveriş yapınca <b style="color:#d4b05e">sana da %'+refRate+'</b> gelsin!</div>';
+html+='<div style="font-size:11px;color:#9e9ea3;margin-bottom:14px;line-height:1.5">Arkadaşına tüm indirimlerine ek<br><b style="color:#d4b05e;font-size:13px">%'+refRate+' özel indirim</b> hediye et,<br>alışveriş yapınca <b style="color:#d4b05e">sana da %'+refRate+'</b> gelsin!</div>';
 html+='<div id="ml-rp-area"><input type="email" id="ml-rp-email" placeholder="Arkadaşının e-postası" style="width:100%;padding:10px 12px;border:1px solid rgba(175,140,62,.2);border-radius:8px;background:#1e1e24;color:#fff;font-size:13px;font-family:inherit;text-align:center;box-sizing:border-box;outline:none"><button id="ml-rp-send" onclick="mlRefSendPrompt()" style="width:100%;margin-top:8px;padding:10px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;position:relative;overflow:hidden">Davet Gönder</button><div id="ml-rp-msg" style="font-size:10px;margin-top:6px;min-height:14px"></div></div>';
 html+='<div onclick="this.closest(\'.ml-share-preview\').remove();window._mlTierCard(window._mlCache||{})" style="margin-top:10px;font-size:11px;color:#636366;cursor:pointer;padding:6px">Kartımı Göster →</div>';
 html+='</div>';
@@ -505,7 +498,7 @@ fetch(WEB_APP+'?action=referral&referrerEmail='+encodeURIComponent(_mlCache.emai
 var pov=document.querySelector('.ml-share-preview');if(pov)pov.remove();
 if(d.success&&d.coupon){
 // Kupon kartını aç
-_mlCouponCard(d.coupon,d.discount,_mlCache.fullName||_mlCache.name||'');
+_mlCouponCard(d.coupon,d.discount,d.senderName||_mlCache.fullName||_mlCache.name||'',d.senderTier||_mlCache.tier||'');
 } else {
 // Hata — prompt tekrar aç
 var refRate=REF_RATES[_mlCache.tier];
@@ -520,92 +513,99 @@ setTimeout(function(){var m=document.getElementById('ml-rp-msg');if(m){m.textCon
 });
 };
 
-// === KUPON KARTI (referral sonrası) ===
-window._mlCouponCard=function(code,disc,senderName){
-var S=3,W=600,H=360;
+// === KUPON KARTI (referral sonrası) — Kredi kartı tasarımı ===
+window._mlCouponCard=function(code,disc,senderName,senderTier){
+var S=3,W=600,H=340;
 var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';c.style.aspectRatio=W+'/'+H;
 var ctx=c.getContext('2d');ctx.scale(S,S);
 var gl=_mlCardBg(ctx,W,H);
 ctx.textAlign='center';ctx.textBaseline='middle';
 // Crown
-drawCrown(ctx,W/2,24,12,'#af8c3e');
+drawCrown(ctx,W/2,22,11,'#af8c3e');
 // MANHATTAN LIKIT
-ctx.font='600 8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#9e9ea3';
-ctx.fillText('M A N H A T T A N   L I K I T',W/2,40);
-// Sender message
-if(senderName){
-ctx.font='400 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#a0a0a5';
-ctx.fillText(senderName+' sana bir hediye gönderdi',W/2,66);
-}
+ctx.font='600 8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
+ctx.fillText('M A N H A T T A N   L I K I T',W/2,38);
+// Sender message — "[İsim] size %X indirim gönderdi"
+var senderMsg=senderName?(senderName+' size %'+disc+' indirim gönderdi'):'Size özel %'+disc+' indirim';
+ctx.font='500 13px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#c8c8cc';
+ctx.fillText(senderMsg,W/2,64);
 // Discount circle
-var circY=120;
+var circY=114;
 ctx.save();ctx.shadowColor='rgba(175,140,62,.4)';ctx.shadowBlur=30;
-ctx.beginPath();ctx.arc(W/2,circY,34,0,Math.PI*2);
-var cg=ctx.createRadialGradient(W/2-8,circY-8,4,W/2,circY,34);cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
+ctx.beginPath();ctx.arc(W/2,circY,32,0,Math.PI*2);
+var cg=ctx.createRadialGradient(W/2-8,circY-8,4,W/2,circY,32);cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
 ctx.fillStyle=cg;ctx.fill();ctx.restore();
-ctx.font='800 20px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#fff';
-ctx.fillText('%'+disc,W/2,circY+2);
-ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
-ctx.fillText('Hoş Geldin İndirimi',W/2,circY+50);
-// Coupon code box — premium gold frame
-var bx=W/2-120,by=192,bw=240,bh=48;
-ctx.fillStyle='rgba(175,140,62,.05)';
+// Outer ring
+ctx.strokeStyle='rgba(240,226,184,.08)';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.arc(W/2,circY,40,0,Math.PI*2);ctx.stroke();
+// Discount text
+ctx.font='800 19px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#fff';
+ctx.fillText('%'+disc,W/2,circY+1);
+// Coupon code — large monospace in subtle frame
+var bx=W/2-130,by=164,bw=260,bh=44;
+ctx.fillStyle='rgba(175,140,62,.04)';
 ctx.beginPath();ctx.roundRect(bx,by,bw,bh,10);ctx.fill();
-ctx.strokeStyle='rgba(212,176,94,.3)';ctx.lineWidth=1;
+ctx.strokeStyle='rgba(212,176,94,.2)';ctx.lineWidth=0.5;
 ctx.beginPath();ctx.roundRect(bx,by,bw,bh,10);ctx.stroke();
-// Small gold dots at corners of box
-ctx.save();ctx.shadowColor='rgba(240,226,184,.4)';ctx.shadowBlur=4;ctx.fillStyle='rgba(212,176,94,.5)';
-ctx.beginPath();ctx.arc(bx+6,by+6,1.5,0,Math.PI*2);ctx.fill();
-ctx.beginPath();ctx.arc(bx+bw-6,by+6,1.5,0,Math.PI*2);ctx.fill();
-ctx.beginPath();ctx.arc(bx+6,by+bh-6,1.5,0,Math.PI*2);ctx.fill();
-ctx.beginPath();ctx.arc(bx+bw-6,by+bh-6,1.5,0,Math.PI*2);ctx.fill();
-ctx.restore();
-// Code text — big gold monospace
 ctx.font='800 22px monospace';
-var codeGl=ctx.createLinearGradient(W/2-90,0,W/2+90,0);codeGl.addColorStop(0,'#af8c3e');codeGl.addColorStop(0.5,'#f0e2b8');codeGl.addColorStop(1,'#af8c3e');
+var codeGl=ctx.createLinearGradient(W/2-100,0,W/2+100,0);codeGl.addColorStop(0,'#af8c3e');codeGl.addColorStop(0.5,'#f0e2b8');codeGl.addColorStop(1,'#af8c3e');
 ctx.fillStyle=codeGl;
 ctx.fillText(code,W/2,by+bh/2+1);
-// Instructions
-ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
-ctx.fillText('manhattandan.com adresinde geçerlidir',W/2,264);
-ctx.fillText('Tek kullanımlık · Yeni müşterilere özel',W/2,280);
-// Sender pride area
+// Site info
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
+ctx.fillText('manhattandan.com adresinde geçerlidir',W/2,228);
+// Separator
+ctx.fillStyle=gl;ctx.fillRect(140,250,W-280,0.5);
+// Sender pride — name + tier badge
 if(senderName){
-ctx.fillStyle=gl;ctx.fillRect(120,H-60,W-240,0.5);
-var nameGl=ctx.createLinearGradient(W/2-80,0,W/2+80,0);nameGl.addColorStop(0,'#af8c3e');nameGl.addColorStop(0.5,'#f0e2b8');nameGl.addColorStop(1,'#af8c3e');
-ctx.font='600 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle=nameGl;
-ctx.fillText(senderName+' tarafından gönderildi',W/2,H-38);
+var nameGl=ctx.createLinearGradient(W/2-100,0,W/2+100,0);nameGl.addColorStop(0,'#af8c3e');nameGl.addColorStop(0.5,'#f0e2b8');nameGl.addColorStop(1,'#af8c3e');
+ctx.font='600 14px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle=nameGl;
+ctx.fillText(senderName,W/2,274);
+// Tier badge
+if(senderTier){
+ctx.font='500 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#9e9ea3';
+ctx.fillText(senderTier+' Üyesi',W/2,294);
 }
-// manhattandan.com
-ctx.font='400 8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
+}
+// Bottom
+ctx.font='400 8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#4a4a4e';
 ctx.fillText('manhattandan.com',W/2,H-14);
-// Overlay with WP + Download buttons
+// Overlay — WP + Download + Kapat
 var ov=_mlCardOverlay(c,'');
 ov.querySelector('.ml-share-preview-btns').innerHTML='<button class="ml-sp-share" id="ml-cp-wp" style="background:#25D366;color:#fff">WhatsApp\'ta Gönder</button><button class="ml-sp-share" id="ml-cp-dl">Kartı İndir</button><button class="ml-sp-close" id="ml-cp-x">Kapat</button>';
 document.getElementById('ml-cp-x').onclick=function(){ov.remove();};
+// Kartı İndir — direkt dosya kaydetme
 document.getElementById('ml-cp-dl').onclick=function(){
 c.toBlob(function(blob){
-if(navigator.share){var f=new File([blob],'manhattan-davet.png',{type:'image/png'});navigator.share({title:'Manhattan Likit İndirim',files:[f]}).catch(function(){});}
-else{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='manhattan-davet.png';a.click();}
+var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='manhattan-davet-'+code+'.png';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
 },'image/png');};
+// WhatsApp — mobil native share, desktop wa.me
 document.getElementById('ml-cp-wp').onclick=function(){
-var wpText='Sana Manhattan Likit\'ten %'+disc+' indirim hediye ettim! 🎁\n\nKod: '+code+'\nmanhattandan.com adresinde kullanabilirsin.\n\nTek kullanımlık, sana özel!';
-// Try sharing image via navigator.share first, fallback to WP text link
+var wpText=senderName?senderName+' sana Manhattan Likit\'ten %'+disc+' indirim hediye etti!':'Manhattan Likit\'ten sana %'+disc+' indirim!';
+wpText+='\n\nKod: '+code+'\nmanhattandan.com\n\nTüm indirimlerine ek, sana özel!';
+var isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+if(isMobile){
 c.toBlob(function(blob){
-if(navigator.share&&navigator.canShare){
+try{
 var f=new File([blob],'manhattan-davet.png',{type:'image/png'});
-var shareData={title:'Manhattan Likit İndirim',text:wpText,files:[f]};
-if(navigator.canShare(shareData)){navigator.share(shareData).catch(function(){});return;}
-}
+if(navigator.share&&navigator.canShare&&navigator.canShare({files:[f]})){
+navigator.share({text:wpText,files:[f]}).catch(function(){
 window.open('https://wa.me/?text='+encodeURIComponent(wpText),'_blank');
-},'image/png');};
+});return;}
+}catch(e){}
+window.open('https://wa.me/?text='+encodeURIComponent(wpText),'_blank');
+},'image/png');
+} else {
+window.open('https://web.whatsapp.com/send?text='+encodeURIComponent(wpText),'_blank');
+}
+};
 }
 
 // === TIER KARTI (kişisel prestij) ===
 window._mlTierCard=function(d){
 var ti=T.findIndex(function(t){return t.n===d.tier});
 var t=T[ti];
-var S=3,W=600,H=330;
+var S=3,W=600,H=340;
 var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';c.style.aspectRatio=W+'/'+H;
 var ctx=c.getContext('2d');ctx.scale(S,S);
 var gl=_mlCardBg(ctx,W,H);
@@ -675,7 +675,7 @@ if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
 var btn=area.querySelector('button');if(btn){btn.disabled=true;btn.textContent='Gönderiliyor...';}
 fetch(WEB_APP+'?action=referral&referrerEmail='+encodeURIComponent(_mlCache.email)+'&friendEmail='+encodeURIComponent(inp.value.trim())).then(function(r){return r.json()}).then(function(d){
 if(d.success&&d.coupon){
-_mlCouponCard(d.coupon,d.discount,_mlCache.fullName||_mlCache.name||'');
+_mlCouponCard(d.coupon,d.discount,d.senderName||_mlCache.fullName||_mlCache.name||'',d.senderTier||_mlCache.tier||'');
 area.innerHTML='<div class="ml-ref-msg ok"><svg viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;vertical-align:-2px"><path d="M20 6L9 17l-5-5"/></svg> Davet gönderildi!</div>';
 setTimeout(function(){area.innerHTML='<div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Başka bir arkadaş davet edin"><button onclick="mlRefSend()">Gönder</button></div>';},20000);
 }
