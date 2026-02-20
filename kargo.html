@@ -372,8 +372,8 @@ async function fetchOrders(){
         ''                         // T: Kampanya Kodu
       ];
       rows.push(row);
-      preview.push({name:o.name,state:o.state,city:o.city,phone:normPhone(o.phone),orderId:o.id,orderNum:o.orderNumber,total:o.total});
-      log('log-export','#'+o.orderNumber+' · '+o.name+' · '+(o.state||'')+' / '+(o.city||'')+' · '+o.total+' ₺','ok');
+      preview.push({name:o.name,state:o.state,city:o.city,phone:normPhone(o.phone),orderId:o.id,orderNum:o.orderNumber});
+      log('log-export','#'+o.orderNumber+' · '+o.name+' · '+(o.state||'')+' / '+(o.city||''),'ok');
     });
 
     setProgress('pbar-export',80);
@@ -391,9 +391,9 @@ async function fetchOrders(){
 
     // Preview table
     var html='<div class="stats"><div class="stat"><div class="stat-val">'+allOrders.length+'</div><div class="stat-label">Sipariş</div></div></div>';
-    html+='<div class="table-wrap"><table><tr><th>Sipariş</th><th>Müşteri</th><th>İl</th><th>İlçe</th><th>Telefon</th><th>Tutar</th></tr>';
+    html+='<div class="table-wrap"><table><tr><th>Sipariş</th><th>Müşteri</th><th>İl</th><th>İlçe</th><th>Telefon</th></tr>';
     preview.forEach(function(p){
-      html+='<tr><td>#'+p.orderNum+'</td><td>'+p.name+'</td><td>'+(p.state||'')+'</td><td>'+(p.city||'')+'</td><td>'+p.phone+'</td><td>'+(p.total||0)+' ₺</td></tr>';
+      html+='<tr><td>#'+p.orderNum+'</td><td>'+p.name+'</td><td>'+(p.state||'')+'</td><td>'+(p.city||'')+'</td><td>'+p.phone+'</td></tr>';
     });
     html+='</table></div>';
     document.getElementById('export-preview').innerHTML=html;
