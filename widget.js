@@ -159,10 +159,10 @@ document.body.appendChild(w);
 
 var T=[
 {n:'Starter',mn:0,d:0,r:0,s:false},
-{n:'Bronze',mn:2000,d:2.5,r:15,s:false},
-{n:'Silver',mn:5000,d:5,r:10,s:false},
-{n:'Gold',mn:10000,d:7.5,r:8,s:false},
-{n:'Platinum',mn:20000,d:10,r:5,s:false},
+{n:'Bronze',mn:2000,d:2.5,r:7,s:false},
+{n:'Silver',mn:5000,d:5,r:6,s:false},
+{n:'Gold',mn:10000,d:7.5,r:5,s:false},
+{n:'Platinum',mn:20000,d:10,r:4,s:false},
 {n:'Diamond',mn:40000,d:15,r:3,s:true}
 ];
 
