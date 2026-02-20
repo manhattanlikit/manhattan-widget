@@ -344,7 +344,9 @@ async function fetchOrders(){
     var preview=[];
 
     allOrders.forEach(function(o){
-      var isYurtici=/yurtici|yurtiçi|yurti/i.test(o.shippingMethod||'');
+      var rawMethod=o.shippingMethod||'';
+      var cleanMethod=rawMethod.replace(/\s*\(.*?\)\s*/g,'').trim()||'Belirtilmemiş';
+      var isYurtici=/yurtici|yurtiçi|yurti/i.test(rawMethod);
       
       if(isYurtici){
         var fullAddr=o.street;
@@ -376,8 +378,12 @@ async function fetchOrders(){
         ];
         rows.push(row);
       }
-      preview.push({name:o.name,state:o.state,city:o.city,phone:normPhone(o.phone),orderId:o.id,orderNum:o.orderNumber,shippingMethod:o.shippingMethod||'Belirtilmemiş',isYurtici:isYurtici});
-      log('log-export','#'+o.orderNumber+' · '+o.name+' · '+(o.state||'')+' / '+(o.city||'')+(!isYurtici?' · ⚠ '+o.shippingMethod:''),'ok');
+      preview.push({name:o.name,state:o.state,city:o.city,phone:normPhone(o.phone),orderId:o.id,orderNum:o.orderNumber,shippingMethod:cleanMethod,isYurtici:isYurtici});
+      if(isYurtici){
+        log('log-export','#'+o.orderNumber+' · '+o.name+' · '+(o.state||'')+' / '+(o.city||''),'ok');
+      }else{
+        log('log-export','<span style="color:#c0392b;font-weight:600">#'+o.orderNumber+' · '+o.name+' · '+(o.state||'')+' / '+(o.city||'')+' · '+cleanMethod+' — Excel\'e işlenmedi, ayrı olarak giriniz</span>','err');
+      }
     });
 
     setProgress('pbar-export',80);
@@ -400,11 +406,12 @@ async function fetchOrders(){
 
     // Preview table
     var otherCount=preview.length-yurticiCount;
-    var html='<div class="stats"><div class="stat"><div class="stat-val">'+allOrders.length+'</div><div class="stat-label">Toplam Sipariş</div></div><div class="stat"><div class="stat-val" style="color:var(--green)">'+yurticiCount+'</div><div class="stat-label">Yurtiçi Kargo</div></div>'+(otherCount?'<div class="stat"><div class="stat-val" style="color:var(--red)">'+otherCount+'</div><div class="stat-label">Diğer Kargo</div></div>':'')+'</div>';
+    var html='<div class="stats"><div class="stat"><div class="stat-val">'+allOrders.length+'</div><div class="stat-label">Toplam Sipariş</div></div><div class="stat"><div class="stat-val" style="color:var(--green)">'+yurticiCount+'</div><div class="stat-label">Yurtiçi Kargo</div></div>'+(otherCount?'<div class="stat"><div class="stat-val" style="color:var(--red)">'+otherCount+'</div><div class="stat-label">Sürat Kargo<br><span style="font-size:10px;font-weight:400;color:var(--tx3)">Excel\'e işlenmedi</span></div></div>':'')+'</div>';
+    preview.sort(function(a,b){return a.isYurtici===b.isYurtici?0:a.isYurtici?1:-1;});
     html+='<div class="table-wrap"><table><tr><th>Sipariş</th><th>Müşteri</th><th>İl</th><th>İlçe</th><th>Telefon</th><th>Kargo</th></tr>';
     preview.forEach(function(p){
       var rowStyle=p.isYurtici?'':'style="background:rgba(231,76,60,.08);color:#c0392b"';
-      var kargoLabel=p.isYurtici?'<span style="color:#27ae60;font-weight:600">Yurtiçi</span>':'<span style="color:#c0392b;font-weight:600">'+p.shippingMethod+'</span>';
+      var kargoLabel=p.isYurtici?'<span style="color:#27ae60;font-weight:600">Yurtiçi Kargo</span>':'<span style="color:#c0392b;font-weight:600">'+p.shippingMethod+'</span>';
       html+='<tr '+rowStyle+'><td>#'+p.orderNum+'</td><td>'+p.name+'</td><td>'+(p.state||'')+'</td><td>'+(p.city||'')+'</td><td>'+p.phone+'</td><td>'+kargoLabel+'</td></tr>';
     });
     html+='</table></div>';
