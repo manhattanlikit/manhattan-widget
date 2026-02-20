@@ -57,7 +57,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-tr-info{flex:1;min-width:0}
 .ml-tr-name{font-size:12px;font-weight:700;color:var(--mltp);letter-spacing:-.1px}
 .ml-tr-desc{font-size:10px;font-weight:500;color:var(--mltt)}
-.ml-tr-discount{font-size:13px;font-weight:800;color:var(--mlg);letter-spacing:-.3px;flex-shrink:0;display:flex;align-items:center;gap:3px}
+.ml-tr-discount{font-size:13px;font-weight:800;color:var(--mlg);letter-spacing:-.3px;flex-shrink:0;display:flex;align-items:center;gap:4px}
 .ml-tr-discount .ml-expand{width:14px;height:14px;border-radius:50%;background:var(--mlbg2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .ml-tr-discount .ml-expand svg{width:8px;height:8px;stroke:var(--mlts);stroke-width:2.5}
 .ml-tier-row.locked{opacity:.65;cursor:pointer;transition:all .2s}
@@ -259,7 +259,7 @@ T.forEach(function(ti,j){
 var ip=j<i,ic=j===i,cls=ic?'current':ip?'passed':'locked';
 var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş'+(ti.r?' · <%'+ti.r+' iade':'');
 var badge=ic?'<span class="ml-tr-badge">SİZ</span>':'';
-var refSmallIco=REF_RATES[ti.n]?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;opacity:.6"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> ':'';
+var refSmallIco=REF_RATES[ti.n]?'<svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;flex-shrink:0"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>':'';
 var expandBtn=(!ip&&!ic)?'<span class="ml-expand"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>':'';
 var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">'+refSmallIco+'%'+ti.d+expandBtn+'</div>';
 var clickAttr=ic?' onclick="mlSharePreview()" style="cursor:pointer"':(!ip&&!ic)?' onclick="mlTip(this)"':'';
@@ -353,7 +353,7 @@ if(typeof Ecwid!=='undefined'&&Ecwid.OnAPILoaded){
 Ecwid.OnAPILoaded.add(function(){
 try{Ecwid.Customer.get(function(c){
 if(c){
-var bp=c.billingPerson||{};var name=c.name?c.name.split(' ')[0]:(bp.firstName||'');var fullName=c.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
+var bp=c.billingPerson||{};var name=c.name?(c.name.split(' ')[0]):(bp.firstName||bp.name&&bp.name.split(' ')[0]||'');var fullName=c.name||bp.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
 if(WEB_APP&&email){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
@@ -377,7 +377,7 @@ if(!document.getElementById('mlspincss')){var sc=document.createElement('style')
 if(typeof Ecwid!=='undefined'&&Ecwid.Customer){
 try{Ecwid.Customer.get(function(c){
 if(c){
-var bp=c.billingPerson||{};var name=c.name?c.name.split(' ')[0]:(bp.firstName||'');var fullName=c.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
+var bp=c.billingPerson||{};var name=c.name?(c.name.split(' ')[0]):(bp.firstName||bp.name&&bp.name.split(' ')[0]||'');var fullName=c.name||bp.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
 if(WEB_APP&&email){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
@@ -515,8 +515,8 @@ if(!inp||!inp.value||!area)return;
 if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value)){area.innerHTML='<div class="ml-ref-msg err">Geçerli bir e-posta girin</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';return;}
 if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
 var btn=area.querySelector('button');if(btn){btn.disabled=true;btn.textContent='Gönderiliyor...';}
-fetch(WEB_APP,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'referral',referrerEmail:_mlCache.email,friendEmail:inp.value.trim()})}).then(function(r){return r.json()}).then(function(d){
-if(d.success){area.innerHTML='<div class="ml-ref-msg ok">✓ '+d.message+'</div>';setTimeout(function(){area.innerHTML='<div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Başka bir arkadaş davet edin"><button onclick="mlRefSend()">Gönder</button></div>';},3000);}
+fetch(WEB_APP+'?action=referral&referrerEmail='+encodeURIComponent(_mlCache.email)+'&friendEmail='+encodeURIComponent(inp.value.trim())).then(function(r){return r.json()}).then(function(d){
+if(d.success){area.innerHTML='<div class="ml-ref-msg ok">✓ '+d.message+'</div>';setTimeout(function(){area.innerHTML='<div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Başka bir arkadaş davet edin"><button onclick="mlRefSend()">Gönder</button></div>';},20000);}
 else{area.innerHTML='<div class="ml-ref-msg err">'+(d.error||'Bir hata oluştu')+'</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';}
 }).catch(function(){area.innerHTML='<div class="ml-ref-msg err">Bağlantı hatası, tekrar deneyin</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';});
 };
@@ -542,7 +542,7 @@ if(!inp||!inp.value){if(msg)msg.textContent='Lütfen tarih seçin';return;}
 if(!_mlCache||!_mlCache.loggedIn)return;
 if(btn){btn.disabled=true;btn.textContent='Kaydediliyor...';}
 var email=_mlCache.email||'';
-fetch(WEB_APP,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'birthday',email:email,birthday:inp.value})}).then(function(r){return r.json()}).then(function(d){
+fetch(WEB_APP+'?action=birthday&email='+encodeURIComponent(email)+'&birthday='+encodeURIComponent(inp.value)).then(function(r){return r.json()}).then(function(d){
 if(d.success){
 var area=document.getElementById('ml-bday-area');
 if(area)area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:#38a169">✓ Kaydedildi!</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Doğum gününüzde sürpriz indiriminiz gelecek</div></div>';
