@@ -298,7 +298,7 @@ if(luStatus==='levelup'){luHtml='<div class="ml-levelup"><div class="ml-levelup-
 var projHtml='';
 if(nx&&d.orders>1&&d.spend>0){
 var avgPerMonth=d.spend/12;
-if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var targetDate=new Date();targetDate.setMonth(targetDate.getMonth()+monthsLeft);var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];projHtml='<div style="text-align:center;font-size:10px;color:var(--mlts);margin:4px 0 8px">Tahmini <b style=\"color:var(--mlg)\">%'+nx.d+' indirime</b> geçiş: <b>'+monthNames[targetDate.getMonth()]+' '+targetDate.getFullYear()+'</b></div>';}
+if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var targetDate=new Date();targetDate.setMonth(targetDate.getMonth()+monthsLeft);var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];projHtml='<div style="text-align:center;font-size:10px;color:var(--mlts);margin:4px 0 8px">Tahmini <b style=\"color:var(--mlg)\">'+nx.n+' seviyesine</b> geçiş: <b>'+monthNames[targetDate.getMonth()]+' '+targetDate.getFullYear()+'</b></div>';}
 }
 // Sürpriz indirimler linki
 var surpriseHtml='<div class="ml-surprise"><a href="javascript:void(0)" onclick="mlBday()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Doğum Günü Hediyenizi Alın</a></div>';
@@ -353,7 +353,7 @@ if(typeof Ecwid!=='undefined'&&Ecwid.OnAPILoaded){
 Ecwid.OnAPILoaded.add(function(){
 try{Ecwid.Customer.get(function(c){
 if(c){
-var name=c.name?c.name.split(' ')[0]:'',fullName=c.name||'',email=c.email||'';
+var bp=c.billingPerson||{};var name=c.name?c.name.split(' ')[0]:(bp.firstName||'');var fullName=c.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
 if(WEB_APP&&email){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
@@ -377,7 +377,7 @@ if(!document.getElementById('mlspincss')){var sc=document.createElement('style')
 if(typeof Ecwid!=='undefined'&&Ecwid.Customer){
 try{Ecwid.Customer.get(function(c){
 if(c){
-var name=c.name?c.name.split(' ')[0]:'',fullName=c.name||'',email=c.email||'';
+var bp=c.billingPerson||{};var name=c.name?c.name.split(' ')[0]:(bp.firstName||'');var fullName=c.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
 if(WEB_APP&&email){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
@@ -401,6 +401,14 @@ document.getElementById('ov').classList.remove('open');
 var trig=document.querySelector('.ml-trigger');
 if(trig&&!trig.classList.contains('collapsed'))trig.classList.add('collapsed');
 };
+document.addEventListener('keydown',function(e){
+if(e.key==='Escape'){
+var sp=document.querySelector('.ml-share-preview');
+if(sp){sp.remove();e.stopImmediatePropagation();return;}
+var ov=document.getElementById('ov');
+if(ov&&ov.classList.contains('open')){mlClose();e.stopImmediatePropagation();}
+}
+},true);
 
 window.mlTip=function(el){
 var wasExpanded=el.classList.contains('expanded');
@@ -450,25 +458,34 @@ ctx.fillStyle=memberGl;
 ctx.fillText('Exclusive Member',W/2,128);
 // Discount circle with glow
 var circY=195;
+var displayName=d.fullName||d.name||'';
+// Greeting left of circle
+if(displayName){
+ctx.textAlign='left';
+ctx.font='400 13px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#8e8e93';
+ctx.fillText('Merhaba,',40,circY-8);
+ctx.font='600 16px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#ffffff';
+ctx.fillText(displayName+'!',40,circY+14);
+}
+// Circle right-center
+var circX=displayName?W-100:W/2;
 ctx.save();
 ctx.shadowColor='rgba(175,140,62,.35)';ctx.shadowBlur=24;
-ctx.beginPath();ctx.arc(W/2,circY,34,0,Math.PI*2);
-var cg=ctx.createRadialGradient(W/2-6,circY-6,3,W/2,circY,34);
+ctx.beginPath();ctx.arc(circX,circY,34,0,Math.PI*2);
+var cg=ctx.createRadialGradient(circX-6,circY-6,3,circX,circY,34);
 cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.4,'#d4b05e');cg.addColorStop(1,'#af8c3e');
 ctx.fillStyle=cg;ctx.fill();
 ctx.restore();
 // Discount ring
 ctx.strokeStyle='rgba(240,226,184,.25)';ctx.lineWidth=1;
-ctx.beginPath();ctx.arc(W/2,circY,40,0,Math.PI*2);ctx.stroke();
+ctx.beginPath();ctx.arc(circX,circY,40,0,Math.PI*2);ctx.stroke();
 // Discount text
+ctx.textAlign='center';
 ctx.font='800 20px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#fff';
-ctx.fillText('%'+t.d,W/2,circY+2);
-// Customer name below circle
-ctx.font='600 14px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#ffffff';
-var displayName=d.fullName||d.name||'';
-ctx.fillText(displayName,W/2,circY+56);
+ctx.fillText('%'+t.d,circX,circY+2);
 // Bottom gold line
 ctx.fillStyle=gl;ctx.fillRect(80,H-44,W-160,1.5);
 // manhattandan.com
