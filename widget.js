@@ -14,10 +14,10 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-x{position:sticky;top:12px;float:right;margin:12px 12px 0 0;width:30px;height:30px;border:none;background:var(--mlbg2);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:background .15s}
 .ml-x:hover{background:var(--mlbgh)}.ml-x svg{width:12px;height:12px;stroke:var(--mlts);stroke-width:2.5}
 .ml-inner{padding:0 22px 16px}
-.ml-head{text-align:center;padding-top:0;margin-bottom:2px}
+.ml-head{text-align:center;padding-top:0;margin-bottom:2px;display:flex;flex-direction:column;align-items:center}
 .ml-head-sub{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mltt);margin-bottom:2px}
 .ml-head-title{font-size:17px;font-weight:800;letter-spacing:-.5px;color:var(--mltp)}
-.ml-tier{text-align:center;margin-bottom:10px}
+.ml-tier{text-align:center;margin-bottom:10px;display:flex;flex-direction:column;align-items:center}
 .ml-tier-badge{width:56px;height:56px;margin:0 auto 8px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
 .ml-tier-badge svg{width:24px;height:24px;stroke-width:1.2}
 .ml-tier-ring{position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;background:conic-gradient(from 0deg,#af8c3e,#d4b05e,#f0e2b8,#d4b05e,#af8c3e) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:mlring 4s linear infinite}
@@ -35,14 +35,15 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-prog-label{font-size:13px;font-weight:500;color:var(--mlts)}
 .ml-prog-val{font-size:13px;font-weight:700;color:var(--mltp);letter-spacing:-.2px}
 .ml-prog-bar{width:100%;height:8px;background:var(--mlbg2);border-radius:4px;overflow:hidden}
-.ml-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#f0e2b8,#d4b05e,#af8c3e);background-size:200% 100%;transition:width .8s cubic-bezier(.25,0,0,1);animation:mlshimmer 2s linear infinite}
-@keyframes mlshimmer{from{background-position:100% 50%}to{background-position:0% 50%}}
+.ml-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#af8c3e,#d4b05e);transition:width .8s cubic-bezier(.25,0,0,1);position:relative;overflow:hidden}
+.ml-prog-fill::after{content:'';position:absolute;top:0;left:-50%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);animation:mlshimmer 2s linear infinite}
+@keyframes mlshimmer{0%{left:-50%}100%{left:150%}}
 .ml-prog-hint{margin-top:6px;text-align:center;font-size:12px;font-weight:500;color:var(--mlts);line-height:1.3;letter-spacing:-.1px}
 .ml-prog-hint b{color:var(--mltp);font-weight:700}
 .ml-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .ml-stat{background:var(--mlbg2);border-radius:12px;padding:10px;text-align:center;border:1px solid rgba(175,140,62,.08);transition:all .2s}
 .ml-stat:hover{border-color:rgba(175,140,62,.2);background:#fdfbf5}
-.ml-stat-num{font-size:16px;font-weight:800;letter-spacing:-.5px;color:var(--mltp);line-height:1.2}
+.ml-stat-num{font-size:14px;font-weight:700;letter-spacing:-.3px;color:var(--mlts);line-height:1.2}
 .ml-stat-lbl{font-size:10px;font-weight:600;color:var(--mltt);letter-spacing:.5px;text-transform:uppercase;margin-top:1px}
 .ml-label{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--mltt);margin-bottom:4px}
 .ml-tiers-table{margin-bottom:10px}
@@ -139,7 +140,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-trigger.collapsed .ml-trigger-txt{max-width:0;opacity:0;overflow:hidden}
 .ml-trigger .ml-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .9s ease,opacity .7s ease}
 .ml-trigger.collapsed svg{margin:0}
-@media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:18px}.ml-tier-name{font-size:22px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:18px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:13px}.ml-prog-val{font-size:13px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
+@media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:18px}.ml-tier-name{font-size:22px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:15px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:13px}.ml-prog-val{font-size:13px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
 @media(max-width:1024px){.ml-card{border-radius:16px;max-width:94vw}.ml-inner{padding:0 18px 16px}.ml-tier-badge{width:56px;height:56px}.ml-tier-badge svg{width:24px;height:24px}.ml-tier-name{font-size:20px}.ml-head-title{font-size:17px}.ml-stat-num{font-size:15px}.ml-stats{gap:6px}.ml-stat{padding:10px 8px}.ml-prog-hint{font-size:11px}.ml-btns{flex-direction:column;gap:6px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:5px 8px}.ml-tr-ico{width:24px;height:24px}.ml-tr-ico svg{width:11px;height:11px}.ml-tr-name{font-size:11px}.ml-tr-desc{font-size:9px}.ml-tr-discount{font-size:12px}}`;
 document.head.appendChild(s);
 
@@ -237,19 +238,21 @@ T.forEach(function(ti,j){
 var ip=j<i,ic=j===i,cls=ic?'current':ip?'passed':'locked';
 var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş'+(ti.r?' · <%'+ti.r+' iade':'');
 var badge=ic?'<span class="ml-tr-badge">SİZ</span>':'';
+var refIco=(!ip&&REF_RATES[ti.n])?'<svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;margin-left:3px;vertical-align:-1px;opacity:.7"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>':'';
 var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">%'+ti.d+'</div>';
 var clickAttr=(!ip&&!ic)?' onclick="mlTip(this)"':'';
 var tip='';
 if(!ip&&!ic){
 var need=ti.mn-d.spend;
-tip='<div class="ml-tier-tip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:3px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><b>'+ti.n+'</b> seviyesine ulaşmak için <b>'+f$(Math.max(need,0))+' ₺</b> daha alışveriş yapın'+(ti.r?' ve iade oranınızı <b>%'+ti.r+'</b> altında tutun':'')+'. Bu seviyede <b>%'+ti.d+'</b> indirim kazanırsınız!</div>';
+var refTipExtra=REF_RATES[ti.n]?' Ayrıca <b>arkadaşlarınızı davet edip %'+REF_RATES[ti.n]+' indirim</b> hediye edebilirsiniz.':'';
+tip='<div class="ml-tier-tip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:3px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><b>'+ti.n+'</b> seviyesine ulaşmak için <b>'+f$(Math.max(need,0))+' ₺</b> daha alışveriş yapın'+(ti.r?' ve iade oranınızı <b>%'+ti.r+'</b> altında tutun':'')+'. Bu seviyede <b>%'+ti.d+'</b> indirim kazanırsınız!'+refTipExtra+'</div>';
 }
-tt+='<div class="ml-tier-row '+cls+'"'+clickAttr+'><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+' '+badge+'</div><div class="ml-tr-desc">'+desc+'</div></div>'+cod+'</div>'+tip;
+tt+='<div class="ml-tier-row '+cls+'"'+clickAttr+'><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+' '+badge+refIco+'</div><div class="ml-tr-desc">'+desc+'</div></div>'+cod+'</div>'+tip;
 });
 var rateBox='';
 var statCols='1fr 1fr';
 if(typeof d.returnRate==='number'){
-rateBox='<div class="ml-stat"><div class="ml-stat-num" style="color:'+(d.returnRate>(t.r||100)?'#e53e3e':'var(--mltp)')+'">%'+d.returnRate.toFixed(1)+'</div><div class="ml-stat-lbl">İade Oranı</div></div>';
+rateBox='<div class="ml-stat"><div class="ml-stat-num" style="color:'+(d.returnRate>(t.r||100)?'#e53e3e':'var(--mlts)')+'">%'+d.returnRate.toFixed(1)+'</div><div class="ml-stat-lbl">İade Oranı</div></div>';
 statCols='1fr 1fr 1fr';
 }
 // Tasarruf hesapla
@@ -275,12 +278,10 @@ var avgPerMonth=d.spend/12;
 if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var targetDate=new Date();targetDate.setMonth(targetDate.getMonth()+monthsLeft);var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];projHtml='<div style="text-align:center;font-size:10px;color:var(--mlts);margin:4px 0 8px">Bu hızda giderseniz <b>'+nx.n+'</b> seviyesi <b>'+monthNames[targetDate.getMonth()]+' '+targetDate.getFullYear()+'</b></div>';}
 }
 // Sürpriz indirimler linki
-var surpriseHtml='<div class="ml-surprise"><a href="javascript:void(0)" onclick="mlBday()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Sürpriz İndirimler</a></div>';
+var surpriseHtml='<div class="ml-surprise"><a href="javascript:void(0)" onclick="mlBday()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Doğum Günü Hediyenizi Alın</a></div>';
 var refHtml='';
 if(REF_RATES[d.tier]){
 refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub">Arkadaşınıza <b>%'+REF_RATES[d.tier]+'</b> indirim hediye edin, sipariş verdiğinde siz de kazanın</div><div id="ml-ref-area"><div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div></div></div>';
-}else if(T.findIndex(function(x){return x.n===d.tier})<3){
-refHtml='<div class="ml-ref-teaser"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-1px;margin-right:2px"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> <b>Gold</b> seviyesinden itibaren arkadaşlarınızı davet edip birlikte kazanabilirsiniz</div>';
 }
 // Flash bonus (Cuma 22:00 - Cumartesi 22:00)
 var flashHtml='';
@@ -375,36 +376,67 @@ document.querySelectorAll('.ml-tier-row.expanded').forEach(function(r){r.classLi
 if(!wasExpanded)el.classList.add('expanded');
 };
 
-// Paylaş — önce preview, sonra paylaş
+// Paylaş — premium share card
 window.mlSharePreview=function(){
 if(!_mlCache||!_mlCache.loggedIn)return;
 var d=_mlCache;
 var ti=T.findIndex(function(t){return t.n===d.tier});
 var t=T[ti];
-var c=document.createElement('canvas');c.width=600;c.height=340;
-var ctx=c.getContext('2d');
-var bg=ctx.createLinearGradient(0,0,600,340);
-bg.addColorStop(0,'#1d1d1f');bg.addColorStop(1,'#2c2c2e');
-ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(0,0,600,340,20);ctx.fill();
-var gl=ctx.createLinearGradient(60,0,540,0);
-gl.addColorStop(0,'#af8c3e');gl.addColorStop(0.5,'#d4b05e');gl.addColorStop(1,'#af8c3e');
-ctx.fillStyle=gl;ctx.fillRect(60,40,480,2);
-ctx.font='600 11px sans-serif';ctx.fillStyle='#8e8e93';ctx.textAlign='center';
-ctx.fillText('MANHATTAN',300,70);
-ctx.font='800 42px sans-serif';ctx.fillStyle='#fff';
-ctx.fillText(d.tier,300,125);
-ctx.font='500 14px sans-serif';ctx.fillStyle='#aeaeb2';
-ctx.fillText('Sadakat Seviyesi',300,150);
-ctx.beginPath();ctx.arc(300,210,38,0,Math.PI*2);
-var cg=ctx.createLinearGradient(262,172,338,248);cg.addColorStop(0,'#af8c3e');cg.addColorStop(1,'#d4b05e');
+// 2x resolution for sharp rendering
+var S=2;
+var W=600,H=360;
+var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width=W+'px';c.style.height=H+'px';
+var ctx=c.getContext('2d');ctx.scale(S,S);
+// Background
+var bg=ctx.createLinearGradient(0,0,W,H);
+bg.addColorStop(0,'#0d0d0f');bg.addColorStop(0.5,'#1a1a1f');bg.addColorStop(1,'#0d0d0f');
+ctx.fillStyle=bg;
+ctx.beginPath();ctx.roundRect(0,0,W,H,16);ctx.fill();
+// Subtle border
+ctx.strokeStyle='rgba(175,140,62,.15)';ctx.lineWidth=1;
+ctx.beginPath();ctx.roundRect(0.5,0.5,W-1,H-1,16);ctx.stroke();
+// Top gold line
+var gl=ctx.createLinearGradient(80,0,W-80,0);
+gl.addColorStop(0,'transparent');gl.addColorStop(0.2,'#af8c3e');gl.addColorStop(0.5,'#f0e2b8');gl.addColorStop(0.8,'#af8c3e');gl.addColorStop(1,'transparent');
+ctx.fillStyle=gl;ctx.fillRect(80,32,W-160,1.5);
+// MANHATTAN
+ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.font='700 10px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#6e6e73';ctx.letterSpacing='3px';
+ctx.fillText('M A N H A T T A N',W/2,58);
+// Tier name
+ctx.font='800 44px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#ffffff';
+ctx.fillText(d.tier,W/2,108);
+// Sadakat Seviyesi
+ctx.font='400 13px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#636366';
+ctx.fillText('Sadakat Seviyesi',W/2,138);
+// Discount circle with glow
+ctx.save();
+ctx.shadowColor='rgba(175,140,62,.3)';ctx.shadowBlur=24;
+ctx.beginPath();ctx.arc(W/2,205,36,0,Math.PI*2);
+var cg=ctx.createRadialGradient(W/2-8,205-8,4,W/2,205,36);
+cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.4,'#d4b05e');cg.addColorStop(1,'#af8c3e');
 ctx.fillStyle=cg;ctx.fill();
-ctx.font='800 22px sans-serif';ctx.fillStyle='#fff';
-ctx.fillText('%'+t.d,300,218);
-ctx.font='500 12px sans-serif';ctx.fillStyle='#636366';
-ctx.fillText('İndirim Oranı',300,268);
-ctx.fillStyle=gl;ctx.fillRect(60,298,480,2);
-ctx.font='500 10px sans-serif';ctx.fillStyle='#48484a';
-ctx.fillText('manhattandan.com',300,322);
+ctx.restore();
+// Discount ring
+ctx.strokeStyle='rgba(240,226,184,.3)';ctx.lineWidth=1;
+ctx.beginPath();ctx.arc(W/2,205,42,0,Math.PI*2);ctx.stroke();
+// Discount text
+ctx.font='800 20px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#fff';
+ctx.fillText('%'+t.d,W/2,208);
+// İndirim Oranı
+ctx.font='500 11px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#4a4a4e';
+ctx.fillText('İndirim Oranı',W/2,262);
+// Bottom gold line
+ctx.fillStyle=gl;ctx.fillRect(80,H-50,W-160,1.5);
+// manhattandan.com
+ctx.font='500 10px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#3a3a3e';
+ctx.fillText('manhattandan.com',W/2,H-28);
 // Preview overlay
 var ov=document.createElement('div');ov.className='ml-share-preview';
 ov.innerHTML='<div class="ml-share-preview-btns"><button class="ml-sp-share" id="ml-sp-go">Paylaş</button><button class="ml-sp-close" id="ml-sp-x">Kapat</button></div>';
@@ -438,28 +470,30 @@ window.mlBday=function(){
 var area=document.getElementById('ml-bday-area');
 if(!area)return;
 if(area.innerHTML){area.innerHTML='';return;}
-// Check if already saved (yearly limit)
 var saved=null;try{saved=localStorage.getItem('ml_bday_saved');}catch(e){}
 if(saved){
-var sd=new Date(saved);
-var diff=Date.now()-sd.getTime();
-if(diff<365*24*60*60*1000){area.innerHTML='<div class="ml-bday-form"><div class="ml-bday-msg">Doğum gününüz kayıtlı. Yılda 1 kez değiştirilebilir.</div></div>';return;}
+var sd=new Date(saved);var diff=Date.now()-sd.getTime();
+if(diff<365*24*60*60*1000){area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp)">🎂 Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde indirim kodunuz e-posta ile gelecek</div></div>';return;}
 }
-area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:2px">Doğum gününüzü girin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:4px">Özel gününüzde sürpriz indirim kazanın</div><input type="date" id="ml-bday-input"><button onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';
+area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:3px">Doğum gününüzü kaydedin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:6px">Özel gününüzde e-posta ile indirim kodu göndereceğiz</div><input type="date" id="ml-bday-input" onchange="document.getElementById(\'ml-bday-btn\').style.display=\'inline-block\'"><button id="ml-bday-btn" style="display:none" onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';
 };
 
 window.mlBdaySave=function(){
 var inp=document.getElementById('ml-bday-input');
 var msg=document.getElementById('ml-bday-msg');
+var btn=document.getElementById('ml-bday-btn');
 if(!inp||!inp.value){if(msg)msg.textContent='Lütfen tarih seçin';return;}
 if(!_mlCache||!_mlCache.loggedIn)return;
+if(btn){btn.disabled=true;btn.textContent='Kaydediliyor...';}
 var email=_mlCache.email||'';
-// POST to Apps Script
-fetch(WEB_APP,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'birthday',email:email,birthday:inp.value})}).then(function(){
-if(msg)msg.textContent='Kaydedildi!';
+fetch(WEB_APP,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'birthday',email:email,birthday:inp.value})}).then(function(r){return r.json()}).then(function(d){
+if(d.success){
+var area=document.getElementById('ml-bday-area');
+if(area)area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:#38a169">✓ Kaydedildi!</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Doğum gününüzde sürpriz indiriminiz gelecek</div></div>';
 try{localStorage.setItem('ml_bday_saved',new Date().toISOString());}catch(e){}
-setTimeout(function(){var a=document.getElementById('ml-bday-area');if(a)a.innerHTML='';},1500);
-}).catch(function(){if(msg)msg.textContent='Kaydedildi!';try{localStorage.setItem('ml_bday_saved',new Date().toISOString());}catch(e){}});
+setTimeout(function(){var a=document.getElementById('ml-bday-area');if(a)a.innerHTML='';},3000);
+}else{if(msg){msg.textContent=d.error||'Bir hata oluştu';msg.style.color='#e53e3e';}if(btn){btn.disabled=false;btn.textContent='Kaydet';}}
+}).catch(function(){if(msg)msg.textContent='Bağlantı hatası';if(btn){btn.disabled=false;btn.textContent='Kaydet';}});
 };
 
 // Micro-sound (Web Audio API, low volume)
