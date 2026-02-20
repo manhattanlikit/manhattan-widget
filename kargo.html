@@ -356,7 +356,7 @@ async function fetchOrders(){
         (o.city||'').toUpperCase(),// D: İlçe
         '',                        // E: Telefon Ev/İş
         normPhone(o.phone),        // F: Telefon Cep
-        o.email,                   // G: E-Mail
+        '',                        // G: E-Mail
         '',                        // H: Vergi No
         CARGO_DEFAULTS.kargoTuru,  // I: 0=DOSYA
         CARGO_DEFAULTS.odemeTipi,  // J: 1=GÖNDERİCİ
