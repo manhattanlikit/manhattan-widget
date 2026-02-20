@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Manhattan Likit — Kargo Yönetimi</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+:root{--bg:#0c0c0e;--bg2:#161619;--bg3:#1e1e22;--tx:#e5e5e7;--tx2:#9e9ea3;--tx3:#636366;--gold:#af8c3e;--goldL:#d4b05e;--goldLL:#f0e2b8;--green:#34c759;--red:#ff453a;--blue:#0a84ff;--border:rgba(175,140,62,.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.header{padding:24px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px}
+.header svg{width:28px;height:28px;color:var(--gold)}
+.header h1{font-size:16px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--goldL)}
+.header span{font-size:11px;color:var(--tx3);font-weight:400;letter-spacing:0}
+.container{max-width:900px;margin:0 auto;padding:32px 24px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:640px){.cards{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.card:hover{border-color:rgba(175,140,62,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(175,140,62,.1)}
+.card.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.card-num{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:8px}
+.card-title{font-size:15px;font-weight:700;color:var(--tx);margin-bottom:6px}
+.card-desc{font-size:11px;color:var(--tx2);line-height:1.6}
+.card-icon{position:absolute;right:20px;top:20px;width:36px;height:36px;border-radius:10px;background:rgba(175,140,62,.08);display:flex;align-items:center;justify-content:center}
+.card-icon svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+
+.panel{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px}
+.panel.show{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.panel h3{font-size:13px;font-weight:700;color:var(--goldL);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldL));color:#fff}
+.btn-gold:hover{box-shadow:0 4px 16px rgba(175,140,62,.3);transform:translateY(-1px)}
+.btn-gold:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--tx2)}
+.btn-outline:hover{border-color:var(--gold);color:var(--goldL)}
+
+.drop-zone{border:2px dashed rgba(175,140,62,.2);border-radius:12px;padding:32px;text-align:center;transition:all .2s;cursor:pointer;margin:12px 0}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--gold);background:rgba(175,140,62,.03)}
+.drop-zone p{font-size:12px;color:var(--tx3)}
+.drop-zone input{display:none}
+
+.log{background:var(--bg);border-radius:10px;padding:16px;margin-top:16px;max-height:400px;overflow-y:auto;font-size:11px;line-height:1.8}
+.log-item{display:flex;align-items:flex-start;gap:8px;padding:3px 0}
+.log-ok{color:var(--green)}
+.log-skip{color:var(--tx3)}
+.log-err{color:var(--red)}
+.log-info{color:var(--blue)}
+.log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+
+.stats{display:flex;gap:24px;padding:12px 0;flex-wrap:wrap}
+.stat{text-align:center}
+.stat-val{font-size:24px;font-weight:800;color:var(--goldL)}
+.stat-label{font-size:10px;color:var(--tx3);margin-top:2px}
+
+.table-wrap{overflow-x:auto;margin:12px 0;border-radius:10px;border:1px solid rgba(255,255,255,.05)}
+.table-wrap table{width:100%;border-collapse:collapse;font-size:11px}
+.table-wrap th{background:var(--bg);padding:8px 10px;text-align:left;color:var(--tx2);font-weight:600;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,.05)}
+.table-wrap td{padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.03);color:var(--tx);white-space:nowrap}
+.table-wrap tr:hover td{background:rgba(175,140,62,.03)}
+.badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:600}
+.badge-green{background:rgba(52,199,89,.1);color:var(--green)}
+.badge-yellow{background:rgba(175,140,62,.1);color:var(--goldL)}
+.badge-gray{background:rgba(255,255,255,.05);color:var(--tx3)}
+
+.progress{height:3px;background:var(--bg);border-radius:2px;margin:8px 0;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--goldL));border-radius:2px;transition:width .3s;width:0}
+
+.footer{text-align:center;padding:24px;font-size:10px;color:var(--tx3)}
+</style>
+</head>
+<body>
+<div class="header">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+<div><h1>Manhattan Likit</h1><span>Kargo Yönetim Paneli</span></div>
+</div>
+
+<div class="container">
+<div class="cards">
+<div class="card" onclick="showPanel('export')">
+<div class="card-num">BUTON 1</div>
+<div class="card-title">Siparişleri İndir</div>
+<div class="card-desc">Ecwid'deki bekleyen siparişleri Yurtiçi Kargo Excel formatına dönüştür</div>
+<div class="card-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+</div>
+<div class="card" onclick="showPanel('import')">
+<div class="card-num">BUTON 2</div>
+<div class="card-title">Takip Kodlarını Yükle</div>
+<div class="card-desc">Yurtiçi Results dosyasını yükle, takip kodlarını otomatik Ecwid'e gir</div>
+<div class="card-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+</div>
+</div>
+
+<!-- PANEL 1: Export -->
+<div class="panel" id="panel-export">
+<h3><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Bekleyen Siparişleri İndir</h3>
+<p style="font-size:11px;color:var(--tx2);margin-bottom:16px">Ecwid'den ödendi/işleme alındı durumdaki siparişleri çeker ve Yurtiçi Kargo Excel şablonuna dönüştürür.</p>
+<button class="btn btn-gold" id="btn-fetch" onclick="fetchOrders()">Siparişleri Çek</button>
+<div class="progress" id="prog-export"><div class="progress-bar" id="pbar-export"></div></div>
+<div id="export-preview"></div>
+<div class="log" id="log-export" style="display:none"></div>
+</div>
+
+<!-- PANEL 2: Import -->
+<div class="panel" id="panel-import">
+<h3><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Takip Kodlarını Yükle</h3>
+<p style="font-size:11px;color:var(--tx2);margin-bottom:12px">Yurtiçi Kargo'dan indirdiğiniz Results dosyasını buraya sürükleyin. Zaten kargolanmış siparişler otomatik atlanır.</p>
+<div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+<p>Results.xlsx dosyasını sürükle veya tıkla</p>
+<input type="file" id="file-input" accept=".xlsx,.xls">
+</div>
+<div class="progress" id="prog-import"><div class="progress-bar" id="pbar-import"></div></div>
+<div id="import-preview"></div>
+<div class="log" id="log-import" style="display:none"></div>
+</div>
+
+</div>
+
+<div class="footer">Manhattan Likit · Kargo Yönetim Paneli</div>
+
+<script>
+// === CONFIG ===
+const ECWID={
+  storeId:'11692025',
+  token:'secret_nQ6JM4ewfv5QJJXbQyxe41kH5LukVdA2',
+  base:'https://app.ecwid.com/api/v3'
+};
+const YK_TRACK_URL='https://ykss.yurticikargo.com/reports/SSWDocumentDetail/';
+const CARGO_DEFAULTS={
+  kargoTuru:0,    // DOSYA
+  odemeTipi:1,    // GÖNDERİCİ
+  adet:1,
+  icerik:'BODY BUTTER'
+};
+
+// === HELPERS ===
+function ts(){var d=new Date();return d.getFullYear()+('0'+(d.getMonth()+1)).slice(-2)+('0'+d.getDate()).slice(-2)+'_'+('0'+d.getHours()).slice(-2)+('0'+d.getMinutes()).slice(-2)}
+function normPhone(p){if(!p)return'';return String(p).replace(/\D/g,'').slice(-10)}
+function log(id,msg,type){
+  var el=document.getElementById(id);el.style.display='block';
+  var colors={ok:'var(--green)',skip:'var(--tx3)',err:'var(--red)',info:'var(--blue)'};
+  el.innerHTML+='<div class="log-item"><div class="log-dot" style="background:'+colors[type||'info']+'"></div><span class="log-'+(type||'info')+'">'+msg+'</span></div>';
+  el.scrollTop=el.scrollHeight;
+}
+function setProgress(barId,pct){document.getElementById(barId).style.width=pct+'%'}
+
+async function ecwidGet(endpoint){
+  var r=await fetch(ECWID.base+'/'+ECWID.storeId+'/'+endpoint,{
+    headers:{'Authorization':'Bearer '+ECWID.token}
+  });
+  if(!r.ok)throw new Error('API Hata: '+r.status);
+  return r.json();
+}
+async function ecwidPut(endpoint,body){
+  var r=await fetch(ECWID.base+'/'+ECWID.storeId+'/'+endpoint,{
+    method:'PUT',
+    headers:{'Authorization':'Bearer '+ECWID.token,'Content-Type':'application/json'},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok)throw new Error('API PUT Hata: '+r.status);
+  return r.json();
+}
+
+// === PANEL TOGGLE ===
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('show');
+  event.currentTarget.classList.add('active');
+}
+
+// === BUTON 1: Siparişleri Çek → Yurtiçi Excel ===
+async function fetchOrders(){
+  var btn=document.getElementById('btn-fetch');
+  btn.disabled=true;btn.textContent='Çekiliyor...';
+  document.getElementById('log-export').innerHTML='';
+  document.getElementById('export-preview').innerHTML='';
+  setProgress('pbar-export',10);
+
+  try{
+    log('log-export','Ecwid siparişleri çekiliyor...','info');
+    
+    // Fetch PAID orders with AWAITING_PROCESSING and PROCESSING
+    var allOrders=[];
+    for(var status of ['AWAITING_PROCESSING','PROCESSING']){
+      var offset=0;
+      while(true){
+        var data=await ecwidGet('orders?paymentStatus=PAID&fulfillmentStatus='+status+'&limit=100&offset='+offset);
+        var items=data.items||[];
+        allOrders=allOrders.concat(items);
+        log('log-export',status+': '+items.length+' sipariş bulundu (offset:'+offset+')','info');
+        if(items.length<100)break;
+        offset+=100;
+      }
+    }
+    setProgress('pbar-export',50);
+    
+    if(allOrders.length===0){
+      log('log-export','Bekleyen sipariş bulunamadı.','skip');
+      btn.disabled=false;btn.textContent='Siparişleri Çek';
+      setProgress('pbar-export',100);
+      return;
+    }
+
+    log('log-export','Toplam '+allOrders.length+' bekleyen sipariş bulundu.','ok');
+
+    // Build Yurtiçi template data
+    var headers=['Kişi / Kurum Adı (*)','Adresi (*)','İl','İlçe','Telefon Ev/İş','Telefon Cep','E-Mail Adresi','Vergi No','Kargo Türü (*)','Ödeme Tipi (*)','İrsaliye Numarası','Referans Numarası','Adet (*)','Kargo İçeriği','Tahsilat Tipi','Fatura Numarası','Fatura Tutarı','Dosya/Poşet No','Kampanya No','Kampanya Kodu'];
+    var rows=[headers];
+    var preview=[];
+
+    allOrders.forEach(function(o){
+      var sp=o.shippingPerson||{};
+      var name=(sp.name||o.billingPerson&&o.billingPerson.name||'').toUpperCase();
+      var street=sp.street||'';
+      var city=sp.city||sp.stateOrProvinceName||'';
+      var phone=sp.phone||'';
+      var email=o.email||'';
+      var orderId=String(o.orderNumber||o.id||'');
+      
+      // Address: combine street for B, city for C, leave D empty (YK parses itself)
+      var fullAddr=street;
+      if(city&&!street.toUpperCase().includes(city.toUpperCase())){
+        fullAddr+=' '+city;
+      }
+
+      var row=[
+        name,                    // A: Kişi/Kurum
+        fullAddr.toUpperCase(),  // B: Adres
+        city.toUpperCase(),      // C: İl
+        '',                      // D: İlçe (YK ayrıştırır)
+        '',                      // E: Telefon Ev/İş
+        normPhone(phone),        // F: Telefon Cep
+        email,                   // G: E-Mail
+        '',                      // H: Vergi No
+        CARGO_DEFAULTS.kargoTuru,// I: 0=DOSYA
+        CARGO_DEFAULTS.odemeTipi,// J: 1=GÖNDERİCİ
+        '',                      // K: İrsaliye No
+        orderId,                 // L: Referans No ← ECWID ORDER ID
+        CARGO_DEFAULTS.adet,     // M: 1
+        CARGO_DEFAULTS.icerik,   // N: BODY BUTTER
+        '',                      // O: Tahsilat Tipi
+        '',                      // P: Fatura No
+        '',                      // Q: Fatura Tutarı
+        '',                      // R: Dosya/Poşet No
+        '',                      // S: Kampanya No
+        ''                       // T: Kampanya Kodu
+      ];
+      rows.push(row);
+      preview.push({name:name,city:city,phone:normPhone(phone),orderId:orderId,total:o.total});
+      log('log-export','#'+orderId+' · '+name+' · '+city+' · '+(o.total||0)+' ₺','ok');
+    });
+
+    setProgress('pbar-export',80);
+
+    // Generate Excel
+    var wb=XLSX.utils.book_new();
+    var ws=XLSX.utils.aoa_to_sheet(rows);
+    
+    // Column widths
+    ws['!cols']=[{wch:30},{wch:50},{wch:15},{wch:15},{wch:15},{wch:15},{wch:25},{wch:12},{wch:10},{wch:10},{wch:15},{wch:15},{wch:8},{wch:15},{wch:10},{wch:12},{wch:12},{wch:12},{wch:12},{wch:12}];
+    
+    XLSX.utils.book_append_sheet(wb,ws,'Sheet1');
+    var fname='YK_Kargo_'+ts()+'.xlsx';
+    XLSX.writeFile(wb,fname);
+    
+    setProgress('pbar-export',100);
+    log('log-export','✓ '+fname+' indirildi — '+allOrders.length+' sipariş','ok');
+
+    // Preview table
+    var html='<div class="stats"><div class="stat"><div class="stat-val">'+allOrders.length+'</div><div class="stat-label">Sipariş</div></div></div>';
+    html+='<div class="table-wrap"><table><tr><th>Sipariş</th><th>Müşteri</th><th>İl</th><th>Telefon</th><th>Tutar</th></tr>';
+    preview.forEach(function(p){
+      html+='<tr><td>#'+p.orderId+'</td><td>'+p.name+'</td><td>'+p.city+'</td><td>'+p.phone+'</td><td>'+(p.total||0)+' ₺</td></tr>';
+    });
+    html+='</table></div>';
+    document.getElementById('export-preview').innerHTML=html;
+
+  }catch(e){
+    log('log-export','HATA: '+e.message,'err');
+  }
+  btn.disabled=false;btn.textContent='Siparişleri Çek';
+}
+
+// === BUTON 2: Results Upload → Ecwid Tracking ===
+var dropZone=document.getElementById('drop-zone');
+var fileInput=document.getElementById('file-input');
+
+dropZone.addEventListener('dragover',function(e){e.preventDefault();dropZone.classList.add('dragover')});
+dropZone.addEventListener('dragleave',function(){dropZone.classList.remove('dragover')});
+dropZone.addEventListener('drop',function(e){e.preventDefault();dropZone.classList.remove('dragover');if(e.dataTransfer.files.length)processResults(e.dataTransfer.files[0])});
+fileInput.addEventListener('change',function(){if(fileInput.files.length)processResults(fileInput.files[0])});
+
+async function processResults(file){
+  document.getElementById('log-import').innerHTML='';
+  document.getElementById('import-preview').innerHTML='';
+  setProgress('pbar-import',5);
+  log('log-import','Dosya okunuyor: '+file.name,'info');
+
+  try{
+    var data=await file.arrayBuffer();
+    var wb=XLSX.read(data);
+    var ws=wb.Sheets[wb.SheetNames[0]];
+    var json=XLSX.utils.sheet_to_json(ws,{defval:''});
+    
+    if(!json.length){log('log-import','Dosyada veri bulunamadı.','err');return}
+    
+    log('log-import',json.length+' satır okundu.','info');
+    setProgress('pbar-import',15);
+
+    // Find column mappings dynamically
+    var cols=Object.keys(json[0]);
+    var colTrack=cols.find(c=>/gönderi.*kodu|takip.*no/i.test(c))||cols[1];
+    var colName=cols.find(c=>/alıcı.*müşteri$/i.test(c))||cols[3];
+    var colPhone=cols.find(c=>/alıcı.*telefon/i.test(c))||cols[6];
+    var colOzel1=cols.find(c=>c==='Özel Alan 1');
+    var colOzel=cols.find(c=>c==='Özel Alan'&&c!=='Özel Alan 1'&&c!=='Özel Alan 2');
+    // Also check for Referans No type columns
+    var colRef=cols.find(c=>/referans/i.test(c));
+    
+    log('log-import','Kolon eşlemesi: Takip='+colTrack+', Ad='+colName+', Tel='+colPhone+', Özel1='+(colOzel1||'yok'),'info');
+
+    // Parse results rows
+    var shipments=json.map(function(r){
+      var trackCode=String(r[colTrack]||'').trim();
+      var name=String(r[colName]||'').trim();
+      var phone=normPhone(r[colPhone]);
+      var ozel1=String(r[colOzel1]||'').trim();
+      var ozel=String(r[colOzel]||r[colRef]||'').trim();
+      // Try to extract order ID from özel alan
+      var ecwidId=ozel1||'';
+      // Also check full özel alan for patterns
+      if(!ecwidId&&ozel){
+        var m=ozel.match(/Müşteri Kargo Ref Kodu[:\s]*(\d+)/i)||ozel.match(/Sipariş No[:\s]*(\d+)/i);
+        if(m)ecwidId=m[1];
+      }
+      return{trackCode:trackCode,name:name,phone:phone,ecwidId:ecwidId,raw:r};
+    }).filter(function(s){return s.trackCode});
+    
+    log('log-import',shipments.length+' geçerli gönderi bulundu.','info');
+    setProgress('pbar-import',25);
+
+    // For each shipment, find Ecwid order and update
+    var updated=0,skipped=0,notFound=0,errors=0;
+    
+    for(var i=0;i<shipments.length;i++){
+      var s=shipments[i];
+      setProgress('pbar-import',25+Math.round(i/shipments.length*70));
+      
+      var orderId=null;
+      
+      // Strategy 1: Direct match via Özel Alan (contains Ecwid order ID from template L)
+      if(s.ecwidId&&/^\d+$/.test(s.ecwidId)){
+        // Verify this order exists
+        try{
+          var order=await ecwidGet('orders/'+s.ecwidId);
+          if(order&&order.orderNumber)orderId=s.ecwidId;
+        }catch(e){
+          // Not a valid Ecwid order ID, try as orderNumber
+          try{
+            var search=await ecwidGet('orders?orderNumber='+s.ecwidId+'&limit=1');
+            if(search.items&&search.items.length){orderId=search.items[0].id||search.items[0].orderNumber}
+          }catch(e2){}
+        }
+      }
+      
+      // Strategy 2: Phone number match (fallback)
+      if(!orderId&&s.phone){
+        try{
+          // Search recent orders by phone
+          var search=await ecwidGet('orders?limit=100&paymentStatus=PAID');
+          var items=search.items||[];
+          for(var j=0;j<items.length;j++){
+            var oPhone=normPhone(items[j].shippingPerson&&items[j].shippingPerson.phone);
+            if(oPhone&&oPhone===s.phone){
+              orderId=items[j].id;
+              break;
+            }
+          }
+        }catch(e){}
+      }
+      
+      if(!orderId){
+        log('log-import','✗ Eşleşme bulunamadı: '+s.name+' ('+s.phone+')','err');
+        notFound++;
+        continue;
+      }
+      
+      // Check if already shipped (duplicate prevention!)
+      try{
+        var currentOrder=await ecwidGet('orders/'+orderId);
+        if((currentOrder.fulfillmentStatus||'').toUpperCase()==='SHIPPED'){
+          log('log-import','⏭ Zaten kargolanmış: #'+orderId+' · '+s.name,'skip');
+          skipped++;
+          continue;
+        }
+      }catch(e){
+        log('log-import','✗ Sipariş kontrol hatası #'+orderId+': '+e.message,'err');
+        errors++;
+        continue;
+      }
+      
+      // Update tracking + status
+      var trackUrl=YK_TRACK_URL+s.trackCode;
+      try{
+        await ecwidPut('orders/'+orderId,{
+          fulfillmentStatus:'SHIPPED',
+          trackingNumber:trackUrl
+        });
+        log('log-import','✓ #'+orderId+' · '+s.name+' → '+s.trackCode,'ok');
+        updated++;
+      }catch(e){
+        log('log-import','✗ Güncelleme hatası #'+orderId+': '+e.message,'err');
+        errors++;
+      }
+      
+      // Small delay to avoid rate limiting
+      await new Promise(function(r){setTimeout(r,300)});
+    }
+    
+    setProgress('pbar-import',100);
+    
+    // Summary
+    var html='<div class="stats">';
+    html+='<div class="stat"><div class="stat-val" style="color:var(--green)">'+updated+'</div><div class="stat-label">Güncellendi</div></div>';
+    html+='<div class="stat"><div class="stat-val" style="color:var(--tx3)">'+skipped+'</div><div class="stat-label">Atlandı (zaten kargo)</div></div>';
+    if(notFound)html+='<div class="stat"><div class="stat-val" style="color:var(--red)">'+notFound+'</div><div class="stat-label">Eşleşmedi</div></div>';
+    if(errors)html+='<div class="stat"><div class="stat-val" style="color:var(--red)">'+errors+'</div><div class="stat-label">Hata</div></div>';
+    html+='</div>';
+    
+    log('log-import','─── Tamamlandı: '+updated+' güncellendi, '+skipped+' atlandı'+(notFound?', '+notFound+' eşleşmedi':'')+(errors?', '+errors+' hata':''),'info');
+    document.getElementById('import-preview').innerHTML=html;
+    
+  }catch(e){
+    log('log-import','HATA: '+e.message,'err');
+  }
+}
+</script>
+</body>
+</html>
