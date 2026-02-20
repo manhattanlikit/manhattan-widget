@@ -365,25 +365,16 @@ area.innerHTML='<div style="font-size:10px;color:#c0392b;padding:6px 0">'+(d.err
 
 var _mlCache=null;window._mlCache=_mlCache;
 
-// Sayfa yüklendiğinde arka planda veriyi çek
-if(typeof Ecwid!=='undefined'&&Ecwid.OnAPILoaded){
-Ecwid.OnAPILoaded.add(function(){
-try{Ecwid.Customer.get(function(c){
-if(c){
-var bp=c.billingPerson||{};var name=c.name?(c.name.split(' ')[0]):(bp.firstName||bp.name&&bp.name.split(' ')[0]||'');var fullName=c.name||bp.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
-if(WEB_APP&&email){
-fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
+// Wix: Ecwid iframe içinde, localStorage ile email kaydet
+var _mlSavedEmail=null;
+try{_mlSavedEmail=localStorage.getItem('ml_wix_email');}catch(e){}
+if(_mlSavedEmail&&WEB_APP){
+fetch(WEB_APP+'?email='+encodeURIComponent(_mlSavedEmail)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
-_mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:fullName,email:email,loggedIn:true};
-}).catch(function(){
-var tier=GM[c.customerGroupId]||'Starter';
-var td=T.find(function(t){return t.n===tier});
-_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};
-});
-}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};}
-}else{_mlCache={tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false};}
-});}catch(e){}
-});
+var name=(_mlSavedEmail.split('@')[0]||'').split('.')[0];
+name=name.charAt(0).toUpperCase()+name.slice(1);
+_mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:name,email:_mlSavedEmail,loggedIn:true};
+}).catch(function(){});
 }
 
 window.mlOpen=function(){
@@ -399,6 +390,7 @@ if(WEB_APP&&email){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
 _mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:fullName,email:email,loggedIn:true};
+try{localStorage.setItem('ml_wix_email',email);}catch(e){}
 go(_mlCache);
 }).catch(function(){
 var tier=GM[c.customerGroupId]||'Starter';
@@ -407,9 +399,63 @@ _mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName
 go(_mlCache);
 });
 }else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};go(_mlCache);}
-}else{_mlCache={tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false};go(_mlCache);}
-});}catch(e){go({tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false});}
-}else{go({tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false});}
+}else{mlWixEmailLogin();}
+});}catch(e){mlWixEmailLogin();}
+}else{mlWixEmailLogin();}
+};
+
+// Wix email giriş
+window.mlWixEmailLogin=function(){
+var saved=null;try{saved=localStorage.getItem('ml_wix_email');}catch(e){}
+if(saved&&WEB_APP){
+document.getElementById('ct').innerHTML='<div style="text-align:center;padding:30px 0"><svg viewBox="0 0 24 24" fill="none" style="width:32px;height:32px;margin:0 auto 8px;display:block;animation:mlpulse 1.5s ease-in-out infinite"><path d="M2 18L5 8l4 4 3-7 3 7 4-4 3 10z" fill="rgba(175,140,62,.15)" stroke="#af8c3e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="19" width="20" height="2" rx="1" fill="#af8c3e" opacity=".3"/></svg><div style="font-size:10px;color:var(--mltt);font-weight:500">Yükleniyor...</div></div>';
+fetch(WEB_APP+'?email='+encodeURIComponent(saved)).then(function(r){return r.json()}).then(function(d){
+if(d.spend>0||d.orders>0){
+var tier=tierFromSpend(d.spend||0);
+var name=(saved.split('@')[0]||'').split('.')[0];
+name=name.charAt(0).toUpperCase()+name.slice(1);
+_mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:name,email:saved,loggedIn:true};
+go(_mlCache);
+}else{
+try{localStorage.removeItem('ml_wix_email');}catch(e){}
+mlWixShowForm('Bu e-posta ile kayıt bulunamadı.');
+}
+}).catch(function(){mlWixShowForm('Bağlantı hatası. Tekrar deneyin.');});
+return;
+}
+mlWixShowForm('');
+};
+
+window.mlWixShowForm=function(err){
+document.getElementById('ct').innerHTML='<div style="text-align:center;padding:16px 0"><div style="font-size:13px;color:var(--mltp);font-weight:600;margin-bottom:12px">Sadakat seviyenizi görmek için<br>e-posta adresinizi girin</div><div style="display:flex;gap:6px;margin-bottom:8px"><input type="email" id="ml-wix-email" placeholder="E-posta adresiniz" style="flex:1;padding:10px 12px;border:1px solid var(--mlbd);border-radius:8px;font-family:inherit;font-size:13px;outline:none" onkeydown="if(event.key===\'Enter\')mlWixLogin()"><button onclick="mlWixLogin()" style="padding:10px 16px;background:var(--mlg);color:#fff;border:none;border-radius:8px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer">Giriş</button></div><div id="ml-wix-err" style="font-size:10px;color:#c0392b;min-height:14px">'+(err||'')+'</div><div style="font-size:9px;color:var(--mltt);margin-top:4px">manhattandan.com veya manhattanlikit2.com hesap e-postanız</div></div>';
+setTimeout(function(){var inp=document.getElementById('ml-wix-email');if(inp)inp.focus();},100);
+};
+
+window.mlWixLogin=function(){
+var inp=document.getElementById('ml-wix-email');
+if(!inp)return;
+var email=inp.value.trim().toLowerCase();
+if(!email||email.indexOf('@')<1){
+document.getElementById('ml-wix-err').textContent='Geçerli bir e-posta girin.';return;
+}
+document.getElementById('ml-wix-err').textContent='Kontrol ediliyor...';
+document.getElementById('ml-wix-err').style.color='var(--mltt)';
+fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
+if(d.spend>0||d.orders>0){
+var tier=tierFromSpend(d.spend||0);
+var name=(email.split('@')[0]||'').split('.')[0];
+name=name.charAt(0).toUpperCase()+name.slice(1);
+_mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:name,email:email,loggedIn:true};
+try{localStorage.setItem('ml_wix_email',email);}catch(e){}
+go(_mlCache);
+}else{
+document.getElementById('ml-wix-err').textContent='Bu e-posta ile kayıt bulunamadı.';
+document.getElementById('ml-wix-err').style.color='#c0392b';
+}
+}).catch(function(){
+document.getElementById('ml-wix-err').textContent='Bağlantı hatası.';
+document.getElementById('ml-wix-err').style.color='#c0392b';
+});
 };
 
 window.mlClose=function(e){
