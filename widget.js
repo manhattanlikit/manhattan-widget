@@ -172,7 +172,7 @@ var WEB_APP='https://script.google.com/macros/s/AKfycbxJKzibWzYOmapPvghMPxbt9u5v
 var GM={0:null,7957004:'Starter',24166501:'Bronze',24166502:'Silver',24166503:'Gold',24166504:'Platinum',24166505:'Diamond'};
 var TB={Starter:'#f5f5f7',Bronze:'linear-gradient(145deg,#f2e8da,#e8d5be)',Silver:'linear-gradient(145deg,#f0f0f2,#e4e4e8)',Gold:'linear-gradient(145deg,#faf3e0,#f0e2b8)',Platinum:'linear-gradient(145deg,#e8e8ed,#d8d8de)',Diamond:'linear-gradient(145deg,#e0e8f5,#c8d8f0)'};
 var DEMO={tier:'Gold',spend:14250,orders:18,returnRate:4.2,name:'Kullanıcı',loggedIn:true};
-var REF_RATES={Gold:7.5,Platinum:10,Diamond:15};
+var REF_RATES={Silver:5,Gold:7.5,Platinum:10,Diamond:15};
 
 function f$(n){return new Intl.NumberFormat('tr-TR').format(Math.round(n))}
 
