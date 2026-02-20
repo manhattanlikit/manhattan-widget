@@ -347,7 +347,7 @@ var fte=document.getElementById('ml-ft');
 if(fte){setInterval(function(){var t=fte.textContent.split(':');var s=parseInt(t[0])*3600+parseInt(t[1])*60+parseInt(t[2])-1;if(s<=0)return;var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;fte.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');},1000);}
 }
 
-var _mlCache=null;
+var _mlCache=null;window._mlCache=_mlCache;
 
 // Sayfa yüklendiğinde arka planda veriyi çek
 if(typeof Ecwid!=='undefined'&&Ecwid.OnAPILoaded){
@@ -358,13 +358,13 @@ var bp=c.billingPerson||{};var name=c.name?(c.name.split(' ')[0]):(bp.firstName|
 if(WEB_APP&&email){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
-_mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:fullName,email:email,loggedIn:true};
+_mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:fullName,email:email,loggedIn:true};
 }).catch(function(){
 var tier=GM[c.customerGroupId]||'Starter';
 var td=T.find(function(t){return t.n===tier});
-_mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};
+_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};
 });
-}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};}
+}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};}
 }else{_mlCache={tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false};}
 });}catch(e){}
 });
@@ -382,15 +382,15 @@ var bp=c.billingPerson||{};var name=c.name?(c.name.split(' ')[0]):(bp.firstName|
 if(WEB_APP&&email){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
-_mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:fullName,email:email,loggedIn:true};
+_mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:fullName,email:email,loggedIn:true};
 go(_mlCache);
 }).catch(function(){
 var tier=GM[c.customerGroupId]||'Starter';
 var td=T.find(function(t){return t.n===tier});
-_mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};
+_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};
 go(_mlCache);
 });
-}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};go(_mlCache);}
+}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};go(_mlCache);}
 }else{_mlCache={tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false};go(_mlCache);}
 });}catch(e){go(DEMO);}
 }else{go(DEMO);}
@@ -418,173 +418,254 @@ if(!wasExpanded)el.classList.add('expanded');
 };
 
 // Paylaş — premium share card
-window.mlSharePreview=function(){
-if(!_mlCache||!_mlCache.loggedIn)return;
-var d=_mlCache;
-var ti=T.findIndex(function(t){return t.n===d.tier});
-var t=T[ti];
-// 3x resolution for ultra-sharp rendering
-var S=3;
-var W=600,H=330;
-var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';c.style.aspectRatio=W+'/'+H;
-var ctx=c.getContext('2d');ctx.scale(S,S);
-// Background — deep dark gradient
-var bg=ctx.createLinearGradient(0,0,W,H);
-bg.addColorStop(0,'#08080a');bg.addColorStop(0.5,'#111115');bg.addColorStop(1,'#08080a');
-ctx.fillStyle=bg;
-ctx.beginPath();ctx.roundRect(0,0,W,H,16);ctx.fill();
-// Gold border
-ctx.strokeStyle='rgba(175,140,62,.18)';ctx.lineWidth=1;
-ctx.beginPath();ctx.roundRect(0.5,0.5,W-1,H-1,16);ctx.stroke();
-// Corner motifs — premium diamond shapes
-function drawMotif(cx,cy,s){
-ctx.save();ctx.strokeStyle='rgba(175,140,62,.12)';ctx.lineWidth=0.5;
+// === SHARED CARD HELPERS ===
+window._mlCardBg=function(ctx,W,H){
+var bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#08080a');bg.addColorStop(0.5,'#111115');bg.addColorStop(1,'#08080a');
+ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(0,0,W,H,16);ctx.fill();
+// Gold gradient border — bright and visible
+var gb;
+// Top
+gb=ctx.createLinearGradient(0,0,W,0);gb.addColorStop(0,'rgba(175,140,62,.1)');gb.addColorStop(0.3,'rgba(212,176,94,.7)');gb.addColorStop(0.5,'rgba(240,226,184,.9)');gb.addColorStop(0.7,'rgba(212,176,94,.7)');gb.addColorStop(1,'rgba(175,140,62,.1)');
+ctx.fillStyle=gb;ctx.fillRect(16,0,W-32,2);
+// Bottom
+ctx.fillRect(16,H-2,W-32,2);
+// Left
+gb=ctx.createLinearGradient(0,0,0,H);gb.addColorStop(0,'rgba(175,140,62,.1)');gb.addColorStop(0.3,'rgba(212,176,94,.5)');gb.addColorStop(0.5,'rgba(240,226,184,.7)');gb.addColorStop(0.7,'rgba(212,176,94,.5)');gb.addColorStop(1,'rgba(175,140,62,.1)');
+ctx.fillStyle=gb;ctx.fillRect(0,16,2,H-32);
+// Right
+ctx.fillRect(W-2,16,2,H-32);
+// Corner glow dots
+ctx.save();ctx.shadowColor='rgba(240,226,184,.5)';ctx.shadowBlur=8;
+ctx.fillStyle='rgba(212,176,94,.6)';
+ctx.beginPath();ctx.arc(16,16,2,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(W-16,16,2,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(16,H-16,2,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(W-16,H-16,2,0,Math.PI*2);ctx.fill();
+ctx.restore();
+// Corner motifs
+function dm(cx,cy,s){ctx.save();ctx.strokeStyle='rgba(175,140,62,.15)';ctx.lineWidth=0.5;
 ctx.beginPath();ctx.moveTo(cx,cy-s);ctx.lineTo(cx+s,cy);ctx.lineTo(cx,cy+s);ctx.lineTo(cx-s,cy);ctx.closePath();ctx.stroke();
-ctx.beginPath();ctx.moveTo(cx,cy-s*0.5);ctx.lineTo(cx+s*0.5,cy);ctx.lineTo(cx,cy+s*0.5);ctx.lineTo(cx-s*0.5,cy);ctx.closePath();ctx.stroke();
-ctx.restore();
+ctx.beginPath();ctx.moveTo(cx,cy-s*0.5);ctx.lineTo(cx+s*0.5,cy);ctx.lineTo(cx,cy+s*0.5);ctx.lineTo(cx-s*0.5,cy);ctx.closePath();ctx.stroke();ctx.restore();}
+dm(46,46,16);dm(W-46,46,16);dm(46,H-46,16);dm(W-46,H-46,16);
+// Top accent line
+var gl=ctx.createLinearGradient(80,0,W-80,0);gl.addColorStop(0,'transparent');gl.addColorStop(0.2,'rgba(175,140,62,.3)');gl.addColorStop(0.5,'rgba(240,226,184,.5)');gl.addColorStop(0.8,'rgba(175,140,62,.3)');gl.addColorStop(1,'transparent');
+return gl;
 }
-drawMotif(50,50,18);drawMotif(W-50,50,18);drawMotif(50,H-50,18);drawMotif(W-50,H-50,18);
-// Side decorative lines
-ctx.strokeStyle='rgba(175,140,62,.06)';ctx.lineWidth=0.5;
-ctx.beginPath();ctx.moveTo(30,80);ctx.lineTo(30,H-80);ctx.stroke();
-ctx.beginPath();ctx.moveTo(W-30,80);ctx.lineTo(W-30,H-80);ctx.stroke();
-// Top gold accent line
-var gl=ctx.createLinearGradient(80,0,W-80,0);
-gl.addColorStop(0,'transparent');gl.addColorStop(0.2,'rgba(175,140,62,.3)');gl.addColorStop(0.5,'rgba(240,226,184,.5)');gl.addColorStop(0.8,'rgba(175,140,62,.3)');gl.addColorStop(1,'transparent');
-ctx.fillStyle=gl;ctx.fillRect(80,0,W-160,1);
-// Crown
-drawCrown(ctx,W/2,28,14,'#af8c3e');
-// MANHATTAN — whiter
-ctx.textAlign='center';ctx.textBaseline='middle';
-ctx.font='600 9px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#9e9ea3';
-ctx.fillText('M A N H A T T A N',W/2,46);
-// Tier name — hero
-ctx.font='800 40px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#ffffff';
-ctx.fillText(d.tier,W/2,90);
-// Discount circle — centered, premium glow
-var circY=150;
-ctx.save();
-ctx.shadowColor='rgba(175,140,62,.35)';ctx.shadowBlur=35;
-ctx.beginPath();ctx.arc(W/2,circY,36,0,Math.PI*2);
-var cg=ctx.createRadialGradient(W/2-10,circY-10,4,W/2,circY,36);
-cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
-ctx.fillStyle=cg;ctx.fill();
-ctx.restore();
-// Outer ring
-ctx.strokeStyle='rgba(240,226,184,.1)';ctx.lineWidth=0.5;
-ctx.beginPath();ctx.arc(W/2,circY,44,0,Math.PI*2);ctx.stroke();
-// Second outer ring
-ctx.strokeStyle='rgba(175,140,62,.05)';ctx.lineWidth=0.5;
-ctx.beginPath();ctx.arc(W/2,circY,52,0,Math.PI*2);ctx.stroke();
-// Discount text
-ctx.font='800 22px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#fff';
-ctx.fillText('%'+t.d,W/2,circY+2);
-// Label below circle
-ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#636366';
-ctx.fillText('Özel İndirim',W/2,circY+52);
-// Referral invite area
-var refRate=REF_RATES[d.tier];
-if(refRate){
-ctx.font='500 10px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#9e9ea3';
-ctx.fillText('Arkadaşınızı davet edin',W/2,circY+74);
-ctx.font='600 12px -apple-system,BlinkMacSystemFont,sans-serif';
-var refGl=ctx.createLinearGradient(W/2-60,0,W/2+60,0);
-refGl.addColorStop(0,'#af8c3e');refGl.addColorStop(0.5,'#f0e2b8');refGl.addColorStop(1,'#af8c3e');
-ctx.fillStyle=refGl;
-ctx.fillText('%'+refRate+' ek indirim kazanın',W/2,circY+90);
-} else {
-ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#636366';
-ctx.fillText('Sadakat üyelerine özel ayrıcalıklar',W/2,circY+80);
-}
-// Customer name — large, gold gradient
-var displayName=d.fullName||d.name||'';
-if(displayName){
-var nameGl=ctx.createLinearGradient(W/2-100,0,W/2+100,0);
-nameGl.addColorStop(0,'#af8c3e');nameGl.addColorStop(0.5,'#f0e2b8');nameGl.addColorStop(1,'#af8c3e');
-ctx.font='600 16px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle=nameGl;
-ctx.fillText(displayName,W/2,H-56);
-}
-// Bottom gold accent line
-ctx.fillStyle=gl;ctx.fillRect(80,H-38,W-160,1);
-// manhattandan.com — whiter
-ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#7c7c80';
-ctx.fillText('manhattandan.com',W/2,H-18);
-// Preview overlay
+window._mlCardOverlay=function(c,btns,onShare){
 var ov=document.createElement('div');ov.className='ml-share-preview';
 ov.onclick=function(e){if(e.target===ov)ov.remove();};
-ov.innerHTML='<div class="ml-share-preview-btns"><button class="ml-sp-share" id="ml-sp-go">Paylaş</button><button class="ml-sp-close" id="ml-sp-x">Kapat</button></div>';
-ov.insertBefore(c,ov.firstChild);
+ov.innerHTML='<div class="ml-share-preview-btns">'+btns+'</div>';
+ov.insertBefore(c,ov.firstChild);document.body.appendChild(ov);
+return ov;
+}
+
+// === BADGE TIKLAMA — ANA AKIŞ ===
+window.mlSharePreview=function(){
+if(!_mlCache||!_mlCache.loggedIn)return;
+var ep=document.querySelector('.ml-share-preview');if(ep)ep.remove();
+var d=_mlCache;
+var refRate=REF_RATES[d.tier];
+// Silver+ → referral prompt önce
+if(refRate){
+_mlRefPrompt(d,refRate);
+} else {
+// Starter/Bronze → direkt tier kartı
+_mlTierCard(d);
+}
+};
+
+// === REFERRAL PROMPT OVERLAY ===
+window._mlRefPrompt=function(d,refRate){
+var ov=document.createElement('div');ov.className='ml-share-preview';
+ov.onclick=function(e){if(e.target===ov)ov.remove();};
+var html='<div style="background:#16161a;border-radius:16px;padding:24px 20px;max-width:340px;width:90vw;text-align:center;cursor:default;border:1px solid rgba(175,140,62,.2);box-shadow:0 20px 60px rgba(0,0,0,.5)">';
+html+='<svg viewBox="0 0 24 24" fill="none" stroke="#af8c3e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:28px;height:28px;margin-bottom:8px"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>';
+html+='<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Arkadaşına hediye gönder</div>';
+html+='<div style="font-size:11px;color:#9e9ea3;margin-bottom:14px;line-height:1.5">Arkadaşına <b style="color:#d4b05e">%'+refRate+' indirim</b> hediye et,<br>alışveriş yapınca <b style="color:#d4b05e">sana da %'+refRate+'</b> gelsin!</div>';
+html+='<div id="ml-rp-area"><input type="email" id="ml-rp-email" placeholder="Arkadaşının e-postası" style="width:100%;padding:10px 12px;border:1px solid rgba(175,140,62,.2);border-radius:8px;background:#1e1e24;color:#fff;font-size:13px;font-family:inherit;text-align:center;box-sizing:border-box;outline:none"><button id="ml-rp-send" onclick="mlRefSendPrompt()" style="width:100%;margin-top:8px;padding:10px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;position:relative;overflow:hidden">Davet Gönder</button><div id="ml-rp-msg" style="font-size:10px;margin-top:6px;min-height:14px"></div></div>';
+html+='<div onclick="this.closest(\'.ml-share-preview\').remove();window._mlTierCard(window._mlCache||{})" style="margin-top:10px;font-size:11px;color:#636366;cursor:pointer;padding:6px">Kartımı Göster →</div>';
+html+='</div>';
+ov.innerHTML=html;
 document.body.appendChild(ov);
-document.getElementById('ml-sp-x').onclick=function(){ov.remove();};
-document.getElementById('ml-sp-go').onclick=function(){
+// Focus email
+setTimeout(function(){var inp=document.getElementById('ml-rp-email');if(inp)inp.focus();},100);
+}
+
+// === REFERRAL SEND (PROMPT İÇİNDEN) ===
+window.mlRefSendPrompt=function(){
+var inp=document.getElementById('ml-rp-email');
+var msg=document.getElementById('ml-rp-msg');
+var btn=document.getElementById('ml-rp-send');
+if(!inp||!inp.value){if(msg){msg.textContent='E-posta girin';msg.style.color='#e53e3e';}return;}
+if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value)){if(msg){msg.textContent='Geçerli bir e-posta girin';msg.style.color='#e53e3e';}return;}
+if(!_mlCache||!_mlCache.email)return;
+if(btn){btn.disabled=true;btn.textContent='Gönderiliyor...';}
+fetch(WEB_APP+'?action=referral&referrerEmail='+encodeURIComponent(_mlCache.email)+'&friendEmail='+encodeURIComponent(inp.value.trim())).then(function(r){return r.json()}).then(function(d){
+// Prompt overlay'ı kapat
+var pov=document.querySelector('.ml-share-preview');if(pov)pov.remove();
+if(d.success&&d.coupon){
+// Kupon kartını aç
+_mlCouponCard(d.coupon,d.discount,_mlCache.fullName||_mlCache.name||'');
+} else {
+// Hata — prompt tekrar aç
+var refRate=REF_RATES[_mlCache.tier];
+_mlRefPrompt(_mlCache,refRate);
+setTimeout(function(){var m=document.getElementById('ml-rp-msg');if(m){m.textContent=d.error||'Bir hata oluştu';m.style.color='#e53e3e';}},200);
+}
+}).catch(function(){
+var pov=document.querySelector('.ml-share-preview');if(pov)pov.remove();
+var refRate=REF_RATES[_mlCache.tier];
+_mlRefPrompt(_mlCache,refRate);
+setTimeout(function(){var m=document.getElementById('ml-rp-msg');if(m){m.textContent='Bağlantı hatası';m.style.color='#e53e3e';}},200);
+});
+};
+
+// === KUPON KARTI (referral sonrası) ===
+window._mlCouponCard=function(code,disc,senderName){
+var S=3,W=600,H=360;
+var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';c.style.aspectRatio=W+'/'+H;
+var ctx=c.getContext('2d');ctx.scale(S,S);
+var gl=_mlCardBg(ctx,W,H);
+ctx.textAlign='center';ctx.textBaseline='middle';
+// Crown
+drawCrown(ctx,W/2,24,12,'#af8c3e');
+// MANHATTAN LIKIT
+ctx.font='600 8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#9e9ea3';
+ctx.fillText('M A N H A T T A N   L I K I T',W/2,40);
+// Sender message
+if(senderName){
+ctx.font='400 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#a0a0a5';
+ctx.fillText(senderName+' sana bir hediye gönderdi',W/2,66);
+}
+// Discount circle
+var circY=120;
+ctx.save();ctx.shadowColor='rgba(175,140,62,.4)';ctx.shadowBlur=30;
+ctx.beginPath();ctx.arc(W/2,circY,34,0,Math.PI*2);
+var cg=ctx.createRadialGradient(W/2-8,circY-8,4,W/2,circY,34);cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
+ctx.fillStyle=cg;ctx.fill();ctx.restore();
+ctx.font='800 20px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#fff';
+ctx.fillText('%'+disc,W/2,circY+2);
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
+ctx.fillText('Hoş Geldin İndirimi',W/2,circY+50);
+// Coupon code box — premium gold frame
+var bx=W/2-120,by=192,bw=240,bh=48;
+ctx.fillStyle='rgba(175,140,62,.05)';
+ctx.beginPath();ctx.roundRect(bx,by,bw,bh,10);ctx.fill();
+ctx.strokeStyle='rgba(212,176,94,.3)';ctx.lineWidth=1;
+ctx.beginPath();ctx.roundRect(bx,by,bw,bh,10);ctx.stroke();
+// Small gold dots at corners of box
+ctx.save();ctx.shadowColor='rgba(240,226,184,.4)';ctx.shadowBlur=4;ctx.fillStyle='rgba(212,176,94,.5)';
+ctx.beginPath();ctx.arc(bx+6,by+6,1.5,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(bx+bw-6,by+6,1.5,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(bx+6,by+bh-6,1.5,0,Math.PI*2);ctx.fill();
+ctx.beginPath();ctx.arc(bx+bw-6,by+bh-6,1.5,0,Math.PI*2);ctx.fill();
+ctx.restore();
+// Code text — big gold monospace
+ctx.font='800 22px monospace';
+var codeGl=ctx.createLinearGradient(W/2-90,0,W/2+90,0);codeGl.addColorStop(0,'#af8c3e');codeGl.addColorStop(0.5,'#f0e2b8');codeGl.addColorStop(1,'#af8c3e');
+ctx.fillStyle=codeGl;
+ctx.fillText(code,W/2,by+bh/2+1);
+// Instructions
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
+ctx.fillText('manhattandan.com adresinde geçerlidir',W/2,264);
+ctx.fillText('Tek kullanımlık · Yeni müşterilere özel',W/2,280);
+// Sender pride area
+if(senderName){
+ctx.fillStyle=gl;ctx.fillRect(120,H-60,W-240,0.5);
+var nameGl=ctx.createLinearGradient(W/2-80,0,W/2+80,0);nameGl.addColorStop(0,'#af8c3e');nameGl.addColorStop(0.5,'#f0e2b8');nameGl.addColorStop(1,'#af8c3e');
+ctx.font='600 11px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle=nameGl;
+ctx.fillText(senderName+' tarafından gönderildi',W/2,H-38);
+}
+// manhattandan.com
+ctx.font='400 8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
+ctx.fillText('manhattandan.com',W/2,H-14);
+// Overlay with WP + Download buttons
+var ov=_mlCardOverlay(c,'');
+ov.querySelector('.ml-share-preview-btns').innerHTML='<button class="ml-sp-share" id="ml-cp-wp" style="background:#25D366;color:#fff">WhatsApp\'ta Gönder</button><button class="ml-sp-share" id="ml-cp-dl">Kartı İndir</button><button class="ml-sp-close" id="ml-cp-x">Kapat</button>';
+document.getElementById('ml-cp-x').onclick=function(){ov.remove();};
+document.getElementById('ml-cp-dl').onclick=function(){
+c.toBlob(function(blob){
+if(navigator.share){var f=new File([blob],'manhattan-davet.png',{type:'image/png'});navigator.share({title:'Manhattan Likit İndirim',files:[f]}).catch(function(){});}
+else{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='manhattan-davet.png';a.click();}
+},'image/png');};
+document.getElementById('ml-cp-wp').onclick=function(){
+var wpText='Sana Manhattan Likit\'ten %'+disc+' indirim hediye ettim! 🎁\n\nKod: '+code+'\nmanhattandan.com adresinde kullanabilirsin.\n\nTek kullanımlık, sana özel!';
+// Try sharing image via navigator.share first, fallback to WP text link
+c.toBlob(function(blob){
+if(navigator.share&&navigator.canShare){
+var f=new File([blob],'manhattan-davet.png',{type:'image/png'});
+var shareData={title:'Manhattan Likit İndirim',text:wpText,files:[f]};
+if(navigator.canShare(shareData)){navigator.share(shareData).catch(function(){});return;}
+}
+window.open('https://wa.me/?text='+encodeURIComponent(wpText),'_blank');
+},'image/png');};
+}
+
+// === TIER KARTI (kişisel prestij) ===
+window._mlTierCard=function(d){
+var ti=T.findIndex(function(t){return t.n===d.tier});
+var t=T[ti];
+var S=3,W=600,H=330;
+var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';c.style.aspectRatio=W+'/'+H;
+var ctx=c.getContext('2d');ctx.scale(S,S);
+var gl=_mlCardBg(ctx,W,H);
+ctx.textAlign='center';ctx.textBaseline='middle';
+// Crown
+drawCrown(ctx,W/2,28,14,'#af8c3e');
+// MANHATTAN
+ctx.font='600 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#9e9ea3';
+ctx.fillText('M A N H A T T A N',W/2,46);
+// Tier name
+ctx.font='800 40px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#ffffff';
+ctx.fillText(d.tier,W/2,90);
+// Discount circle
+var circY=150;
+ctx.save();ctx.shadowColor='rgba(175,140,62,.35)';ctx.shadowBlur=35;
+ctx.beginPath();ctx.arc(W/2,circY,36,0,Math.PI*2);
+var cg=ctx.createRadialGradient(W/2-10,circY-10,4,W/2,circY,36);cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
+ctx.fillStyle=cg;ctx.fill();ctx.restore();
+ctx.strokeStyle='rgba(240,226,184,.1)';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.arc(W/2,circY,44,0,Math.PI*2);ctx.stroke();
+ctx.font='800 22px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#fff';
+ctx.fillText('%'+t.d,W/2,circY+2);
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
+ctx.fillText('Özel İndirim',W/2,circY+52);
+// Referral area or generic text
+var refRate=REF_RATES[d.tier];
+if(refRate){
+ctx.font='500 10px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#9e9ea3';
+ctx.fillText('Arkadaşınızı davet edin',W/2,circY+72);
+ctx.font='600 12px -apple-system,BlinkMacSystemFont,sans-serif';
+var refGl=ctx.createLinearGradient(W/2-60,0,W/2+60,0);refGl.addColorStop(0,'#af8c3e');refGl.addColorStop(0.5,'#f0e2b8');refGl.addColorStop(1,'#af8c3e');
+ctx.fillStyle=refGl;
+ctx.fillText('%'+refRate+' ek indirim kazanın',W/2,circY+88);
+} else {
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
+ctx.fillText('Sadakat üyelerine özel ayrıcalıklar',W/2,circY+80);
+}
+// Customer name
+var displayName=d.fullName||d.name||'';
+if(displayName){
+var nameGl=ctx.createLinearGradient(W/2-100,0,W/2+100,0);nameGl.addColorStop(0,'#af8c3e');nameGl.addColorStop(0.5,'#f0e2b8');nameGl.addColorStop(1,'#af8c3e');
+ctx.font='600 16px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle=nameGl;
+ctx.fillText(displayName,W/2,H-52);
+}
+// Bottom
+ctx.fillStyle=gl;ctx.fillRect(80,H-38,W-160,1);
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
+ctx.fillText('manhattandan.com',W/2,H-18);
+// Overlay
+var ov=_mlCardOverlay(c,'<button class="ml-sp-share" id="ml-tc-go">Paylaş</button><button class="ml-sp-close" id="ml-tc-x">Kapat</button>');
+document.getElementById('ml-tc-x').onclick=function(){ov.remove();};
+document.getElementById('ml-tc-go').onclick=function(){
 c.toBlob(function(blob){
 if(navigator.share){var f=new File([blob],'manhattan-seviye.png',{type:'image/png'});navigator.share({title:'Manhattan Sadakat Seviyem',files:[f]}).catch(function(){});}
 else{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='manhattan-seviye.png';a.click();}
 ov.remove();
 },'image/png');};
-};
+}
 
-// Referral gönder
-window.mlRefShareCard=function(code,disc){
-var S=3,W=600,H=320;
-var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';
-var ctx=c.getContext('2d');ctx.scale(S,S);
-var bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#08080a');bg.addColorStop(0.5,'#111115');bg.addColorStop(1,'#08080a');
-ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(0,0,W,H,16);ctx.fill();
-ctx.strokeStyle='rgba(175,140,62,.18)';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(0.5,0.5,W-1,H-1,16);ctx.stroke();
-var gl=ctx.createLinearGradient(80,0,W-80,0);gl.addColorStop(0,'transparent');gl.addColorStop(0.3,'rgba(175,140,62,.3)');gl.addColorStop(0.5,'rgba(240,226,184,.5)');gl.addColorStop(0.7,'rgba(175,140,62,.3)');gl.addColorStop(1,'transparent');
-ctx.fillStyle=gl;ctx.fillRect(80,0,W-160,1);
-drawCrown(ctx,W/2,26,12,'#af8c3e');
-ctx.textAlign='center';ctx.textBaseline='middle';
-ctx.font='600 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#9e9ea3';
-ctx.fillText('M A N H A T T A N   L I K I T',W/2,42);
-ctx.font='500 13px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#a0a0a5';
-ctx.fillText('Sana özel hoş geldin hediyesi',W/2,72);
-// Discount circle
-ctx.save();ctx.shadowColor='rgba(175,140,62,.35)';ctx.shadowBlur=30;
-ctx.beginPath();ctx.arc(W/2,130,34,0,Math.PI*2);
-var cg=ctx.createRadialGradient(W/2-8,122,4,W/2,130,34);cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
-ctx.fillStyle=cg;ctx.fill();ctx.restore();
-ctx.font='800 20px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#fff';
-ctx.fillText('%'+disc,W/2,132);
-ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
-ctx.fillText('İndirim',W/2,168);
-// Coupon code box
-ctx.fillStyle='rgba(175,140,62,.06)';
-ctx.beginPath();ctx.roundRect(W/2-110,190,220,40,8);ctx.fill();
-ctx.strokeStyle='rgba(175,140,62,.15)';ctx.lineWidth=0.5;
-ctx.beginPath();ctx.roundRect(W/2-110,190,220,40,8);ctx.stroke();
-ctx.font='800 18px monospace';
-var codeGl=ctx.createLinearGradient(W/2-80,0,W/2+80,0);codeGl.addColorStop(0,'#af8c3e');codeGl.addColorStop(0.5,'#f0e2b8');codeGl.addColorStop(1,'#af8c3e');
-ctx.fillStyle=codeGl;
-ctx.fillText(code,W/2,212);
-ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
-ctx.fillText('manhattandan.com adresinde geçerlidir · Tek kullanımlık',W/2,252);
-ctx.fillStyle=gl;ctx.fillRect(80,H-32,W-160,1);
-ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
-ctx.fillText('manhattandan.com',W/2,H-14);
-var ov=document.createElement('div');ov.className='ml-share-preview';
-ov.onclick=function(e){if(e.target===ov)ov.remove();};
-ov.innerHTML='<div class="ml-share-preview-btns"><button class="ml-sp-share" id="ml-rp-go">Paylaş</button><button class="ml-sp-close" id="ml-rp-x">Kapat</button></div>';
-ov.insertBefore(c,ov.firstChild);
-document.body.appendChild(ov);
-document.getElementById('ml-rp-x').onclick=function(){ov.remove();};
-document.getElementById('ml-rp-go').onclick=function(){
-c.toBlob(function(blob){
-if(navigator.share){var f=new File([blob],'manhattan-davet.png',{type:'image/png'});navigator.share({title:'Manhattan Likit İndirim Kodu',files:[f]}).catch(function(){});}
-else{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='manhattan-davet.png';a.click();}
-ov.remove();
-},'image/png');};
-};
-
+// === ESKİ REFERRAL SEND (alttaki form için backward compat) ===
 window.mlRefSend=function(){
 var inp=document.getElementById('ml-ref-email');
 var area=document.getElementById('ml-ref-area');
@@ -593,7 +674,11 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value)){area.innerHTML='<div class="ml
 if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
 var btn=area.querySelector('button');if(btn){btn.disabled=true;btn.textContent='Gönderiliyor...';}
 fetch(WEB_APP+'?action=referral&referrerEmail='+encodeURIComponent(_mlCache.email)+'&friendEmail='+encodeURIComponent(inp.value.trim())).then(function(r){return r.json()}).then(function(d){
-if(d.success){var couponHtml=d.coupon?'<div style="margin-top:8px;padding:8px 12px;background:rgba(175,140,62,.08);border:1px solid rgba(175,140,62,.15);border-radius:8px;text-align:center"><div style="font-size:9px;color:var(--mlts);margin-bottom:4px">Arkadaşınıza özel indirim kodu</div><div style="font-size:15px;font-weight:800;color:var(--mlg);letter-spacing:1px;font-family:monospace">'+d.coupon+'</div><div style="font-size:9px;color:var(--mlts);margin-top:4px">%'+(d.discount||'')+' indirim · Tek kullanımlık</div></div><div style="text-align:center;margin-top:6px"><button onclick="mlRefShareCard(\''+d.coupon+'\','+(d.discount||0)+')" style="background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">Kodu Paylaş</button></div>':'';area.innerHTML='<div class="ml-ref-msg ok"><svg viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;vertical-align:-2px"><path d="M20 6L9 17l-5-5"/></svg> '+d.message+'</div>'+couponHtml;setTimeout(function(){area.innerHTML='<div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Başka bir arkadaş davet edin"><button onclick="mlRefSend()">Gönder</button></div>';},20000);}
+if(d.success&&d.coupon){
+_mlCouponCard(d.coupon,d.discount,_mlCache.fullName||_mlCache.name||'');
+area.innerHTML='<div class="ml-ref-msg ok"><svg viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;vertical-align:-2px"><path d="M20 6L9 17l-5-5"/></svg> Davet gönderildi!</div>';
+setTimeout(function(){area.innerHTML='<div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Başka bir arkadaş davet edin"><button onclick="mlRefSend()">Gönder</button></div>';},20000);
+}
 else{area.innerHTML='<div class="ml-ref-msg err">'+(d.error||'Bir hata oluştu')+'</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';}
 }).catch(function(){area.innerHTML='<div class="ml-ref-msg err">Bağlantı hatası, tekrar deneyin</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';});
 };
