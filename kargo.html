@@ -352,8 +352,8 @@ async function fetchOrders(){
       var row=[
         o.name,                    // A: Kişi/Kurum
         fullAddr.toUpperCase(),    // B: Adres
-        (o.city||'').toUpperCase(),// C: İl
-        '',                        // D: İlçe
+        (o.state||'').toUpperCase(),// C: İl
+        (o.city||'').toUpperCase(),// D: İlçe
         '',                        // E: Telefon Ev/İş
         normPhone(o.phone),        // F: Telefon Cep
         o.email,                   // G: E-Mail
@@ -361,7 +361,7 @@ async function fetchOrders(){
         CARGO_DEFAULTS.kargoTuru,  // I: 0=DOSYA
         CARGO_DEFAULTS.odemeTipi,  // J: 1=GÖNDERİCİ
         '',                        // K: İrsaliye No
-        String(o.id),              // L: Referans No ← ECWID ORDER ID
+        '',                        // L: Referans No (boş)
         CARGO_DEFAULTS.adet,       // M: 1
         CARGO_DEFAULTS.icerik,     // N: BODY BUTTER
         '',                        // O: Tahsilat Tipi
@@ -372,8 +372,8 @@ async function fetchOrders(){
         ''                         // T: Kampanya Kodu
       ];
       rows.push(row);
-      preview.push({name:o.name,city:o.city,phone:normPhone(o.phone),orderId:o.id,orderNum:o.orderNumber,total:o.total});
-      log('log-export','#'+o.orderNumber+' · '+o.name+' · '+o.city+' · '+o.total+' ₺','ok');
+      preview.push({name:o.name,state:o.state,city:o.city,phone:normPhone(o.phone),orderId:o.id,orderNum:o.orderNumber,total:o.total});
+      log('log-export','#'+o.orderNumber+' · '+o.name+' · '+(o.state||'')+' / '+(o.city||'')+' · '+o.total+' ₺','ok');
     });
 
     setProgress('pbar-export',80);
@@ -391,9 +391,9 @@ async function fetchOrders(){
 
     // Preview table
     var html='<div class="stats"><div class="stat"><div class="stat-val">'+allOrders.length+'</div><div class="stat-label">Sipariş</div></div></div>';
-    html+='<div class="table-wrap"><table><tr><th>Sipariş</th><th>Müşteri</th><th>İl</th><th>Telefon</th><th>Tutar</th></tr>';
+    html+='<div class="table-wrap"><table><tr><th>Sipariş</th><th>Müşteri</th><th>İl</th><th>İlçe</th><th>Telefon</th><th>Tutar</th></tr>';
     preview.forEach(function(p){
-      html+='<tr><td>#'+p.orderNum+'</td><td>'+p.name+'</td><td>'+p.city+'</td><td>'+p.phone+'</td><td>'+(p.total||0)+' ₺</td></tr>';
+      html+='<tr><td>#'+p.orderNum+'</td><td>'+p.name+'</td><td>'+(p.state||'')+'</td><td>'+(p.city||'')+'</td><td>'+p.phone+'</td><td>'+(p.total||0)+' ₺</td></tr>';
     });
     html+='</table></div>';
     document.getElementById('export-preview').innerHTML=html;
