@@ -16,7 +16,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-inner{padding:0 22px 16px}
 .ml-head{text-align:center;padding-top:0;margin-bottom:2px;display:flex;flex-direction:column;align-items:center}
 .ml-head-sub{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mltt);margin-bottom:2px}
-.ml-head-title{font-size:17px;font-weight:800;letter-spacing:-.5px;color:var(--mltp)}
+.ml-head-title{font-size:15px;font-weight:800;letter-spacing:-.5px;color:var(--mltp);margin-bottom:4px}
 .ml-tier{text-align:center;margin-bottom:10px;display:flex;flex-direction:column;align-items:center}
 .ml-tier-badge{width:56px;height:56px;margin:0 auto 8px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
 .ml-tier-badge svg{width:24px;height:24px;stroke-width:1.2}
@@ -91,6 +91,10 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-savings-ico svg{width:15px;height:15px;stroke:#fff;stroke-width:2;fill:none}
 .ml-savings-txt{font-size:11px;color:var(--mlts);line-height:1.3;letter-spacing:-.1px}
 .ml-savings-txt b{color:var(--mltp);font-size:14px;font-weight:800}
+.ml-savings-orders{margin-left:auto;text-align:center;padding-left:10px;border-left:1px solid rgba(175,140,62,.15);min-width:44px}
+.ml-savings-orders-val{font-size:14px;font-weight:800;color:var(--mltp);line-height:1.2}
+.ml-savings-orders-lbl{font-size:8px;font-weight:500;color:var(--mlts);text-transform:uppercase;letter-spacing:.5px}
+.ml-savings-only{justify-content:center;background:var(--mlbg2);border-color:var(--mlbd)}
 .ml-stats-compact{display:flex;justify-content:center;gap:0;margin-bottom:10px;background:var(--mlbg2);border-radius:10px;padding:8px 4px;border:1px solid var(--mlbd)}
 .ml-sc-item{flex:1;text-align:center;position:relative}
 .ml-sc-item+.ml-sc-item::before{content:'';position:absolute;left:0;top:20%;height:60%;width:1px;background:var(--mlbd)}
@@ -148,8 +152,8 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-trigger.collapsed .ml-trigger-txt{max-width:0;opacity:0;overflow:hidden}
 .ml-trigger .ml-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .9s ease,opacity .7s ease}
 .ml-trigger.collapsed svg{margin:0}
-@media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:18px}.ml-tier-name{font-size:22px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:15px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:12px}.ml-prog-val{font-size:11px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
-@media(max-width:1024px){.ml-card{border-radius:16px;max-width:94vw}.ml-inner{padding:0 18px 16px}.ml-tier-badge{width:56px;height:56px}.ml-tier-badge svg{width:24px;height:24px}.ml-tier-name{font-size:20px}.ml-head-title{font-size:17px}.ml-stat-num{font-size:15px}.ml-stats{gap:6px}.ml-stat{padding:10px 8px}.ml-prog-hint{font-size:11px}.ml-btns{flex-direction:column;gap:6px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:5px 8px}.ml-tr-ico{width:24px;height:24px}.ml-tr-ico svg{width:11px;height:11px}.ml-tr-name{font-size:11px}.ml-tr-desc{font-size:9px}.ml-tr-discount{font-size:12px}}`;
+@media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:16px}.ml-tier-name{font-size:22px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:15px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:12px}.ml-prog-val{font-size:11px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
+@media(max-width:1024px){.ml-card{border-radius:16px;max-width:94vw}.ml-inner{padding:0 18px 16px}.ml-tier-badge{width:56px;height:56px}.ml-tier-badge svg{width:24px;height:24px}.ml-tier-name{font-size:20px}.ml-head-title{font-size:14px}.ml-stat-num{font-size:15px}.ml-stats{gap:6px}.ml-stat{padding:10px 8px}.ml-prog-hint{font-size:11px}.ml-btns{flex-direction:column;gap:6px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:5px 8px}.ml-tr-ico{width:24px;height:24px}.ml-tr-ico svg{width:11px;height:11px}.ml-tr-name{font-size:11px}.ml-tr-desc{font-size:9px}.ml-tr-discount{font-size:12px}}`;
 document.head.appendChild(s);
 
 // HTML enjekte
@@ -255,30 +259,28 @@ T.forEach(function(ti,j){
 var ip=j<i,ic=j===i,cls=ic?'current':ip?'passed':'locked';
 var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş'+(ti.r?' · <%'+ti.r+' iade':'');
 var badge=ic?'<span class="ml-tr-badge">SİZ</span>':'';
+var refSmallIco=REF_RATES[ti.n]?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px;opacity:.6"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> ':'';
 var expandBtn=(!ip&&!ic)?'<span class="ml-expand"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>':'';
-var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">%'+ti.d+expandBtn+'</div>';
+var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">'+refSmallIco+'%'+ti.d+expandBtn+'</div>';
 var clickAttr=ic?' onclick="mlSharePreview()" style="cursor:pointer"':(!ip&&!ic)?' onclick="mlTip(this)"':'';
 var tip='';
 if(ic){
-var curRefExtra=REF_RATES[ti.n]?' Arkadaşlarınızı davet ederek <b>%'+REF_RATES[ti.n]+' indirim</b> hediye edebilirsiniz.':'';
+var curRefExtra=REF_RATES[ti.n]?' Arkadaşlarınızı davet ederek <b>%'+REF_RATES[ti.n]+' ek indirim</b> hediye edebilirsiniz. Seviye indiriminize ek olarak geçerlidir.':'';
 tip='<div class="ml-tier-tip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:3px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="9" r=".5" fill="var(--mlg)"/><circle cx="15" cy="9" r=".5" fill="var(--mlg)"/></svg><b>'+ti.n+'</b> seviyesinde <b>%'+ti.d+' indirim</b> kazanıyorsunuz.'+(ti.r?' İade limitiniz <b>%'+ti.r+'</b>.':'')+curRefExtra+'</div>';
 }
 else if(!ip&&!ic){
 var need=ti.mn-d.spend;
-var refTipExtra=REF_RATES[ti.n]?' Ayrıca <b>arkadaşlarınızı davet edip %'+REF_RATES[ti.n]+' indirim</b> hediye edebilirsiniz.':'';
+var refTipExtra=REF_RATES[ti.n]?' Ayrıca arkadaşlarınızı davet edip <b>mevcut indiriminize ek %'+REF_RATES[ti.n]+' indirim</b> hediye edebilirsiniz.':'';
 tip='<div class="ml-tier-tip"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:3px;flex-shrink:0"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><b>'+ti.n+'</b> seviyesine ulaşmak için <b>'+f$(Math.max(need,0))+' ₺</b> daha alışveriş yapın'+(ti.r?' ve iade oranınızı <b>%'+ti.r+'</b> altında tutun':'')+'. Bu seviyede <b>%'+ti.d+'</b> indirim kazanırsınız!'+refTipExtra+'</div>';
 }
 tt+='<div class="ml-tier-row '+cls+'"'+clickAttr+'><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+' '+badge+'</div><div class="ml-tr-desc">'+desc+'</div></div>'+cod+'</div>'+tip;
 });
 // Tasarruf hesapla
 var savings=Math.round(d.spend*(t.d/100));
-var savingsHtml=savings>0?'<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">Bugüne kadar toplam<br><b>'+f$(savings)+' ₺</b> tasarruf ettiniz</div></div>':'';
-// Combined compact stats row: spend | orders (+ return rate if exists)
-var compactStats='<div class="ml-stats-compact">';
-compactStats+='<div class="ml-sc-item"><div class="ml-sc-val">'+f$(d.spend)+' ₺</div><div class="ml-sc-lbl">Alışveriş</div></div>';
-compactStats+='<div class="ml-sc-item"><div class="ml-sc-val">'+d.orders+'</div><div class="ml-sc-lbl">Sipariş</div></div>';
-if(typeof d.returnRate==='number'){compactStats+='<div class="ml-sc-item"><div class="ml-sc-val" style="color:'+(d.returnRate>(t.r||100)?'#e53e3e':'var(--mlts)')+'">%'+d.returnRate.toFixed(1)+'</div><div class="ml-sc-lbl">İade</div></div>';}
-compactStats+='</div>';
+var savingsHtml=savings>0?'<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">Bugüne kadar toplam<br><b>'+f$(savings)+' ₺</b> tasarruf ettiniz</div><div class="ml-savings-orders"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>':'<div class="ml-savings ml-savings-only"><div class="ml-savings-orders" style="margin:0"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>';
+// İade compact (only if exists)
+var compactStats='';
+if(typeof d.returnRate==='number'){compactStats='<div class="ml-stats-compact"><div class="ml-sc-item"><div class="ml-sc-val" style="color:'+(d.returnRate>(t.r||100)?'#e53e3e':'var(--mlts)')+'">%'+d.returnRate.toFixed(1)+'</div><div class="ml-sc-lbl">İade Oranı</div></div></div>';}
 // İade uyarısı
 var warnHtml='';
 if(typeof d.returnRate==='number'&&t.r>0){
@@ -310,7 +312,7 @@ var isActive=rn===d.tier;
 refProgHtml+='<div style="text-align:center;padding:4px 8px;border-radius:6px;font-size:9px;line-height:1.3;'+(isActive?'background:rgba(175,140,62,.12);color:var(--mlg);font-weight:700':'color:var(--mlts);opacity:.6')+'"><div style="font-weight:'+(isActive?'700':'500')+'">'+rn+'</div><div style="font-size:10px">%'+rate+'</div></div>';
 });
 refProgHtml+='</div>';
-refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub">Arkadaşınıza <b>%'+REF_RATES[d.tier]+'</b> hoş geldin indirimi hediye edin.<br>Alışveriş yaptığında <b>size de %'+REF_RATES[d.tier]+' indirim kuponu</b> gelsin!</div>'+refProgHtml+'<div id="ml-ref-area" style="margin-top:10px"><div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div></div></div>';
+refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub">Arkadaşınıza <b>%'+REF_RATES[d.tier]+'</b> hoş geldin indirimi hediye edin.<br>Alışveriş yaptığında <b>size de %'+REF_RATES[d.tier]+' ek indirim kuponu</b> gelsin!<br><span style="font-size:9px;color:var(--mltt)">Mevcut seviye indiriminize ek olarak geçerlidir.</span></div>'+refProgHtml+'<div id="ml-ref-area" style="margin-top:10px"><div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div></div></div>';
 }
 // Flash bonus (Cuma 22:00 - Cumartesi 22:00)
 var flashHtml='';
@@ -323,7 +325,7 @@ var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
 flashHtml='<div class="ml-flash"><div class="ml-flash-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="ml-flash-txt"><b>Flash Bonus +%2.5</b><br>Hafta sonu özel ek indirim</div><div class="ml-flash-timer" id="ml-ft">'+String(fh).padStart(2,'0')+':'+String(fm).padStart(2,'0')+':'+String(fs).padStart(2,'0')+'</div></div>';
 }
 var btns='<button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta">Alışverişe Devam Et</button>';
-document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div><div class="ml-tier-sub">Exclusive Member</div></div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+compactStats+'<div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+refHtml+btns;
+document.getElementById('ct').innerHTML=greeting+luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div></div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+compactStats+'<div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler</div>'+tt+'</div>'+refHtml+btns;
 // Confetti
 setTimeout(function(){
 var ht=document.getElementById('ml-htitle');if(ht)ht.style.color=TC[d.tier]||'var(--mltp)';
@@ -463,9 +465,10 @@ ctx.font='800 20px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#fff';
 ctx.fillText('%'+t.d,W/2,circY+2);
 // Customer name below circle
-ctx.font='500 12px -apple-system,BlinkMacSystemFont,sans-serif';
-ctx.fillStyle='#aeaeb2';
-ctx.fillText(d.fullName||'',W/2,circY+52);
+ctx.font='600 14px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#ffffff';
+var displayName=d.fullName||d.name||'';
+ctx.fillText(displayName,W/2,circY+56);
 // Bottom gold line
 ctx.fillStyle=gl;ctx.fillRect(80,H-44,W-160,1.5);
 // manhattandan.com
