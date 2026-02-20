@@ -58,8 +58,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-tr-name{font-size:12px;font-weight:700;color:var(--mltp);letter-spacing:-.1px}
 .ml-tr-desc{font-size:10px;font-weight:500;color:var(--mltt)}
 .ml-tr-discount{font-size:14px;font-weight:800;color:var(--mlg);letter-spacing:-.3px;flex-shrink:0;display:flex;align-items:center;gap:3px;justify-content:center}
-.ml-tr-discount .ml-expand{width:16px;height:16px;border-radius:50%;background:rgba(175,140,62,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ml-tr-discount .ml-expand svg{width:9px;height:9px;stroke:var(--mlg);stroke-width:2.5}
+
 .ml-tier-row.locked{opacity:.8;cursor:pointer;transition:all .2s}
 .ml-tier-row.locked:hover{opacity:1;background:var(--mlbg2)}
 .ml-tier-row.locked .ml-tr-name{color:var(--mltp)}.ml-tier-row.locked .ml-tr-discount{color:var(--mlg);opacity:.8}
@@ -260,8 +259,7 @@ var ip=j<i,ic=j===i,cls=ic?'current':ip?'passed':'locked';
 var desc=ti.mn===0?'Başlangıç':f$(ti.mn)+' ₺ alışveriş'+(ti.r?' · <%'+ti.r+' iade':'');
 var badge=ic?'<span class="ml-tr-badge">SİZ</span>':'';
 var refSmallIco=REF_RATES[ti.n]?'<svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px;flex-shrink:0"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>':'';
-var expandBtn=(!ip&&!ic)?'<span class="ml-expand"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>':'';
-var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">'+refSmallIco+'%'+ti.d+expandBtn+'</div>';
+var cod=ip?'<div class="ml-tr-check">'+IC.chk+'</div>':'<div class="ml-tr-discount">'+refSmallIco+'%'+ti.d+'</div>';
 var clickAttr=ic?' onclick="mlSharePreview()" style="cursor:pointer"':(!ip&&!ic)?' onclick="mlTip(this)"':'';
 var tip='';
 if(ic){
