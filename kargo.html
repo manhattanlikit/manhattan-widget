@@ -14,9 +14,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .header svg{width:28px;height:28px;color:var(--gold)}
 .header h1{font-size:24px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--goldL)}
 .header span{font-size:16px;color:var(--tx3);font-weight:400;letter-spacing:0}
-.container{max-width:900px;margin:0 auto;padding:32px 24px}
+.container{max-width:1000px;margin:0 auto;padding:32px 24px}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
-@media(max-width:640px){.cards{grid-template-columns:1fr}}
+@media(max-width:640px){.cards{grid-template-columns:1fr}.btn{font-size:16px;padding:12px 16px;width:100%;justify-content:center}.panel{padding:16px}.teslim-box{padding:24px 20px}}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .card:hover{border-color:rgba(175,140,62,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.08)}
 .card.active{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
@@ -30,7 +30,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .panel.show{display:block;animation:fadeIn .3s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .panel h3{font-size:22px;font-weight:700;color:var(--goldL);margin-bottom:16px;display:flex;align-items:center;gap:8px}
-.btn{padding:14px 28px;border:none;border-radius:10px;font-family:inherit;font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn{padding:14px 28px;border:none;border-radius:10px;font-family:inherit;font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
 .btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldL));color:#fff}
 .btn-gold:hover{box-shadow:0 4px 16px rgba(175,140,62,.3);transform:translateY(-1px)}
 .btn-gold:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
@@ -71,8 +71,12 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .footer{text-align:center;padding:24px;font-size:15px;color:var(--tx3)}
 @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(175,140,62,.3),0 0 60px rgba(175,140,62,.15)}50%{box-shadow:0 0 30px rgba(175,140,62,.6),0 0 80px rgba(175,140,62,.3)}}
 @keyframes blink-border{0%,100%{border-color:var(--gold)}50%{border-color:var(--red)}}
+@keyframes live-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
 .teslim-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;justify-content:center;align-items:center}
 .teslim-box{background:var(--bg2);border:3px solid var(--gold);border-radius:20px;padding:36px 40px;max-width:480px;width:90%;text-align:center;animation:pulse-glow 2s ease-in-out infinite,blink-border 1.5s ease-in-out infinite}
+.live-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:13px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
+.live-badge::before{content:'';width:8px;height:8px;background:#fff;border-radius:50%;animation:live-dot 1s ease-in-out infinite}
+.teslim-mini{position:fixed;bottom:24px;right:24px;z-index:9998;background:var(--bg2);border:2px solid var(--gold);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.12);cursor:pointer;animation:pulse-glow 3s ease-in-out infinite;text-decoration:none;color:var(--tx);font-weight:600;font-size:15px}
 </style>
 </head>
 <body>
@@ -104,14 +108,14 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <div class="container">
 <div class="cards">
 <div class="card" onclick="showPanel('export')">
-<div class="card-num">ADIM 1 <span style="display:inline-block;background:rgba(175,140,62,.12);color:var(--gold);font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:6px;letter-spacing:0">09:00 – 18:00</span></div>
+<div class="card-num">ADIM 1 <span style="display:inline-block;background:rgba(175,140,62,.12);color:var(--gold);font-size:15px;font-weight:700;padding:4px 10px;border-radius:6px;margin-left:8px;letter-spacing:0">09:00 – 18:00</span></div>
 <div class="card-title">Siparişleri İndir</div>
 <div class="card-desc">Bekleyen siparişleri Yurtiçi Kargo'ya yüklenecek Excel dosyasına dönüştürür</div>
 <div style="margin-top:10px;font-size:14px;color:var(--gold);font-weight:600">▶ Buraya tıklayın</div>
 <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
 </div>
 <div class="card" onclick="showPanel('import')">
-<div class="card-num">ADIM 2 <span style="display:inline-block;background:rgba(175,140,62,.12);color:var(--gold);font-size:12px;font-weight:700;padding:2px 8px;border-radius:4px;margin-left:6px;letter-spacing:0">18:00 sonrası</span></div>
+<div class="card-num">ADIM 2 <span style="display:inline-block;background:rgba(175,140,62,.12);color:var(--gold);font-size:15px;font-weight:700;padding:4px 10px;border-radius:6px;margin-left:8px;letter-spacing:0">18:00 sonrası</span></div>
 <div class="card-title">Takip Kodlarını Gir</div>
 <div class="card-desc">Yurtiçi'den indirdiğiniz listeyi yükleyin, takip kodları otomatik girilsin</div>
 <div style="margin-top:10px;font-size:14px;color:var(--gold);font-weight:600">▶ Buraya tıklayın</div>
@@ -123,9 +127,11 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <div class="panel" id="panel-export">
 <h3><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Bekleyen Siparişleri İndir</h3>
 <p style="font-size:18px;color:var(--tx2);margin-bottom:16px">Ecwid'den ödendi/işleme alındı durumdaki siparişleri çeker ve Yurtiçi Kargo Excel şablonuna dönüştürür.</p>
-<button class="btn btn-gold" id="btn-fetch" onclick="fetchOrders()">Siparişleri Çek</button>
-<a href="https://ykss.yurticikargo.com/cargo?cargo=file+shipment" target="_blank" class="btn btn-outline" style="margin-left:8px;font-size:18px">İndirilen Dosyayı Yurtiçi'ye Yükle →</a>
-<a href="https://ykss.yurticikargo.com/cargo?cargo=delivery+list&delivery+list=active+deliveries" target="_blank" class="btn btn-outline" style="margin-left:8px;font-size:18px;border-color:var(--gold);color:var(--gold)">Teslim Listesini Onayla →</a>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px">
+<button class="btn btn-gold" id="btn-fetch" onclick="fetchOrders()"><span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.3);font-size:14px;font-weight:800;margin-right:6px">1</span> Siparişleri Çek</button>
+<a href="https://ykss.yurticikargo.com/cargo?cargo=file+shipment" target="_blank" class="btn btn-gold"><span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.3);font-size:14px;font-weight:800;margin-right:6px">2</span> Dosyayı Yurtiçi'ye Yükle</a>
+<a href="https://ykss.yurticikargo.com/cargo?cargo=delivery+list&delivery+list=active+deliveries" target="_blank" class="btn btn-gold"><span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.3);font-size:14px;font-weight:800;margin-right:6px">3</span> Teslim Listesini Onayla</a>
+</div>
 <div class="progress" id="prog-export"><div class="progress-bar" id="pbar-export"></div></div>
 <div id="export-preview"></div>
 <div class="log" id="log-export" style="display:none"></div>
@@ -135,10 +141,13 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <div class="panel" id="panel-import">
 <h3><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Takip Kodlarını Yükle</h3>
 <p style="font-size:18px;color:var(--tx2);margin-bottom:12px">Önce aşağıdaki linkten bugünkü giden kargoları Excel olarak indirin, sonra buraya sürükleyin.</p>
-<a href="https://ykss.yurticikargo.com/onlineReports/outgoingCargo" target="_blank" class="btn btn-gold" style="margin-bottom:14px;font-size:18px" id="btn-yk-report">Yurtiçi'den Giden Kargoları İndir →</a>
+<div style="text-align:center;margin-bottom:14px">
+<a href="https://ykss.yurticikargo.com/onlineReports/outgoingCargo" target="_blank" class="btn btn-gold" style="text-decoration:none" id="btn-yk-report"><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.3);font-size:13px;font-weight:800;margin-right:4px">1</span> Yurtiçi'den Giden Kargoları İndir</a>
+</div>
 <p style="font-size:16px;color:var(--tx3);margin-bottom:12px" id="yk-date-hint"></p>
 <script>!function(){var d=new Date(),dd=('0'+d.getDate()).slice(-2),mm=('0'+(d.getMonth()+1)).slice(-2),yy=d.getFullYear(),t=dd+'.'+mm+'.'+yy;document.getElementById('yk-date-hint').innerHTML='Başlangıç ve Bitiş tarihini <b style="color:var(--tx)">'+t+'</b> yapıp Sorgula\'ya basın, sonra <b style="color:var(--tx)">Excel\'e Aktar</b>\'a tıklayın.'}()</script>
-<div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+<div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" style="min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px">
+<svg viewBox="0 0 24 24" fill="none" stroke="var(--tx3)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px;opacity:.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
 <p>İndirdiğiniz Excel dosyasını buraya sürükleyin veya tıklayın</p>
 <input type="file" id="file-input" accept=".xlsx,.xls">
 </div>
@@ -163,17 +172,24 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 
 </div><!-- /main-screen -->
 
-<!-- TESLIM LISTESI REMINDER -->
-<div id="teslim-overlay" class="teslim-overlay" style="display:none" onclick="if(event.target===this)return">
+<!-- TESLIM LISTESI POPUP -->
+<div id="teslim-overlay" class="teslim-overlay" style="display:none">
 <div class="teslim-box">
-<div style="font-size:48px;margin-bottom:12px">⚠️</div>
+<div style="margin-bottom:14px"><span class="live-badge">CANLI</span></div>
+<div style="font-size:40px;margin-bottom:10px">⚠️</div>
 <div style="font-size:22px;font-weight:800;color:var(--red);margin-bottom:8px">TESLİM LİSTESİ ONAYLANDI MI?</div>
 <div style="font-size:17px;color:var(--tx2);margin-bottom:6px;line-height:1.6">Onaylanmazsa bugünkü kargolar <b style="color:var(--red)">çıkmaz!</b></div>
 <div style="font-size:15px;color:var(--tx3);margin-bottom:20px">Yurtiçi Kargo panelinden teslim listesini onaylayın.</div>
-<a href="https://ykss.yurticikargo.com/cargo?cargo=delivery+list&delivery+list=active+deliveries" target="_blank" class="btn btn-gold" style="width:100%;justify-content:center;font-size:18px;padding:16px;margin-bottom:10px" onclick="teslimDismiss()">Teslim Listesini Onayla →</a>
-<button class="btn btn-outline" onclick="teslimDismiss()" style="width:100%;justify-content:center;font-size:15px;padding:12px;color:var(--tx3)">Onayladım, kapat</button>
+<a href="https://ykss.yurticikargo.com/cargo?cargo=delivery+list&delivery+list=active+deliveries" target="_blank" class="btn btn-gold" style="width:100%;justify-content:center;font-size:18px;padding:16px;margin-bottom:10px" onclick="teslimDismiss()">Teslim Listesini Onayla</a>
+<button class="btn btn-outline" onclick="teslimDismiss()" style="width:100%;justify-content:center;font-size:16px;font-weight:700;padding:14px;color:var(--tx);border:2px solid var(--border)">Onayladım, kapat</button>
 </div>
 </div>
+
+<!-- TESLIM MINI BADGE (persistent after dismiss) -->
+<a id="teslim-mini" class="teslim-mini" href="https://ykss.yurticikargo.com/cargo?cargo=delivery+list&delivery+list=active+deliveries" target="_blank" style="display:none">
+<span class="live-badge">CANLI</span>
+Teslim Listesi
+</a>
 
 <div class="footer">Manhattan Likit · Kargo Yönetim Paneli</div>
 
@@ -521,35 +537,36 @@ var teslimDismissed=false;
 function teslimDismiss(){
   teslimDismissed=true;
   document.getElementById('teslim-overlay').style.display='none';
-  // 10 dk sonra tekrar göster (kapatsa bile)
-  setTimeout(function(){
-    teslimDismissed=false;
-    checkTeslimTime();
-  },600000);
+  document.getElementById('teslim-mini').style.display='flex';
 }
 function checkTeslimTime(){
-  if(teslimDismissed)return;
-  if(!SESSION_PIN)return; // giriş yapılmamışsa gösterme
+  if(!SESSION_PIN)return;
   var now=new Date();
-  var h=now.getHours(),m=now.getMinutes();
-  var mins=h*60+m;
+  var mins=now.getHours()*60+now.getMinutes();
+  var overlay=document.getElementById('teslim-overlay');
+  var mini=document.getElementById('teslim-mini');
   // 17:15 = 1035, 17:40 = 1060
   if(mins>=1035&&mins<=1060){
-    document.getElementById('teslim-overlay').style.display='flex';
-    // Page title blink
+    if(!teslimDismissed){
+      overlay.style.display='flex';
+      mini.style.display='none';
+    }else{
+      overlay.style.display='none';
+      mini.style.display='flex';
+    }
     if(!window._teslimTitleBlink){
       window._teslimTitleBlink=setInterval(function(){
         document.title=document.title==='⚠️ TESLİM LİSTESİ!'?'Manhattan Kargo':'⚠️ TESLİM LİSTESİ!';
       },1000);
     }
   }else{
-    document.getElementById('teslim-overlay').style.display='none';
+    overlay.style.display='none';
+    mini.style.display='none';
+    teslimDismissed=false;
     if(window._teslimTitleBlink){clearInterval(window._teslimTitleBlink);window._teslimTitleBlink=null;document.title='Manhattan Kargo'}
   }
 }
-// Her 30 saniye kontrol et
 setInterval(checkTeslimTime,30000);
-// İlk kontrol
 setTimeout(checkTeslimTime,2000);
 
 // Auto-focus PIN input
