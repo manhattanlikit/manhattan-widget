@@ -276,7 +276,7 @@ tt+='<div class="ml-tier-row '+cls+'"'+clickAttr+'><div class="ml-tr-ico t-'+ti.
 });
 // Tasarruf hesapla
 var savings=Math.round(d.spend*(t.d/100));
-var savingsHtml='<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">'+(savings>0?'Bugüne kadar toplam<br><b>'+f$(savings)+' ₺</b> tasarruf ettiniz':'İlk alışverişinizde<br><b>tasarruf etmeye başlayın</b>')+'</div><div class="ml-savings-orders"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>';
+var savingsHtml='<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">'+(savings>0?'Bugüne kadar toplam<br><b>'+f$(savings)+' ₺</b> tasarruf ettiniz':'Sipariş verin,<br><b>tasarruf etmeye başlayın</b>')+'</div><div class="ml-savings-orders"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>';
 // İade compact (only if exists)
 var compactStats='';
 if(typeof d.returnRate==='number'){compactStats='<div class="ml-stats-compact"><div class="ml-sc-item"><div class="ml-sc-val" style="color:'+(d.returnRate>(t.r||100)?'#e53e3e':'var(--mlts)')+'">%'+d.returnRate.toFixed(1)+'</div><div class="ml-sc-lbl">İade Oranı</div></div></div>';}
@@ -313,7 +313,7 @@ refProgHtml+='<div style="text-align:center;padding:4px 8px;border-radius:6px;fo
 refProgHtml+='</div>';
 refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub">Arkadaşınıza <b>%'+REF_RATES[d.tier]+'</b> hoş geldin indirimi hediye edin.<br>Alışveriş yaptığında <b>size de %'+REF_RATES[d.tier]+' ek indirim kuponu</b> gelsin!<br><span style="font-size:9px;color:var(--mltt)">Mevcut seviye indiriminize ek olarak geçerlidir.</span></div>'+refProgHtml+'<div id="ml-ref-area" style="margin-top:10px"><div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div></div></div>';
 } else {
-refHtml='<div class="ml-ref" style="opacity:.7"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub"><b>Silver</b> seviyesine ulaştığınızda arkadaşlarınızı davet edip <b>ek indirim</b> kazanabilirsiniz!<br><span style="font-size:9px;color:var(--mltt)">Silver: %5 · Gold: %7.5 · Platinum: %10 · Diamond: %15</span></div></div>';
+refHtml='<div class="ml-ref" style="opacity:.85"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub"><b>Silver</b> seviyesine ulaştığınızda arkadaşlarınızı davet edip <b>ek indirim</b> kazanabilirsiniz!</div><div style="display:flex;justify-content:center;gap:8px;margin-top:6px"><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;background:rgba(175,140,62,.08);color:var(--mlg)"><div style="font-weight:600">Silver</div><div>%5</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Gold</div><div>%7.5</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Platinum</div><div>%10</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Diamond</div><div>%15</div></div></div></div>';
 }
 // Flash bonus (Cuma 22:00 - Cumartesi 22:00)
 var flashHtml='';
@@ -425,7 +425,7 @@ var ti=T.findIndex(function(t){return t.n===d.tier});
 var t=T[ti];
 // 3x resolution for ultra-sharp rendering
 var S=3;
-var W=600,H=380;
+var W=600,H=330;
 var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';c.style.aspectRatio=W+'/'+H;
 var ctx=c.getContext('2d');ctx.scale(S,S);
 // Background — deep dark gradient
@@ -464,36 +464,52 @@ ctx.font='800 40px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#ffffff';
 ctx.fillText(d.tier,W/2,90);
 // Discount circle — centered, premium glow
-var circY=165;
+var circY=150;
 ctx.save();
 ctx.shadowColor='rgba(175,140,62,.35)';ctx.shadowBlur=35;
-ctx.beginPath();ctx.arc(W/2,circY,38,0,Math.PI*2);
-var cg=ctx.createRadialGradient(W/2-10,circY-10,4,W/2,circY,38);
+ctx.beginPath();ctx.arc(W/2,circY,36,0,Math.PI*2);
+var cg=ctx.createRadialGradient(W/2-10,circY-10,4,W/2,circY,36);
 cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
 ctx.fillStyle=cg;ctx.fill();
 ctx.restore();
 // Outer ring
 ctx.strokeStyle='rgba(240,226,184,.1)';ctx.lineWidth=0.5;
-ctx.beginPath();ctx.arc(W/2,circY,46,0,Math.PI*2);ctx.stroke();
+ctx.beginPath();ctx.arc(W/2,circY,44,0,Math.PI*2);ctx.stroke();
 // Second outer ring
 ctx.strokeStyle='rgba(175,140,62,.05)';ctx.lineWidth=0.5;
-ctx.beginPath();ctx.arc(W/2,circY,54,0,Math.PI*2);ctx.stroke();
+ctx.beginPath();ctx.arc(W/2,circY,52,0,Math.PI*2);ctx.stroke();
 // Discount text
-ctx.font='800 24px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.font='800 22px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#fff';
 ctx.fillText('%'+t.d,W/2,circY+2);
 // Label below circle
 ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle='#636366';
-ctx.fillText('Özel İndirim',W/2,circY+58);
-// Customer name — large, gold gradient, just above bottom line
+ctx.fillText('Özel İndirim',W/2,circY+52);
+// Referral invite area
+var refRate=REF_RATES[d.tier];
+if(refRate){
+ctx.font='500 10px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#9e9ea3';
+ctx.fillText('Arkadaşınızı davet edin',W/2,circY+74);
+ctx.font='600 12px -apple-system,BlinkMacSystemFont,sans-serif';
+var refGl=ctx.createLinearGradient(W/2-60,0,W/2+60,0);
+refGl.addColorStop(0,'#af8c3e');refGl.addColorStop(0.5,'#f0e2b8');refGl.addColorStop(1,'#af8c3e');
+ctx.fillStyle=refGl;
+ctx.fillText('%'+refRate+' ek indirim kazanın',W/2,circY+90);
+} else {
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.fillStyle='#636366';
+ctx.fillText('Sadakat üyelerine özel ayrıcalıklar',W/2,circY+80);
+}
+// Customer name — large, gold gradient
 var displayName=d.fullName||d.name||'';
 if(displayName){
 var nameGl=ctx.createLinearGradient(W/2-100,0,W/2+100,0);
 nameGl.addColorStop(0,'#af8c3e');nameGl.addColorStop(0.5,'#f0e2b8');nameGl.addColorStop(1,'#af8c3e');
-ctx.font='600 18px -apple-system,BlinkMacSystemFont,sans-serif';
+ctx.font='600 16px -apple-system,BlinkMacSystemFont,sans-serif';
 ctx.fillStyle=nameGl;
-ctx.fillText(displayName,W/2,H-62);
+ctx.fillText(displayName,W/2,H-56);
 }
 // Bottom gold accent line
 ctx.fillStyle=gl;ctx.fillRect(80,H-38,W-160,1);
@@ -517,6 +533,58 @@ ov.remove();
 };
 
 // Referral gönder
+window.mlRefShareCard=function(code,disc){
+var S=3,W=600,H=320;
+var c=document.createElement('canvas');c.width=W*S;c.height=H*S;c.style.width='100%';c.style.maxWidth=W+'px';c.style.height='auto';
+var ctx=c.getContext('2d');ctx.scale(S,S);
+var bg=ctx.createLinearGradient(0,0,W,H);bg.addColorStop(0,'#08080a');bg.addColorStop(0.5,'#111115');bg.addColorStop(1,'#08080a');
+ctx.fillStyle=bg;ctx.beginPath();ctx.roundRect(0,0,W,H,16);ctx.fill();
+ctx.strokeStyle='rgba(175,140,62,.18)';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(0.5,0.5,W-1,H-1,16);ctx.stroke();
+var gl=ctx.createLinearGradient(80,0,W-80,0);gl.addColorStop(0,'transparent');gl.addColorStop(0.3,'rgba(175,140,62,.3)');gl.addColorStop(0.5,'rgba(240,226,184,.5)');gl.addColorStop(0.7,'rgba(175,140,62,.3)');gl.addColorStop(1,'transparent');
+ctx.fillStyle=gl;ctx.fillRect(80,0,W-160,1);
+drawCrown(ctx,W/2,26,12,'#af8c3e');
+ctx.textAlign='center';ctx.textBaseline='middle';
+ctx.font='600 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#9e9ea3';
+ctx.fillText('M A N H A T T A N   L I K I T',W/2,42);
+ctx.font='500 13px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#a0a0a5';
+ctx.fillText('Sana özel hoş geldin hediyesi',W/2,72);
+// Discount circle
+ctx.save();ctx.shadowColor='rgba(175,140,62,.35)';ctx.shadowBlur=30;
+ctx.beginPath();ctx.arc(W/2,130,34,0,Math.PI*2);
+var cg=ctx.createRadialGradient(W/2-8,122,4,W/2,130,34);cg.addColorStop(0,'#f0e2b8');cg.addColorStop(0.35,'#d4b05e');cg.addColorStop(1,'#af8c3e');
+ctx.fillStyle=cg;ctx.fill();ctx.restore();
+ctx.font='800 20px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#fff';
+ctx.fillText('%'+disc,W/2,132);
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
+ctx.fillText('İndirim',W/2,168);
+// Coupon code box
+ctx.fillStyle='rgba(175,140,62,.06)';
+ctx.beginPath();ctx.roundRect(W/2-110,190,220,40,8);ctx.fill();
+ctx.strokeStyle='rgba(175,140,62,.15)';ctx.lineWidth=0.5;
+ctx.beginPath();ctx.roundRect(W/2-110,190,220,40,8);ctx.stroke();
+ctx.font='800 18px monospace';
+var codeGl=ctx.createLinearGradient(W/2-80,0,W/2+80,0);codeGl.addColorStop(0,'#af8c3e');codeGl.addColorStop(0.5,'#f0e2b8');codeGl.addColorStop(1,'#af8c3e');
+ctx.fillStyle=codeGl;
+ctx.fillText(code,W/2,212);
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
+ctx.fillText('manhattandan.com adresinde geçerlidir · Tek kullanımlık',W/2,252);
+ctx.fillStyle=gl;ctx.fillRect(80,H-32,W-160,1);
+ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
+ctx.fillText('manhattandan.com',W/2,H-14);
+var ov=document.createElement('div');ov.className='ml-share-preview';
+ov.onclick=function(e){if(e.target===ov)ov.remove();};
+ov.innerHTML='<div class="ml-share-preview-btns"><button class="ml-sp-share" id="ml-rp-go">Paylaş</button><button class="ml-sp-close" id="ml-rp-x">Kapat</button></div>';
+ov.insertBefore(c,ov.firstChild);
+document.body.appendChild(ov);
+document.getElementById('ml-rp-x').onclick=function(){ov.remove();};
+document.getElementById('ml-rp-go').onclick=function(){
+c.toBlob(function(blob){
+if(navigator.share){var f=new File([blob],'manhattan-davet.png',{type:'image/png'});navigator.share({title:'Manhattan Likit İndirim Kodu',files:[f]}).catch(function(){});}
+else{var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='manhattan-davet.png';a.click();}
+ov.remove();
+},'image/png');};
+};
+
 window.mlRefSend=function(){
 var inp=document.getElementById('ml-ref-email');
 var area=document.getElementById('ml-ref-area');
@@ -525,12 +593,25 @@ if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inp.value)){area.innerHTML='<div class="ml
 if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
 var btn=area.querySelector('button');if(btn){btn.disabled=true;btn.textContent='Gönderiliyor...';}
 fetch(WEB_APP+'?action=referral&referrerEmail='+encodeURIComponent(_mlCache.email)+'&friendEmail='+encodeURIComponent(inp.value.trim())).then(function(r){return r.json()}).then(function(d){
-if(d.success){area.innerHTML='<div class="ml-ref-msg ok">✓ '+d.message+'</div>';setTimeout(function(){area.innerHTML='<div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Başka bir arkadaş davet edin"><button onclick="mlRefSend()">Gönder</button></div>';},20000);}
+if(d.success){var couponHtml=d.coupon?'<div style="margin-top:8px;padding:8px 12px;background:rgba(175,140,62,.08);border:1px solid rgba(175,140,62,.15);border-radius:8px;text-align:center"><div style="font-size:9px;color:var(--mlts);margin-bottom:4px">Arkadaşınıza özel indirim kodu</div><div style="font-size:15px;font-weight:800;color:var(--mlg);letter-spacing:1px;font-family:monospace">'+d.coupon+'</div><div style="font-size:9px;color:var(--mlts);margin-top:4px">%'+(d.discount||'')+' indirim · Tek kullanımlık</div></div><div style="text-align:center;margin-top:6px"><button onclick="mlRefShareCard(\''+d.coupon+'\','+(d.discount||0)+')" style="background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:10px;font-weight:700;cursor:pointer;font-family:inherit">Kodu Paylaş</button></div>':'';area.innerHTML='<div class="ml-ref-msg ok"><svg viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;vertical-align:-2px"><path d="M20 6L9 17l-5-5"/></svg> '+d.message+'</div>'+couponHtml;setTimeout(function(){area.innerHTML='<div class="ml-ref-form"><input type="email" id="ml-ref-email" placeholder="Başka bir arkadaş davet edin"><button onclick="mlRefSend()">Gönder</button></div>';},20000);}
 else{area.innerHTML='<div class="ml-ref-msg err">'+(d.error||'Bir hata oluştu')+'</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';}
 }).catch(function(){area.innerHTML='<div class="ml-ref-msg err">Bağlantı hatası, tekrar deneyin</div><div class="ml-ref-form" style="margin-top:4px"><input type="email" id="ml-ref-email" placeholder="Arkadaşınızın e-postası"><button onclick="mlRefSend()">Gönder</button></div>';});
 };
 
 // Doğum günü formu
+var _bdaySvgCake='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;vertical-align:-2px"><path d="M20 21v-8a2 2 0 00-2-2H6a2 2 0 00-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>';
+var _bdaySvgEdit='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:10px;height:10px;vertical-align:-1px"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>';
+var _bdaySvgCheck='<svg viewBox="0 0 24 24" fill="none" stroke="#38a169" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;vertical-align:-2px"><path d="M20 6L9 17l-5-5"/></svg>';
+var _bdaySvgGift='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;vertical-align:-1px"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>';
+
+window.mlBdayEdit=function(){
+var bdayKey='ml_bday_'+((_mlCache&&_mlCache.email)?_mlCache.email:'guest');
+try{localStorage.removeItem(bdayKey);}catch(e){}
+var area=document.getElementById('ml-bday-area');
+if(area)area.innerHTML='';
+mlBday();
+};
+
 window.mlBday=function(){
 var area=document.getElementById('ml-bday-area');
 if(!area)return;
@@ -540,10 +621,10 @@ var saved=null;try{saved=localStorage.getItem(bdayKey);}catch(e){}
 if(saved){
 var sd=new Date(saved);var diff=Date.now()-sd.getTime();
 var canEdit=diff<30*60*1000;
-var editInfo=canEdit?'<div style="font-size:8px;color:var(--mlg);margin-top:4px;cursor:pointer" onclick="try{localStorage.removeItem(\'ml_bday_\'+((_mlCache&&_mlCache.email)?_mlCache.email:\'guest\'))}catch(e){};this.closest(\'.ml-bday-form\').parentElement.innerHTML=\'\';mlBday()">✏️ Değiştir ('+Math.ceil((30*60*1000-diff)/60000)+' dk kaldı)</div>':'<div style="font-size:8px;color:var(--mltt);margin-top:4px">Yılda 1 kez değiştirilebilir</div>';
-area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp)">🎂 Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde <b>%5 indirim kodu</b> e-posta ile gelecek</div>'+editInfo+'</div>';return;
+var editHtml=canEdit?'<div style="font-size:8px;color:var(--mlg);margin-top:4px;cursor:pointer" onclick="mlBdayEdit()">'+_bdaySvgEdit+' Değiştir ('+Math.ceil((30*60*1000-diff)/60000)+' dk kaldı)</div>':'<div style="font-size:8px;color:var(--mltt);margin-top:4px">Yılda 1 kez değiştirilebilir</div>';
+area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp)">'+_bdaySvgCake+' Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde <b>sürpriz indirim kodu</b> e-posta ile gelecek</div>'+editHtml+'</div>';return;
 }
-area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:3px">Doğum gününüzü kaydedin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:6px">Özel gününüzde e-posta ile <b>%5 indirim kodu</b> göndereceğiz</div><input type="date" id="ml-bday-input" onchange="document.getElementById(\'ml-bday-btn\').style.display=\'inline-block\'"><button id="ml-bday-btn" style="display:none" onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';
+area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:3px">'+_bdaySvgCake+' Doğum gününüzü kaydedin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:6px">Özel gününüzde e-posta ile <b>sürpriz indirim kodu</b> göndereceğiz</div><input type="date" id="ml-bday-input" onchange="document.getElementById(\'ml-bday-btn\').style.display=\'inline-block\'"><button id="ml-bday-btn" style="display:none" onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';
 };
 
 window.mlBdaySave=function(){
@@ -561,7 +642,8 @@ if(daysUntil<0)daysUntil+=365;
 fetch(WEB_APP+'?action=birthday&email='+encodeURIComponent(email)+'&birthday='+encodeURIComponent(inp.value)).then(function(r){return r.json()}).then(function(d){
 if(d.success){
 var area=document.getElementById('ml-bday-area');
-if(area)area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:#38a169">✓ Kaydedildi!</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Doğum gününüzde <b>%5 indirim kodu</b> e-posta ile gelecek</div><div style="font-size:8px;color:var(--mltt);margin-top:3px">'+(daysUntil===0?'Bugün doğum gününüz! 🎉':daysUntil+' gün sonra hediyeniz gelecek')+'</div><div style="font-size:8px;color:var(--mlg);margin-top:3px;cursor:pointer" onclick="try{localStorage.removeItem(\'ml_bday_\'+((_mlCache&&_mlCache.email)?_mlCache.email:\'guest\'))}catch(e){};this.closest(\'.ml-bday-form\').parentElement.innerHTML=\'\';mlBday()">✏️ Değiştir (30 dk içinde)</div></div>';
+var daysTxt=daysUntil===0?_bdaySvgGift+' Bugün doğum gününüz!':_bdaySvgGift+' '+daysUntil+' gün sonra hediyeniz gelecek';
+if(area)area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:#38a169">'+_bdaySvgCheck+' Kaydedildi!</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Doğum gününüzde <b>sürpriz indirim kodu</b> e-posta ile gelecek</div><div style="font-size:8px;color:var(--mltt);margin-top:3px">'+daysTxt+'</div><div style="font-size:8px;color:var(--mlg);margin-top:3px;cursor:pointer" onclick="mlBdayEdit()">'+_bdaySvgEdit+' Değiştir (30 dk içinde)</div></div>';
 try{localStorage.setItem('ml_bday_'+((_mlCache&&_mlCache.email)?_mlCache.email:'guest'),new Date().toISOString());}catch(e){}
 }else{if(msg){msg.textContent=d.error||'Bir hata oluştu';msg.style.color='#e53e3e';}if(btn){btn.disabled=false;btn.textContent='Kaydet';}}
 }).catch(function(){if(msg)msg.textContent='Bağlantı hatası';if(btn){btn.disabled=false;btn.textContent='Kaydet';}});
