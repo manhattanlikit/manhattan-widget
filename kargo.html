@@ -8,15 +8,16 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 :root{--bg:#f5f5f7;--bg2:#ffffff;--bg3:#f0f0f2;--tx:#1d1d1f;--tx2:#6e6e73;--tx3:#86868b;--gold:#af8c3e;--goldL:#8a6d2b;--goldLL:#f0e2b8;--green:#28a745;--red:#dc3545;--blue:#007aff;--border:rgba(0,0,0,.08)}
+[data-theme="dark"]{--bg:#1a1a1e;--bg2:#2a2a2e;--bg3:#333338;--tx:#e5e5e7;--tx2:#a1a1a6;--tx3:#6e6e73;--gold:#c9a24e;--goldL:#d4b060;--goldLL:#3d3422;--green:#34c759;--red:#ff453a;--blue:#0a84ff;--border:rgba(255,255,255,.1)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
 .header{padding:24px 32px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px}
 .header svg{width:28px;height:28px;color:var(--gold)}
 .header h1{font-size:24px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--goldL)}
 .header span{font-size:16px;color:var(--tx3);font-weight:400;letter-spacing:0}
-.container{max-width:1000px;margin:0 auto;padding:32px 24px}
+.container{max-width:1200px;margin:0 auto;padding:32px 24px}
 .cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
-@media(max-width:640px){.cards{grid-template-columns:1fr}.btn{font-size:16px;padding:12px 16px;width:100%;justify-content:center}.panel{padding:16px}.teslim-box{padding:24px 20px}}
+@media(max-width:640px){.cards{grid-template-columns:1fr}.btn{font-size:16px;padding:12px 16px;width:100%;justify-content:center}.panel{padding:16px}.teslim-box{padding:24px 20px}#rules-grid{grid-template-columns:1fr !important}}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .card:hover{border-color:rgba(175,140,62,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.08)}
 .card.active{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
@@ -85,6 +86,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <div style="flex:1"><h1>Manhattan Likit</h1><span>Kargo Yönetim Paneli</span></div>
 <div id="header-right" style="display:none;align-items:center;gap:10px">
 <span id="pin-user"></span>
+<button onclick="toggleDark()" id="btn-dark" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:14px;color:var(--tx2);font-family:inherit" title="Karanlık/Aydınlık">☀</button>
 <button onclick="togglePinModal()" style="background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:16px;color:var(--tx2);font-family:inherit" title="PIN Değiştir">⚙ PIN</button>
 </div>
 </div>
@@ -168,101 +170,93 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <h3><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Ödeme Bekleyen Siparişler</h3>
 <p style="font-size:18px;color:var(--tx2);margin-bottom:16px">Ödemesi henüz gelmemiş siparişleri listeler. Hatırlatma e-postası göndermeden önce içeriğini önizleyebilirsiniz.</p>
 
-<!-- Auto Reminder Toggle -->
 <!-- Otomatik Hatırlatma Sistemi -->
 <div id="auto-reminder-box" style="margin-bottom:16px">
 
-<!-- Ana Toggle -->
-<div style="border:2px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px" id="auto-main-box">
-<div>
-<p style="margin:0 0 4px;font-size:20px;font-weight:800;color:var(--tx)">Otomatik Hatırlatma</p>
-<p style="margin:0;font-size:15px;color:var(--tx3)" id="auto-desc">Program kapalı olsa bile çalışır</p>
-</div>
-<button id="btn-auto-main" class="btn" onclick="toggleAutoMain()" style="font-size:18px;padding:12px 32px;min-width:140px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
-</div>
+<p style="margin:0 0 12px;font-size:20px;font-weight:800;color:var(--tx)">Otomatik Hatırlatma</p>
+<div id="auto-status" style="display:none;margin:-6px 0 12px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);font-size:14px;color:var(--tx2)"></div>
 
-<!-- Kural 1: Hafta İçi Mesai -->
-<div class="rule-card" id="rule1-card" style="border:2px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:10px;background:var(--bg)">
-<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+<!-- 3 Kural Yan Yana -->
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px" id="rules-grid">
+
+<!-- K1 -->
+<div class="rule-card" id="rule1-card" style="border:2px solid var(--border);border-radius:12px;padding:14px;background:var(--bg)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
 <div>
-<p style="margin:0;font-size:18px;font-weight:700;color:var(--tx)">Kural 1 — Hafta İçi Mesai</p>
-<p style="margin:4px 0 0;font-size:14px;color:var(--tx3)">Pazartesi → Cuma</p>
+<p style="margin:0;font-size:16px;font-weight:700;color:var(--tx)">Mesai</p>
+<p style="margin:2px 0 0;font-size:12px;color:var(--tx3)">Pzt→Cum</p>
 </div>
-<button class="btn rule-toggle" id="btn-r1" onclick="toggleRule(1)" style="font-size:16px;padding:10px 24px;min-width:120px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
+<button class="btn rule-toggle" id="btn-r1" onclick="toggleRule(1)" style="font-size:14px;padding:8px 18px;min-width:90px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
-<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Saat:</span>
-<select id="r1-start" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
-<span style="font-size:18px;font-weight:700;color:var(--tx2)">—</span>
-<select id="r1-end" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+<select id="r1-start" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<span style="font-size:14px;color:var(--tx3)">—</span>
+<select id="r1-end" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 </div>
-<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Bekle:</span>
-<button class="btn btn-outline" onclick="adjThr(1,-5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">−</button>
-<span id="r1-thr" style="font-size:28px;font-weight:800;color:var(--gold);min-width:50px;text-align:center">45</span>
-<button class="btn btn-outline" onclick="adjThr(1,5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">+</button>
-<span style="font-size:16px;color:var(--tx2)">dakika</span>
+<div style="display:flex;align-items:center;justify-content:center;gap:6px">
+<button class="btn btn-outline" onclick="adjThr(1,-5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">−</button>
+<span id="r1-thr" style="font-size:26px;font-weight:800;color:var(--gold);min-width:40px;text-align:center">45</span>
+<button class="btn btn-outline" onclick="adjThr(1,5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">+</button>
+<span style="font-size:13px;color:var(--tx3)">dk</span>
 </div>
 </div>
 
-<!-- Kural 2: Hafta İçi Akşam -->
-<div class="rule-card" id="rule2-card" style="border:2px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:10px;background:var(--bg)">
-<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+<!-- K2 -->
+<div class="rule-card" id="rule2-card" style="border:2px solid var(--border);border-radius:12px;padding:14px;background:var(--bg)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
 <div>
-<p style="margin:0;font-size:18px;font-weight:700;color:var(--tx)">Kural 2 — Hafta İçi Akşam</p>
-<p style="margin:4px 0 0;font-size:14px;color:var(--tx3)">Pazartesi → Cuma</p>
+<p style="margin:0;font-size:16px;font-weight:700;color:var(--tx)">Akşam</p>
+<p style="margin:2px 0 0;font-size:12px;color:var(--tx3)">Pzt→Cum</p>
 </div>
-<button class="btn rule-toggle" id="btn-r2" onclick="toggleRule(2)" style="font-size:16px;padding:10px 24px;min-width:120px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
+<button class="btn rule-toggle" id="btn-r2" onclick="toggleRule(2)" style="font-size:14px;padding:8px 18px;min-width:90px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
-<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Saat:</span>
-<select id="r2-start" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
-<span style="font-size:18px;font-weight:700;color:var(--tx2)">—</span>
-<select id="r2-end" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+<select id="r2-start" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<span style="font-size:14px;color:var(--tx3)">—</span>
+<select id="r2-end" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 </div>
-<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Bekle:</span>
-<button class="btn btn-outline" onclick="adjThr(2,-5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">−</button>
-<span id="r2-thr" style="font-size:28px;font-weight:800;color:var(--gold);min-width:50px;text-align:center">20</span>
-<button class="btn btn-outline" onclick="adjThr(2,5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">+</button>
-<span style="font-size:16px;color:var(--tx2)">dakika</span>
+<div style="display:flex;align-items:center;justify-content:center;gap:6px">
+<button class="btn btn-outline" onclick="adjThr(2,-5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">−</button>
+<span id="r2-thr" style="font-size:26px;font-weight:800;color:var(--gold);min-width:40px;text-align:center">20</span>
+<button class="btn btn-outline" onclick="adjThr(2,5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">+</button>
+<span style="font-size:13px;color:var(--tx3)">dk</span>
 </div>
 </div>
 
-<!-- Kural 3: Hafta Sonu -->
-<div class="rule-card" id="rule3-card" style="border:2px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:14px;background:var(--bg)">
-<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+<!-- K3 -->
+<div class="rule-card" id="rule3-card" style="border:2px solid var(--border);border-radius:12px;padding:14px;background:var(--bg)">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
 <div>
-<p style="margin:0;font-size:18px;font-weight:700;color:var(--tx)">Kural 3 — Hafta Sonu</p>
-<p style="margin:4px 0 0;font-size:14px;color:var(--tx3)">Cumartesi + Pazar</p>
+<p style="margin:0;font-size:16px;font-weight:700;color:var(--tx)">Cumartesi</p>
+<p style="margin:2px 0 0;font-size:12px;color:var(--tx3)">Cmt</p>
 </div>
-<button class="btn rule-toggle" id="btn-r3" onclick="toggleRule(3)" style="font-size:16px;padding:10px 24px;min-width:120px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
+<button class="btn rule-toggle" id="btn-r3" onclick="toggleRule(3)" style="font-size:14px;padding:8px 18px;min-width:90px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
-<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Saat:</span>
-<select id="r3-start" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
-<span style="font-size:18px;font-weight:700;color:var(--tx2)">—</span>
-<select id="r3-end" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
+<div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+<select id="r3-start" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<span style="font-size:14px;color:var(--tx3)">—</span>
+<select id="r3-end" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 </div>
-<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Bekle:</span>
-<button class="btn btn-outline" onclick="adjThr(3,-5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">−</button>
-<span id="r3-thr" style="font-size:28px;font-weight:800;color:var(--gold);min-width:50px;text-align:center">30</span>
-<button class="btn btn-outline" onclick="adjThr(3,5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">+</button>
-<span style="font-size:16px;color:var(--tx2)">dakika</span>
+<div style="display:flex;align-items:center;justify-content:center;gap:6px">
+<button class="btn btn-outline" onclick="adjThr(3,-5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">−</button>
+<span id="r3-thr" style="font-size:26px;font-weight:800;color:var(--gold);min-width:40px;text-align:center">30</span>
+<button class="btn btn-outline" onclick="adjThr(3,5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">+</button>
+<span style="font-size:13px;color:var(--tx3)">dk</span>
 </div>
 </div>
 
-<!-- Kaydet + Test -->
-<div style="display:flex;gap:10px;flex-wrap:wrap">
-<button class="btn btn-gold" onclick="saveAllRules()" id="btn-save-rules" style="font-size:18px;padding:14px 32px;flex:1;border-radius:10px">Kaydet</button>
-<button class="btn btn-outline" onclick="testAutoReminder()" id="btn-test-auto" style="font-size:18px;padding:14px 28px;flex:1;border-radius:10px">Test Et</button>
+</div>
+
+<!-- Kaydet + Test + Ödeme Çek -->
+<div style="display:flex;gap:10px;margin-bottom:16px">
+<button class="btn btn-gold" onclick="saveAllRules()" id="btn-save-rules" style="font-size:16px;padding:12px 28px;flex:1;border-radius:10px">Kaydet</button>
+<button class="btn btn-gold" onclick="testAutoReminder()" id="btn-test-auto" style="font-size:16px;padding:12px 28px;flex:1;border-radius:10px">Test Et</button>
+<button id="btn-unpaid" class="btn btn-gold" onclick="fetchUnpaid()" style="font-size:16px;padding:12px 28px;flex:1;border-radius:10px">Ödeme Bekleyenleri Çek</button>
 </div>
 <div id="test-result" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg2)"></div>
 
 </div>
 
-<button id="btn-unpaid" class="btn btn-gold" onclick="fetchUnpaid()" style="font-size:18px;padding:14px 28px;margin-bottom:12px">Ödeme Bekleyenleri Çek</button>
 <div class="progress" id="prog-payment"><div class="progress-bar" id="pbar-payment"></div></div>
 <div id="payment-preview"></div>
 <div class="log" id="log-payment" style="display:none"></div>
@@ -945,11 +939,12 @@ function teslimDismiss(){
 function checkTeslimTime(){
   if(!SESSION_PIN)return;
   var now=new Date();
+  var day=now.getDay();
   var mins=now.getHours()*60+now.getMinutes();
   var overlay=document.getElementById('teslim-overlay');
   var mini=document.getElementById('teslim-mini');
-  // 17:15 = 1035, 17:40 = 1060
-  if(mins>=1035&&mins<=1060){
+  // Sadece hafta içi (Pzt-Cum) + 17:15-17:40
+  if(day>=1&&day<=5&&mins>=1035&&mins<=1060){
     if(!teslimDismissed){
       overlay.style.display='flex';
       mini.style.display='none';
@@ -971,8 +966,7 @@ function checkTeslimTime(){
 }
 setInterval(checkTeslimTime,30000);
 // === OTOMATİK HATIRLATMA (3 KURAL) ===
-// K1: Hafta İçi Mesai (Pzt-Cum), K2: Hafta İçi Akşam (Pzt-Cum), K3: Hafta Sonu (Cmt-Paz)
-var RULE_DAYS={r1:[1,2,3,4,5],r2:[1,2,3,4,5],r3:[0,6]};
+var RULE_DAYS={r1:[1,2,3,4,5],r2:[1,2,3,4,5],r3:[6]};
 var RULE_STATES={r1:false,r2:false,r3:false};
 
 function initTimeSelects(){
@@ -1003,6 +997,7 @@ function adjThr(n,delta){
 function toggleRule(n){
   RULE_STATES['r'+n]=!RULE_STATES['r'+n];
   updateRuleBtn(n);
+  saveAllRules();
 }
 
 function updateRuleBtn(n){
@@ -1014,18 +1009,6 @@ function updateRuleBtn(n){
   }else{
     btn.textContent='KAPALI';btn.style.background='var(--bg2)';btn.style.color='var(--tx3)';btn.style.borderColor='var(--border)';
     card.style.borderColor='var(--border)';
-  }
-}
-
-function updateMainBtn(enabled){
-  var btn=document.getElementById('btn-auto-main');
-  var box=document.getElementById('auto-main-box');
-  if(enabled){
-    btn.textContent='AKTİF';btn.style.background='var(--green)';btn.style.color='#fff';btn.style.borderColor='var(--green)';
-    box.style.borderColor='var(--green)';
-  }else{
-    btn.textContent='KAPALI';btn.style.background='var(--bg2)';btn.style.color='var(--tx3)';btn.style.borderColor='var(--border)';
-    box.style.borderColor='var(--border)';
   }
 }
 
@@ -1048,59 +1031,47 @@ function applyRulesToUI(rules){
     if(r.threshold)document.getElementById(key+'-thr').textContent=r.threshold;
     updateRuleBtn(n);
   });
-  updateAutoDesc(rules);
 }
-
-function updateAutoDesc(rules){
-  var parts=[];
-  ['r1','r2','r3'].forEach(function(key,i){
-    var r=rules[key];if(!r||!r.enabled)return;
-    var label=['Mesai','Akşam','H.Sonu'][i];
-    parts.push(label+' '+r.start+'-'+r.end+' ('+r.threshold+'dk)');
-  });
-  document.getElementById('auto-desc').textContent=parts.length>0?parts.join(' · '):'Tüm kurallar kapalı';
-}
-
-var AUTO_MAIN_ENABLED=false;
 
 async function checkAutoStatus(){
   try{
     var res=await gasPost({action:'kargoGetAutoReminderStatus',pin:SESSION_PIN});
     if(res.ok){
-      AUTO_MAIN_ENABLED=res.enabled;
-      updateMainBtn(res.enabled);
       if(res.rules)applyRulesToUI(res.rules);
+      var box=document.getElementById('auto-status');
+      var parts=[];
+      if(res.enabled){
+        parts.push('<span style="color:var(--green);font-weight:700">Sistem AKTİF</span>');
+      }else{
+        parts.push('<span style="color:var(--tx3);font-weight:700">Sistem KAPALI</span>');
+      }
+      if(res.lastSendDate){
+        parts.push('Son gönderim: <strong>'+res.lastSendDate+'</strong>');
+      }
+      if(res.totalSent>0){
+        parts.push('Toplam: <strong>'+res.totalSent+'</strong> mail');
+      }
+      if(res.todaySent>0){
+        parts.push('Bugün: <strong>'+res.todaySent+'</strong>');
+      }
+      box.innerHTML=parts.join(' · ');
+      box.style.display='block';
+      if(res.enabled)box.style.borderColor='var(--green)';
     }
   }catch(e){}
-}
-
-async function toggleAutoMain(){
-  AUTO_MAIN_ENABLED=!AUTO_MAIN_ENABLED;
-  updateMainBtn(AUTO_MAIN_ENABLED);
-  var btn=document.getElementById('btn-auto-main');
-  btn.textContent='Kaydediliyor...';
-  var rules=readRulesFromUI();
-  var res=await gasPost({action:'kargoToggleAutoReminder',pin:SESSION_PIN,enabled:AUTO_MAIN_ENABLED,rules:rules});
-  if(res.ok){
-    updateMainBtn(res.enabled);
-    AUTO_MAIN_ENABLED=res.enabled;
-    updateAutoDesc(rules);
-    log('log-payment',res.enabled?'Otomatik hatırlatma AKTİF':'Otomatik hatırlatma KAPALI',res.enabled?'ok':'skip');
-  }else{
-    AUTO_MAIN_ENABLED=!AUTO_MAIN_ENABLED;
-    updateMainBtn(AUTO_MAIN_ENABLED);
-  }
 }
 
 async function saveAllRules(){
   var btn=document.getElementById('btn-save-rules');
   btn.textContent='Kaydediliyor...';btn.disabled=true;
   var rules=readRulesFromUI();
-  var res=await gasPost({action:'kargoSaveRules',pin:SESSION_PIN,rules:rules});
+  var anyEnabled=RULE_STATES.r1||RULE_STATES.r2||RULE_STATES.r3;
+  var res=await gasPost({action:'kargoSaveAndToggle',pin:SESSION_PIN,rules:rules,enabled:anyEnabled});
   if(res.ok){
     btn.textContent='Kaydedildi';btn.style.background='var(--green)';btn.style.borderColor='var(--green)';btn.style.color='#fff';
-    updateAutoDesc(rules);
-    log('log-payment','Kurallar kaydedildi.','ok');
+    var msg=anyEnabled?'Kurallar kaydedildi, otomatik gönderim AKTİF':'Tüm kurallar kapalı, otomatik gönderim DURDURULDU';
+    log('log-payment',msg,anyEnabled?'ok':'skip');
+    checkAutoStatus();
   }else{
     btn.textContent='Hata!';btn.style.background='var(--red)';btn.style.borderColor='var(--red)';btn.style.color='#fff';
   }
@@ -1117,7 +1088,7 @@ async function testAutoReminder(){
   if(res.ok){
     var html='<p style="margin:0 0 12px;font-size:18px;font-weight:800;color:var(--tx)">Test Sonucu</p>';
     html+='<p style="margin:0 0 8px;font-size:16px;color:var(--tx2)">Sunucu saati: <strong>'+res.serverTime+'</strong></p>';
-    var rNames=['Mesai','Akşam','H.Sonu'];
+    var rNames=['Mesai','Akşam','Cumartesi'];
     var rKeys=['r1','r2','r3'];
     var rMatches=[res.rule1Match,res.rule2Match,res.rule3Match];
     for(var i=0;i<3;i++){
@@ -1129,11 +1100,9 @@ async function testAutoReminder(){
       html+='<strong style="color:'+(match?'var(--green)':'var(--red)')+'">'+(match?'Pencerede':'Pencere dışı')+'</strong> ('+r.start+'-'+r.end+', '+r.threshold+'dk)</p>';
     }
     html+='<p style="margin:12px 0 8px;font-size:16px;color:var(--tx2)">Ödeme bekleyen: <strong>'+res.totalUnpaid+'</strong></p>';
-
     if(!res.rule1Match&&!res.rule2Match&&!res.rule3Match){
-      html+='<p style="margin:0 0 10px;padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:15px;color:#b45309">Şu an tüm kurallar pencere dışı. Pencere açıldığında aşağıdakilere mail gönderilecek.</p>';
+      html+='<p style="margin:0 0 10px;padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:15px;color:#b45309">Şu an tüm kurallar pencere dışı.</p>';
     }
-
     if(res.wouldSend&&res.wouldSend.length>0){
       html+='<p style="margin:0 0 6px;font-size:16px;font-weight:700;color:var(--green)">Gönderilecek ('+res.wouldSend.length+'):</p>';
       res.wouldSend.forEach(function(o){
@@ -1155,6 +1124,25 @@ async function testAutoReminder(){
     result.innerHTML='<p style="color:var(--red);font-size:16px">Hata: '+(res.error||'Bilinmeyen')+'</p>';
   }
   btn.disabled=false;btn.textContent='Test Et';
+}
+
+
+// === DARK MODE ===
+function toggleDark(){
+  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.removeItem('kargo-dark');
+    document.getElementById('btn-dark').textContent='☀';
+  }else{
+    document.documentElement.setAttribute('data-theme','dark');
+    localStorage.setItem('kargo-dark','1');
+    document.getElementById('btn-dark').textContent='☾';
+  }
+}
+if(localStorage.getItem('kargo-dark')==='1'){
+  document.documentElement.setAttribute('data-theme','dark');
+  document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('btn-dark');if(b)b.textContent='☾';});
 }
 
 setTimeout(checkTeslimTime,2000);
