@@ -173,10 +173,10 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 
 <!-- Auto Reminder Toggle -->
 <div style="border:2px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;background:var(--bg)" id="auto-reminder-box">
-<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:14px">
 <div>
 <p style="margin:0 0 4px;font-size:18px;font-weight:700;color:var(--tx)">Otomatik Hatırlatma</p>
-<p style="margin:0;font-size:14px;color:var(--tx3)">Hafta içi 10:00 - 17:15 arası, 45+ dk ödeme gelmeyenlere otomatik mail gönderir</p>
+<p style="margin:0;font-size:14px;color:var(--tx3)">Hafta içi 10:00 - 17:15 arası otomatik mail gönderir</p>
 </div>
 <div style="display:flex;align-items:center;gap:10px">
 <span id="auto-status-text" style="font-size:14px;font-weight:600;color:var(--tx3)">Yükleniyor...</span>
@@ -186,6 +186,22 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 </label>
 </div>
 </div>
+
+<!-- Dakika Ayarı -->
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+<label style="font-size:16px;font-weight:600;color:var(--tx)">Bekleme süresi:</label>
+<div style="display:flex;align-items:center;gap:6px">
+<button class="btn btn-outline" onclick="adjustThreshold(-5)" style="padding:6px 12px;font-size:18px;font-weight:700">−</button>
+<span id="threshold-val" style="font-size:24px;font-weight:800;color:var(--gold);min-width:50px;text-align:center">45</span>
+<button class="btn btn-outline" onclick="adjustThreshold(5)" style="padding:6px 12px;font-size:18px;font-weight:700">+</button>
+<span style="font-size:16px;color:var(--tx2)">dakika</span>
+</div>
+<button class="btn btn-outline" onclick="saveThreshold()" style="font-size:14px;padding:6px 16px" id="btn-save-threshold">Kaydet</button>
+</div>
+
+<!-- Test Modu -->
+<button class="btn btn-outline" onclick="testAutoReminder()" id="btn-test-auto" style="font-size:16px;padding:10px 22px;width:100%">Test Et (mail göndermeden kontrol et)</button>
+<div id="test-result" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg2)"></div>
 </div>
 
 <button id="btn-unpaid" class="btn btn-gold" onclick="fetchUnpaid()" style="font-size:18px;padding:14px 28px;margin-bottom:12px">Ödeme Bekleyenleri Çek</button>
@@ -897,6 +913,8 @@ function checkTeslimTime(){
 }
 setInterval(checkTeslimTime,30000);
 // === OTOMATİK HATIRLATMA ===
+var AUTO_THRESHOLD=45;
+
 async function checkAutoStatus(){
   try{
     var res=await gasPost({action:'kargoGetAutoReminderStatus',pin:SESSION_PIN});
@@ -905,6 +923,10 @@ async function checkAutoStatus(){
       var txt=document.getElementById('auto-status-text');
       var box=document.getElementById('auto-reminder-box');
       tog.checked=res.enabled;
+      if(res.threshold) {
+        AUTO_THRESHOLD=res.threshold;
+        document.getElementById('threshold-val').textContent=res.threshold;
+      }
       if(res.enabled){
         txt.textContent='AKTİF';txt.style.color='var(--green)';
         box.style.borderColor='var(--green)';
@@ -921,13 +943,13 @@ async function toggleAutoReminder(enabled){
   var box=document.getElementById('auto-reminder-box');
   txt.textContent='Kaydediliyor...';txt.style.color='var(--gold)';
   
-  var res=await gasPost({action:'kargoToggleAutoReminder',pin:SESSION_PIN,enabled:enabled});
+  var res=await gasPost({action:'kargoToggleAutoReminder',pin:SESSION_PIN,enabled:enabled,threshold:AUTO_THRESHOLD});
   
   if(res.ok){
     if(res.enabled){
       txt.textContent='AKTİF';txt.style.color='var(--green)';
       box.style.borderColor='var(--green)';
-      log('log-payment','Otomatik hatırlatma AKTİF edildi. Hafta içi 10:00-17:15 arası çalışacak.','ok');
+      log('log-payment','Otomatik hatırlatma AKTİF. Bekleme: '+AUTO_THRESHOLD+' dk. Hafta içi 10:00-17:15.','ok');
     }else{
       txt.textContent='KAPALI';txt.style.color='var(--tx3)';
       box.style.borderColor='var(--border)';
@@ -936,8 +958,71 @@ async function toggleAutoReminder(enabled){
   }else{
     txt.textContent='HATA';txt.style.color='var(--red)';
     document.getElementById('auto-toggle').checked=!enabled;
-    log('log-payment','Otomatik hatırlatma ayarı kaydedilemedi.','err');
+    log('log-payment','Ayar kaydedilemedi.','err');
   }
+}
+
+function adjustThreshold(delta){
+  AUTO_THRESHOLD=Math.max(15,Math.min(180,AUTO_THRESHOLD+delta));
+  document.getElementById('threshold-val').textContent=AUTO_THRESHOLD;
+}
+
+async function saveThreshold(){
+  var btn=document.getElementById('btn-save-threshold');
+  btn.textContent='Kaydediliyor...';btn.disabled=true;
+  var res=await gasPost({action:'kargoSaveThreshold',pin:SESSION_PIN,threshold:AUTO_THRESHOLD});
+  if(res.ok){
+    btn.textContent='Kaydedildi';btn.style.color='var(--green)';
+    log('log-payment','Bekleme süresi '+AUTO_THRESHOLD+' dakika olarak kaydedildi.','ok');
+  }else{
+    btn.textContent='Hata';btn.style.color='var(--red)';
+  }
+  setTimeout(function(){btn.textContent='Kaydet';btn.style.color='';btn.disabled=false},2000);
+}
+
+async function testAutoReminder(){
+  var btn=document.getElementById('btn-test-auto');
+  var result=document.getElementById('test-result');
+  btn.disabled=true;btn.textContent='Test ediliyor...';
+  result.style.display='block';result.innerHTML='<p style="color:var(--gold);font-weight:600">Kontrol ediliyor...</p>';
+  
+  var res=await gasPost({action:'kargoTestAutoReminder',pin:SESSION_PIN,threshold:AUTO_THRESHOLD});
+  
+  if(res.ok){
+    var html='<p style="margin:0 0 10px;font-size:16px;font-weight:700;color:var(--tx)">Test Sonucu (mail gönderilmedi)</p>';
+    html+='<p style="margin:0 0 6px;font-size:14px;color:var(--tx2)">Sunucu saati: <strong>'+res.serverTime+'</strong></p>';
+    html+='<p style="margin:0 0 6px;font-size:14px;color:var(--tx2)">Çalışma penceresi: <strong>'+(res.inWindow?'EVET (10:00-17:15 hafta içi)':'HAYIR — şu an gönderim yapılmaz')+'</strong></p>';
+    html+='<p style="margin:0 0 6px;font-size:14px;color:var(--tx2)">Bekleme süresi: <strong>'+AUTO_THRESHOLD+' dk</strong></p>';
+    html+='<p style="margin:0 0 10px;font-size:14px;color:var(--tx2)">Toplam ödeme bekleyen: <strong>'+res.totalUnpaid+'</strong></p>';
+    
+    if(res.wouldSend&&res.wouldSend.length>0){
+      html+='<p style="margin:0 0 6px;font-size:15px;font-weight:700;color:var(--green)">Mail gönderilecek ('+res.wouldSend.length+'):</p>';
+      res.wouldSend.forEach(function(o){
+        html+='<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:14px"><strong style="color:var(--gold)">#'+o.orderNumber+'</strong> <strong>'+o.name+'</strong> · '+o.email+' · <span style="color:var(--red)">'+o.elapsedMin+' dk</span></div>';
+      });
+    }else{
+      html+='<p style="margin:0;font-size:15px;color:var(--tx3)">Şu an gönderilecek mail yok (tüm siparişlere gönderilmiş veya süre dolmamış).</p>';
+    }
+    
+    if(res.alreadySent&&res.alreadySent.length>0){
+      html+='<p style="margin:10px 0 6px;font-size:15px;font-weight:700;color:var(--tx3)">Zaten gönderilmiş ('+res.alreadySent.length+'):</p>';
+      res.alreadySent.forEach(function(o){
+        html+='<div style="padding:4px 0;font-size:13px;color:var(--tx3)"><strong>#'+o.orderNumber+'</strong> '+o.name+' · '+o.email+'</div>';
+      });
+    }
+    
+    if(res.notReady&&res.notReady.length>0){
+      html+='<p style="margin:10px 0 6px;font-size:15px;font-weight:700;color:#f59e0b">Henüz süre dolmamış ('+res.notReady.length+'):</p>';
+      res.notReady.forEach(function(o){
+        html+='<div style="padding:4px 0;font-size:13px;color:var(--tx2)"><strong>#'+o.orderNumber+'</strong> '+o.name+' · '+o.elapsedMin+' dk geçmiş</div>';
+      });
+    }
+    
+    result.innerHTML=html;
+  }else{
+    result.innerHTML='<p style="color:var(--red)">Hata: '+(res.error||'Bilinmeyen')+'</p>';
+  }
+  btn.disabled=false;btn.textContent='Test Et (mail göndermeden kontrol et)';
 }
 
 setTimeout(checkTeslimTime,2000);
