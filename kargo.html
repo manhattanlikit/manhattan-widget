@@ -15,7 +15,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .header h1{font-size:24px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--goldL)}
 .header span{font-size:16px;color:var(--tx3);font-weight:400;letter-spacing:0}
 .container{max-width:1000px;margin:0 auto;padding:32px 24px}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
 @media(max-width:640px){.cards{grid-template-columns:1fr}.btn{font-size:16px;padding:12px 16px;width:100%;justify-content:center}.panel{padding:16px}.teslim-box{padding:24px 20px}}
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:24px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.04)}
 .card:hover{border-color:rgba(175,140,62,.4);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.08)}
@@ -121,6 +121,13 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <div style="margin-top:10px;font-size:14px;color:var(--gold);font-weight:600">▶ Buraya tıklayın</div>
 <div class="card-icon"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
 </div>
+<div class="card" onclick="showPanel('payment')">
+<div class="card-num" style="color:var(--red)">ÖDEME TAKİP</div>
+<div class="card-title">Ödeme Bekleyenler</div>
+<div class="card-desc">Ödemesi gelmemiş siparişleri listele, hatırlatma e-postası gönder</div>
+<div style="margin-top:10px;font-size:14px;color:var(--gold);font-weight:600">▶ Buraya tıklayın</div>
+<div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+</div>
 </div>
 
 <!-- PANEL 1: Export -->
@@ -154,6 +161,16 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <div class="progress" id="prog-import"><div class="progress-bar" id="pbar-import"></div></div>
 <div id="import-preview"></div>
 <div class="log" id="log-import" style="display:none"></div>
+</div>
+
+<!-- PANEL 3: Payment Reminders -->
+<div class="panel" id="panel-payment">
+<h3><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Ödeme Bekleyen Siparişler</h3>
+<p style="font-size:18px;color:var(--tx2);margin-bottom:16px">Ödemesi henüz gelmemiş siparişleri listeler. Hatırlatma e-postası göndermeden önce içeriğini önizleyebilirsiniz.</p>
+<button id="btn-unpaid" class="btn btn-gold" onclick="fetchUnpaid()" style="font-size:18px;padding:14px 28px;margin-bottom:12px">Ödeme Bekleyenleri Çek</button>
+<div class="progress" id="prog-payment"><div class="progress-bar" id="pbar-payment"></div></div>
+<div id="payment-preview"></div>
+<div class="log" id="log-payment" style="display:none"></div>
 </div>
 
 </div><!-- /container -->
@@ -551,6 +568,134 @@ async function processResults(file){
     log('log-import','HATA: '+e.message,'err');
   }
 }
+// === BUTON 3: Ödeme Bekleyenleri Çek ===
+async function fetchUnpaid(){
+  var btn=document.getElementById('btn-unpaid');
+  btn.disabled=true;btn.textContent='Çekiliyor...';
+  document.getElementById('log-payment').innerHTML='';
+  document.getElementById('payment-preview').innerHTML='';
+  
+  log('log-payment','Ödeme bekleyen siparişler çekiliyor...','info');
+  setProgress('pbar-payment',20);
+  
+  var res=await gasPost({action:'kargoGetUnpaid',pin:SESSION_PIN});
+  setProgress('pbar-payment',80);
+  
+  if(!res.ok){
+    log('log-payment','HATA: '+(res.error||'Bilinmeyen hata'),'err');
+    btn.disabled=false;btn.textContent='Ödeme Bekleyenleri Çek';
+    return;
+  }
+  
+  var orders=res.orders||[];
+  if(orders.length===0){
+    log('log-payment','Ödeme bekleyen sipariş bulunamadı.','skip');
+    btn.disabled=false;btn.textContent='Ödeme Bekleyenleri Çek';
+    setProgress('pbar-payment',100);
+    return;
+  }
+  
+  log('log-payment','Toplam '+orders.length+' ödeme bekleyen sipariş bulundu.','ok');
+  
+  // Build preview
+  var html='<div class="stats">';
+  html+='<div class="stat"><div class="stat-val">'+orders.length+'</div><div class="stat-label">Ödeme Bekleyen</div></div>';
+  var over45=orders.filter(function(o){return o.elapsedMin>=45}).length;
+  if(over45)html+='<div class="stat"><div class="stat-val" style="color:var(--red)">'+over45+'</div><div class="stat-label">45+ dk geçmiş</div></div>';
+  var sent=orders.filter(function(o){return o.alreadySent}).length;
+  if(sent)html+='<div class="stat"><div class="stat-val" style="color:var(--tx3)">'+sent+'</div><div class="stat-label">Mail gönderilmiş</div></div>';
+  html+='</div>';
+  
+  // Order cards
+  orders.forEach(function(o,idx){
+    var timeColor=o.elapsedMin>=45?'var(--red)':o.elapsedMin>=20?'#f59e0b':'var(--green)';
+    var timeLabel=o.elapsedMin>=60?Math.floor(o.elapsedMin/60)+' saat '+(o.elapsedMin%60)+' dk':o.elapsedMin+' dk';
+    var sentBadge=o.alreadySent?'<span style="display:inline-block;background:rgba(39,174,96,.1);color:#27ae60;font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px;margin-left:8px">Mail gönderildi</span>':'';
+    
+    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--bg2)">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">';
+    html+='<div><span style="font-size:18px;font-weight:700;color:var(--tx)">#'+o.orderNumber+'</span> <span style="font-size:14px;color:var(--tx2)">'+o.name+'</span>'+sentBadge+'</div>';
+    html+='<div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px;font-weight:700;color:'+timeColor+'">'+timeLabel+' geçti</span>';
+    html+='<span style="font-size:13px;color:var(--tx3)">'+o.total.toLocaleString('tr-TR')+' ₺</span></div>';
+    html+='</div>';
+    
+    // Details row
+    html+='<div style="display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--tx2);margin-bottom:12px">';
+    html+='<span>'+o.email+'</span>';
+    if(o.state||o.city)html+='<span>'+(o.state||'')+' / '+(o.city||'')+'</span>';
+    if(o.shippingMethod)html+='<span>'+o.shippingMethod.replace(/\s*\(.*?\)\s*/g,'')+'</span>';
+    html+='</div>';
+    
+    // Bank info preview
+    if(o.bankInfo){
+      html+='<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:12px">';
+      html+='<p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#166534">Banka Bilgisi (mailde gönderilecek)</p>';
+      html+='<p style="margin:0;font-size:13px;line-height:20px;color:#333">'+o.bankInfo.replace(/\n/g,'<br>')+'</p>';
+      html+='</div>';
+    }else{
+      html+='<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:12px">';
+      html+='<p style="margin:0;font-size:13px;color:#b91c1c">Banka bilgisi bulunamadı</p>';
+      html+='</div>';
+    }
+    
+    // Action buttons
+    html+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
+    if(!o.alreadySent){
+      html+='<button class="btn btn-gold" onclick="sendReminder(\''+o.id+'\',this)" style="font-size:14px;padding:8px 18px">Hatırlatma Gönder</button>';
+    }else{
+      html+='<button class="btn btn-outline" onclick="sendReminder(\''+o.id+'\',this)" style="font-size:14px;padding:8px 18px">Tekrar Gönder</button>';
+    }
+    html+='<button class="btn btn-outline" onclick="toggleMailPreview(\'mail-preview-'+idx+'\')" style="font-size:14px;padding:8px 18px">Mail Önizle</button>';
+    html+='</div>';
+    
+    // Mail preview (hidden)
+    html+='<div id="mail-preview-'+idx+'" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">';
+    html+='<div style="background:#1a1a1a;padding:14px 18px"><p style="margin:0;font-size:16px;font-weight:700;color:#fff;letter-spacing:1px">MANHATTAN LİKİT</p><p style="margin:4px 0 0;font-size:11px;color:#999">Sipariş Hatırlatma</p></div>';
+    html+='<div style="padding:16px 18px;background:#fff">';
+    html+='<p style="margin:0 0 8px;font-size:15px;color:#333"><strong>Merhaba '+o.name+',</strong></p>';
+    html+='<p style="margin:0 0 12px;font-size:14px;color:#555"><strong>#'+o.orderNumber+'</strong> numaralı siparişiniz için ödeme beklenmektedir.</p>';
+    html+='<div style="background:#f9f9f9;border:1px solid #e5e5e5;border-radius:6px;padding:12px;margin-bottom:12px">';
+    html+='<p style="margin:0;font-size:13px;color:#777">Sipariş No: <strong style="color:#333">#'+o.orderNumber+'</strong> — Toplam: <strong style="color:#333">'+o.total.toLocaleString('tr-TR')+' ₺</strong></p>';
+    html+='</div>';
+    if(o.bankInfo){
+      html+='<div style="background:#f0fdf4;border:2px solid #166534;border-radius:6px;padding:12px">';
+      html+='<p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#166534">Havale/EFT/FAST Bilgilerimiz</p>';
+      html+='<p style="margin:0;font-size:13px;line-height:20px;color:#333"><strong>'+o.bankInfo.replace(/\n/g,'<br>')+'</strong></p>';
+      html+='</div>';
+    }
+    html+='<p style="margin:12px 0 0;font-size:11px;color:#999;text-align:center">Bu e-posta otomatik olarak gönderilmiştir. Ödemenizi zaten yaptıysanız lütfen dikkate almayınız.</p>';
+    html+='</div></div>';
+    
+    html+='</div>';
+  });
+  
+  document.getElementById('payment-preview').innerHTML=html;
+  setProgress('pbar-payment',100);
+  btn.disabled=false;btn.textContent='Ödeme Bekleyenleri Çek';
+}
+
+function toggleMailPreview(id){
+  var el=document.getElementById(id);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+async function sendReminder(orderId,btn){
+  if(!confirm('Bu siparişe hatırlatma e-postası gönderilsin mi?'))return;
+  btn.disabled=true;btn.textContent='Gönderiliyor...';
+  log('log-payment','Hatırlatma gönderiliyor: #'+orderId,'info');
+  
+  var res=await gasPost({action:'kargoSendReminder',pin:SESSION_PIN,orderId:String(orderId)});
+  
+  if(res.ok){
+    log('log-payment','✓ '+res.message,'ok');
+    btn.textContent='Gönderildi';
+    btn.style.background='var(--green)';btn.style.borderColor='var(--green)';btn.style.color='#fff';
+  }else{
+    log('log-payment','✗ '+(res.error||'Bilinmeyen hata'),'err');
+    btn.disabled=false;btn.textContent='Tekrar Dene';
+  }
+}
+
 // === TESLİM LİSTESİ HATIRLATICI (17:15 - 17:40) ===
 var teslimDismissed=false;
 function teslimDismiss(){
