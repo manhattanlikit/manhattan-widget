@@ -77,6 +77,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .live-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:13px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
 .live-badge::before{content:'';width:8px;height:8px;background:#fff;border-radius:50%;animation:live-dot 1s ease-in-out infinite}
 .teslim-mini{position:fixed;bottom:24px;right:24px;z-index:9998;background:var(--bg2);border:2px solid var(--gold);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.12);cursor:pointer;animation:pulse-glow 3s ease-in-out infinite;text-decoration:none;color:var(--tx);font-weight:600;font-size:15px}
+#auto-slider:before{position:absolute;content:"";height:26px;width:26px;left:3px;bottom:3px;background-color:#fff;border-radius:50%;transition:.3s}
+#auto-toggle:checked+#auto-slider{background-color:var(--green)}
+#auto-toggle:checked+#auto-slider:before{transform:translateX(28px)}
 </style>
 </head>
 <body>
@@ -167,6 +170,24 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <div class="panel" id="panel-payment">
 <h3><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Ödeme Bekleyen Siparişler</h3>
 <p style="font-size:18px;color:var(--tx2);margin-bottom:16px">Ödemesi henüz gelmemiş siparişleri listeler. Hatırlatma e-postası göndermeden önce içeriğini önizleyebilirsiniz.</p>
+
+<!-- Auto Reminder Toggle -->
+<div style="border:2px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;background:var(--bg)" id="auto-reminder-box">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+<div>
+<p style="margin:0 0 4px;font-size:18px;font-weight:700;color:var(--tx)">Otomatik Hatırlatma</p>
+<p style="margin:0;font-size:14px;color:var(--tx3)">Hafta içi 10:00 - 17:15 arası, 45+ dk ödeme gelmeyenlere otomatik mail gönderir</p>
+</div>
+<div style="display:flex;align-items:center;gap:10px">
+<span id="auto-status-text" style="font-size:14px;font-weight:600;color:var(--tx3)">Yükleniyor...</span>
+<label style="position:relative;display:inline-block;width:60px;height:32px;cursor:pointer">
+<input type="checkbox" id="auto-toggle" onchange="toggleAutoReminder(this.checked)" style="opacity:0;width:0;height:0">
+<span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;border-radius:32px;transition:.3s" id="auto-slider"></span>
+</label>
+</div>
+</div>
+</div>
+
 <button id="btn-unpaid" class="btn btn-gold" onclick="fetchUnpaid()" style="font-size:18px;padding:14px 28px;margin-bottom:12px">Ödeme Bekleyenleri Çek</button>
 <div class="progress" id="prog-payment"><div class="progress-bar" id="pbar-payment"></div></div>
 <div id="payment-preview"></div>
@@ -342,6 +363,7 @@ function showPanel(id){
 
 function autoOpenExport(){
   setTimeout(function(){showPanel('export')},100);
+  setTimeout(checkAutoStatus,500);
 }
 
 // === BUTON 1: Siparişleri Çek → Yurtiçi Excel ===
@@ -874,6 +896,50 @@ function checkTeslimTime(){
   }
 }
 setInterval(checkTeslimTime,30000);
+// === OTOMATİK HATIRLATMA ===
+async function checkAutoStatus(){
+  try{
+    var res=await gasPost({action:'kargoGetAutoReminderStatus',pin:SESSION_PIN});
+    if(res.ok){
+      var tog=document.getElementById('auto-toggle');
+      var txt=document.getElementById('auto-status-text');
+      var box=document.getElementById('auto-reminder-box');
+      tog.checked=res.enabled;
+      if(res.enabled){
+        txt.textContent='AKTİF';txt.style.color='var(--green)';
+        box.style.borderColor='var(--green)';
+      }else{
+        txt.textContent='KAPALI';txt.style.color='var(--tx3)';
+        box.style.borderColor='var(--border)';
+      }
+    }
+  }catch(e){}
+}
+
+async function toggleAutoReminder(enabled){
+  var txt=document.getElementById('auto-status-text');
+  var box=document.getElementById('auto-reminder-box');
+  txt.textContent='Kaydediliyor...';txt.style.color='var(--gold)';
+  
+  var res=await gasPost({action:'kargoToggleAutoReminder',pin:SESSION_PIN,enabled:enabled});
+  
+  if(res.ok){
+    if(res.enabled){
+      txt.textContent='AKTİF';txt.style.color='var(--green)';
+      box.style.borderColor='var(--green)';
+      log('log-payment','Otomatik hatırlatma AKTİF edildi. Hafta içi 10:00-17:15 arası çalışacak.','ok');
+    }else{
+      txt.textContent='KAPALI';txt.style.color='var(--tx3)';
+      box.style.borderColor='var(--border)';
+      log('log-payment','Otomatik hatırlatma KAPATILDI.','skip');
+    }
+  }else{
+    txt.textContent='HATA';txt.style.color='var(--red)';
+    document.getElementById('auto-toggle').checked=!enabled;
+    log('log-payment','Otomatik hatırlatma ayarı kaydedilemedi.','err');
+  }
+}
+
 setTimeout(checkTeslimTime,2000);
 
 // Auto-focus PIN input
