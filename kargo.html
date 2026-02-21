@@ -622,66 +622,47 @@ async function fetchUnpaid(){
   log('log-payment','Toplam '+UNPAID_ORDERS.length+' ödeme bekleyen sipariş bulundu.','ok');
   
   // Stats
+  var notSent=UNPAID_ORDERS.filter(function(o){return !o.alreadySent}).length;
+  var sent=UNPAID_ORDERS.length-notSent;
   var html='<div class="stats">';
   html+='<div class="stat"><div class="stat-val">'+UNPAID_ORDERS.length+'</div><div class="stat-label">Ödeme Bekleyen</div></div>';
-  var over45=UNPAID_ORDERS.filter(function(o){return o.elapsedMin>=45}).length;
-  if(over45)html+='<div class="stat"><div class="stat-val" style="color:var(--red)">'+over45+'</div><div class="stat-label">45+ dk geçmiş</div></div>';
-  var sent=UNPAID_ORDERS.filter(function(o){return o.alreadySent}).length;
-  if(sent)html+='<div class="stat"><div class="stat-val" style="color:var(--tx3)">'+sent+'</div><div class="stat-label">Mail gönderilmiş</div></div>';
+  if(notSent)html+='<div class="stat"><div class="stat-val" style="color:var(--red)">'+notSent+'</div><div class="stat-label">Mail gönderilmemiş</div></div>';
+  if(sent)html+='<div class="stat"><div class="stat-val" style="color:var(--green)">'+sent+'</div><div class="stat-label">Mail gönderilmiş</div></div>';
   html+='</div>';
   
-  // Bulk action bar
-  html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">';
-  html+='<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;color:var(--tx2)"><input type="checkbox" id="chk-all" onchange="toggleAllUnpaid(this.checked)"> Tümünü Seç</label>';
-  html+='<button class="btn btn-gold" onclick="bulkSend()" style="font-size:14px;padding:8px 18px">Seçilenlere Hatırlatma Gönder</button>';
+  // Main action buttons
+  html+='<div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap">';
+  if(notSent){
+    html+='<button class="btn btn-gold" onclick="bulkSendUnsent()" style="font-size:20px;padding:16px 32px;flex:1">Gönderilmeyenlere Hatırlatma Gönder ('+notSent+')</button>';
+  }
+  html+='<button class="btn btn-outline" onclick="bulkSendAll()" style="font-size:16px;padding:16px 24px">Hepsine Gönder ('+UNPAID_ORDERS.length+')</button>';
   html+='</div>';
   
-  // Order cards
+  // Order list - simple rows
   UNPAID_ORDERS.forEach(function(o,idx){
     var timeColor=o.elapsedMin>=45?'var(--red)':o.elapsedMin>=20?'#f59e0b':'var(--green)';
     var timeLabel=o.elapsedMin>=60?Math.floor(o.elapsedMin/60)+' saat '+(o.elapsedMin%60)+' dk':o.elapsedMin+' dk';
-    var sentBadge=o.alreadySent?'<span style="display:inline-block;background:rgba(39,174,96,.1);color:#27ae60;font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px;margin-left:8px">Mail gönderildi</span>':'';
+    var sentBadge=o.alreadySent?'<span style="display:inline-block;background:rgba(39,174,96,.1);color:#27ae60;font-size:14px;font-weight:600;padding:4px 12px;border-radius:6px;margin-left:8px">Gönderildi</span>':'';
+    var noBankBadge=!o.bankInfo?'<span style="display:inline-block;background:#fef2f2;color:#b91c1c;font-size:12px;font-weight:600;padding:3px 8px;border-radius:4px;margin-left:8px">Banka bilgisi yok</span>':'';
     
-    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--bg2)" id="card-'+o.id+'">';
+    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;background:var(--bg2)" id="card-'+o.id+'">';
     
-    // Header row with checkbox
-    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">';
-    html+='<div style="display:flex;align-items:center;gap:8px"><input type="checkbox" class="chk-unpaid" value="'+idx+'" style="width:18px;height:18px;cursor:pointer"> <span style="font-size:18px;font-weight:700;color:var(--tx)">#'+o.orderNumber+'</span> <span style="font-size:14px;color:var(--tx2)">'+o.name+'</span>'+sentBadge+'</div>';
-    html+='<div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px;font-weight:700;color:'+timeColor+'">'+timeLabel+' geçti</span>';
-    html+='<span style="font-size:13px;color:var(--tx3)">'+(o.total||0).toLocaleString('tr-TR')+' ₺</span></div>';
+    // Single row: order# + bold name + email + time
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">';
+    html+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
+    html+='<span style="font-size:18px;color:var(--gold);font-weight:700">#'+o.orderNumber+'</span>';
+    html+='<span style="font-size:18px;font-weight:800;color:var(--tx)">'+o.name+'</span>';
+    html+='<span style="font-size:14px;color:var(--tx3)">'+o.email+'</span>';
+    html+=sentBadge+noBankBadge;
     html+='</div>';
-    
-    // Details
-    html+='<div style="display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--tx2);margin-bottom:12px">';
-    html+='<span>'+o.email+'</span>';
-    if(o.state||o.city)html+='<span>'+(o.state||'')+' / '+(o.city||'')+'</span>';
-    if(o.shippingMethod)html+='<span>'+o.shippingMethod.replace(/\s*\(.*?\)\s*/g,'')+'</span>';
-    html+='</div>';
-    
-    // Bank info
-    if(o.bankInfo){
-      html+='<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:12px">';
-      html+='<p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#166534">Banka Bilgisi (mailde gönderilecek)</p>';
-      html+='<p style="margin:0;font-size:13px;line-height:20px;color:#333">'+o.bankInfo.replace(/\n/g,'<br>')+'</p>';
-      html+='</div>';
-    }else{
-      html+='<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:10px 14px;margin-bottom:12px">';
-      html+='<p style="margin:0;font-size:13px;color:#b91c1c">Banka bilgisi bulunamadı</p>';
-      html+='</div>';
-    }
-    
-    // Buttons
-    html+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
-    if(!o.alreadySent){
-      html+='<button class="btn btn-gold" id="sbtn-'+o.id+'" onclick="singleSend('+idx+')" style="font-size:14px;padding:8px 18px">Hatırlatma Gönder</button>';
-    }else{
-      html+='<button class="btn btn-outline" id="sbtn-'+o.id+'" onclick="singleSend('+idx+')" style="font-size:14px;padding:8px 18px">Tekrar Gönder</button>';
-    }
-    html+='<button class="btn btn-outline" onclick="toggleMailPreview(\'mail-preview-'+idx+'\')" style="font-size:14px;padding:8px 18px">Mail Önizle</button>';
-    html+='</div>';
+    html+='<div style="display:flex;align-items:center;gap:10px">';
+    html+='<span style="font-size:16px;font-weight:700;color:'+timeColor+'">'+timeLabel+'</span>';
+    html+='<button class="btn btn-outline" onclick="toggleMailPreview(\'mail-preview-'+idx+'\')" style="font-size:13px;padding:6px 14px" id="sbtn-'+o.id+'">Mail Önizle</button>';
+    html+='</div></div>';
     
     // Mail preview (hidden) - matching original template
     var bankPreview=o.bankInfo?o.bankInfo.replace(/\n/g,'<br>'):'Banka bilgisi bulunamadı.';
+    var totalPreview=(o.total||0).toLocaleString('tr-TR',{minimumFractionDigits:2})+' TL';
     html+='<div id="mail-preview-'+idx+'" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff">';
     html+='<div style="padding:16px 20px;border-bottom:1px solid #eee"><p style="margin:0;font-size:20px;font-weight:normal;color:#333">Sipariş Durumu</p></div>';
     html+='<div style="padding:16px 20px">';
@@ -710,10 +691,10 @@ async function fetchUnpaid(){
     html+='<p style="margin:0;font-size:13px;color:#555">Siparişiniz iptal edilir · Ödemeniz masraflar düşülerek iade edilir · Sonraki siparişleriniz kabul edilmez</p>';
     html+='</div></div>';
     
-    // Banka bilgisi
+    // Banka bilgisi + Tutar
     html+='<div style="border:2px solid #166534;margin-bottom:10px"><div style="background:#166534;padding:8px 14px"><p style="margin:0;font-size:13px;font-weight:bold;color:#fff">Geçici hesap bilgileridir. Kaydetmeyiniz.</p></div>';
     html+='<div style="background:#f0fdf4;padding:12px 14px"><p style="margin:0 0 6px;font-size:14px;font-weight:bold;color:#166534">Havale/EFT/FAST Bilgilerimiz</p><p style="margin:0;font-size:14px;line-height:24px;color:#333"><strong>'+bankPreview+'</strong></p></div>';
-    html+='<div style="background:#dcfce7;padding:10px 14px;border-top:1px solid #bbf7d0"><p style="margin:0;font-size:12px;color:#166534"><strong>Hatırlatma:</strong> Açıklama kısmını boş bırakın. Talimatları okumadan gönderim yapmayınız.</p></div></div>';
+    html+='<div style="background:#dcfce7;padding:12px 14px;border-top:1px solid #bbf7d0"><p style="margin:0 0 4px;font-size:14px;font-weight:bold;color:#166534">Gönderilecek Tutar: '+totalPreview+'</p><p style="margin:0;font-size:12px;color:#166534">Açıklama kısmını boş bırakın. Talimatları okumadan gönderim yapmayınız.</p></div></div>';
     
     // Durum barı
     html+='<div style="background:#f8f8f8;padding:16px;text-align:center;margin-bottom:10px"><p style="margin:0 0 4px;font-size:16px;color:#333">Sipariş durumu: <b>İşlem Sırasında</b></p><p style="margin:0;font-size:18px;color:#333">Ödeme durumu: <b>Ödeme Bekleniyor</b></p></div>';
@@ -730,37 +711,33 @@ async function fetchUnpaid(){
   btn.disabled=false;btn.textContent='Ödeme Bekleyenleri Çek';
 }
 
-function toggleAllUnpaid(checked){
-  document.querySelectorAll('.chk-unpaid').forEach(function(c){c.checked=checked});
-}
-
 function toggleMailPreview(id){
   var el=document.getElementById(id);
   el.style.display=el.style.display==='none'?'block':'none';
 }
 
-// Single send via popup
-function singleSend(idx){
-  var o=UNPAID_ORDERS[idx];
-  openSendPopup([o],function(results){
-    if(results[0]&&results[0].ok){
-      var btn=document.getElementById('sbtn-'+o.id);
-      btn.textContent='Gönderildi';btn.style.background='var(--green)';btn.style.borderColor='var(--green)';btn.style.color='#fff';btn.disabled=true;
-    }
+// Bulk send - only unsent
+function bulkSendUnsent(){
+  var unsent=UNPAID_ORDERS.filter(function(o){return !o.alreadySent});
+  if(!unsent.length){log('log-payment','Gönderilecek sipariş yok.','skip');return}
+  openSendPopup(unsent,function(results){
+    results.forEach(function(r,i){
+      if(r&&r.ok){
+        var card=document.getElementById('card-'+unsent[i].id);
+        if(card)card.style.borderColor='var(--green)';
+      }
+    });
   });
 }
 
-// Bulk send
-function bulkSend(){
-  var checks=document.querySelectorAll('.chk-unpaid:checked');
-  if(!checks.length){log('log-payment','Lütfen en az bir sipariş seçin.','err');return}
-  var selected=[];
-  checks.forEach(function(c){selected.push(UNPAID_ORDERS[parseInt(c.value)])});
-  openSendPopup(selected,function(results){
+// Bulk send - all (including already sent)
+function bulkSendAll(){
+  if(!UNPAID_ORDERS.length){log('log-payment','Gönderilecek sipariş yok.','skip');return}
+  openSendPopup(UNPAID_ORDERS,function(results){
     results.forEach(function(r,i){
       if(r&&r.ok){
-        var btn=document.getElementById('sbtn-'+selected[i].id);
-        if(btn){btn.textContent='Gönderildi';btn.style.background='var(--green)';btn.style.borderColor='var(--green)';btn.style.color='#fff';btn.disabled=true}
+        var card=document.getElementById('card-'+UNPAID_ORDERS[i].id);
+        if(card)card.style.borderColor='var(--green)';
       }
     });
   });
