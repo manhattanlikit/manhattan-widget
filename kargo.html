@@ -210,6 +210,19 @@ Teslim Listesi
 
 <div class="footer">Manhattan Likit · Kargo Yönetim Paneli</div>
 
+<!-- MAIL GÖNDER POPUP -->
+<div id="send-popup" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9998;justify-content:center;align-items:center" onclick="if(event.target===this)closeSendPopup()">
+<div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:440px;width:90%;box-shadow:0 16px 48px rgba(0,0,0,.15)" onclick="event.stopPropagation()">
+<p style="font-size:22px;font-weight:700;color:var(--tx);margin-bottom:6px" id="popup-title">Hatırlatma Gönder</p>
+<p style="font-size:15px;color:var(--tx2);margin-bottom:20px;line-height:1.5" id="popup-desc">Seçili siparişlere hatırlatma e-postası gönderilecek.</p>
+<div id="popup-list" style="max-height:200px;overflow-y:auto;margin-bottom:16px;border:1px solid var(--border);border-radius:8px;padding:8px"></div>
+<div style="display:flex;gap:10px">
+<button class="btn btn-gold" id="popup-confirm" onclick="confirmSendPopup()" style="flex:1;justify-content:center;font-size:16px;padding:14px">Gönder</button>
+<button class="btn btn-outline" onclick="closeSendPopup()" style="flex:1;justify-content:center;font-size:16px;padding:14px">İptal</button>
+</div>
+</div>
+</div>
+
 <script>
 // === CONFIG ===
 const GAS_URL='https://script.google.com/macros/s/AKfycbxJKzibWzYOmapPvghMPxbt9u5vjGQyxCXZae4FKfUEsjCMIWEqkyI2CM_CovOGrzTbXQ/exec';
@@ -222,7 +235,7 @@ const CARGO_DEFAULTS={
 };
 var SESSION_PIN=null;
 // 24h session check
-!function(){var s=localStorage.getItem("kargo_session");if(s){try{var d=JSON.parse(s);if(d.pin&&d.exp>Date.now()){SESSION_PIN=d.pin;document.addEventListener("DOMContentLoaded",function(){document.getElementById("pin-screen").style.display="none";document.getElementById("main-screen").style.display="block";document.getElementById("header-right").style.display="flex";document.getElementById("pin-user").textContent="Kullanıcı "+d.user})}}catch(e){}}}();
+!function(){var s=localStorage.getItem("kargo_session");if(s){try{var d=JSON.parse(s);if(d.pin&&d.exp>Date.now()){SESSION_PIN=d.pin;document.addEventListener("DOMContentLoaded",function(){document.getElementById("pin-screen").style.display="none";document.getElementById("main-screen").style.display="block";document.getElementById("header-right").style.display="flex";document.getElementById("pin-user").textContent="Kullanıcı "+d.user;autoOpenExport()})}}catch(e){}}}();
 var FAIL_COUNT=0;
 var LOCKED_UNTIL=0;
 
@@ -269,6 +282,7 @@ async function verifyPin(){
     document.getElementById('main-screen').style.display='block';
     document.getElementById('header-right').style.display='flex';
     document.getElementById('pin-user').textContent='Kullanıcı '+res.user;
+    autoOpenExport();
   }else{
     if(res.locked){
       LOCKED_UNTIL=now+5*60*1000;
@@ -321,7 +335,13 @@ function showPanel(id){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
   document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('show');
-  event.currentTarget.classList.add('active');
+  var cards=document.querySelectorAll('.card');
+  var idx={export:0,import:1,payment:2};
+  if(idx[id]!==undefined&&cards[idx[id]])cards[idx[id]].classList.add('active');
+}
+
+function autoOpenExport(){
+  setTimeout(function(){showPanel('export')},100);
 }
 
 // === BUTON 1: Siparişleri Çek → Yurtiçi Excel ===
@@ -569,6 +589,10 @@ async function processResults(file){
   }
 }
 // === BUTON 3: Ödeme Bekleyenleri Çek ===
+var UNPAID_ORDERS=[];
+var SEND_QUEUE=[];
+var SEND_CALLBACK=null;
+
 async function fetchUnpaid(){
   var btn=document.getElementById('btn-unpaid');
   btn.disabled=true;btn.textContent='Çekiliyor...';
@@ -587,46 +611,54 @@ async function fetchUnpaid(){
     return;
   }
   
-  var orders=res.orders||[];
-  if(orders.length===0){
+  UNPAID_ORDERS=res.orders||[];
+  if(UNPAID_ORDERS.length===0){
     log('log-payment','Ödeme bekleyen sipariş bulunamadı.','skip');
     btn.disabled=false;btn.textContent='Ödeme Bekleyenleri Çek';
     setProgress('pbar-payment',100);
     return;
   }
   
-  log('log-payment','Toplam '+orders.length+' ödeme bekleyen sipariş bulundu.','ok');
+  log('log-payment','Toplam '+UNPAID_ORDERS.length+' ödeme bekleyen sipariş bulundu.','ok');
   
-  // Build preview
+  // Stats
   var html='<div class="stats">';
-  html+='<div class="stat"><div class="stat-val">'+orders.length+'</div><div class="stat-label">Ödeme Bekleyen</div></div>';
-  var over45=orders.filter(function(o){return o.elapsedMin>=45}).length;
+  html+='<div class="stat"><div class="stat-val">'+UNPAID_ORDERS.length+'</div><div class="stat-label">Ödeme Bekleyen</div></div>';
+  var over45=UNPAID_ORDERS.filter(function(o){return o.elapsedMin>=45}).length;
   if(over45)html+='<div class="stat"><div class="stat-val" style="color:var(--red)">'+over45+'</div><div class="stat-label">45+ dk geçmiş</div></div>';
-  var sent=orders.filter(function(o){return o.alreadySent}).length;
+  var sent=UNPAID_ORDERS.filter(function(o){return o.alreadySent}).length;
   if(sent)html+='<div class="stat"><div class="stat-val" style="color:var(--tx3)">'+sent+'</div><div class="stat-label">Mail gönderilmiş</div></div>';
   html+='</div>';
   
+  // Bulk action bar
+  html+='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">';
+  html+='<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;color:var(--tx2)"><input type="checkbox" id="chk-all" onchange="toggleAllUnpaid(this.checked)"> Tümünü Seç</label>';
+  html+='<button class="btn btn-gold" onclick="bulkSend()" style="font-size:14px;padding:8px 18px">Seçilenlere Hatırlatma Gönder</button>';
+  html+='</div>';
+  
   // Order cards
-  orders.forEach(function(o,idx){
+  UNPAID_ORDERS.forEach(function(o,idx){
     var timeColor=o.elapsedMin>=45?'var(--red)':o.elapsedMin>=20?'#f59e0b':'var(--green)';
     var timeLabel=o.elapsedMin>=60?Math.floor(o.elapsedMin/60)+' saat '+(o.elapsedMin%60)+' dk':o.elapsedMin+' dk';
     var sentBadge=o.alreadySent?'<span style="display:inline-block;background:rgba(39,174,96,.1);color:#27ae60;font-size:12px;font-weight:600;padding:3px 10px;border-radius:6px;margin-left:8px">Mail gönderildi</span>':'';
     
-    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--bg2)">';
+    html+='<div style="border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;background:var(--bg2)" id="card-'+o.id+'">';
+    
+    // Header row with checkbox
     html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">';
-    html+='<div><span style="font-size:18px;font-weight:700;color:var(--tx)">#'+o.orderNumber+'</span> <span style="font-size:14px;color:var(--tx2)">'+o.name+'</span>'+sentBadge+'</div>';
+    html+='<div style="display:flex;align-items:center;gap:8px"><input type="checkbox" class="chk-unpaid" value="'+idx+'" style="width:18px;height:18px;cursor:pointer"> <span style="font-size:18px;font-weight:700;color:var(--tx)">#'+o.orderNumber+'</span> <span style="font-size:14px;color:var(--tx2)">'+o.name+'</span>'+sentBadge+'</div>';
     html+='<div style="display:flex;align-items:center;gap:8px"><span style="font-size:14px;font-weight:700;color:'+timeColor+'">'+timeLabel+' geçti</span>';
-    html+='<span style="font-size:13px;color:var(--tx3)">'+o.total.toLocaleString('tr-TR')+' ₺</span></div>';
+    html+='<span style="font-size:13px;color:var(--tx3)">'+(o.total||0).toLocaleString('tr-TR')+' ₺</span></div>';
     html+='</div>';
     
-    // Details row
+    // Details
     html+='<div style="display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--tx2);margin-bottom:12px">';
     html+='<span>'+o.email+'</span>';
     if(o.state||o.city)html+='<span>'+(o.state||'')+' / '+(o.city||'')+'</span>';
     if(o.shippingMethod)html+='<span>'+o.shippingMethod.replace(/\s*\(.*?\)\s*/g,'')+'</span>';
     html+='</div>';
     
-    // Bank info preview
+    // Bank info
     if(o.bankInfo){
       html+='<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;margin-bottom:12px">';
       html+='<p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#166534">Banka Bilgisi (mailde gönderilecek)</p>';
@@ -638,32 +670,56 @@ async function fetchUnpaid(){
       html+='</div>';
     }
     
-    // Action buttons
+    // Buttons
     html+='<div style="display:flex;gap:8px;flex-wrap:wrap">';
     if(!o.alreadySent){
-      html+='<button class="btn btn-gold" onclick="sendReminder(\''+o.id+'\',this)" style="font-size:14px;padding:8px 18px">Hatırlatma Gönder</button>';
+      html+='<button class="btn btn-gold" id="sbtn-'+o.id+'" onclick="singleSend('+idx+')" style="font-size:14px;padding:8px 18px">Hatırlatma Gönder</button>';
     }else{
-      html+='<button class="btn btn-outline" onclick="sendReminder(\''+o.id+'\',this)" style="font-size:14px;padding:8px 18px">Tekrar Gönder</button>';
+      html+='<button class="btn btn-outline" id="sbtn-'+o.id+'" onclick="singleSend('+idx+')" style="font-size:14px;padding:8px 18px">Tekrar Gönder</button>';
     }
     html+='<button class="btn btn-outline" onclick="toggleMailPreview(\'mail-preview-'+idx+'\')" style="font-size:14px;padding:8px 18px">Mail Önizle</button>';
     html+='</div>';
     
-    // Mail preview (hidden)
-    html+='<div id="mail-preview-'+idx+'" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden">';
-    html+='<div style="background:#1a1a1a;padding:14px 18px"><p style="margin:0;font-size:16px;font-weight:700;color:#fff;letter-spacing:1px">MANHATTAN LİKİT</p><p style="margin:4px 0 0;font-size:11px;color:#999">Sipariş Hatırlatma</p></div>';
-    html+='<div style="padding:16px 18px;background:#fff">';
-    html+='<p style="margin:0 0 8px;font-size:15px;color:#333"><strong>Merhaba '+o.name+',</strong></p>';
-    html+='<p style="margin:0 0 12px;font-size:14px;color:#555"><strong>#'+o.orderNumber+'</strong> numaralı siparişiniz için ödeme beklenmektedir.</p>';
-    html+='<div style="background:#f9f9f9;border:1px solid #e5e5e5;border-radius:6px;padding:12px;margin-bottom:12px">';
-    html+='<p style="margin:0;font-size:13px;color:#777">Sipariş No: <strong style="color:#333">#'+o.orderNumber+'</strong> — Toplam: <strong style="color:#333">'+o.total.toLocaleString('tr-TR')+' ₺</strong></p>';
-    html+='</div>';
-    if(o.bankInfo){
-      html+='<div style="background:#f0fdf4;border:2px solid #166534;border-radius:6px;padding:12px">';
-      html+='<p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#166534">Havale/EFT/FAST Bilgilerimiz</p>';
-      html+='<p style="margin:0;font-size:13px;line-height:20px;color:#333"><strong>'+o.bankInfo.replace(/\n/g,'<br>')+'</strong></p>';
-      html+='</div>';
-    }
-    html+='<p style="margin:12px 0 0;font-size:11px;color:#999;text-align:center">Bu e-posta otomatik olarak gönderilmiştir. Ödemenizi zaten yaptıysanız lütfen dikkate almayınız.</p>';
+    // Mail preview (hidden) - matching original template
+    var bankPreview=o.bankInfo?o.bankInfo.replace(/\n/g,'<br>'):'Banka bilgisi bulunamadı.';
+    html+='<div id="mail-preview-'+idx+'" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff">';
+    html+='<div style="padding:16px 20px;border-bottom:1px solid #eee"><p style="margin:0;font-size:20px;font-weight:normal;color:#333">Sipariş Durumu</p></div>';
+    html+='<div style="padding:16px 20px">';
+    html+='<p style="margin:0 0 16px;font-size:15px;color:#333">Merhaba <strong>'+o.name+'</strong>, <strong>#'+o.orderNumber+'</strong> numaralı siparişiniz için ödeme beklenmektedir.</p>';
+    
+    // Havale başlık
+    html+='<div style="background:#166534;padding:10px 14px;margin-bottom:10px"><p style="margin:0;font-size:16px;font-weight:bold;color:#fff">Havale / EFT / FAST Talimatları</p></div>';
+    
+    // Dikkat kutusu
+    html+='<div style="display:flex;margin-bottom:10px"><div style="width:4px;background:#22c55e;flex-shrink:0"></div><div style="background:#f0fdf4;padding:12px 14px;flex:1">';
+    html+='<p style="margin:0 0 8px;font-size:14px;font-weight:bold;color:#166534">Ödeme Yaparken Dikkat Edin</p>';
+    html+='<p style="margin:0 0 4px;font-size:13px;color:#333">✓ Açıklama kısmını <strong>boş bırakın</strong></p>';
+    html+='<p style="margin:0 0 4px;font-size:13px;color:#333">✓ Boş bırakamıyorsanız sadece <strong>adınızı ve soyadınızı</strong> yazın</p>';
+    html+='<p style="margin:0;font-size:13px;color:#333">✗ Ürün adı, sipariş no veya benzeri ifadeler <strong>kesinlikle yazmayın</strong></p>';
+    html+='</div></div>';
+    
+    // Neden önemli
+    html+='<div style="display:flex;margin-bottom:10px"><div style="width:4px;background:#f59e0b;flex-shrink:0"></div><div style="background:#fffbeb;padding:12px 14px;flex:1">';
+    html+='<p style="margin:0 0 4px;font-size:14px;font-weight:bold;color:#b45309">Neden Bu Kadar Önemli?</p>';
+    html+='<p style="margin:0;font-size:13px;color:#555">Bankalar açıklama kısmındaki belirli kelimeleri otomatik olarak tarar. Bu tür ifadeler <strong>sizin hesaplarınızda</strong> da sorunlara yol açabilir.</p>';
+    html+='</div></div>';
+    
+    // Kurallara uyulmaması
+    html+='<div style="display:flex;margin-bottom:10px"><div style="width:4px;background:#dc2626;flex-shrink:0"></div><div style="background:#fef2f2;padding:12px 14px;flex:1">';
+    html+='<p style="margin:0 0 4px;font-size:14px;font-weight:bold;color:#b91c1c">Kurallara Uyulmaması Halinde</p>';
+    html+='<p style="margin:0;font-size:13px;color:#555">Siparişiniz iptal edilir · Ödemeniz masraflar düşülerek iade edilir · Sonraki siparişleriniz kabul edilmez</p>';
+    html+='</div></div>';
+    
+    // Banka bilgisi
+    html+='<div style="border:2px solid #166534;margin-bottom:10px"><div style="background:#166534;padding:8px 14px"><p style="margin:0;font-size:13px;font-weight:bold;color:#fff">Geçici hesap bilgileridir. Kaydetmeyiniz.</p></div>';
+    html+='<div style="background:#f0fdf4;padding:12px 14px"><p style="margin:0 0 6px;font-size:14px;font-weight:bold;color:#166534">Havale/EFT/FAST Bilgilerimiz</p><p style="margin:0;font-size:14px;line-height:24px;color:#333"><strong>'+bankPreview+'</strong></p></div>';
+    html+='<div style="background:#dcfce7;padding:10px 14px;border-top:1px solid #bbf7d0"><p style="margin:0;font-size:12px;color:#166534"><strong>Hatırlatma:</strong> Açıklama kısmını boş bırakın. Talimatları okumadan gönderim yapmayınız.</p></div></div>';
+    
+    // Durum barı
+    html+='<div style="background:#f8f8f8;padding:16px;text-align:center;margin-bottom:10px"><p style="margin:0 0 4px;font-size:16px;color:#333">Sipariş durumu: <b>İşlem Sırasında</b></p><p style="margin:0;font-size:18px;color:#333">Ödeme durumu: <b>Ödeme Bekleniyor</b></p></div>';
+    
+    // Footer
+    html+='<p style="margin:0;font-size:11px;color:#999;text-align:center">Bu e-posta otomatik olarak gönderilmiştir. Ödemenizi zaten yaptıysanız lütfen dikkate almayınız.</p>';
     html+='</div></div>';
     
     html+='</div>';
@@ -674,26 +730,93 @@ async function fetchUnpaid(){
   btn.disabled=false;btn.textContent='Ödeme Bekleyenleri Çek';
 }
 
+function toggleAllUnpaid(checked){
+  document.querySelectorAll('.chk-unpaid').forEach(function(c){c.checked=checked});
+}
+
 function toggleMailPreview(id){
   var el=document.getElementById(id);
   el.style.display=el.style.display==='none'?'block':'none';
 }
 
-async function sendReminder(orderId,btn){
-  if(!confirm('Bu siparişe hatırlatma e-postası gönderilsin mi?'))return;
-  btn.disabled=true;btn.textContent='Gönderiliyor...';
-  log('log-payment','Hatırlatma gönderiliyor: #'+orderId,'info');
+// Single send via popup
+function singleSend(idx){
+  var o=UNPAID_ORDERS[idx];
+  openSendPopup([o],function(results){
+    if(results[0]&&results[0].ok){
+      var btn=document.getElementById('sbtn-'+o.id);
+      btn.textContent='Gönderildi';btn.style.background='var(--green)';btn.style.borderColor='var(--green)';btn.style.color='#fff';btn.disabled=true;
+    }
+  });
+}
+
+// Bulk send
+function bulkSend(){
+  var checks=document.querySelectorAll('.chk-unpaid:checked');
+  if(!checks.length){log('log-payment','Lütfen en az bir sipariş seçin.','err');return}
+  var selected=[];
+  checks.forEach(function(c){selected.push(UNPAID_ORDERS[parseInt(c.value)])});
+  openSendPopup(selected,function(results){
+    results.forEach(function(r,i){
+      if(r&&r.ok){
+        var btn=document.getElementById('sbtn-'+selected[i].id);
+        if(btn){btn.textContent='Gönderildi';btn.style.background='var(--green)';btn.style.borderColor='var(--green)';btn.style.color='#fff';btn.disabled=true}
+      }
+    });
+  });
+}
+
+// Popup system
+function openSendPopup(orders,callback){
+  SEND_QUEUE=orders;
+  SEND_CALLBACK=callback;
+  var popup=document.getElementById('send-popup');
+  var title=document.getElementById('popup-title');
+  var desc=document.getElementById('popup-desc');
+  var list=document.getElementById('popup-list');
   
-  var res=await gasPost({action:'kargoSendReminder',pin:SESSION_PIN,orderId:String(orderId)});
+  title.textContent=orders.length===1?'Hatırlatma Gönder':orders.length+' Siparişe Hatırlatma Gönder';
+  desc.textContent=orders.length===1?orders[0].name+' adlı müşteriye hatırlatma e-postası gönderilecek.':orders.length+' müşteriye hatırlatma e-postası gönderilecek.';
   
-  if(res.ok){
-    log('log-payment','✓ '+res.message,'ok');
-    btn.textContent='Gönderildi';
-    btn.style.background='var(--green)';btn.style.borderColor='var(--green)';btn.style.color='#fff';
-  }else{
-    log('log-payment','✗ '+(res.error||'Bilinmeyen hata'),'err');
-    btn.disabled=false;btn.textContent='Tekrar Dene';
+  var lhtml='';
+  orders.forEach(function(o){
+    var timeLabel=o.elapsedMin>=60?Math.floor(o.elapsedMin/60)+'s '+(o.elapsedMin%60)+'dk':o.elapsedMin+'dk';
+    lhtml+='<div style="display:flex;justify-content:space-between;padding:6px 8px;font-size:13px;border-bottom:1px solid var(--border)">';
+    lhtml+='<span><strong>#'+o.orderNumber+'</strong> · '+o.name+'</span>';
+    lhtml+='<span style="color:var(--tx3)">'+timeLabel+' · '+o.email+'</span>';
+    lhtml+='</div>';
+  });
+  list.innerHTML=lhtml;
+  
+  popup.style.display='flex';
+  document.getElementById('popup-confirm').disabled=false;
+  document.getElementById('popup-confirm').textContent='Gönder ('+orders.length+')';
+}
+
+function closeSendPopup(){
+  document.getElementById('send-popup').style.display='none';
+  SEND_QUEUE=[];SEND_CALLBACK=null;
+}
+
+async function confirmSendPopup(){
+  var btn=document.getElementById('popup-confirm');
+  btn.disabled=true;
+  var results=[];
+  for(var i=0;i<SEND_QUEUE.length;i++){
+    var o=SEND_QUEUE[i];
+    btn.textContent='Gönderiliyor... ('+(i+1)+'/'+SEND_QUEUE.length+')';
+    log('log-payment','Gönderiliyor: #'+o.orderNumber+' · '+o.name,'info');
+    var res=await gasPost({action:'kargoSendReminder',pin:SESSION_PIN,orderId:String(o.id)});
+    results.push(res);
+    if(res.ok){
+      log('log-payment','✓ '+res.message,'ok');
+    }else{
+      log('log-payment','✗ #'+o.orderNumber+' — '+(res.error||'Hata'),'err');
+    }
   }
+  if(SEND_CALLBACK)SEND_CALLBACK(results);
+  btn.textContent='Tamamlandı';
+  setTimeout(closeSendPopup,1500);
 }
 
 // === TESLİM LİSTESİ HATIRLATICI (17:15 - 17:40) ===
