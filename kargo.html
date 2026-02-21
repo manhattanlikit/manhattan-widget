@@ -77,9 +77,6 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .live-badge{display:inline-flex;align-items:center;gap:6px;background:var(--red);color:#fff;font-size:13px;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.5px}
 .live-badge::before{content:'';width:8px;height:8px;background:#fff;border-radius:50%;animation:live-dot 1s ease-in-out infinite}
 .teslim-mini{position:fixed;bottom:24px;right:24px;z-index:9998;background:var(--bg2);border:2px solid var(--gold);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.12);cursor:pointer;animation:pulse-glow 3s ease-in-out infinite;text-decoration:none;color:var(--tx);font-weight:600;font-size:15px}
-#auto-slider:before{position:absolute;content:"";height:26px;width:26px;left:3px;bottom:3px;background-color:#fff;border-radius:50%;transition:.3s}
-#auto-toggle:checked+#auto-slider{background-color:var(--green)}
-#auto-toggle:checked+#auto-slider:before{transform:translateX(28px)}
 </style>
 </head>
 <body>
@@ -172,88 +169,97 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <p style="font-size:18px;color:var(--tx2);margin-bottom:16px">Ödemesi henüz gelmemiş siparişleri listeler. Hatırlatma e-postası göndermeden önce içeriğini önizleyebilirsiniz.</p>
 
 <!-- Auto Reminder Toggle -->
-<div style="border:2px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;background:var(--bg)" id="auto-reminder-box">
+<!-- Otomatik Hatırlatma Sistemi -->
+<div id="auto-reminder-box" style="margin-bottom:16px">
 
 <!-- Ana Toggle -->
-<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+<div style="border:2px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:12px;background:var(--bg);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px" id="auto-main-box">
 <div>
-<p style="margin:0 0 4px;font-size:18px;font-weight:700;color:var(--tx)">Otomatik Hatırlatma</p>
-<p style="margin:0;font-size:14px;color:var(--tx3)" id="auto-desc">Ayarları yükleniyor...</p>
+<p style="margin:0 0 4px;font-size:20px;font-weight:800;color:var(--tx)">Otomatik Hatırlatma</p>
+<p style="margin:0;font-size:15px;color:var(--tx3)" id="auto-desc">Program kapalı olsa bile çalışır</p>
 </div>
-<div style="display:flex;align-items:center;gap:10px">
-<span id="auto-status-text" style="font-size:14px;font-weight:600;color:var(--tx3)">Yükleniyor...</span>
-<label style="position:relative;display:inline-block;width:60px;height:32px;cursor:pointer">
-<input type="checkbox" id="auto-toggle" onchange="toggleAutoReminder(this.checked)" style="opacity:0;width:0;height:0">
-<span style="position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#ccc;border-radius:32px;transition:.3s" id="auto-slider"></span>
-</label>
+<button id="btn-auto-main" class="btn" onclick="toggleAutoMain()" style="font-size:18px;padding:12px 32px;min-width:140px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
+</div>
+
+<!-- Kural 1: Hafta İçi Mesai -->
+<div class="rule-card" id="rule1-card" style="border:2px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:10px;background:var(--bg)">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+<div>
+<p style="margin:0;font-size:18px;font-weight:700;color:var(--tx)">Kural 1 — Hafta İçi Mesai</p>
+<p style="margin:4px 0 0;font-size:14px;color:var(--tx3)">Pazartesi → Cuma</p>
+</div>
+<button class="btn rule-toggle" id="btn-r1" onclick="toggleRule(1)" style="font-size:16px;padding:10px 24px;min-width:120px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
+</div>
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Saat:</span>
+<select id="r1-start" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
+<span style="font-size:18px;font-weight:700;color:var(--tx2)">—</span>
+<select id="r1-end" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
+</div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Bekle:</span>
+<button class="btn btn-outline" onclick="adjThr(1,-5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">−</button>
+<span id="r1-thr" style="font-size:28px;font-weight:800;color:var(--gold);min-width:50px;text-align:center">45</span>
+<button class="btn btn-outline" onclick="adjThr(1,5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">+</button>
+<span style="font-size:16px;color:var(--tx2)">dakika</span>
 </div>
 </div>
 
-<!-- KURAL 1 -->
-<div style="border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px;background:var(--bg2)">
-<p style="margin:0 0 10px;font-size:16px;font-weight:700;color:var(--gold)">Kural 1 — Ana Mesai</p>
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-<span style="font-size:15px;font-weight:600;color:var(--tx)">Günler:</span>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r1-day" value="1" checked> Pzt</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r1-day" value="2" checked> Sal</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r1-day" value="3" checked> Çar</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r1-day" value="4" checked> Per</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r1-day" value="5" checked> Cum</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r1-day" value="6"> Cmt</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r1-day" value="0"> Paz</label>
+<!-- Kural 2: Hafta İçi Akşam -->
+<div class="rule-card" id="rule2-card" style="border:2px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:10px;background:var(--bg)">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+<div>
+<p style="margin:0;font-size:18px;font-weight:700;color:var(--tx)">Kural 2 — Hafta İçi Akşam</p>
+<p style="margin:4px 0 0;font-size:14px;color:var(--tx3)">Pazartesi → Cuma</p>
 </div>
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-<span style="font-size:15px;font-weight:600;color:var(--tx)">Saat:</span>
-<select id="r1-start" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx)"></select>
-<span style="font-size:15px;color:var(--tx2)">—</span>
-<select id="r1-end" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx)"></select>
+<button class="btn rule-toggle" id="btn-r2" onclick="toggleRule(2)" style="font-size:16px;padding:10px 24px;min-width:120px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-<span style="font-size:15px;font-weight:600;color:var(--tx)">Bekleme:</span>
-<button class="btn btn-outline" onclick="adjRule(1,-5)" style="padding:4px 10px;font-size:16px;font-weight:700">−</button>
-<span id="r1-thr" style="font-size:22px;font-weight:800;color:var(--gold);min-width:40px;text-align:center">45</span>
-<button class="btn btn-outline" onclick="adjRule(1,5)" style="padding:4px 10px;font-size:16px;font-weight:700">+</button>
-<span style="font-size:14px;color:var(--tx2)">dakika</span>
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Saat:</span>
+<select id="r2-start" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
+<span style="font-size:18px;font-weight:700;color:var(--tx2)">—</span>
+<select id="r2-end" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
+</div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Bekle:</span>
+<button class="btn btn-outline" onclick="adjThr(2,-5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">−</button>
+<span id="r2-thr" style="font-size:28px;font-weight:800;color:var(--gold);min-width:50px;text-align:center">20</span>
+<button class="btn btn-outline" onclick="adjThr(2,5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">+</button>
+<span style="font-size:16px;color:var(--tx2)">dakika</span>
 </div>
 </div>
 
-<!-- KURAL 2 -->
-<div style="border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px;background:var(--bg2)">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-<p style="margin:0;font-size:16px;font-weight:700;color:var(--gold)">Kural 2 — Ek Pencere</p>
-<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;color:var(--tx2)"><input type="checkbox" id="r2-enabled" checked> Aktif</label>
+<!-- Kural 3: Hafta Sonu -->
+<div class="rule-card" id="rule3-card" style="border:2px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:14px;background:var(--bg)">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+<div>
+<p style="margin:0;font-size:18px;font-weight:700;color:var(--tx)">Kural 3 — Hafta Sonu</p>
+<p style="margin:4px 0 0;font-size:14px;color:var(--tx3)">Cumartesi + Pazar</p>
 </div>
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-<span style="font-size:15px;font-weight:600;color:var(--tx)">Günler:</span>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r2-day" value="1" checked> Pzt</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r2-day" value="2" checked> Sal</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r2-day" value="3" checked> Çar</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r2-day" value="4" checked> Per</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r2-day" value="5" checked> Cum</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r2-day" value="6"> Cmt</label>
-<label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:14px"><input type="checkbox" class="r2-day" value="0"> Paz</label>
+<button class="btn rule-toggle" id="btn-r3" onclick="toggleRule(3)" style="font-size:16px;padding:10px 24px;min-width:120px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-<span style="font-size:15px;font-weight:600;color:var(--tx)">Saat:</span>
-<select id="r2-start" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx)"></select>
-<span style="font-size:15px;color:var(--tx2)">—</span>
-<select id="r2-end" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx)"></select>
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Saat:</span>
+<select id="r3-start" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
+<span style="font-size:18px;font-weight:700;color:var(--tx2)">—</span>
+<select id="r3-end" style="padding:10px 14px;font-size:18px;border-radius:10px;border:2px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600"></select>
 </div>
-<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-<span style="font-size:15px;font-weight:600;color:var(--tx)">Bekleme:</span>
-<button class="btn btn-outline" onclick="adjRule(2,-5)" style="padding:4px 10px;font-size:16px;font-weight:700">−</button>
-<span id="r2-thr" style="font-size:22px;font-weight:800;color:var(--gold);min-width:40px;text-align:center">20</span>
-<button class="btn btn-outline" onclick="adjRule(2,5)" style="padding:4px 10px;font-size:16px;font-weight:700">+</button>
-<span style="font-size:14px;color:var(--tx2)">dakika</span>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<span style="font-size:16px;font-weight:700;color:var(--tx);min-width:50px">Bekle:</span>
+<button class="btn btn-outline" onclick="adjThr(3,-5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">−</button>
+<span id="r3-thr" style="font-size:28px;font-weight:800;color:var(--gold);min-width:50px;text-align:center">30</span>
+<button class="btn btn-outline" onclick="adjThr(3,5)" style="padding:8px 16px;font-size:20px;font-weight:700;border-radius:10px">+</button>
+<span style="font-size:16px;color:var(--tx2)">dakika</span>
 </div>
 </div>
 
 <!-- Kaydet + Test -->
 <div style="display:flex;gap:10px;flex-wrap:wrap">
-<button class="btn btn-gold" onclick="saveRules()" id="btn-save-rules" style="font-size:16px;padding:12px 28px;flex:1">Kuralları Kaydet</button>
-<button class="btn btn-outline" onclick="testAutoReminder()" id="btn-test-auto" style="font-size:16px;padding:12px 22px;flex:1">Test Et (mail göndermeden)</button>
+<button class="btn btn-gold" onclick="saveAllRules()" id="btn-save-rules" style="font-size:18px;padding:14px 32px;flex:1;border-radius:10px">Kaydet</button>
+<button class="btn btn-outline" onclick="testAutoReminder()" id="btn-test-auto" style="font-size:18px;padding:14px 28px;flex:1;border-radius:10px">Test Et</button>
 </div>
 <div id="test-result" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:8px;padding:14px;background:var(--bg2)"></div>
+
 </div>
 
 <button id="btn-unpaid" class="btn btn-gold" onclick="fetchUnpaid()" style="font-size:18px;padding:14px 28px;margin-bottom:12px">Ödeme Bekleyenleri Çek</button>
@@ -964,16 +970,14 @@ function checkTeslimTime(){
   }
 }
 setInterval(checkTeslimTime,30000);
-// === OTOMATİK HATIRLATMA (2 KURAL) ===
-var RULES={
-  r1:{days:[1,2,3,4,5],start:'10:00',end:'17:15',threshold:45},
-  r2:{enabled:true,days:[1,2,3,4,5],start:'17:00',end:'18:30',threshold:20}
-};
+// === OTOMATİK HATIRLATMA (3 KURAL) ===
+// K1: Hafta İçi Mesai (Pzt-Cum), K2: Hafta İçi Akşam (Pzt-Cum), K3: Hafta Sonu (Cmt-Paz)
+var RULE_DAYS={r1:[1,2,3,4,5],r2:[1,2,3,4,5],r3:[0,6]};
+var RULE_STATES={r1:false,r2:false,r3:false};
 
-// Populate time selects
 function initTimeSelects(){
-  ['r1-start','r1-end','r2-start','r2-end'].forEach(function(id){
-    var sel=document.getElementById(id);
+  ['r1-start','r1-end','r2-start','r2-end','r3-start','r3-end'].forEach(function(id){
+    var sel=document.getElementById(id);if(!sel)return;
     sel.innerHTML='';
     for(var h=6;h<=23;h++){
       for(var m=0;m<60;m+=15){
@@ -982,109 +986,113 @@ function initTimeSelects(){
       }
     }
   });
-  // Set defaults
   document.getElementById('r1-start').value='10:00';
   document.getElementById('r1-end').value='17:15';
   document.getElementById('r2-start').value='17:00';
   document.getElementById('r2-end').value='18:30';
+  document.getElementById('r3-start').value='10:00';
+  document.getElementById('r3-end').value='17:00';
 }
 initTimeSelects();
 
-function adjRule(n,delta){
-  var key='r'+n+'-thr';
-  var el=document.getElementById(key);
-  var val=Math.max(5,Math.min(180,parseInt(el.textContent)+delta));
-  el.textContent=val;
+function adjThr(n,delta){
+  var el=document.getElementById('r'+n+'-thr');
+  el.textContent=Math.max(5,Math.min(180,parseInt(el.textContent)+delta));
+}
+
+function toggleRule(n){
+  RULE_STATES['r'+n]=!RULE_STATES['r'+n];
+  updateRuleBtn(n);
+}
+
+function updateRuleBtn(n){
+  var btn=document.getElementById('btn-r'+n);
+  var card=document.getElementById('rule'+n+'-card');
+  if(RULE_STATES['r'+n]){
+    btn.textContent='AKTİF';btn.style.background='var(--green)';btn.style.color='#fff';btn.style.borderColor='var(--green)';
+    card.style.borderColor='var(--green)';
+  }else{
+    btn.textContent='KAPALI';btn.style.background='var(--bg2)';btn.style.color='var(--tx3)';btn.style.borderColor='var(--border)';
+    card.style.borderColor='var(--border)';
+  }
+}
+
+function updateMainBtn(enabled){
+  var btn=document.getElementById('btn-auto-main');
+  var box=document.getElementById('auto-main-box');
+  if(enabled){
+    btn.textContent='AKTİF';btn.style.background='var(--green)';btn.style.color='#fff';btn.style.borderColor='var(--green)';
+    box.style.borderColor='var(--green)';
+  }else{
+    btn.textContent='KAPALI';btn.style.background='var(--bg2)';btn.style.color='var(--tx3)';btn.style.borderColor='var(--border)';
+    box.style.borderColor='var(--border)';
+  }
 }
 
 function readRulesFromUI(){
-  var r1days=[];document.querySelectorAll('.r1-day:checked').forEach(function(c){r1days.push(parseInt(c.value))});
-  var r2days=[];document.querySelectorAll('.r2-day:checked').forEach(function(c){r2days.push(parseInt(c.value))});
   return {
-    r1:{days:r1days,start:document.getElementById('r1-start').value,end:document.getElementById('r1-end').value,threshold:parseInt(document.getElementById('r1-thr').textContent)},
-    r2:{enabled:document.getElementById('r2-enabled').checked,days:r2days,start:document.getElementById('r2-start').value,end:document.getElementById('r2-end').value,threshold:parseInt(document.getElementById('r2-thr').textContent)}
+    r1:{enabled:RULE_STATES.r1,days:RULE_DAYS.r1,start:document.getElementById('r1-start').value,end:document.getElementById('r1-end').value,threshold:parseInt(document.getElementById('r1-thr').textContent)},
+    r2:{enabled:RULE_STATES.r2,days:RULE_DAYS.r2,start:document.getElementById('r2-start').value,end:document.getElementById('r2-end').value,threshold:parseInt(document.getElementById('r2-thr').textContent)},
+    r3:{enabled:RULE_STATES.r3,days:RULE_DAYS.r3,start:document.getElementById('r3-start').value,end:document.getElementById('r3-end').value,threshold:parseInt(document.getElementById('r3-thr').textContent)}
   };
 }
 
 function applyRulesToUI(rules){
   if(!rules)return;
-  if(rules.r1){
-    document.getElementById('r1-start').value=rules.r1.start||'10:00';
-    document.getElementById('r1-end').value=rules.r1.end||'17:15';
-    document.getElementById('r1-thr').textContent=rules.r1.threshold||45;
-    if(rules.r1.days){
-      document.querySelectorAll('.r1-day').forEach(function(c){c.checked=rules.r1.days.indexOf(parseInt(c.value))>=0});
-    }
-  }
-  if(rules.r2){
-    document.getElementById('r2-enabled').checked=rules.r2.enabled!==false;
-    document.getElementById('r2-start').value=rules.r2.start||'17:00';
-    document.getElementById('r2-end').value=rules.r2.end||'18:30';
-    document.getElementById('r2-thr').textContent=rules.r2.threshold||20;
-    if(rules.r2.days){
-      document.querySelectorAll('.r2-day').forEach(function(c){c.checked=rules.r2.days.indexOf(parseInt(c.value))>=0});
-    }
-  }
+  ['r1','r2','r3'].forEach(function(key,i){
+    var r=rules[key];if(!r)return;
+    var n=i+1;
+    RULE_STATES[key]=r.enabled===true;
+    if(r.start)document.getElementById(key+'-start').value=r.start;
+    if(r.end)document.getElementById(key+'-end').value=r.end;
+    if(r.threshold)document.getElementById(key+'-thr').textContent=r.threshold;
+    updateRuleBtn(n);
+  });
   updateAutoDesc(rules);
 }
 
 function updateAutoDesc(rules){
-  var dayNames={0:'Paz',1:'Pzt',2:'Sal',3:'Çar',4:'Per',5:'Cum',6:'Cmt'};
-  var d1=(rules.r1.days||[]).map(function(d){return dayNames[d]}).join(',');
-  var txt='K1: '+d1+' '+rules.r1.start+'-'+rules.r1.end+' ('+rules.r1.threshold+'dk)';
-  if(rules.r2&&rules.r2.enabled){
-    var d2=(rules.r2.days||[]).map(function(d){return dayNames[d]}).join(',');
-    txt+=' · K2: '+d2+' '+rules.r2.start+'-'+rules.r2.end+' ('+rules.r2.threshold+'dk)';
-  }
-  document.getElementById('auto-desc').textContent=txt;
+  var parts=[];
+  ['r1','r2','r3'].forEach(function(key,i){
+    var r=rules[key];if(!r||!r.enabled)return;
+    var label=['Mesai','Akşam','H.Sonu'][i];
+    parts.push(label+' '+r.start+'-'+r.end+' ('+r.threshold+'dk)');
+  });
+  document.getElementById('auto-desc').textContent=parts.length>0?parts.join(' · '):'Tüm kurallar kapalı';
 }
+
+var AUTO_MAIN_ENABLED=false;
 
 async function checkAutoStatus(){
   try{
     var res=await gasPost({action:'kargoGetAutoReminderStatus',pin:SESSION_PIN});
     if(res.ok){
-      var tog=document.getElementById('auto-toggle');
-      var txt=document.getElementById('auto-status-text');
-      var box=document.getElementById('auto-reminder-box');
-      tog.checked=res.enabled;
+      AUTO_MAIN_ENABLED=res.enabled;
+      updateMainBtn(res.enabled);
       if(res.rules)applyRulesToUI(res.rules);
-      if(res.enabled){
-        txt.textContent='AKTİF';txt.style.color='var(--green)';
-        box.style.borderColor='var(--green)';
-      }else{
-        txt.textContent='KAPALI';txt.style.color='var(--tx3)';
-        box.style.borderColor='var(--border)';
-      }
     }
   }catch(e){}
 }
 
-async function toggleAutoReminder(enabled){
-  var txt=document.getElementById('auto-status-text');
-  var box=document.getElementById('auto-reminder-box');
-  txt.textContent='Kaydediliyor...';txt.style.color='var(--gold)';
+async function toggleAutoMain(){
+  AUTO_MAIN_ENABLED=!AUTO_MAIN_ENABLED;
+  updateMainBtn(AUTO_MAIN_ENABLED);
+  var btn=document.getElementById('btn-auto-main');
+  btn.textContent='Kaydediliyor...';
   var rules=readRulesFromUI();
-  
-  var res=await gasPost({action:'kargoToggleAutoReminder',pin:SESSION_PIN,enabled:enabled,rules:rules});
-  
+  var res=await gasPost({action:'kargoToggleAutoReminder',pin:SESSION_PIN,enabled:AUTO_MAIN_ENABLED,rules:rules});
   if(res.ok){
-    if(res.enabled){
-      txt.textContent='AKTİF';txt.style.color='var(--green)';
-      box.style.borderColor='var(--green)';
-      log('log-payment','Otomatik hatırlatma AKTİF.','ok');
-    }else{
-      txt.textContent='KAPALI';txt.style.color='var(--tx3)';
-      box.style.borderColor='var(--border)';
-      log('log-payment','Otomatik hatırlatma KAPATILDI.','skip');
-    }
+    updateMainBtn(res.enabled);
+    AUTO_MAIN_ENABLED=res.enabled;
     updateAutoDesc(rules);
+    log('log-payment',res.enabled?'Otomatik hatırlatma AKTİF':'Otomatik hatırlatma KAPALI',res.enabled?'ok':'skip');
   }else{
-    txt.textContent='HATA';txt.style.color='var(--red)';
-    document.getElementById('auto-toggle').checked=!enabled;
+    AUTO_MAIN_ENABLED=!AUTO_MAIN_ENABLED;
+    updateMainBtn(AUTO_MAIN_ENABLED);
   }
 }
 
-async function saveRules(){
+async function saveAllRules(){
   var btn=document.getElementById('btn-save-rules');
   btn.textContent='Kaydediliyor...';btn.disabled=true;
   var rules=readRulesFromUI();
@@ -1094,55 +1102,59 @@ async function saveRules(){
     updateAutoDesc(rules);
     log('log-payment','Kurallar kaydedildi.','ok');
   }else{
-    btn.textContent='Hata';btn.style.color='var(--red)';
+    btn.textContent='Hata!';btn.style.background='var(--red)';btn.style.borderColor='var(--red)';btn.style.color='#fff';
   }
-  setTimeout(function(){btn.textContent='Kuralları Kaydet';btn.style.background='';btn.style.borderColor='';btn.style.color='';btn.disabled=false},2000);
+  setTimeout(function(){btn.textContent='Kaydet';btn.style.background='';btn.style.borderColor='';btn.style.color='';btn.disabled=false},2000);
 }
 
 async function testAutoReminder(){
   var btn=document.getElementById('btn-test-auto');
   var result=document.getElementById('test-result');
   btn.disabled=true;btn.textContent='Test ediliyor...';
-  result.style.display='block';result.innerHTML='<p style="color:var(--gold);font-weight:600">Kontrol ediliyor...</p>';
-  
+  result.style.display='block';result.innerHTML='<p style="color:var(--gold);font-weight:600;font-size:16px">Kontrol ediliyor...</p>';
   var rules=readRulesFromUI();
   var res=await gasPost({action:'kargoTestAutoReminder',pin:SESSION_PIN,rules:rules});
-  
   if(res.ok){
-    var html='<p style="margin:0 0 10px;font-size:16px;font-weight:700;color:var(--tx)">Test Sonucu (mail gönderilmedi)</p>';
-    html+='<p style="margin:0 0 6px;font-size:14px;color:var(--tx2)">Sunucu saati: <strong>'+res.serverTime+'</strong></p>';
-    html+='<p style="margin:0 0 6px;font-size:14px;color:var(--tx2)">Kural 1: <strong>'+(res.rule1Match?'AKTİF pencerede':'Şu an pencere dışı')+'</strong> ('+rules.r1.threshold+' dk bekleme)</p>';
-    html+='<p style="margin:0 0 6px;font-size:14px;color:var(--tx2)">Kural 2: <strong>'+(rules.r2.enabled?(res.rule2Match?'AKTİF pencerede':'Şu an pencere dışı'):'Kapalı')+'</strong>'+(rules.r2.enabled?' ('+rules.r2.threshold+' dk bekleme)':'')+'</p>';
-    html+='<p style="margin:0 0 10px;font-size:14px;color:var(--tx2)">Toplam ödeme bekleyen: <strong>'+res.totalUnpaid+'</strong></p>';
-    
+    var html='<p style="margin:0 0 12px;font-size:18px;font-weight:800;color:var(--tx)">Test Sonucu</p>';
+    html+='<p style="margin:0 0 8px;font-size:16px;color:var(--tx2)">Sunucu saati: <strong>'+res.serverTime+'</strong></p>';
+    var rNames=['Mesai','Akşam','H.Sonu'];
+    var rKeys=['r1','r2','r3'];
+    var rMatches=[res.rule1Match,res.rule2Match,res.rule3Match];
+    for(var i=0;i<3;i++){
+      var r=rules[rKeys[i]];
+      var active=r&&r.enabled;
+      var match=rMatches[i];
+      html+='<p style="margin:0 0 4px;font-size:15px;color:var(--tx2)">'+rNames[i]+': ';
+      if(!active){html+='<strong style="color:var(--tx3)">Kapalı</strong></p>';continue;}
+      html+='<strong style="color:'+(match?'var(--green)':'var(--red)')+'">'+(match?'Pencerede':'Pencere dışı')+'</strong> ('+r.start+'-'+r.end+', '+r.threshold+'dk)</p>';
+    }
+    html+='<p style="margin:12px 0 8px;font-size:16px;color:var(--tx2)">Ödeme bekleyen: <strong>'+res.totalUnpaid+'</strong></p>';
+
+    if(!res.rule1Match&&!res.rule2Match&&!res.rule3Match){
+      html+='<p style="margin:0 0 10px;padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:15px;color:#b45309">Şu an tüm kurallar pencere dışı. Pencere açıldığında aşağıdakilere mail gönderilecek.</p>';
+    }
+
     if(res.wouldSend&&res.wouldSend.length>0){
-      html+='<p style="margin:0 0 6px;font-size:15px;font-weight:700;color:var(--green)">Mail gönderilecek ('+res.wouldSend.length+'):</p>';
+      html+='<p style="margin:0 0 6px;font-size:16px;font-weight:700;color:var(--green)">Gönderilecek ('+res.wouldSend.length+'):</p>';
       res.wouldSend.forEach(function(o){
-        html+='<div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:14px"><strong style="color:var(--gold)">#'+o.orderNumber+'</strong> <strong>'+o.name+'</strong> · '+o.email+' · <span style="color:var(--red)">'+o.elapsedMin+' dk</span> · K'+o.ruleMatch+'</div>';
+        html+='<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:15px"><strong style="color:var(--gold)">#'+o.orderNumber+'</strong> <strong>'+o.name+'</strong> · '+o.email+' · <span style="color:var(--red)">'+o.elapsedMin+' dk</span></div>';
       });
     }else{
-      html+='<p style="margin:0;font-size:15px;color:var(--tx3)">Şu an gönderilecek mail yok.</p>';
+      html+='<p style="margin:0;font-size:16px;color:var(--tx3)">Şu an gönderilecek mail yok.</p>';
     }
-    
     if(res.alreadySent&&res.alreadySent.length>0){
-      html+='<p style="margin:10px 0 6px;font-size:15px;font-weight:700;color:var(--tx3)">Zaten gönderilmiş ('+res.alreadySent.length+'):</p>';
-      res.alreadySent.forEach(function(o){
-        html+='<div style="padding:4px 0;font-size:13px;color:var(--tx3)">#'+o.orderNumber+' '+o.name+'</div>';
-      });
+      html+='<p style="margin:12px 0 6px;font-size:16px;font-weight:700;color:var(--tx3)">Zaten gönderilmiş ('+res.alreadySent.length+'):</p>';
+      res.alreadySent.forEach(function(o){html+='<div style="padding:4px 0;font-size:14px;color:var(--tx3)">#'+o.orderNumber+' '+o.name+'</div>';});
     }
-    
     if(res.notReady&&res.notReady.length>0){
-      html+='<p style="margin:10px 0 6px;font-size:15px;font-weight:700;color:#f59e0b">Henüz süre dolmamış ('+res.notReady.length+'):</p>';
-      res.notReady.forEach(function(o){
-        html+='<div style="padding:4px 0;font-size:13px;color:var(--tx2)">#'+o.orderNumber+' '+o.name+' · '+o.elapsedMin+' dk</div>';
-      });
+      html+='<p style="margin:12px 0 6px;font-size:16px;font-weight:700;color:#f59e0b">Süre dolmamış ('+res.notReady.length+'):</p>';
+      res.notReady.forEach(function(o){html+='<div style="padding:4px 0;font-size:14px;color:var(--tx2)">#'+o.orderNumber+' '+o.name+' · '+o.elapsedMin+' dk</div>';});
     }
-    
     result.innerHTML=html;
   }else{
-    result.innerHTML='<p style="color:var(--red)">Hata: '+(res.error||'Bilinmeyen')+'</p>';
+    result.innerHTML='<p style="color:var(--red);font-size:16px">Hata: '+(res.error||'Bilinmeyen')+'</p>';
   }
-  btn.disabled=false;btn.textContent='Test Et (mail göndermeden)';
+  btn.disabled=false;btn.textContent='Test Et';
 }
 
 setTimeout(checkTeslimTime,2000);
