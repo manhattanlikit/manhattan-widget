@@ -38,7 +38,7 @@ body.ml-dm-t,body.ml-dm-t *,body.ml-dm-t *::before,body.ml-dm-t *::after{
 
 /* ── TOGGLE BUTON ── */
 .ml-dm-btn{
-  position:fixed;top:12px;right:16px;z-index:999999;
+  position:absolute;z-index:999999;
   width:40px;height:40px;border-radius:50%;
   border:1.5px solid rgba(175,140,62,.35);
   background:rgba(255,255,255,.92);
@@ -47,11 +47,11 @@ body.ml-dm-t,body.ml-dm-t *,body.ml-dm-t *::before,body.ml-dm-t *::after{
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
   box-shadow:0 2px 8px rgba(0,0,0,.08);
-  transition:all .3s ease;
+  transition:background .3s ease,border-color .3s ease,color .3s ease,box-shadow .3s ease;
   padding:0;
+  pointer-events:auto;
 }
 .ml-dm-btn:hover{
-  transform:scale(1.08);
   box-shadow:0 3px 14px rgba(175,140,62,.18);
   border-color:rgba(175,140,62,.6);
 }
@@ -66,7 +66,7 @@ body.ml-dark .ml-dm-btn{
 }
 
 @media(max-width:768px){
-  .ml-dm-btn{top:10px;right:12px;width:36px;height:36px}
+  .ml-dm-btn{width:36px;height:36px}
   .ml-dm-btn svg{width:18px;height:18px}
 }
 
@@ -343,9 +343,14 @@ body.ml-dark button.button:hover{
 
 /* Cover butonlar */
 body.ml-dark .cover__button,
-body.ml-dark .cover-button{
+body.ml-dark .cover-button,
+body.ml-dark .cover__button a,
+body.ml-dark .cover-button a,
+body.ml-dark a.cover__button,
+body.ml-dark a.cover-button{
   background:${GOLDDIM}!important;
   color:#fff!important;
+  text-decoration:none!important;
 }
 
 /* ── FORM / INPUT ── */
@@ -663,11 +668,16 @@ body.ml-dark [class*="related-products"]{
 /* ── ANASAYFA CTA BUTONU (Alışverişe Devam Et / Mağazaya Git) ── */
 body.ml-dark .tile-cover .cover__button,
 body.ml-dark .tile-cover .cover-button,
-body.ml-dark .cover__button.cover-button{
+body.ml-dark .cover__button.cover-button,
+body.ml-dark .tile-cover .cover__button a,
+body.ml-dark .tile-cover .cover-button a,
+body.ml-dark .tile-cover a.cover__button,
+body.ml-dark .tile-cover a.cover-button{
   background:${GOLDDIM}!important;
   color:#fff!important;
   border:none!important;
   font-weight:600!important;
+  text-decoration:none!important;
 }
 body.ml-dark .tile-cover .cover__button:hover{
   background:${GOLD}!important;
@@ -745,15 +755,17 @@ body.ml-dark .ec-label{
   background:${GOLDDIM}!important;
   color:${BG1}!important;
 }
-/* Stokta Yok — kırmızı (badge kuralından SONRA olmalı) */
-body.ml-dark .grid-product__label--Stokta-Yok,
+/* Stokta Yok — kırmızı (badge + grid-product__label kurallarını ezmek için yüksek specificity) */
+body.ml-dark .grid-product__label.grid-product__label--Stokta-Yok,
 body.ml-dark .grid-product__label[class*="Stokta-Yok"],
-body.ml-dark [class*="label--Stokta-Yok"],
-body.ml-dark [class*="label-container"][class*="Stokta-Yok"]{
+body.ml-dark [class*="label--Stokta-Yok"][class*="label--Stokta-Yok"],
+body.ml-dark [class*="label-container"][class*="Stokta-Yok"],
+body.ml-dark .product-details__label-container.product-details__label--Stokta-Yok{
   background:#c0392b!important;
   color:#fff!important;
 }
-body.ml-dark [class*="Stokta-Yok"] .label__text{
+body.ml-dark [class*="Stokta-Yok"] .label__text,
+body.ml-dark .grid-product__label--Stokta-Yok .label__text{
   color:#fff!important;
 }
 
@@ -852,9 +864,21 @@ btn.addEventListener('click',function(e){
 });
 
 // ─── SAYFA HAZIR OLUNCA EKLE ───
+var BTN_TOP=14;
+var BTN_RIGHT=16;
+
+function posBtn(){
+  var sy=window.scrollY||window.pageYOffset||document.documentElement.scrollTop||0;
+  var w=window.innerWidth||document.documentElement.clientWidth;
+  btn.style.top=(sy+BTN_TOP)+'px';
+  btn.style.left=(w-BTN_RIGHT-40)+'px';
+}
+
 function init(){
-  // documentElement'e ekle — body'deki olası transform/contain fixed'ı bozamaz
-  document.documentElement.appendChild(btn);
+  document.body.appendChild(btn);
+  posBtn();
+  window.addEventListener('scroll',posBtn,{passive:true});
+  window.addEventListener('resize',posBtn,{passive:true});
   // Kayıtlı tercihi yükle
   try{
     if(localStorage.getItem('ml-dark')==='1'){
