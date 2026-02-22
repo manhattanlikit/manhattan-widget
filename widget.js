@@ -290,7 +290,7 @@ tip='<div class="ml-tier-tip"><svg viewBox="0 0 24 24" fill="none" stroke="var(-
 tt+='<div class="ml-tier-row '+cls+'"'+clickAttr+'><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+' '+badge+'</div><div class="ml-tr-desc">'+desc+'</div></div>'+cod+'</div>'+tip;
 });
 // Tasarruf hesapla
-var _savSpend=(d.allTimeSpend||d.spend||0);var _savRate=Math.max(t.d,2.5);var rawSav=_savSpend*(_savRate/100)*1.4;var savings;if(rawSav<1000){savings=Math.ceil(rawSav/10)*10;}else{savings=Math.ceil(rawSav/50)*50;}
+var _savSpend=(d.allTimeSpend||d.spend||0);var _savRate=Math.max(t.d,2.5);var rawSav=_savSpend*(_savRate/100)*1.4+(d.couponTotal||0);var savings;if(rawSav<1000){savings=Math.ceil(rawSav/10)*10;}else{savings=Math.ceil(rawSav/50)*50;}
 var savingsHtml='<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">'+(savings>0?'Bugüne kadar toplam<br><b>'+f$(savings)+' ₺ ve üzeri</b> tasarruf ettiniz':'Sipariş verin,<br><b>tasarruf etmeye başlayın</b>')+'</div><div class="ml-savings-orders"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>';
 // İade compact (only if exists)
 var compactStats='';
