@@ -38,7 +38,7 @@ body.ml-dm-t,body.ml-dm-t *,body.ml-dm-t *::before,body.ml-dm-t *::after{
 
 /* ── TOGGLE BUTON ── */
 .ml-dm-btn{
-  position:absolute;z-index:999999;
+  z-index:999999;
   width:40px;height:40px;border-radius:50%;
   border:1.5px solid rgba(175,140,62,.35);
   background:rgba(255,255,255,.92);
@@ -66,8 +66,8 @@ body.ml-dark .ml-dm-btn{
 }
 
 @media(max-width:768px){
-  .ml-dm-btn{width:36px;height:36px}
-  .ml-dm-btn svg{width:18px;height:18px}
+  .ml-dm-btn{width:34px;height:34px}
+  .ml-dm-btn svg{width:16px;height:16px}
 }
 
 /* ══════════════════════════════════════
@@ -700,6 +700,7 @@ body.ml-dark .cover__button:hover,
 body.ml-dark .cover-button:hover{
   background:${GOLD}!important;
   background-color:${GOLD}!important;
+  border-radius:12px!important;
 }
 body.ml-dark .cover__button:hover *,
 body.ml-dark .cover-button:hover *{
@@ -888,21 +889,14 @@ btn.addEventListener('click',function(e){
 });
 
 // ─── SAYFA HAZIR OLUNCA EKLE ───
-var BTN_TOP=14;
-var BTN_RIGHT=16;
-
-function posBtn(){
-  var sy=window.scrollY||window.pageYOffset||document.documentElement.scrollTop||0;
-  var w=window.innerWidth||document.documentElement.clientWidth;
-  btn.style.top=(sy+BTN_TOP)+'px';
-  btn.style.left=(w-BTN_RIGHT-40)+'px';
-}
-
 function init(){
-  document.body.appendChild(btn);
-  posBtn();
-  window.addEventListener('scroll',posBtn,{passive:true});
-  window.addEventListener('resize',posBtn,{passive:true});
+  // Wrapper div — inline fixed, hiçbir CSS override edemez
+  var wrap=document.createElement('div');
+  wrap.id='ml-dm-wrap';
+  wrap.setAttribute('style','position:fixed!important;top:14px!important;right:16px!important;z-index:999999!important;pointer-events:auto!important;');
+  wrap.appendChild(btn);
+  // documentElement'e ekle (body transform varsa bile etkilenmez)
+  (document.documentElement||document.body).appendChild(wrap);
   // Kayıtlı tercihi yükle
   try{
     if(localStorage.getItem('ml-dark')==='1'){
