@@ -10,13 +10,14 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);z-index:1000000;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .25s ease}
 .ml-overlay.open{opacity:1;visibility:visible}
 .ml-card{width:400px;max-width:92vw;max-height:98vh;overflow-y:auto;overflow-x:hidden;background:var(--mlbg);border-radius:var(--mlr);position:relative;transform:translateY(10px);transition:transform .3s cubic-bezier(.2,0,0,1);box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 24px 60px -12px rgba(0,0,0,.15);font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;color:var(--mltp)}
-.ml-overlay.open .ml-card{transform:translateY(0)}.ml-card::-webkit-scrollbar{display:none}
+.ml-overlay.open .ml-card{transform:translateY(0)}.ml-card::-webkit-scrollbar{display:none}.ml-card{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .ml-x{position:sticky;top:12px;float:right;margin:12px 12px 0 0;width:30px;height:30px;border:none;background:var(--mlbg2);border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;transition:background .15s}
 .ml-x:hover{background:var(--mlbgh)}.ml-x svg{width:12px;height:12px;stroke:var(--mlts);stroke-width:2.5}
 .ml-inner{padding:0 22px 16px}
-.ml-head{text-align:center;padding-top:0;margin-bottom:0;display:flex;flex-direction:column;align-items:center}
-.ml-head-sub{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--mltt);margin-bottom:1px}
-.ml-head-title{font-size:13px;font-weight:700;letter-spacing:-.3px;color:var(--mltp);margin-bottom:6px}
+.ml-head{display:flex;align-items:center;justify-content:center;gap:6px;padding-top:0;margin-bottom:4px}
+.ml-head-sub{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--mltt)}
+.ml-head-dot{width:3px;height:3px;border-radius:50%;background:var(--mlbd);flex-shrink:0}
+.ml-head-title{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--mltt)}
 .ml-tier{text-align:center;margin-bottom:8px;display:flex;flex-direction:column;align-items:center}
 .ml-tier-badge{width:48px;height:48px;margin:0 auto 6px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative}
 .ml-tier-badge svg{width:20px;height:20px;stroke-width:1.2}
@@ -31,8 +32,8 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .t-platinum .ml-tier-badge{background:linear-gradient(145deg,#e8e8ed,#d8d8de)}.t-platinum .ml-tier-badge svg{stroke:#636366}.t-platinum .ml-tier-name{color:#48484a}
 .t-diamond .ml-tier-badge{background:linear-gradient(145deg,#e0e8f5,#c8d8f0)}.t-diamond .ml-tier-badge svg{stroke:#4a6fa5}.t-diamond .ml-tier-name{color:#3a5a8a}
 .ml-prog{margin-bottom:10px}
-.ml-prog-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
-.ml-prog-label{font-size:13px;font-weight:500;color:var(--mlts)}
+.ml-prog-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;gap:6px}
+.ml-prog-label{font-size:11px;font-weight:500;color:var(--mlts);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .ml-prog-val{font-size:11px;font-weight:500;color:var(--mlts);letter-spacing:-.1px}
 .ml-prog-bar{width:100%;height:8px;background:var(--mlbg2);border-radius:4px;overflow:hidden}
 .ml-prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#af8c3e,#d4b05e);transition:width .8s cubic-bezier(.25,0,0,1);position:relative;overflow:hidden}
@@ -143,6 +144,13 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-ref-form button:disabled{opacity:.5;cursor:not-allowed}
 .ml-ref-msg{font-size:10px;margin-top:4px;line-height:1.3}
 .ml-ref-msg.ok{color:#38a169}.ml-ref-msg.err{color:#e53e3e}
+.ml-acc-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--mlbg2);border-radius:8px;cursor:pointer;margin-bottom:4px;-webkit-tap-highlight-color:transparent;user-select:none}
+.ml-acc-hdr:active{background:var(--mlbgh)}
+.ml-acc-title{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--mltt);display:flex;align-items:center;gap:5px}
+.ml-acc-chev{width:12px;height:12px;stroke:var(--mltt);stroke-width:2.5;fill:none;transition:transform .2s;flex-shrink:0}
+.ml-acc-hdr.open .ml-acc-chev{transform:rotate(180deg)}
+.ml-acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.ml-acc-hdr.open+.ml-acc-body{max-height:800px}
 .ml-ref-teaser{font-size:10px;color:var(--mlts);text-align:center;margin-bottom:8px;padding:6px 10px;background:var(--mlbg2);border-radius:8px;line-height:1.4}
 .ml-ref-teaser b{color:var(--mlg);font-weight:700}
 .ml-tier-share{position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-radius:50%;background:var(--mltp);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.7);transition:all .2s;cursor:pointer}
@@ -152,13 +160,13 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-trigger.collapsed .ml-trigger-txt{max-width:0;opacity:0;overflow:hidden}
 .ml-trigger .ml-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .9s ease,opacity .7s ease}
 .ml-trigger.collapsed svg{margin:0}
-@media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:14px}.ml-tier-name{font-size:20px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:15px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:12px}.ml-prog-val{font-size:11px}.ml-prog-hint{font-size:12px}.ml-inner{padding:0 24px 18px}}
-@media(max-width:1024px){.ml-card{border-radius:16px;max-width:94vw}.ml-inner{padding:0 18px 16px}.ml-tier-badge{width:44px;height:44px}.ml-tier-badge svg{width:18px;height:18px}.ml-tier-name{font-size:16px}.ml-head-title{font-size:12px}.ml-stat-num{font-size:15px}.ml-stats{gap:6px}.ml-stat{padding:10px 8px}.ml-prog-hint{font-size:11px}.ml-btns{flex-direction:column;gap:6px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:5px 8px}.ml-tr-ico{width:24px;height:24px}.ml-tr-ico svg{width:11px;height:11px}.ml-tr-name{font-size:11px}.ml-tr-desc{font-size:9px}.ml-tr-discount{font-size:12px}}`;
+@media(min-width:1025px){.ml-card{width:440px}.ml-head-title{font-size:10px}.ml-tier-name{font-size:20px}.ml-tr-name{font-size:13px}.ml-tr-desc{font-size:11px}.ml-tr-discount{font-size:14px}.ml-stat-num{font-size:15px}.ml-stat-lbl{font-size:10px}.ml-prog-label{font-size:10px}.ml-prog-val{font-size:11px}.ml-inner{padding:0 24px 18px}}
+@media(max-width:1024px){.ml-card{border-radius:16px;max-width:94vw}.ml-inner{padding:0 18px 16px}.ml-tier-badge{width:44px;height:44px}.ml-tier-badge svg{width:18px;height:18px}.ml-tier-name{font-size:16px}.ml-head-title{font-size:10px}.ml-stat-num{font-size:15px}.ml-stats{gap:6px}.ml-stat{padding:10px 8px}.ml-btns{flex-direction:column;gap:6px}.ml-trigger{bottom:16px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center}.ml-trigger .ml-trigger-txt{display:none}.ml-trigger svg{width:18px;height:18px;margin:0}.ml-tier-row{padding:5px 8px}.ml-tr-ico{width:24px;height:24px}.ml-tr-ico svg{width:11px;height:11px}.ml-tr-name{font-size:11px}.ml-tr-desc{font-size:9px}.ml-tr-discount{font-size:12px}}`;
 document.head.appendChild(s);
 
 // HTML enjekte
 var w=document.createElement('div');
-w.innerHTML='<button class="ml-trigger" onclick="mlOpen()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="ml-trigger-txt">Sadakat Seviyem</span></button><div class="ml-overlay" id="ov" onclick="mlClose(event)"><div class="ml-card"><button class="ml-x" onclick="mlClose()"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="ml-inner"><div class="ml-head"><div class="ml-head-sub">Manhattan</div><div class="ml-head-title" id="ml-htitle">Sadakat Programı</div></div><div id="ct"></div></div></div></div>';
+w.innerHTML='<button class="ml-trigger" onclick="mlOpen()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span class="ml-trigger-txt">Sadakat Seviyem</span></button><div class="ml-overlay" id="ov" onclick="mlClose(event)"><div class="ml-card"><button class="ml-x" onclick="mlClose()"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button><div class="ml-inner"><div class="ml-head"><div class="ml-head-sub">Manhattan</div><div class="ml-head-dot"></div><div class="ml-head-title" id="ml-htitle">İndirim Seviyem</div></div><div id="ct"></div></div></div></div>';
 document.body.appendChild(w);
 
 var T=[
@@ -245,12 +253,12 @@ return;
 var i=T.findIndex(function(t){return t.n===d.tier});
 var t=T[i],nx=i<T.length-1?T[i+1]:null;
 var c='t-'+d.tier.toLowerCase();
-var greeting=d.loggedIn&&d.name?'<div class="ml-greeting">'+d.name+'</div>':'';
+var greeting=d.loggedIn&&d.name?'<div class="ml-greeting">Hoşgeldin, '+d.name+'!</div>':'';
 var prog='';
 if(nx){
 var p=Math.min((d.spend/nx.mn)*100,100);
 var r=nx.mn-d.spend;
-prog='<div class="ml-prog"><div class="ml-prog-row"><span class="ml-prog-label">Sonraki: <b>'+nx.n+'</b> · %'+nx.d+' indirim</span><span class="ml-prog-val">'+Math.round(p)+'%</span></div><div class="ml-prog-bar"><div class="ml-prog-fill" id="pf" data-p="'+p+'" style="width:0%"></div></div><div class="ml-prog-hint"><span style="color:var(--mlg);font-weight:600">%'+nx.d+' indirime</span> <span style="font-weight:400">'+f$(r)+' ₺ kaldı</span>'+(nx.r?' · iade <%'+nx.r:'')+'</div></div>';
+prog='<div class="ml-prog"><div class="ml-prog-row"><span class="ml-prog-label">Sonraki: <b>'+nx.n+'</b> · %'+nx.d+' indirim · '+f$(r)+' ₺ kaldı'+(nx.r?' · iade <%'+nx.r:'')+'</span><span class="ml-prog-val">'+Math.round(p)+'%</span></div><div class="ml-prog-bar"><div class="ml-prog-fill" id="pf" data-p="'+p+'" style="width:0%"></div></div></div>';
 }else{
 prog='<div class="ml-max-msg">En yüksek seviyedesiniz.<br>Tüm ayrıcalıklarınız aktif.</div>';
 }
@@ -300,7 +308,7 @@ var avgPerMonth=d.spend/12;
 if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var targetDate=new Date();targetDate.setMonth(targetDate.getMonth()+monthsLeft);var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];projHtml='<div style="text-align:center;font-size:10px;color:var(--mlts);margin:4px 0 8px">Tahmini <b style=\"color:var(--mlg)\">'+nx.n+' seviyesine</b> geçiş: <b>'+monthNames[targetDate.getMonth()]+' '+targetDate.getFullYear()+'</b></div>';}
 }
 // Sürpriz indirimler linki
-var surpriseHtml='<div class="ml-surprise"><a href="javascript:void(0)" onclick="mlBday()"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Doğum Günü Hediyenizi Alın</a></div>';
+var surpriseHtml='<div class="ml-surprise" style="margin:2px 0 0;line-height:1"><a href="javascript:void(0)" onclick="mlBday()" style="font-size:9px;opacity:.5"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:9px;height:9px"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg> Doğum Günü Hediyesi</a></div>';
 var refHtml='';
 if(REF_RATES[d.tier]){
 var refTiers=['Silver','Gold','Platinum','Diamond'];
@@ -315,6 +323,7 @@ refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" 
 } else {
 refHtml='<div class="ml-ref" style="opacity:.85"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub"><b>Silver</b> seviyesine ulaştığınızda arkadaşlarınızı davet edip <b>ek indirim</b> kazanabilirsiniz!</div><div style="display:flex;justify-content:center;gap:8px;margin-top:6px"><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;background:rgba(175,140,62,.08);color:var(--mlg)"><div style="font-weight:600">Silver</div><div>%5</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Gold</div><div>%7.5</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Platinum</div><div>%10</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Diamond</div><div>%15</div></div></div></div>';
 }
+if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-ref\')"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body">'+refHtml+'</div>';}
 // Flash bonus (Cumartesi 16:00 - Pazar 18:00)
 var flashHtml='';
 var now=new Date();var dow=now.getDay(),hr=now.getHours();
@@ -326,7 +335,7 @@ var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
 flashHtml='<div class="ml-flash" onclick="event.stopPropagation()"><div class="ml-flash-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="ml-flash-txt"><b>Flash Bonus +%2.5</b><br>Hafta sonu özel ek indirim</div><div class="ml-flash-timer" id="ml-ft">'+String(fh).padStart(2,'0')+':'+String(fm).padStart(2,'0')+':'+String(fs).padStart(2,'0')+'</div></div><div id="ml-flash-code" onclick="event.stopPropagation()" style="text-align:center;margin-bottom:8px"><button onclick="event.stopPropagation();mlFlashCoupon()" class="ml-cta ml-cta-gold" style="font-size:11px;padding:6px 16px;width:100%">Kodumu Oluştur</button></div>';
 }
 var btns='<button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta">Alışverişe Devam Et</button>';
-document.getElementById('ct').innerHTML=luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div>'+greeting+'</div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+compactStats+'<div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div>'+tt+'</div>'+refHtml+btns;
+document.getElementById('ct').innerHTML=luHtml+'<div class="ml-tier '+c+'"><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-tier-name">'+d.tier+'</div>'+greeting+'</div>'+surpriseHtml+'<div id="ml-bday-area"></div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+compactStats+'<div class="ml-acc-hdr" id="ml-acc-tiers" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-tiers\')"><div class="ml-acc-title">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div class="ml-tiers-table">'+tt+'</div></div>'+refHtml+btns;
 // Confetti
 setTimeout(function(){
 var ht=document.getElementById('ml-htitle');if(ht)ht.style.color=TC[d.tier]||'var(--mltp)';
@@ -426,6 +435,7 @@ if(ov&&ov.classList.contains('open')){mlClose();e.stopImmediatePropagation();}
 }
 },true);
 
+window.mlAccToggle=function(id){var h=document.getElementById(id);if(h)h.classList.toggle('open');};
 window.mlTip=function(el){
 var wasExpanded=el.classList.contains('expanded');
 document.querySelectorAll('.ml-tier-row.expanded').forEach(function(r){r.classList.remove('expanded');});
