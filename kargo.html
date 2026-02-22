@@ -189,9 +189,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <button class="btn rule-toggle" id="btn-r1" onclick="toggleRule(1)" style="font-size:14px;padding:8px 18px;min-width:90px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
 <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
-<select id="r1-start" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<select id="r1-start" onchange="markUnsaved()" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 <span style="font-size:14px;color:var(--tx3)">—</span>
-<select id="r1-end" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<select id="r1-end" onchange="markUnsaved()" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 </div>
 <div style="display:flex;align-items:center;justify-content:center;gap:6px">
 <button class="btn btn-outline" onclick="adjThr(1,-5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">−</button>
@@ -211,9 +211,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <button class="btn rule-toggle" id="btn-r2" onclick="toggleRule(2)" style="font-size:14px;padding:8px 18px;min-width:90px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
 <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
-<select id="r2-start" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<select id="r2-start" onchange="markUnsaved()" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 <span style="font-size:14px;color:var(--tx3)">—</span>
-<select id="r2-end" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<select id="r2-end" onchange="markUnsaved()" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 </div>
 <div style="display:flex;align-items:center;justify-content:center;gap:6px">
 <button class="btn btn-outline" onclick="adjThr(2,-5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">−</button>
@@ -233,9 +233,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <button class="btn rule-toggle" id="btn-r3" onclick="toggleRule(3)" style="font-size:14px;padding:8px 18px;min-width:90px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
 <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
-<select id="r3-start" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<select id="r3-start" onchange="markUnsaved()" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 <span style="font-size:14px;color:var(--tx3)">—</span>
-<select id="r3-end" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
+<select id="r3-end" onchange="markUnsaved()" style="padding:8px;font-size:16px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-weight:600;flex:1"></select>
 </div>
 <div style="display:flex;align-items:center;justify-content:center;gap:6px">
 <button class="btn btn-outline" onclick="adjThr(3,-5)" style="padding:6px 12px;font-size:18px;font-weight:700;border-radius:8px">−</button>
@@ -607,59 +607,34 @@ async function processResults(file){
 
     var updated=0,skipped=0,notFound=0,errors=0;
     
-    for(var i=0;i<shipments.length;i++){
-      var s=shipments[i];
-      setProgress('pbar-import',25+Math.round(i/shipments.length*70));
-      
-      var orderId=null;
-      var orderNum=null;
-      var alreadyShipped=false;
-      
-      // Strategy 1: Direct match via Özel Alan
-      if(s.ecwidId&&/^\d+$/.test(s.ecwidId)){
-        var chk=await gasPost({action:'kargoCheckOrder',pin:SESSION_PIN,orderId:s.ecwidId});
-        if(chk.ok){
-          orderId=chk.id;
-          orderNum=chk.orderNumber;
-          if(chk.fulfillmentStatus==='SHIPPED')alreadyShipped=true;
+    // Toplu eşleştirme — tek GAS çağrısı
+    log('log-import','Toplu eşleştirme başlatılıyor ('+shipments.length+' gönderi)...','info');
+    setProgress('pbar-import',30);
+    var batchData=shipments.map(function(s){return{phone:s.phone,trackCode:s.trackCode,name:s.name}});
+    var batchRes=await gasPost({action:'kargoBatchUpdate',pin:SESSION_PIN,shipments:batchData});
+    setProgress('pbar-import',90);
+    
+    if(batchRes.ok&&batchRes.results){
+      batchRes.results.forEach(function(r){
+        if(r.status==='updated'){
+          log('log-import','✓ #'+r.orderNumber+' · '+r.name+' → '+r.trackCode,'ok');
+          updated++;
+        }else if(r.status==='alreadyShipped'){
+          log('log-import','⏭ Kargo takibi önceden girilmiş: #'+r.orderNumber+' · '+r.name,'skip');
+          skipped++;
+        }else if(r.status==='notFound'){
+          log('log-import','✗ Eşleşmedi: '+r.name+' — Farklı kargo firması (Sürat, MNG vb.) olabilir','err');
+          notFound++;
+        }else if(r.status==='error'){
+          log('log-import','✗ Güncelleme hatası: '+r.name+' — '+(r.reason||''),'err');
+          errors++;
+        }else if(r.status==='skip'){
+          log('log-import','⏭ '+r.name+' — '+(r.reason||'Atlandı'),'skip');
+          skipped++;
         }
-      }
-      
-      // Strategy 2: Phone fallback
-      if(!orderId&&s.phone){
-        var ph=await gasPost({action:'kargoSearchByPhone',pin:SESSION_PIN,phone:s.phone});
-        if(ph.ok){
-          orderId=ph.id;
-          orderNum=ph.orderNumber;
-          if(ph.fulfillmentStatus==='SHIPPED')alreadyShipped=true;
-        }
-      }
-      
-      // Already shipped — önceden girilmiş
-      if(alreadyShipped){
-        log('log-import','⏭ Kargo takibi önceden girilmiş: #'+(orderNum||orderId)+' · '+s.name,'skip');
-        skipped++;
-        continue;
-      }
-      
-      // Not found at all
-      if(!orderId){
-        log('log-import','✗ Eşleşmedi: '+s.name+' — Farklı kargo firması (Sürat, MNG vb.) olabilir','err');
-        notFound++;
-        continue;
-      }
-      
-      // Update tracking
-      var upd=await gasPost({action:'kargoUpdateTracking',pin:SESSION_PIN,orderId:String(orderId),trackCode:s.trackCode});
-      if(upd.ok){
-        log('log-import','✓ #'+(orderNum||orderId)+' · '+s.name+' → '+s.trackCode,'ok');
-        updated++;
-      }else{
-        log('log-import','✗ Güncelleme hatası #'+orderId+': '+(upd.error||''),'err');
-        errors++;
-      }
-      
-      await new Promise(function(r){setTimeout(r,200)});
+      });
+    }else{
+      log('log-import','HATA: '+(batchRes.error||'Toplu güncelleme başarısız'),'err');
     }
     
     setProgress('pbar-import',100);
@@ -992,12 +967,23 @@ initTimeSelects();
 function adjThr(n,delta){
   var el=document.getElementById('r'+n+'-thr');
   el.textContent=Math.max(5,Math.min(180,parseInt(el.textContent)+delta));
+  markUnsaved();
+}
+
+function markUnsaved(){
+  var btn=document.getElementById('btn-save-rules');
+  if(btn.disabled)return;
+  btn.textContent='● Kaydet';btn.style.background='#b8860b';btn.style.borderColor='#b8860b';btn.style.color='#fff';
+}
+function clearUnsaved(){
+  var btn=document.getElementById('btn-save-rules');
+  btn.textContent='Kaydet';btn.style.background='';btn.style.borderColor='';btn.style.color='';
 }
 
 function toggleRule(n){
   RULE_STATES['r'+n]=!RULE_STATES['r'+n];
   updateRuleBtn(n);
-  saveAllRules();
+  markUnsaved();
 }
 
 function updateRuleBtn(n){
@@ -1075,7 +1061,7 @@ async function saveAllRules(){
   }else{
     btn.textContent='Hata!';btn.style.background='var(--red)';btn.style.borderColor='var(--red)';btn.style.color='#fff';
   }
-  setTimeout(function(){btn.textContent='Kaydet';btn.style.background='';btn.style.borderColor='';btn.style.color='';btn.disabled=false},2000);
+  setTimeout(function(){clearUnsaved();btn.disabled=false},2000);
 }
 
 async function testAutoReminder(){
