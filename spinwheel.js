@@ -12,7 +12,7 @@ var SEGS=[
   {label:'%2',   sub:'İNDİRİM',        bg:'#141820',text:'#7eb8da'},
   {label:'KARGO',sub:'ÜCRETSİZ',       bg:'#0f1f1a',text:'#5ec4a0'},
   {label:'%5',   sub:'İNDİRİM',        bg:'#221a10',text:'#e8c36a'},
-  {label:'—',    sub:'TEKRAR DENE',     bg:'#161616',text:'#666'},
+  {label:'TEKRAR',sub:'DENE',          bg:'#161616',text:'#888'},
   {label:'%10',  sub:'İNDİRİM',        bg:'#1e1510',text:'#ffc857'},
   {label:'%3',   sub:'İNDİRİM',        bg:'#181420',text:'#b08ed4'}
 ];
@@ -44,7 +44,6 @@ var css=`
 .sw-trigger.collapsed .sw-trigger-txt{max-width:0;opacity:0;overflow:hidden}
 .sw-trigger.collapsed svg{margin:0}
 .sw-tip{display:none}
-@keyframes sw-glow{0%,100%{box-shadow:0 4px 20px rgba(175,140,62,.4),0 0 0 0 rgba(212,176,94,.3)}50%{box-shadow:0 4px 20px rgba(175,140,62,.4),0 0 0 12px rgba(212,176,94,0)}}
 
 .sw-ov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:1000001;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s;padding:16px;overflow:hidden}
 .sw-ov.open{opacity:1;visibility:visible}
@@ -54,7 +53,7 @@ var css=`
 .sw-x{position:fixed;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:all .2s;font-family:sans-serif}
 .sw-x:hover{background:rgba(255,255,255,.15)}
 
-.sw-badge{font:700 11px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.6);display:flex;align-items:center;gap:8px}
+.sw-badge{font:700 11px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding-left:2.5px}
 .sw-badge::before,.sw-badge::after{content:'';width:28px;height:1px;background:linear-gradient(90deg,transparent,#d4b05e,transparent)}
 
 .sw-snd{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);font:500 11px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s;vertical-align:middle}
@@ -181,16 +180,16 @@ function build(){
 }
 
 // ====== CANVAS ÇARK ======
-function drawWheel(){
+function drawWheel(rotDeg){
   var cv=document.getElementById('sw-cv');if(!cv)return;
   var c=cv.getContext('2d'),W=cv.width,H=cv.height,cx=W/2,cy=H/2;
-  var R=W/2-4;
-  var CR=48;
+  var R=W/2-4,CR=52;
+  var rot=(rotDeg||0)*Math.PI/180;
 
   c.clearRect(0,0,W,H);
 
   for(var i=0;i<N;i++){
-    var a0=-Math.PI/2+i*SAR,a1=a0+SAR,mid=a0+SAR/2;
+    var a0=-Math.PI/2+i*SAR+rot,a1=a0+SAR,mid=a0+SAR/2;
     var seg=SEGS[i];
 
     // Segment arka plan
@@ -199,52 +198,49 @@ function drawWheel(){
       var g=c.createRadialGradient(cx,cy,CR,cx,cy,R);
       g.addColorStop(0,'#8b1a2a');g.addColorStop(1,'#4a0d14');
       c.fillStyle=g;
-    }else{
-      c.fillStyle=seg.bg;
-    }
+    }else{c.fillStyle=seg.bg}
     c.fill();
 
     // Sınır çizgisi
     c.beginPath();c.moveTo(cx,cy);
     c.lineTo(cx+Math.cos(a0)*R,cy+Math.sin(a0)*R);
-    c.strokeStyle='rgba(212,176,94,.2)';c.lineWidth=1.5;c.stroke();
+    c.strokeStyle='rgba(212,176,94,.25)';c.lineWidth=1.5;c.stroke();
 
-    // ===== METİN (radyal — her zaman okunabilir) =====
+    // ===== METİN — flip ekrandaki GERÇEK konuma göre =====
     c.save();
     c.translate(cx,cy);
     c.rotate(mid);
 
-    var norm=((mid%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
-    var flip=norm>Math.PI/2&&norm<Math.PI*3/2;
+    var screenA=((mid%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
+    var flip=screenA>Math.PI/2&&screenA<Math.PI*3/2;
     if(flip)c.rotate(Math.PI);
 
-    var tr=flip?-R*0.56:R*0.56;
+    var tr=flip?-R*0.55:R*0.55;
     c.textAlign='center';c.textBaseline='middle';c.fillStyle=seg.text;
 
     if(seg.grand){
-      c.font='800 32px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.label,tr,-10);
-      c.font='600 14px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.sub,tr,flip?-30:14);
-      // Yıldız (SVG path olarak çiz)
-      var starR=flip?-R*0.82:R*0.82;
-      c.fillStyle='#ffd700';c.globalAlpha=.4;
+      c.font='800 40px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.label,tr,-12);
+      c.font='600 17px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.sub,tr,flip?-36:16);
+      // Yıldız
+      var sR=flip?-R*0.8:R*0.8;
+      c.fillStyle='#ffd700';c.globalAlpha=.35;
       c.beginPath();
       for(var si=0;si<5;si++){
         var sa=-Math.PI/2+si*Math.PI*2/5;
-        var sx=starR+Math.cos(sa)*10,sy=Math.sin(sa)*10;
-        if(si===0)c.moveTo(sx,sy);else c.lineTo(sx,sy);
+        c.lineTo(sR+Math.cos(sa)*12,Math.sin(sa)*12);
         var ib=sa+Math.PI/5;
-        c.lineTo(starR+Math.cos(ib)*4,Math.sin(ib)*4);
+        c.lineTo(sR+Math.cos(ib)*5,Math.sin(ib)*5);
       }
       c.closePath();c.fill();c.globalAlpha=1;
     }else{
-      c.font='800 36px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.label,tr,seg.sub?-10:0);
+      c.font='800 46px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.label,tr,seg.sub?-12:0);
       if(seg.sub){
-        c.globalAlpha=.6;
-        c.font='600 13px "Plus Jakarta Sans",sans-serif';
-        c.fillText(seg.sub,tr,flip?-30:16);
+        c.globalAlpha=.55;
+        c.font='700 16px "Plus Jakarta Sans",sans-serif';
+        c.fillText(seg.sub,tr,flip?-36:18);
         c.globalAlpha=1;
       }
     }
@@ -252,15 +248,15 @@ function drawWheel(){
   }
 
   // Son segment çizgisi
-  var la=-Math.PI/2;
+  var la=-Math.PI/2+rot;
   c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(la)*R,cy+Math.sin(la)*R);
-  c.strokeStyle='rgba(212,176,94,.2)';c.lineWidth=1.5;c.stroke();
+  c.strokeStyle='rgba(212,176,94,.25)';c.lineWidth=1.5;c.stroke();
 
   // Pin noktaları
   for(var i=0;i<N;i++){
-    var pa=-Math.PI/2+i*SAR;
+    var pa=-Math.PI/2+i*SAR+rot;
     var px=cx+Math.cos(pa)*(R-8),py=cy+Math.sin(pa)*(R-8);
-    c.beginPath();c.arc(px,py,4,0,Math.PI*2);
+    c.beginPath();c.arc(px,py,4.5,0,Math.PI*2);
     c.fillStyle='#d4b05e';c.fill();
     c.strokeStyle='rgba(0,0,0,.3)';c.lineWidth=1;c.stroke();
   }
@@ -270,11 +266,11 @@ function drawWheel(){
   cg.addColorStop(0,'#f5e6c8');cg.addColorStop(.5,'#d4b05e');cg.addColorStop(1,'#8a6e2f');
   c.beginPath();c.arc(cx,cy,CR,0,Math.PI*2);
   c.fillStyle=cg;c.fill();
-  c.strokeStyle='rgba(255,255,255,.15)';c.lineWidth=2;c.stroke();
+  c.strokeStyle='rgba(255,255,255,.2)';c.lineWidth=2;c.stroke();
 
-  // Merkez "M"
+  // M
   c.fillStyle='#1a1714';
-  c.font='800 38px "Plus Jakarta Sans",sans-serif';
+  c.font='800 42px "Plus Jakarta Sans",sans-serif';
   c.textAlign='center';c.textBaseline='middle';
   c.fillText('M',cx,cy+1);
 }
@@ -339,7 +335,7 @@ function initDrag(){
     var now=Date.now(),a=getAngle(e);
     var delta=a-_dragStart;
     _rotation+=delta;
-    cv.style.transform='rotate('+_rotation+'deg)';
+    drawWheel(_rotation);
     _dragVel=(a-_lastDragAngle)/(now-_lastDragTime+1)*16;
     _lastDragAngle=a;_lastDragTime=now;
     _dragStart=a;
@@ -381,13 +377,13 @@ function animateTo(segment,angleOffset,dur){
       var ease=1-Math.pow(1-t,3.5);
 
       _rotation=startRot+(end-startRot)*ease;
-      cv.style.transform='rotate('+_rotation+'deg)';
+      drawWheel(_rotation);
 
       var curSeg=Math.floor(((_rotation%360+360)%360)/SA)%N;
       if(curSeg!==lastSeg){tick();lastSeg=curSeg}
 
       if(t<1)requestAnimationFrame(frame);
-      else{_rotation=end;cv.style.transform='rotate('+_rotation+'deg)';resolve()}
+      else{_rotation=end;drawWheel(_rotation);resolve()}
     }
     requestAnimationFrame(frame);
   });
@@ -645,7 +641,7 @@ function swToggleSound(){
 window.swSpin=swSpin;window.swClose=swClose;window.swCopy=swCopy;window.swToggleSound=swToggleSound;
 
 // ====== INIT ======
-function init(){build();drawWheel();initDrag()}
+function init(){build();drawWheel(0);initDrag()}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
 else init();
 
