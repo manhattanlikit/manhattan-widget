@@ -357,6 +357,8 @@ body.ml-dark button.cover-button{
 body.ml-dark .cover__button *,
 body.ml-dark .cover-button *{
   color:${GOLD}!important;
+  background:transparent!important;
+  background-color:transparent!important;
 }
 
 /* ── FORM / INPUT ── */
@@ -687,16 +689,25 @@ body.ml-dark .tile-cover a.cover-button{
 body.ml-dark .tile-cover .cover__button *,
 body.ml-dark .tile-cover .cover-button *{
   color:${GOLD}!important;
+  background:transparent!important;
+  background-color:transparent!important;
 }
 body.ml-dark .tile-cover .cover__button:hover,
-body.ml-dark .tile-cover .cover-button:hover{
+body.ml-dark .tile-cover .cover-button:hover,
+body.ml-dark .cover__button:hover,
+body.ml-dark .cover-button:hover{
   background:${GOLDDIM}!important;
   background-color:${GOLDDIM}!important;
   color:${BG1}!important;
+  border-color:${GOLD}!important;
 }
 body.ml-dark .tile-cover .cover__button:hover *,
-body.ml-dark .tile-cover .cover-button:hover *{
+body.ml-dark .tile-cover .cover-button:hover *,
+body.ml-dark .cover__button:hover *,
+body.ml-dark .cover-button:hover *{
   color:${BG1}!important;
+  background:transparent!important;
+  background-color:transparent!important;
 }
 
 /* ── ECWID İKON BAR (Ürünleri Ara, Hesabım, Siparişleri İzle, Favoriler, Sepetim) ── */
