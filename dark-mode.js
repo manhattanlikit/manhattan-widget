@@ -38,35 +38,36 @@ body.ml-dm-t,body.ml-dm-t *,body.ml-dm-t *::before,body.ml-dm-t *::after{
 
 /* ── TOGGLE BUTON ── */
 .ml-dm-btn{
-  position:fixed;top:14px;right:16px;z-index:999999;
-  width:36px;height:36px;border-radius:50%;
-  border:1px solid rgba(0,0,0,.08);
-  background:rgba(255,255,255,.85);
+  position:fixed;top:18px;right:72px;z-index:999999;
+  width:34px;height:34px;border-radius:50%;
+  border:1.5px solid rgba(175,140,62,.3);
+  background:rgba(255,255,255,.9);
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
-  color:#1b1a17;
+  color:#af8c3e;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
-  box-shadow:0 1px 6px rgba(0,0,0,.08);
+  box-shadow:0 1px 6px rgba(0,0,0,.06);
   transition:all .3s ease;
   padding:0;
 }
 .ml-dm-btn:hover{
-  transform:scale(1.1);
-  box-shadow:0 2px 12px rgba(0,0,0,.12);
+  transform:scale(1.08);
+  box-shadow:0 2px 12px rgba(175,140,62,.15);
+  border-color:rgba(175,140,62,.5);
 }
-.ml-dm-btn svg{width:18px;height:18px;transition:transform .4s ease}
+.ml-dm-btn svg{width:17px;height:17px;transition:transform .4s ease}
 .ml-dm-btn:active svg{transform:rotate(30deg)}
 
 body.ml-dark .ml-dm-btn{
-  background:rgba(35,34,30,.85);
+  background:rgba(35,34,30,.9);
   border-color:${BD};
   color:${GOLD};
   box-shadow:0 1px 8px rgba(0,0,0,.3);
 }
 
 @media(max-width:768px){
-  .ml-dm-btn{top:10px;right:10px;width:32px;height:32px}
-  .ml-dm-btn svg{width:16px;height:16px}
+  .ml-dm-btn{top:12px;right:56px;width:30px;height:30px}
+  .ml-dm-btn svg{width:15px;height:15px}
 }
 
 /* ══════════════════════════════════════
@@ -198,7 +199,7 @@ body.ml-dark small,body.ml-dark .ec-text-muted{color:${TX3}!important}
 body.ml-dark .grid-product__wrap,
 body.ml-dark .grid-product__wrap-inner{
   background:${BG2}!important;
-  border-radius:12px!important;
+  border-radius:14px!important;
   border:1px solid ${BD2}!important;
   box-shadow:${CARD_SHADOW}!important;
   overflow:hidden;
@@ -206,6 +207,31 @@ body.ml-dark .grid-product__wrap-inner{
 body.ml-dark .grid-product__wrap:hover{
   border-color:${BD}!important;
   box-shadow:0 4px 24px rgba(0,0,0,.45)!important;
+}
+/* Grid spacing — kenar kartlar sıkışmasın */
+body.ml-dark .grid__products{
+  gap:16px!important;
+  padding:0 4px!important;
+}
+/* Stokta Var label — gold */
+body.ml-dark .grid-product__label{
+  background:${GOLDDIM}!important;
+  color:${BG1}!important;
+  border-radius:6px!important;
+}
+/* Stokta Yok label — kırmızı/coral */
+body.ml-dark .grid-product__label--Stokta-yok,
+body.ml-dark [class*="label--Stokta-Yok"],
+body.ml-dark [class*="label--out"]{
+  background:#c0392b!important;
+  color:#fff!important;
+}
+/* Ürün detaydaki Stokta var badge — genişleme düzeltme */
+body.ml-dark .details-product-purchase__place .ec-label,
+body.ml-dark .product-details .ec-label{
+  display:inline-block!important;
+  width:auto!important;
+  max-width:fit-content!important;
 }
 
 /* ── ÜRÜN KART İÇERİK ── */
@@ -224,9 +250,11 @@ body.ml-dark .grid-product__price-value{
 
 /* ── ÜRÜN GÖRSELLERİ — Açık container, blend yok ── */
 body.ml-dark .grid-product__image,
-body.ml-dark .grid-product__bg{
+body.ml-dark .grid-product__bg,
+body.ml-dark .grid-product__bg[style]{
   background:${IMG_BG}!important;
-  border-radius:10px 10px 0 0!important;
+  background-color:${IMG_BG}!important;
+  border-radius:12px 12px 0 0!important;
 }
 body.ml-dark .grid-product__image img,
 body.ml-dark .grid-product__picture img,
@@ -239,6 +267,27 @@ body.ml-dark .product-details__product-title{color:${TX1}!important}
 body.ml-dark .product-details__product-price .ec-price-item{color:${GOLD}!important}
 body.ml-dark .product-details__product-description{color:${TX2}!important}
 body.ml-dark .product-details{color:${TX2}!important}
+
+/* WYSIWYG ürün açıklaması içerikleri (Koleksiyon tablosu vb.) */
+body.ml-dark .product-details__product-description *,
+body.ml-dark .product-details__product-description td,
+body.ml-dark .product-details__product-description th,
+body.ml-dark .product-details__product-description span,
+body.ml-dark .product-details__product-description p,
+body.ml-dark .product-details__product-description div,
+body.ml-dark .product-details__product-description strong,
+body.ml-dark .product-details__product-description b,
+body.ml-dark .product-details__product-description li{
+  color:${TX1}!important;
+  background-color:transparent!important;
+}
+body.ml-dark .product-details__product-description table{
+  border-color:${BD}!important;
+}
+body.ml-dark .product-details__product-description td,
+body.ml-dark .product-details__product-description th{
+  border-color:${BD}!important;
+}
 
 /* Ürün detay görseli */
 body.ml-dark .product-details__gallery,
@@ -309,10 +358,14 @@ body.ml-dark textarea:focus{
 
 /* ── SEPET ── */
 body.ml-dark .ec-cart,
-body.ml-dark .ec-cart__body,
-body.ml-dark .ec-cart-item{
-  background:${BG2}!important;
+body.ml-dark .ec-cart__body{
+  background:${BG1}!important;
   color:${TX1}!important;
+}
+body.ml-dark .ec-cart-item{
+  background:${BG1}!important;
+  color:${TX1}!important;
+  border-bottom:1px solid ${BD2}!important;
 }
 body.ml-dark .ec-cart-item__title{color:${TX1}!important}
 body.ml-dark .ec-cart-item__price{color:${GOLD}!important}
@@ -350,6 +403,32 @@ body.ml-dark .hc-review-form__submit__wrapper{
   color:${TX1}!important;
   border-color:${BD}!important;
 }
+body.ml-dark [class*="hc-"] h1,
+body.ml-dark [class*="hc-"] h2,
+body.ml-dark [class*="hc-"] h3,
+body.ml-dark [class*="hc-"] h4,
+body.ml-dark [class*="hc-"] strong,
+body.ml-dark .hc-comment__title,
+body.ml-dark .hc-review-summary__title,
+body.ml-dark [class*="hc-"] [class*="title"]{
+  color:${TX1}!important;
+}
+body.ml-dark [class*="hc-"] p,
+body.ml-dark [class*="hc-"] span,
+body.ml-dark [class*="hc-"] div,
+body.ml-dark .hc-comment__body,
+body.ml-dark .hc-comment__author,
+body.ml-dark [class*="hc-"] [class*="text"],
+body.ml-dark [class*="hc-"] [class*="label"],
+body.ml-dark [class*="hc-"] [class*="metric"]{
+  color:${TX2}!important;
+}
+body.ml-dark [class*="hc-"] hr,
+body.ml-dark .hc-comment+.hc-comment,
+body.ml-dark [class*="hc-"] [class*="border"],
+body.ml-dark [class*="hc-"] [class*="separator"]{
+  border-color:${BD}!important;
+}
 body.ml-dark .hc-dropdown__content,
 body.ml-dark .hc-dropdown__item{
   background:${BG3}!important;
@@ -361,6 +440,10 @@ body.ml-dark .hc-dropdown__item:hover{
 body.ml-dark .hc-product-tab-filters__search{
   background:${BG3}!important;
   border-color:${BD}!important;
+  color:${TX1}!important;
+}
+body.ml-dark .hc-product-tab-filters__search input{
+  color:${TX1}!important;
 }
 body.ml-dark .hc-rating-chart__bar-wrapper{
   background:${BG3}!important;
@@ -379,6 +462,17 @@ body.ml-dark .hc-flag{
   background:${BG3}!important;
   color:${TX2}!important;
 }
+/* HelpfulCrowd butonlar */
+body.ml-dark [class*="hc-"] button,
+body.ml-dark .hc-review-form__submit button{
+  background:${GOLDDIM}!important;
+  color:${BG1}!important;
+  border-color:${GOLDDIM}!important;
+}
+/* Müşteri medya resimleri */
+body.ml-dark [class*="hc-"] img{
+  border-radius:6px;
+}
 
 /* ── SOSYAL PAYLAŞIM ── */
 body.ml-dark .ec-likely__widget{
@@ -392,14 +486,30 @@ body.ml-dark .form-control--checkbox-button label,
 body.ml-dark .details-product-option label,
 body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   background:${BG3}!important;
+  color:${TX2}!important;
+  border:1.5px solid ${BD}!important;
+  border-radius:8px!important;
+}
+body.ml-dark .form-control--checkbox-button label:hover,
+body.ml-dark .details-product-option label:hover{
+  border-color:${GOLDDIM}!important;
   color:${TX1}!important;
-  border-color:${BD}!important;
 }
 body.ml-dark .form-control--checkbox-button input:checked+label,
-body.ml-dark .form-control--checkbox-button .form-control__radio--checked+label{
+body.ml-dark .form-control--checkbox-button .form-control__radio--checked+label,
+body.ml-dark .form-control--checkbox-button input:checked~label,
+body.ml-dark .form-control--checkbox-button .form-control__radio--checked~label,
+body.ml-dark .details-product-option .form-control__radio--checked,
+body.ml-dark .details-product-option .form-control__radio--checked label{
   background:${GOLDDIM}!important;
   color:${BG1}!important;
-  border-color:${GOLDDIM}!important;
+  border-color:${GOLD}!important;
+  font-weight:600!important;
+}
+/* Seçenek text'leri de koyu olsun seçildiğinde */
+body.ml-dark .form-control--checkbox-button input:checked+label *,
+body.ml-dark .form-control--checkbox-button .form-control__radio--checked+label *{
+  color:${BG1}!important;
 }
 
 /* ── MİKTAR INPUT ── */
@@ -426,6 +536,114 @@ body.ml-dark .page-link a:hover{
 /* ── MİNİCART ── */
 body.ml-dark .ec-minicart{
   background:transparent!important;
+}
+
+/* ── ALT NAVİGASYON İKONLARI (Ürünleri Ara, Hesabım vb.) ── */
+body.ml-dark .footer-menu,
+body.ml-dark .ec-store__content-wrapper [class*="footer"]{
+  background:${BG2}!important;
+  border-top:1px solid ${BD2}!important;
+}
+body.ml-dark .footer-menu a,
+body.ml-dark .footer-menu svg,
+body.ml-dark [class*="store-footer"] a,
+body.ml-dark [class*="store-footer"] svg{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+}
+body.ml-dark [class*="store-footer"] span{
+  color:${TX2}!important;
+}
+
+/* ── CHECKOUT — Teslimat yöntemi kutuları ── */
+body.ml-dark [class*="shipping"] [class*="radio"],
+body.ml-dark [class*="delivery"] label,
+body.ml-dark .ec-radiogroup label,
+body.ml-dark [class*="checkout"] [class*="step"] label{
+  background:${BG2}!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark [class*="shipping"] [class*="radio"]:hover,
+body.ml-dark .ec-radiogroup label:hover{
+  border-color:${GOLDDIM}!important;
+}
+body.ml-dark [class*="shipping"] input:checked~label,
+body.ml-dark [class*="shipping"] input:checked+label,
+body.ml-dark .ec-radiogroup input:checked+label{
+  border-color:${GOLDDIM}!important;
+  background:rgba(175,140,62,.08)!important;
+}
+
+/* ── CHECKOUT — Ödeme bildirim kutuları (renkli arka planlar) ── */
+body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 224)"],
+body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 240)"],
+body.ml-dark [style*="background-color: rgb(245, 212"],
+body.ml-dark [style*="background-color: rgb(247, 205"]{
+  background-color:rgba(175,140,62,.1)!important;
+  border-color:${BD}!important;
+}
+
+/* ── SEPET SAYFA ARKA PLANI — ana bg ile aynı ── */
+body.ml-dark .ec-cart-step,
+body.ml-dark .ec-confirmation,
+body.ml-dark [class*="checkout"]{
+  background:${BG1}!important;
+  color:${TX1}!important;
+}
+body.ml-dark .ec-cart-step__body,
+body.ml-dark .ec-cart-step__section{
+  background:${BG1}!important;
+}
+
+/* ── ÖNERİLEN ÜRÜNLER KAROSELİ (Bunları da Beğenebilirsiniz) ── */
+body.ml-dark .product-details__related-products .grid-product__wrap,
+body.ml-dark [class*="related"] .grid-product__wrap,
+body.ml-dark [class*="recently"] .grid-product__wrap{
+  border-radius:14px!important;
+  border:1px solid ${BD2}!important;
+  overflow:hidden!important;
+}
+
+/* ── ANASAYFA CTA BUTONU (Alışverişe Devam Et / Mağazaya Git) ── */
+body.ml-dark .tile-cover .cover__button,
+body.ml-dark .tile-cover .cover-button,
+body.ml-dark .cover__button.cover-button{
+  background:${GOLDDIM}!important;
+  color:${BG1}!important;
+  border:none!important;
+  font-weight:600!important;
+}
+body.ml-dark .tile-cover .cover__button:hover{
+  background:${GOLD}!important;
+}
+
+/* ── ECWID İKON BAR (Ürünleri Ara, Hesabım, Siparişleri İzle, Favoriler, Sepetim) ── */
+body.ml-dark .ec-store__content-wrapper a,
+body.ml-dark .ec-footer a svg,
+body.ml-dark .ec-store [class*="icon-bar"] a,
+body.ml-dark .ec-store [class*="icon-bar"] svg{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+}
+
+/* ── ÜRÜN DETAY — ek düzeltmeler ── */
+/* Stokta var badge genişleme düzeltme */
+body.ml-dark .product-details .ec-label[class*="Stokta"]{
+  width:auto!important;
+  max-width:fit-content!important;
+}
+/* Üzeri çizili eski fiyat */
+body.ml-dark .ec-price-item--old,
+body.ml-dark [class*="price--old"],
+body.ml-dark .grid-product__price-compare,
+body.ml-dark s .ec-price-item{
+  color:${TX3}!important;
+}
+/* Promosyon kodu linki */
+body.ml-dark [class*="coupon"] a,
+body.ml-dark [class*="promo"] a{
+  color:${GOLD}!important;
 }
 
 /* ── PARA BİRİMİ ── */
@@ -491,6 +709,21 @@ body.ml-dark .ml-overlay .ml-card{
   --mlbgh:#3a3930;
   --mlbd:${BD};
   --mlgl:rgba(175,140,62,.08);
+}
+/* Widget içi okunabilirlik */
+body.ml-dark .ml-overlay .ml-card *{
+  border-color:${BD}!important;
+}
+body.ml-dark .ml-overlay .ml-card .ml-sub,
+body.ml-dark .ml-overlay .ml-card [class*="desc"],
+body.ml-dark .ml-overlay .ml-card [class*="info"]{
+  color:${TX2}!important;
+}
+body.ml-dark .ml-overlay .ml-card .ml-val{
+  color:${TX1}!important;
+}
+body.ml-dark .ml-overlay{
+  background:rgba(0,0,0,.6)!important;
 }
 body.ml-dark .ml-trigger{
   background:linear-gradient(135deg,${BG2},${BG3})!important;
