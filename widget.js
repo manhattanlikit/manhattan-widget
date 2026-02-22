@@ -83,6 +83,9 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-cta-secondary{display:flex;align-items:center;justify-content:center;padding:13px;background:var(--mlbg2);color:var(--mltp);font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:10px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box}
 .ml-cta-secondary:hover{background:var(--mlbgh)}
 .ml-locked-msg{text-align:center;padding:16px 0 8px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6}
+.ml-signin-form{padding:12px 0 4px}.ml-signin-input{width:100%;padding:13px 14px;border:1.5px solid rgba(175,140,62,.3);border-radius:10px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;background:var(--mlbg2);color:var(--mltp);outline:none;box-sizing:border-box;transition:border .2s}.ml-signin-input:focus{border-color:var(--mlg)}.ml-signin-input::placeholder{color:var(--mlts);opacity:.6}
+.ml-signin-btn{width:100%;margin-top:10px;padding:13px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#1a1a2e;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:pointer;transition:all .2s;letter-spacing:-.1px}.ml-signin-btn:hover{background:linear-gradient(135deg,#d4b05e,#af8c3e)}.ml-signin-btn:disabled{opacity:.6;cursor:wait}
+.ml-signin-ok{text-align:center;padding:14px;background:rgba(175,140,62,.1);border-radius:10px;margin-top:10px;font-size:14px;color:var(--mlg);font-weight:600;line-height:1.5}
 .ml-confetti{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:3}
 .ml-confetti i{position:absolute;width:6px;height:6px;border-radius:50%;top:-10px;animation:mlconf 1.8s ease-out forwards}
 .ml-confetti i:nth-child(odd){border-radius:1px;width:5px;height:8px}
@@ -259,7 +262,7 @@ T.forEach(function(ti){
 var lockIco='<svg viewBox="0 0 24 24" fill="none" stroke="var(--mltt)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
 tt+='<div class="ml-tier-row locked"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+'</div></div><div class="ml-tr-discount">'+lockIco+'</div></div>';
 });
-document.getElementById('ct').innerHTML='<div class="ml-locked-msg">İndirim seviyenizi görmek için<br><a href="https://manhattandan.com" target="_self" onclick="event.stopPropagation()" style="color:var(--mlg);font-weight:700;text-decoration:underline">giriş yapın</a>.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div>'+tt+'</div><div class="ml-btns"><a href="https://manhattandan.com" target="_self" onclick="event.stopPropagation()" class="ml-cta ml-cta-gold">Giriş Yap</a><button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta-secondary">Mağazaya Git</button></div>';
+document.getElementById('ct').innerHTML='<div class="ml-locked-msg">Giriş bağlantınızı almak için<br>e-posta adresinizi girin.</div><div class="ml-signin-form"><input type="email" class="ml-signin-input" id="mlSignEmail" placeholder="E-posta adresiniz" onclick="event.stopPropagation()" onkeydown="event.stopPropagation();if(event.key===\'Enter\'){event.preventDefault();mlSendSignIn();}"><button type="button" class="ml-signin-btn" id="mlSignBtn" onclick="event.stopPropagation();mlSendSignIn()">Giriş Bağlantısı Gönder</button><div id="mlSignMsg"></div></div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div>'+tt+'</div><div class="ml-btns"><button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta-secondary">Mağazaya Git</button></div>';
 return;
 }
 // LOGGED IN
@@ -340,10 +343,10 @@ if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stop
 // Flash bonus (Cumartesi 16:00 - Pazar 18:00)
 var flashHtml='';
 var now=new Date();var dow=now.getDay(),hr=now.getHours();
-var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<19);
+var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<18);
 window._mlFlashEnd=null;
 if(isFlash){
-var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(19,0,0,0);
+var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(18,0,0,0);
 window._mlFlashEnd=end.getTime();
 var rem=Math.max(0,Math.floor((end-now)/1000));
 var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
@@ -381,6 +384,43 @@ var fte=document.getElementById('ml-ft');var timeStr=fte?fte.textContent:'--:--:
 area.innerHTML='<div class="ml-acc-hdr open" id="ml-acc-flash" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-flash\')"><div class="ml-acc-title" style="color:var(--mlg)" id="ml-fc-title">Ek %2.5 İndirim Kodunuz</div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div style="background:var(--mlbg2);border:2px dashed var(--mlg);border-radius:0 0 10px 10px;padding:12px 14px;text-align:center;cursor:pointer" onclick="event.stopPropagation();mlCopyFlash()"><div style="display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;opacity:.6"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><div style="font-size:20px;font-weight:800;color:var(--mlg);letter-spacing:2px;font-family:monospace">'+code+'</div></div></div></div>';
 window._mlFlashCode=code;
 try{if(window._mlFlashEnd)sessionStorage.setItem('ml_flash_code',JSON.stringify({code:code,end:window._mlFlashEnd}));}catch(e){}
+};
+window.mlSendSignIn=function(){
+var em=document.getElementById('mlSignEmail');
+var btn=document.getElementById('mlSignBtn');
+var msg=document.getElementById('mlSignMsg');
+if(!em||!em.value||!em.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)){
+msg.innerHTML='<div style="color:#ff6b6b;font-size:13px;padding:8px 0;text-align:center">Lütfen geçerli bir e-posta adresi girin.</div>';return;}
+var email=em.value.trim();
+btn.disabled=true;btn.textContent='Gönderiliyor...';msg.innerHTML='';
+var prevPage=window.location.hash||'';
+Ecwid.openPage('account');
+var attempts=0;
+var waitForForm=setInterval(function(){
+attempts++;
+var ecInp=document.querySelector('.ec-cart-email__input input');
+if(ecInp){
+clearInterval(waitForForm);
+var ns=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;
+ns.call(ecInp,email);
+ecInp.dispatchEvent(new Event('input',{bubbles:true}));
+ecInp.dispatchEvent(new Event('change',{bubbles:true}));
+setTimeout(function(){
+var ecBtn=document.querySelector('button.form-control__button');
+if(ecBtn){ecBtn.click();
+setTimeout(function(){
+if(prevPage)window.location.hash=prevPage;
+else Ecwid.openPage('');
+btn.disabled=false;btn.textContent='Giriş Bağlantısı Gönder';
+msg.innerHTML='<div class="ml-signin-ok">✓ Giriş bağlantısı gönderildi!<br><span style="font-weight:400;font-size:13px;opacity:.8">E-postanızı kontrol edin.</span></div>';
+},1500);
+}else{btn.disabled=false;btn.textContent='Giriş Bağlantısı Gönder';
+msg.innerHTML='<div style="color:#ff6b6b;font-size:13px;padding:8px 0;text-align:center">Bir hata oluştu. Lütfen tekrar deneyin.</div>';}
+},1000);
+}
+if(attempts>15){clearInterval(waitForForm);btn.disabled=false;btn.textContent='Giriş Bağlantısı Gönder';
+msg.innerHTML='<div style="color:#ff6b6b;font-size:13px;padding:8px 0;text-align:center">Bağlantı kurulamadı. Lütfen tekrar deneyin.</div>';}
+},500);
 };
 window.mlCopyFlash=function(){
 var code=window._mlFlashCode;if(!code)return;
