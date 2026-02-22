@@ -20,6 +20,7 @@ var N=8,SA=360/N,SAR=Math.PI*2/N;
 
 // ====== DURUM ======
 var _spinning=false,_spunSession=false,_rotation=0,_audioCtx=null,_muted=false;
+var _TEST_MODE=true; // TEST: sınırsız çevirme — canlıya alırken false yap
 
 // ====== SVG İKONLAR (emoji yasak) ======
 var ICO={
@@ -35,11 +36,14 @@ var ICO={
 
 // ====== CSS ======
 var css=`
-.sw-trigger{position:fixed;bottom:80px;right:24px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#af8c3e,#d4b05e);border:2px solid rgba(255,255,255,.15);cursor:pointer;z-index:999998;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(175,140,62,.4);transition:all .3s ease;animation:sw-glow 2.5s ease-in-out infinite}
-.sw-trigger:hover{transform:scale(1.1)}
-.sw-trigger:hover .sw-tip{opacity:1;transform:translateX(-100%) translateY(-50%) scale(1)}
-.sw-trigger svg{width:28px;height:28px}
-.sw-tip{position:absolute;right:62px;top:50%;transform:translateX(-100%) translateY(-50%) scale(.9);background:#1a1714;color:#d4b05e;font:600 12px 'Plus Jakarta Sans',sans-serif;padding:6px 12px;border-radius:8px;white-space:nowrap;pointer-events:none;opacity:0;transition:all .2s;border:1px solid rgba(212,176,94,.3)}
+.sw-trigger{position:fixed;bottom:80px;right:24px;height:48px;padding:0 18px 0 14px;border-radius:24px;background:linear-gradient(135deg,#1a1714,#292118);border:1.5px solid rgba(212,176,94,.3);cursor:pointer;z-index:999998;display:flex;align-items:center;gap:7px;color:#d4b05e;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:.3px;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:all .8s cubic-bezier(.25,0,0,1);overflow:hidden}
+.sw-trigger:hover{transform:scale(1.04);box-shadow:0 6px 28px rgba(0,0,0,.4)}
+.sw-trigger svg{width:20px;height:20px;flex-shrink:0;transition:margin .8s cubic-bezier(.25,0,0,1)}
+.sw-trigger .sw-trigger-txt{max-width:200px;opacity:1;white-space:nowrap;overflow:hidden;transition:max-width .9s ease,opacity .7s ease}
+.sw-trigger.collapsed{width:48px;height:48px;padding:0;border-radius:50%;justify-content:center;gap:0}
+.sw-trigger.collapsed .sw-trigger-txt{max-width:0;opacity:0;overflow:hidden}
+.sw-trigger.collapsed svg{margin:0}
+.sw-tip{display:none}
 @keyframes sw-glow{0%,100%{box-shadow:0 4px 20px rgba(175,140,62,.4),0 0 0 0 rgba(212,176,94,.3)}50%{box-shadow:0 4px 20px rgba(175,140,62,.4),0 0 0 12px rgba(212,176,94,0)}}
 
 .sw-ov{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:1000001;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s;padding:16px;overflow:hidden}
@@ -53,17 +57,17 @@ var css=`
 .sw-badge{font:700 11px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.6);display:flex;align-items:center;gap:8px}
 .sw-badge::before,.sw-badge::after{content:'';width:28px;height:1px;background:linear-gradient(90deg,transparent,#d4b05e,transparent)}
 
-.sw-snd{position:fixed;top:16px;left:16px;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);font:500 11px 'Plus Jakarta Sans',sans-serif;cursor:pointer;z-index:10;transition:all .2s}
-.sw-snd:hover{background:rgba(255,255,255,.15);color:#fff}
-.sw-snd.off{color:rgba(255,255,255,.35)}
+.sw-snd{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);font:500 11px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s;vertical-align:middle}
+.sw-snd:hover{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8)}
+.sw-snd.off{color:rgba(255,255,255,.25);border-color:rgba(255,255,255,.06)}
 
-.sw-wheel-box{position:relative;width:min(82vw,400px);height:min(82vw,400px);margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.sw-wheel-box{position:relative;width:min(72vh,72vw,520px);height:min(72vh,72vw,520px);margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none}
 .sw-pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);z-index:5;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))}
 .sw-ring{width:100%;height:100%;border-radius:50%;padding:6px;background:linear-gradient(135deg,#f5e6c8,#d4b05e,#af8c3e,#d4b05e,#f5e6c8);box-shadow:0 0 80px rgba(175,140,62,.2),0 0 0 1px rgba(0,0,0,.3)}
 .sw-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;position:relative}
 .sw-canvas{width:100%;height:100%;display:block}
 
-.sw-btn{margin-top:18px;padding:15px 52px;border-radius:30px;border:none;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;font:700 17px 'Plus Jakarta Sans',sans-serif;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase;box-shadow:0 4px 24px rgba(175,140,62,.4);transition:all .25s}
+.sw-btn{padding:15px 44px;border-radius:30px;border:none;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;font:700 16px 'Plus Jakarta Sans',sans-serif;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase;box-shadow:0 4px 24px rgba(175,140,62,.4);transition:all .25s}
 .sw-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(175,140,62,.5)}
 .sw-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
 
@@ -104,10 +108,10 @@ var css=`
 @keyframes sw-shk{0%,100%{transform:translateX(0)}15%{transform:translateX(-6px)}30%{transform:translateX(6px)}45%{transform:translateX(-4px)}60%{transform:translateX(4px)}75%{transform:translateX(-2px)}90%{transform:translateX(2px)}}
 
 @media(max-width:640px){
-  .sw-trigger{bottom:68px;right:16px;width:48px;height:48px}
-  .sw-trigger svg{width:24px;height:24px}
-  .sw-tip{display:none}
-  .sw-wheel-box{width:90vw;height:90vw}
+  .sw-trigger{bottom:68px;right:16px;width:44px;height:44px;padding:0;border-radius:50%;justify-content:center;gap:0}
+  .sw-trigger .sw-trigger-txt{display:none}
+  .sw-trigger svg{width:20px;height:20px;margin:0}
+  .sw-wheel-box{width:88vw;height:88vw}
   .sw-btn{padding:13px 40px;font-size:15px}
   .sw-x{top:10px;right:10px;width:36px;height:36px;font-size:18px}
   .sw-badge{font-size:10px}
@@ -125,15 +129,16 @@ function build(){
   // Trigger
   var btn=document.createElement('button');btn.className='sw-trigger';btn.id='sw-trigger';
   btn.setAttribute('aria-label','Çark Çevir');
-  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.5" fill="#fff" stroke="none"/><line x1="12" y1="2" x2="12" y2="12"/><line x1="12" y1="12" x2="19.07" y2="4.93"/><line x1="12" y1="12" x2="22" y2="12"/><line x1="12" y1="12" x2="12" y2="22"/></svg><span class="sw-tip">Çark Çevir</span>';
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#d4b05e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.5" fill="#d4b05e" stroke="none"/><line x1="12" y1="2" x2="12" y2="12"/><line x1="12" y1="12" x2="19.07" y2="4.93"/><line x1="12" y1="12" x2="22" y2="12"/><line x1="12" y1="12" x2="12" y2="22"/></svg><span class="sw-trigger-txt">Çark Çevir</span>';
   btn.onclick=function(e){e.stopPropagation();openOverlay()};
   document.body.appendChild(btn);
+  // Pill → daire küçülme (widget.js paterni)
+  setTimeout(function(){btn.classList.add('collapsed')},2500);
 
   // Overlay
   var ov=document.createElement('div');ov.className='sw-ov';ov.id='sw-ov';
   ov.innerHTML=
     '<button class="sw-x" id="sw-x" onclick="event.stopPropagation();swClose()">✕</button>'+
-    '<button class="sw-snd" id="sw-snd" onclick="event.stopPropagation();swToggleSound()">'+ICO.sndOn+' <span id="sw-snd-txt">Ses Açık</span></button>'+
     '<div class="sw-main" onclick="event.stopPropagation()">'+
       '<div class="sw-badge">ŞANSINI DENE</div>'+
       '<div class="sw-wheel-box" id="sw-box">'+
@@ -144,7 +149,7 @@ function build(){
           '<a class="sw-login-btn" href="/account">Giriş Yap</a>'+
         '</div>'+
       '</div>'+
-      '<button class="sw-btn" id="sw-btn" onclick="event.stopPropagation();swSpin()">ÇEVİR!</button>'+
+      '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px"><button class="sw-btn" id="sw-btn" onclick="event.stopPropagation();swSpin()">ÇEVİR!</button><button class="sw-snd" id="sw-snd" onclick="event.stopPropagation();swToggleSound()">'+ICO.sndOn+' <span id="sw-snd-txt">Ses Açık</span></button></div>'+
       '<div class="sw-msg" id="sw-msg"></div>'+
     '</div>'+
     '<div class="sw-prize" id="sw-prize" onclick="event.stopPropagation()">'+
@@ -501,7 +506,8 @@ function swClose(){
 
 // ====== ANA ÇARK LOGİĞİ (GAS kontrol) ======
 async function swSpin(){
-  if(_spinning||_spunSession)return;
+  if(_spinning)return;
+  if(_spunSession&&!_TEST_MODE)return;
   if(!isLoggedIn()){openOverlay();return}
 
   _spinning=true;
@@ -511,13 +517,14 @@ async function swSpin(){
 
   try{
     var email=getEmail();
-    var resp=await fetch(GAS_URL+'?action=spin&email='+encodeURIComponent(email));
+    var url=GAS_URL+'?action=spin&email='+encodeURIComponent(email)+(_TEST_MODE?'&test=1':'');
+    var resp=await fetch(url);
     var data=await resp.json();
 
     if(!data.ok){
       if(data.error==='already_spun'){
-        _spunSession=true;
-        msg(data.message||'Bu hafta zaten çevirdiniz!');
+        if(!_TEST_MODE)_spunSession=true;
+        msg(data.message||'Bugün zaten çevirdiniz!');
         if(data.couponCode)showPrize({prize:data.prize,couponCode:data.couponCode,type:'repeat'});
         else{msg(getCountdownText())}
       }else{
@@ -535,7 +542,7 @@ async function swSpin(){
     var isNearMiss=(data.segment===0||data.segment===2);
 
     if(data.type==='none'){
-      showToast('Tekrar Dene!','Haftaya şansınız açılabilir',2500);
+      showToast('Tekrar Dene!','Yarın tekrar şansını dene!',2500);
     }else{
       winSound();confetti();
       var card=document.getElementById('sw-prize-card');
@@ -544,11 +551,11 @@ async function swSpin(){
     }
 
     showPrize(data);
-    _spunSession=true;
+    if(!_TEST_MODE)_spunSession=true;
 
     if(isNearMiss&&data.type!=='none'){
       setTimeout(function(){
-        showToast(ICO.fire+'Çok yaklaştınız!','Büyük ödüle az kaldı... Haftaya tekrar deneyin!',3000);
+        showToast(ICO.fire+'Çok yaklaştınız!','Büyük ödüle az kaldı... Yarın tekrar deneyin!',3000);
       },2500);
     }
 
@@ -574,7 +581,7 @@ function showPrize(data){
 
   if(data.type==='none'){
     ico.innerHTML=ICO.retry;t.textContent='Tekrar Dene!';
-    s.textContent='Bu sefer olmadı ama haftaya şansın açılabilir!';
+    s.textContent='Bu sefer olmadı ama yarın tekrar deneyebilirsin!';
     pc.style.display='none';pex.textContent='';
   }else if(data.type==='repeat'){
     ico.innerHTML=ICO.ticket;t.textContent='Bu Haftaki Ödülünüz';
@@ -611,13 +618,13 @@ function swCopy(){
 // ====== GERİ SAYIM ======
 function getCountdownText(){
   var now=new Date();
-  var next=new Date(now);
-  var d=next.getDay(),diff=d===0?1:(8-d);
-  next.setDate(next.getDate()+diff);next.setHours(0,0,0,0);
-  var ms=next-now;if(ms<=0)return'Hemen tekrar çevirebilirsiniz!';
-  var days=Math.floor(ms/86400000);
-  var hrs=Math.floor((ms%86400000)/3600000);
-  return'Sonraki hak: '+days+' gün '+hrs+' saat';
+  // 24 saat sonra (canlıda kullanılacak)
+  var next=new Date(now.getTime()+24*60*60*1000);
+  next.setMinutes(0,0,0);
+  var ms=next-now;if(ms<=0)return'Tekrar çevirebilirsiniz!';
+  var hrs=Math.floor(ms/3600000);
+  var mins=Math.floor((ms%3600000)/60000);
+  return'Sonraki hak: '+hrs+' saat '+mins+' dk';
 }
 
 // ====== SES TOGGLE ======
