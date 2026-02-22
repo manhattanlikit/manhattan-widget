@@ -334,10 +334,10 @@ if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stop
 // Flash bonus (Cumartesi 16:00 - Pazar 18:00)
 var flashHtml='';
 var now=new Date();var dow=now.getDay(),hr=now.getHours();
-var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<18);
+var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<19);
 window._mlFlashEnd=null;
 if(isFlash){
-var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(18,0,0,0);
+var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(19,0,0,0);
 window._mlFlashEnd=end.getTime();
 var rem=Math.max(0,Math.floor((end-now)/1000));
 var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
