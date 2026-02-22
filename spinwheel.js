@@ -125,7 +125,7 @@ function build(){
   // Trigger
   var btn=document.createElement('button');btn.className='sw-trigger';btn.id='sw-trigger';
   btn.setAttribute('aria-label','Çark Çevir');
-  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="#fff" opacity=".9"/><line x1="12" y1="2" x2="12" y2="5" stroke="#fff" stroke-width="1.5"/><line x1="12" y1="19" x2="12" y2="22" stroke="#fff" stroke-width="1.5"/><line x1="2" y1="12" x2="5" y2="12" stroke="#fff" stroke-width="1.5"/><line x1="19" y1="12" x2="22" y2="12" stroke="#fff" stroke-width="1.5"/><line x1="4.93" y1="4.93" x2="6.34" y2="6.34" stroke="#fff" stroke-width="1.2"/><line x1="17.66" y1="17.66" x2="19.07" y2="19.07" stroke="#fff" stroke-width="1.2"/><line x1="4.93" y1="19.07" x2="6.34" y2="17.66" stroke="#fff" stroke-width="1.2"/><line x1="17.66" y1="6.34" x2="19.07" y2="4.93" stroke="#fff" stroke-width="1.2"/></svg><span class="sw-tip">Çark Çevir</span>';
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.5" fill="#fff" stroke="none"/><line x1="12" y1="2" x2="12" y2="12"/><line x1="12" y1="12" x2="19.07" y2="4.93"/><line x1="12" y1="12" x2="22" y2="12"/><line x1="12" y1="12" x2="12" y2="22"/></svg><span class="sw-tip">Çark Çevir</span>';
   btn.onclick=function(e){e.stopPropagation();openOverlay()};
   document.body.appendChild(btn);
 
@@ -443,22 +443,54 @@ function msg(text,cls){
 }
 
 // ====== OVERLAY ======
+function showReady(){
+  var gate=document.getElementById('sw-gate');
+  var btn=document.getElementById('sw-btn');
+  gate.style.display='none';btn.style.display='';
+  btn.disabled=_spunSession;
+  btn.textContent=_spunSession?'ÇEVRİLDİ':'ÇEVİR!';
+  msg(_spunSession?getCountdownText():'Çarkı çevir veya sürükle!');
+}
+
+function showGate(){
+  document.getElementById('sw-gate').style.display='flex';
+  document.getElementById('sw-btn').style.display='none';msg('');
+}
+
 function openOverlay(){
   initAudio();
   var ov=document.getElementById('sw-ov');
   ov.classList.add('open');
   document.getElementById('sw-prize').classList.remove('show');
 
-  var gate=document.getElementById('sw-gate');
-  var btn=document.getElementById('sw-btn');
-  if(!isLoggedIn()){
-    gate.style.display='flex';btn.style.display='none';msg('');
-  }else{
-    gate.style.display='none';btn.style.display='';
-    btn.disabled=_spunSession;
-    btn.textContent=_spunSession?'ÇEVRİLDİ':'ÇEVİR!';
-    msg(_spunSession?getCountdownText():'Çarkı çevir veya sürükle!');
+  // 1) _mlCache zaten varsa hemen göster
+  if(isLoggedIn()){showReady();return}
+
+  // 2) _mlCache henüz yüklenmemiş — Ecwid'den direkt kontrol
+  if(typeof Ecwid!=='undefined'&&Ecwid.Customer){
+    try{
+      Ecwid.Customer.get(function(c){
+        if(c&&c.email){
+          if(!window._mlCache||!window._mlCache.loggedIn){
+            window._mlCache={email:c.email,loggedIn:true,tier:'Starter',spend:0,orders:0,name:c.name||'',fullName:c.name||''};
+          }
+          showReady();
+        }else{
+          showGate();
+        }
+      });
+    }catch(e){showGate()}
+    // Yükleniyor durumu göster (Ecwid callback beklerken)
+    document.getElementById('sw-gate').style.display='none';
+    document.getElementById('sw-btn').style.display='';
+    document.getElementById('sw-btn').disabled=true;
+    document.getElementById('sw-btn').textContent='Yükleniyor...';
+    msg('');
+    return;
   }
+
+  // 3) Ecwid yoksa gate göster
+  showGate();
 }
 
 function swClose(){
