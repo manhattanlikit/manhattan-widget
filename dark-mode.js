@@ -208,25 +208,16 @@ body.ml-dark .grid-product__wrap:hover{
   border-color:${BD}!important;
   box-shadow:0 4px 24px rgba(0,0,0,.45)!important;
 }
-/* Grid spacing — kenar kartlar sıkışmasın */
-body.ml-dark .grid__products{
-  gap:16px!important;
-  padding:0 4px!important;
-}
+
 /* Stokta Var label — gold */
 body.ml-dark .grid-product__label{
   background:${GOLDDIM}!important;
   color:${BG1}!important;
   border-radius:6px!important;
 }
-/* Stokta Yok label — kırmızı/coral */
-body.ml-dark .grid-product__label--Stokta-yok,
-body.ml-dark [class*="label--Stokta-Yok"],
-body.ml-dark [class*="label--out"]{
-  background:#c0392b!important;
-  color:#fff!important;
-}
+/* Stokta Yok — eski kural kaldırıldı, badge section sonrasına taşındı */
 /* Ürün detaydaki Stokta var badge — genişleme düzeltme */
+body.ml-dark .product-details__label-container,
 body.ml-dark .details-product-purchase__place .ec-label,
 body.ml-dark .product-details .ec-label{
   display:inline-block!important;
@@ -403,6 +394,22 @@ body.ml-dark .hc-review-form__submit__wrapper{
   color:${TX1}!important;
   border-color:${BD}!important;
 }
+/* HC içi tüm beyaz çizgileri kaldır */
+body.ml-dark [class*="hc-"] hr{
+  border:none!important;
+  border-top:1px solid ${BD}!important;
+  background:transparent!important;
+  height:0!important;
+}
+body.ml-dark .hc-comment{
+  border:none!important;
+  border-bottom:1px solid ${BD}!important;
+  margin-bottom:0!important;
+}
+body.ml-dark .hc-widget-card{
+  border:none!important;
+  background:transparent!important;
+}
 body.ml-dark [class*="hc-"] h1,
 body.ml-dark [class*="hc-"] h2,
 body.ml-dark [class*="hc-"] h3,
@@ -420,14 +427,15 @@ body.ml-dark .hc-comment__body,
 body.ml-dark .hc-comment__author,
 body.ml-dark [class*="hc-"] [class*="text"],
 body.ml-dark [class*="hc-"] [class*="label"],
-body.ml-dark [class*="hc-"] [class*="metric"]{
+body.ml-dark [class*="hc-"] [class*="metric"],
+body.ml-dark [class*="hc-"] time{
   color:${TX2}!important;
 }
-body.ml-dark [class*="hc-"] hr,
-body.ml-dark .hc-comment+.hc-comment,
 body.ml-dark [class*="hc-"] [class*="border"],
-body.ml-dark [class*="hc-"] [class*="separator"]{
+body.ml-dark [class*="hc-"] [class*="separator"],
+body.ml-dark [class*="hc-"] [class*="divider"]{
   border-color:${BD}!important;
+  background:transparent!important;
 }
 body.ml-dark .hc-dropdown__content,
 body.ml-dark .hc-dropdown__item{
@@ -482,7 +490,13 @@ body.ml-dark .ec-likely__widget{
 }
 
 /* ── CHECKBOX / OPSİYON BUTONLARI ── */
+/* Container div'in kendisi beyaz kalıyor — şeffaf yap */
+body.ml-dark .form-control--checkbox-button,
+body.ml-dark .details-product-option .form-control{
+  background:transparent!important;
+}
 body.ml-dark .form-control--checkbox-button label,
+body.ml-dark .form-control__inline-label,
 body.ml-dark .details-product-option label,
 body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   background:${BG3}!important;
@@ -491,24 +505,31 @@ body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   border-radius:8px!important;
 }
 body.ml-dark .form-control--checkbox-button label:hover,
+body.ml-dark .form-control__inline-label:hover,
 body.ml-dark .details-product-option label:hover{
   border-color:${GOLDDIM}!important;
   color:${TX1}!important;
 }
+/* SEÇİLİ DURUM — Ecwid .form-control__radio--checked kullanır */
 body.ml-dark .form-control--checkbox-button input:checked+label,
-body.ml-dark .form-control--checkbox-button .form-control__radio--checked+label,
 body.ml-dark .form-control--checkbox-button input:checked~label,
-body.ml-dark .form-control--checkbox-button .form-control__radio--checked~label,
+body.ml-dark .form-control--checkbox-button input:checked+.form-control__inline-label,
+body.ml-dark .form-control__radio--checked .form-control__inline-label,
+body.ml-dark .form-control__radio--checked label,
+body.ml-dark .form-control--checkbox-button.form-control__radio--checked label,
+body.ml-dark .form-control--checkbox-button.form-control__radio--checked .form-control__inline-label,
 body.ml-dark .details-product-option .form-control__radio--checked,
-body.ml-dark .details-product-option .form-control__radio--checked label{
+body.ml-dark .details-product-option .form-control__radio--checked label,
+body.ml-dark .details-product-option .form-control__radio--checked .form-control__inline-label{
   background:${GOLDDIM}!important;
   color:${BG1}!important;
   border-color:${GOLD}!important;
   font-weight:600!important;
 }
 /* Seçenek text'leri de koyu olsun seçildiğinde */
+body.ml-dark .form-control__radio--checked .form-control__inline-label *,
 body.ml-dark .form-control--checkbox-button input:checked+label *,
-body.ml-dark .form-control--checkbox-button .form-control__radio--checked+label *{
+body.ml-dark .form-control--checkbox-button input:checked~label *{
   color:${BG1}!important;
 }
 
@@ -604,6 +625,16 @@ body.ml-dark [class*="recently"] .grid-product__wrap{
   border:1px solid ${BD2}!important;
   overflow:hidden!important;
 }
+/* Karosel scroller — kenar kartlar sıkışmasın */
+body.ml-dark .grid-product__scroller,
+body.ml-dark [class*="related"] [class*="scroller"],
+body.ml-dark [class*="recently"] [class*="scroller"]{
+  padding:0 4px!important;
+}
+body.ml-dark .product-details__related-products,
+body.ml-dark [class*="related-products"]{
+  overflow:visible!important;
+}
 
 /* ── ANASAYFA CTA BUTONU (Alışverişe Devam Et / Mağazaya Git) ── */
 body.ml-dark .tile-cover .cover__button,
@@ -629,7 +660,9 @@ body.ml-dark .ec-store [class*="icon-bar"] svg{
 
 /* ── ÜRÜN DETAY — ek düzeltmeler ── */
 /* Stokta var badge genişleme düzeltme */
-body.ml-dark .product-details .ec-label[class*="Stokta"]{
+body.ml-dark .product-details .ec-label[class*="Stokta"],
+body.ml-dark .product-details__label-container{
+  display:inline-block!important;
   width:auto!important;
   max-width:fit-content!important;
 }
@@ -687,6 +720,17 @@ body.ml-dark [class*="label--"],
 body.ml-dark .ec-label{
   background:${GOLDDIM}!important;
   color:${BG1}!important;
+}
+/* Stokta Yok — kırmızı (badge kuralından SONRA olmalı) */
+body.ml-dark .grid-product__label--Stokta-Yok,
+body.ml-dark .grid-product__label[class*="Stokta-Yok"],
+body.ml-dark [class*="label--Stokta-Yok"],
+body.ml-dark [class*="label-container"][class*="Stokta-Yok"]{
+  background:#c0392b!important;
+  color:#fff!important;
+}
+body.ml-dark [class*="Stokta-Yok"] .label__text{
+  color:#fff!important;
 }
 
 /* ── POPUP / OVERLAY ── */
