@@ -291,7 +291,7 @@ tip='<div class="ml-tier-tip"><svg viewBox="0 0 24 24" fill="none" stroke="var(-
 tt+='<div class="ml-tier-row '+cls+'"'+clickAttr+'><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+' '+badge+'</div><div class="ml-tr-desc">'+desc+'</div></div>'+cod+'</div>'+tip;
 });
 // Tasarruf hesapla
-var _savSpend=(d.allTimeSpend||d.spend||0);var _savRate=Math.max(t.d,2.5);var rawSav=_savSpend*(_savRate/100)*1.4;var savings;if(rawSav<1000){savings=Math.ceil(rawSav/10)*10;}else{savings=Math.ceil(rawSav/50)*50;}
+var _savSpend=(d.allTimeSpend||d.spend||0);var _savRate=Math.max(t.d,2.5);var rawSav=_savSpend*(_savRate/100)*1.4+(d.couponTotal||0);var savings;if(rawSav<1000){savings=Math.ceil(rawSav/10)*10;}else{savings=Math.ceil(rawSav/50)*50;}
 var savingsHtml='<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">'+(savings>0?'Bugüne kadar toplam<br><b>'+f$(savings)+' ₺ ve üzeri</b> tasarruf ettiniz':'Sipariş verin,<br><b>tasarruf etmeye başlayın</b>')+'</div><div class="ml-savings-orders"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>';
 // İade compact (only if exists)
 var compactStats='';
@@ -335,10 +335,10 @@ if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stop
 // Flash bonus (Cumartesi 16:00 - Pazar 18:00)
 var flashHtml='';
 var now=new Date();var dow=now.getDay(),hr=now.getHours();
-var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<18);
+var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<19);
 window._mlFlashEnd=null;
 if(isFlash){
-var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(18,0,0,0);
+var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(19,0,0,0);
 window._mlFlashEnd=end.getTime();
 var rem=Math.max(0,Math.floor((end-now)/1000));
 var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
@@ -366,7 +366,7 @@ var tm=setInterval(function(){cur+=inc;if(cur>=target){cur=target;clearInterval(
 },120);
 // Flash timer
 var fte=document.getElementById('ml-ft');
-if(fte){setInterval(function(){var t=fte.textContent.split(':');var s=parseInt(t[0])*3600+parseInt(t[1])*60+parseInt(t[2])-1;if(s<=0)return;var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;fte.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');var fce=document.getElementById('ml-fc-exp');if(fce)fce.textContent='Kod geçerliliği: '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');},1000);}
+if(fte){setInterval(function(){var t=fte.textContent.split(':');var s=parseInt(t[0])*3600+parseInt(t[1])*60+parseInt(t[2])-1;if(s<=0)return;var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;fte.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');var fct=document.getElementById('ml-fc-title');if(fct&&window._mlFlashCode&&!window._mlCopyActive)fct.textContent='Kuponu kullanmaya kalan süre: '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');},1000);}
 }
 
 // Flash kupon oluştur
@@ -379,12 +379,11 @@ try{if(window._mlFlashEnd)sessionStorage.setItem('ml_flash_code',JSON.stringify(
 };
 window.mlCopyFlash=function(){
 var code=window._mlFlashCode;if(!code)return;
-navigator.clipboard.writeText(code);
+navigator.clipboard.writeText(code);window._mlCopyActive=true;
 var t=document.getElementById('ml-fc-title');if(!t)return;
-var orig=t.textContent;
 t.innerHTML='<span style="color:#38a169">\u2713 Kopyaland\u0131!</span>';
 clearTimeout(window._mlCopyTimer);
-window._mlCopyTimer=setTimeout(function(){var el=document.getElementById('ml-fc-title');if(el)el.textContent=orig;},2000);
+window._mlCopyTimer=setTimeout(function(){window._mlCopyActive=false;var h=document.getElementById('ml-acc-flash');if(h)h.classList.remove('open');},2000);
 };
 window.mlFlashCoupon=function(){
 if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
@@ -740,19 +739,18 @@ if(area)area.innerHTML='';
 mlBday();
 };
 
+window._mlBdayForm=function(){return '<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:3px">'+_bdaySvgCake+' Doğum gününüzü kaydedin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:6px">Özel gününüzde e-posta ile <b>sürpriz indirim kodu</b> göndereceğiz</div><input type="date" id="ml-bday-input" onchange="this.nextElementSibling.style.display=\'inline-block\'"><button id="ml-bday-btn" style="display:none" onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';};
 window.mlBday=function(){
 var area=document.getElementById('ml-bday-area');
 if(!area)return;
 if(area.innerHTML)return;
-var bdayKey='ml_bday_'+((_mlCache&&_mlCache.email)?_mlCache.email:'guest');
-var saved=null;try{saved=localStorage.getItem(bdayKey);}catch(e){}
-if(saved){
-var sd=new Date(saved);var diff=Date.now()-sd.getTime();
-var canEdit=diff<30*60*1000;
-var editHtml=canEdit?'<div style="font-size:8px;color:var(--mlg);margin-top:4px;cursor:pointer" onclick="mlBdayEdit()">'+_bdaySvgEdit+' Değiştir ('+Math.ceil((30*60*1000-diff)/60000)+' dk kaldı)</div>':'<div style="font-size:8px;color:var(--mltt);margin-top:4px">Yılda 1 kez değiştirilebilir</div>';
-area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp)">'+_bdaySvgCake+' Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde <b>sürpriz indirim kodu</b> e-posta ile gelecek</div>'+editHtml+'</div>';return;
-}
-area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp);margin-bottom:3px">'+_bdaySvgCake+' Doğum gününüzü kaydedin</div><div style="font-size:9px;color:var(--mlts);margin-bottom:6px">Özel gününüzde e-posta ile <b>sürpriz indirim kodu</b> göndereceğiz</div><input type="date" id="ml-bday-input" onchange="document.getElementById(\'ml-bday-btn\').style.display=\'inline-block\'"><button id="ml-bday-btn" style="display:none" onclick="mlBdaySave()">Kaydet</button><div class="ml-bday-msg" id="ml-bday-msg"></div></div>';
+if(!_mlCache||!_mlCache.email){area.innerHTML=_mlBdayForm();return;}
+area.innerHTML='<div style="text-align:center;padding:8px;font-size:10px;color:var(--mlts)">Kontrol ediliyor...</div>';
+fetch(WEB_APP+'?action=check-birthday&email='+encodeURIComponent(_mlCache.email)).then(function(r){return r.json()}).then(function(d){
+if(d.exists){
+area.innerHTML='<div class="ml-bday-form"><div style="font-size:11px;font-weight:600;color:var(--mltp)">'+_bdaySvgCake+' Doğum gününüz kayıtlı</div><div style="font-size:9px;color:var(--mlts);margin-top:2px">Özel gününüzde <b>sürpriz indirim kodu</b> e-posta ile gelecek</div><div style="font-size:8px;color:var(--mltt);margin-top:4px">Yılda 1 kez değiştirilebilir</div></div>';
+}else{area.innerHTML=_mlBdayForm();}
+}).catch(function(){area.innerHTML=_mlBdayForm();});
 };
 
 window.mlBdaySave=function(){
