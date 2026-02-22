@@ -196,23 +196,26 @@ body.ml-dark a:hover{color:${TX1}!important}
 body.ml-dark small,body.ml-dark .ec-text-muted{color:${TX3}!important}
 
 /* ── ÜRÜN KARTLARI ── */
-/* Grid parent — box-shadow görünsün diye overflow:visible */
+/* Grid parent — kenar kartlar için padding, shadow kırpılmasın */
 body.ml-dark .grid__products,
 body.ml-dark .grid__products--classic,
 body.ml-dark [class*="grid__products"]{
   overflow:visible!important;
+  padding:6px!important;
+}
+/* Kategori grid'leri de aynı */
+body.ml-dark .grid-categories,
+body.ml-dark [class*="grid-categories"]{
+  overflow:visible!important;
+  padding:6px!important;
 }
 body.ml-dark .grid-product__wrap{
   background:${BG2}!important;
   border-radius:14px!important;
-  border:none!important;
-  /* Çift katman efekti: iç border → koyu boşluk → dış border → gölge */
-  box-shadow:
-    0 0 0 1px ${BD2},
-    0 0 0 4px ${BG1},
-    0 0 0 5px ${BD2},
-    0 2px 16px rgba(0,0,0,.35)!important;
+  border:1.5px solid ${BD}!important;
+  box-shadow:0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden;
+  transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease!important;
 }
 body.ml-dark .grid-product__wrap-inner{
   background:${BG2}!important;
@@ -221,11 +224,33 @@ body.ml-dark .grid-product__wrap-inner{
   overflow:hidden;
 }
 body.ml-dark .grid-product__wrap:hover{
-  box-shadow:
-    0 0 0 1px ${BD},
-    0 0 0 4px ${BG1},
-    0 0 0 5px ${GOLDDIM},
-    0 4px 24px rgba(0,0,0,.45)!important;
+  border-color:${GOLDDIM}!important;
+  box-shadow:0 0 0 1px ${GOLDDIM},0 4px 20px rgba(175,140,62,.2),0 8px 32px rgba(0,0,0,.4)!important;
+  transform:translateY(-2px)!important;
+}
+/* Kategori kartları */
+body.ml-dark .grid-category__card,
+body.ml-dark [class*="grid-category__card"]{
+  background:${BG2}!important;
+  border-radius:14px!important;
+  border:1.5px solid ${BD}!important;
+  box-shadow:0 2px 12px rgba(0,0,0,.3)!important;
+  overflow:hidden!important;
+  transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease!important;
+}
+body.ml-dark .grid-category__card:hover,
+body.ml-dark [class*="grid-category__card"]:hover{
+  border-color:${GOLDDIM}!important;
+  box-shadow:0 0 0 1px ${GOLDDIM},0 4px 20px rgba(175,140,62,.2),0 8px 32px rgba(0,0,0,.4)!important;
+  transform:translateY(-2px)!important;
+}
+/* Kategori resim container'ları */
+body.ml-dark .grid-category__card img{
+  border-radius:12px 12px 0 0!important;
+}
+body.ml-dark .grid-category__title,
+body.ml-dark [class*="grid-category__title"]{
+  color:${TX1}!important;
 }
 
 /* Stokta Var label — gold */
@@ -656,17 +681,14 @@ body.ml-dark .product-details__related-products,
 body.ml-dark [class*="related-products"],
 body.ml-dark [class*="recently"]{
   overflow:visible!important;
+  padding:6px!important;
 }
 body.ml-dark .product-details__related-products .grid-product__wrap,
 body.ml-dark [class*="related"] .grid-product__wrap,
 body.ml-dark [class*="recently"] .grid-product__wrap{
   border-radius:14px!important;
-  border:none!important;
-  box-shadow:
-    0 0 0 1px ${BD2},
-    0 0 0 4px ${BG1},
-    0 0 0 5px ${BD2},
-    0 2px 16px rgba(0,0,0,.35)!important;
+  border:1.5px solid ${BD}!important;
+  box-shadow:0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden!important;
 }
 /* Karosel scroller */
