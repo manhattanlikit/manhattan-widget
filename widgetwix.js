@@ -84,6 +84,9 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-cta-secondary{display:flex;align-items:center;justify-content:center;padding:13px;background:var(--mlbg2);color:var(--mltp);font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:10px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box}
 .ml-cta-secondary:hover{background:var(--mlbgh)}
 .ml-locked-msg{text-align:center;padding:16px 0 8px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6}
+.ml-signin-form{padding:12px 0 4px}.ml-signin-input{width:100%;padding:13px 14px;border:1.5px solid rgba(175,140,62,.3);border-radius:10px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;background:var(--mlbg2);color:var(--mltp);outline:none;box-sizing:border-box;transition:border .2s}.ml-signin-input:focus{border-color:var(--mlg)}.ml-signin-input::placeholder{color:var(--mlts);opacity:.6}
+.ml-signin-btn{width:100%;margin-top:10px;padding:13px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#1a1a2e;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;border:none;border-radius:10px;cursor:pointer;transition:all .2s;letter-spacing:-.1px}.ml-signin-btn:hover{background:linear-gradient(135deg,#d4b05e,#af8c3e)}
+.ml-signin-ok{text-align:center;padding:14px;background:rgba(175,140,62,.1);border-radius:10px;margin-top:10px;font-size:14px;color:var(--mlg);font-weight:600;line-height:1.5}
 .ml-confetti{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:hidden;z-index:3}
 .ml-confetti i{position:absolute;width:6px;height:6px;border-radius:50%;top:-10px;animation:mlconf 1.8s ease-out forwards}
 .ml-confetti i:nth-child(odd){border-radius:1px;width:5px;height:8px}
@@ -164,8 +167,11 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 
 .ml-hero-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:2px}
 .ml-hero-side{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#af8c3e;text-align:center;line-height:1.3;min-width:56px}
-.ml-brand-txt{background:linear-gradient(135deg,#c9a24e,#f0d78c,#af8c3e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;letter-spacing:1.5px;font-size:11px;position:relative}
-.ml-brand-txt::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,215,0,.4),transparent);animation:mlsweep 4s ease-in-out infinite}
+.ml-brand-txt{background:linear-gradient(90deg,#af8c3e 0%,#af8c3e 35%,#f5e6b8 50%,#af8c3e 65%,#af8c3e 100%);background-size:250% 100%;background-position:100% 0;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;letter-spacing:1.5px;font-size:11px;position:relative;overflow:hidden;padding:3px 0;animation:mlglow 2.5s ease-in-out 4s infinite}
+.ml-brand-txt::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#af8c3e);animation:mlline 1.5s ease-out .5s forwards}
+.ml-brand-txt::before{content:'';position:absolute;top:0;left:0;width:0;height:1px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#af8c3e);animation:mlline 1.5s ease-out 2s forwards}
+@keyframes mlline{to{width:100%}}
+@keyframes mlglow{0%,100%{background-position:100% 0}50%{background-position:0% 0}}
 .ml-flash-row{display:flex;gap:0;margin-bottom:6px;align-items:stretch;border-radius:8px;overflow:hidden}
 .ml-flash-row .ml-flash{flex:1;margin-bottom:0;border-radius:0}
 .ml-flash-btn{flex:0 0 auto;width:120px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;font-weight:700;cursor:pointer;padding:8px 6px;transition:opacity .2s;white-space:nowrap;position:relative;overflow:hidden}
@@ -257,7 +263,7 @@ T.forEach(function(ti){
 var lockIco='<svg viewBox="0 0 24 24" fill="none" stroke="var(--mltt)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
 tt+='<div class="ml-tier-row locked"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+'</div></div><div class="ml-tr-discount">'+lockIco+'</div></div>';
 });
-document.getElementById('ct').innerHTML='<div class="ml-locked-msg">İndirim seviyenizi görmek için<br><a href="https://www.manhattanlikit2.com/likitler/account" target="_self" onclick="event.stopPropagation()" style="color:var(--mlg);font-weight:700;text-decoration:underline">giriş yapın</a>.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div>'+tt+'</div><div class="ml-btns"><a href="https://www.manhattanlikit2.com/likitler/account" target="_self" onclick="event.stopPropagation()" class="ml-cta ml-cta-gold">Giriş Yap</a><button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta-secondary">Mağazaya Git</button></div>';
+document.getElementById('ct').innerHTML='<div class="ml-locked-msg">Giriş bağlantınızı almak için<br>e-posta adresinizi girin.</div><div class="ml-signin-form"><a href="https://www.manhattanlikit2.com/likitler/account" target="_self" onclick="event.stopPropagation()" class="ml-signin-btn" style="display:block;text-align:center;text-decoration:none">Giriş Sayfasına Git</a></div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div>'+tt+'</div><div class="ml-btns"><button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta-secondary">Mağazaya Git</button></div>';
 return;
 }
 // LOGGED IN
@@ -338,10 +344,10 @@ if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stop
 // Flash bonus (Cumartesi 16:00 - Pazar 18:00)
 var flashHtml='';
 var now=new Date();var dow=now.getDay(),hr=now.getHours();
-var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<19);
+var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<18);
 window._mlFlashEnd=null;
 if(isFlash){
-var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(19,0,0,0);
+var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(18,0,0,0);
 window._mlFlashEnd=end.getTime();
 var rem=Math.max(0,Math.floor((end-now)/1000));
 var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
