@@ -53,7 +53,7 @@ var css=`
 .sw-x{position:fixed;top:16px;right:16px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:all .2s;font-family:sans-serif}
 .sw-x:hover{background:rgba(255,255,255,.15)}
 
-.sw-badge{font:700 11px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding-left:2.5px}
+.sw-badge{font:700 11px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
 .sw-badge::before,.sw-badge::after{content:'';width:28px;height:1px;background:linear-gradient(90deg,transparent,#d4b05e,transparent)}
 
 .sw-snd{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);font:500 11px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s;vertical-align:middle}
@@ -64,7 +64,7 @@ var css=`
 .sw-pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);z-index:5;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))}
 .sw-ring{width:100%;height:100%;border-radius:50%;padding:6px;background:linear-gradient(135deg,#f5e6c8,#d4b05e,#af8c3e,#d4b05e,#f5e6c8);box-shadow:0 0 80px rgba(175,140,62,.2),0 0 0 1px rgba(0,0,0,.3)}
 .sw-inner{width:100%;height:100%;border-radius:50%;overflow:hidden;position:relative}
-.sw-canvas{width:100%;height:100%;display:block}
+.sw-canvas{width:100%;height:100%;display:block;touch-action:none}
 
 .sw-btn{padding:15px 44px;border-radius:30px;border:none;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;font:700 16px 'Plus Jakarta Sans',sans-serif;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase;box-shadow:0 4px 24px rgba(175,140,62,.4);transition:all .25s}
 .sw-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(175,140,62,.5)}
@@ -148,7 +148,7 @@ function build(){
           '<a class="sw-login-btn" href="/account">Giriş Yap</a>'+
         '</div>'+
       '</div>'+
-      '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px"><button class="sw-btn" id="sw-btn" onclick="event.stopPropagation();swSpin()">ÇEVİR!</button><button class="sw-snd" id="sw-snd" onclick="event.stopPropagation();swToggleSound()">'+ICO.sndOn+' <span id="sw-snd-txt">Ses Açık</span></button></div>'+
+      '<div style="display:flex;align-items:center;justify-content:center;position:relative;margin-top:18px"><button class="sw-btn" id="sw-btn" onclick="event.stopPropagation();swSpin()">ÇEVİR!</button><button class="sw-snd" id="sw-snd" onclick="event.stopPropagation();swToggleSound()" style="position:absolute;right:0">'+ICO.sndOn+' <span id="sw-snd-txt">Ses Açık</span></button></div>'+
       '<div class="sw-msg" id="sw-msg"></div>'+
     '</div>'+
     '<div class="sw-prize" id="sw-prize" onclick="event.stopPropagation()">'+
@@ -206,25 +206,21 @@ function drawWheel(rotDeg){
     c.lineTo(cx+Math.cos(a0)*R,cy+Math.sin(a0)*R);
     c.strokeStyle='rgba(212,176,94,.25)';c.lineWidth=1.5;c.stroke();
 
-    // ===== METİN — flip ekrandaki GERÇEK konuma göre =====
+    // ===== METİN — flip YOK, yazılar daima merkezden dışa bakar =====
     c.save();
     c.translate(cx,cy);
     c.rotate(mid);
 
-    var screenA=((mid%(Math.PI*2))+(Math.PI*2))%(Math.PI*2);
-    var flip=screenA>Math.PI/2&&screenA<Math.PI*3/2;
-    if(flip)c.rotate(Math.PI);
-
-    var tr=flip?-R*0.55:R*0.55;
+    var tr=R*0.52;
     c.textAlign='center';c.textBaseline='middle';c.fillStyle=seg.text;
 
     if(seg.grand){
-      c.font='800 40px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.label,tr,-12);
-      c.font='600 17px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.sub,tr,flip?-36:16);
+      c.font='800 56px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.label,tr,-14);
+      c.font='600 30px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.sub,tr,22);
       // Yıldız
-      var sR=flip?-R*0.8:R*0.8;
+      var sR=R*0.8;
       c.fillStyle='#ffd700';c.globalAlpha=.35;
       c.beginPath();
       for(var si=0;si<5;si++){
@@ -235,12 +231,12 @@ function drawWheel(rotDeg){
       }
       c.closePath();c.fill();c.globalAlpha=1;
     }else{
-      c.font='800 46px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.label,tr,seg.sub?-12:0);
+      c.font='800 64px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.label,tr,seg.sub?-14:0);
       if(seg.sub){
         c.globalAlpha=.55;
-        c.font='700 16px "Plus Jakarta Sans",sans-serif';
-        c.fillText(seg.sub,tr,flip?-36:18);
+        c.font='700 32px "Plus Jakarta Sans",sans-serif';
+        c.fillText(seg.sub,tr,24);
         c.globalAlpha=1;
       }
     }
@@ -324,7 +320,8 @@ function initDrag(){
   }
 
   function onStart(e){
-    if(_spinning||!isLoggedIn())return;
+    if(_spinning)return;
+    if(!_TEST_MODE&&!isLoggedIn())return;
     e.preventDefault();
     _dragStart=getAngle(e);_dragVel=0;_lastDragTime=Date.now();_lastDragAngle=_dragStart;
   }
