@@ -148,7 +148,7 @@ function build(){
           '<a class="sw-login-btn" href="/account">Giriş Yap</a>'+
         '</div>'+
       '</div>'+
-      '<div style="display:flex;align-items:center;justify-content:center;position:relative;margin-top:18px"><button class="sw-btn" id="sw-btn" onclick="event.stopPropagation();swSpin()">ÇEVİR!</button><button class="sw-snd" id="sw-snd" onclick="event.stopPropagation();swToggleSound()" style="position:absolute;right:0">'+ICO.sndOn+' <span id="sw-snd-txt">Ses Açık</span></button></div>'+
+      '<div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:18px"><button class="sw-btn" id="sw-btn" onclick="event.stopPropagation();swSpin()">ÇEVİR!</button><button class="sw-snd" id="sw-snd" onclick="event.stopPropagation();swToggleSound()">'+ICO.sndOn+' <span id="sw-snd-txt">Ses Açık</span></button></div>'+
       '<div class="sw-msg" id="sw-msg"></div>'+
     '</div>'+
     '<div class="sw-prize" id="sw-prize" onclick="event.stopPropagation()">'+
@@ -206,7 +206,7 @@ function drawWheel(rotDeg){
     c.lineTo(cx+Math.cos(a0)*R,cy+Math.sin(a0)*R);
     c.strokeStyle='rgba(212,176,94,.25)';c.lineWidth=1.5;c.stroke();
 
-    // ===== METİN — flip YOK, yazılar daima merkezden dışa bakar =====
+    // ===== METİN — flip yok, yazılar daima merkezden dışa =====
     c.save();
     c.translate(cx,cy);
     c.rotate(mid);
@@ -215,10 +215,12 @@ function drawWheel(rotDeg){
     c.textAlign='center';c.textBaseline='middle';c.fillStyle=seg.text;
 
     if(seg.grand){
-      c.font='800 56px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.label,tr,-14);
-      c.font='600 30px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.sub,tr,22);
+      c.font='800 38px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.label,tr,-10);
+      c.font='600 18px "Plus Jakarta Sans",sans-serif';
+      var subW=c.measureText(seg.sub).width,maxW=2*tr*Math.sin(SAR/2)*0.85;
+      if(subW>maxW)c.font='600 '+Math.floor(18*maxW/subW)+'px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.sub,tr,16);
       // Yıldız
       var sR=R*0.8;
       c.fillStyle='#ffd700';c.globalAlpha=.35;
@@ -231,12 +233,12 @@ function drawWheel(rotDeg){
       }
       c.closePath();c.fill();c.globalAlpha=1;
     }else{
-      c.font='800 64px "Plus Jakarta Sans",sans-serif';
-      c.fillText(seg.label,tr,seg.sub?-14:0);
+      c.font='800 42px "Plus Jakarta Sans",sans-serif';
+      c.fillText(seg.label,tr,seg.sub?-10:0);
       if(seg.sub){
         c.globalAlpha=.55;
-        c.font='700 32px "Plus Jakarta Sans",sans-serif';
-        c.fillText(seg.sub,tr,24);
+        c.font='700 22px "Plus Jakarta Sans",sans-serif';
+        c.fillText(seg.sub,tr,18);
         c.globalAlpha=1;
       }
     }
@@ -341,7 +343,7 @@ function initDrag(){
   function onEnd(){
     if(_dragStart===null)return;
     _dragStart=null;
-    if(Math.abs(_dragVel)>3)swSpin();
+    if(Math.abs(_dragVel)>1.5)swSpin();
   }
 
   cv.addEventListener('mousedown',onStart);
@@ -530,20 +532,26 @@ async function swSpin(){
 
     // Çarkı çevir (7sn)
     await animateTo(data.segment,data.angleOffset||0,7000);
-    await new Promise(function(r){setTimeout(r,500)});
 
     var isNearMiss=(data.segment===0||data.segment===2);
 
     if(data.type==='none'){
+      // Kaybetti — toast + kart, ekstra efekt yok
+      await new Promise(function(r){setTimeout(r,400)});
       showToast('Tekrar Dene!','Yarın tekrar şansını dene!',2500);
+      showPrize(data);
     }else{
+      // Kazandı — 1) confetti + ses
       winSound();confetti();
-      var card=document.getElementById('sw-prize-card');
-      card.classList.add('sw-shake');
-      setTimeout(function(){card.classList.remove('sw-shake')},600);
+      // 2) 800ms bekle — patlama izlensin
+      await new Promise(function(r){setTimeout(r,800)});
+      // 3) Kart açılır (sw-cardIn animasyonu)
+      showPrize(data);
+      // 4) 600ms bekle + 2. confetti
+      await new Promise(function(r){setTimeout(r,600)});
+      confetti();
     }
 
-    showPrize(data);
     if(!_TEST_MODE)_spunSession=true;
 
     if(isNearMiss&&data.type!=='none'){
