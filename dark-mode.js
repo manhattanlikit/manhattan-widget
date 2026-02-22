@@ -81,8 +81,27 @@ body.ml-dark{
 
 /* ── TILES WRAPPER (Instant Site ana container) ── */
 body.ml-dark .tiles-wrapper,
+body.ml-dark .tiles,
 body.ml-dark .body{
   background:${BG1}!important;
+}
+/* ── SİTE SECTION BLOKLARI ── */
+body.ml-dark .menu,
+body.ml-dark .container,
+body.ml-dark .caption,
+body.ml-dark .whyus,
+body.ml-dark .contacts,
+body.ml-dark .owner,
+body.ml-dark .store,
+body.ml-dark .dynamic-product-browser{
+  background:${BG1}!important;
+  color:${TX1}!important;
+}
+body.ml-dark .footer,
+body.ml-dark .footer-new{
+  background:${BGnav}!important;
+  color:${TX3}!important;
+  border-top:1px solid ${BD2}!important;
 }
 
 /* ── NAVİGASYON ── */
@@ -119,9 +138,11 @@ body.ml-dark .ec-store__content-wrapper{
 }
 
 /* ── TİLE / SECTION BLOKLARI ── */
+body.ml-dark .tile,
 body.ml-dark [class*="tile-"]{
   background:${BG1}!important;
 }
+body.ml-dark .tile [class*="cover"],
 body.ml-dark [class*="tile-"] [class*="cover"]{
   background:${BG1}!important;
 }
@@ -201,16 +222,16 @@ body.ml-dark .grid-product__price-value{
   color:${GOLD}!important;
 }
 
-/* ── ÜRÜN GÖRSELLERİ — Beyaz arka plan eritme ── */
-body.ml-dark .grid-product__image{
+/* ── ÜRÜN GÖRSELLERİ — Açık container, blend yok ── */
+body.ml-dark .grid-product__image,
+body.ml-dark .grid-product__bg{
   background:${IMG_BG}!important;
   border-radius:10px 10px 0 0!important;
 }
 body.ml-dark .grid-product__image img,
 body.ml-dark .grid-product__picture img,
 body.ml-dark .grid-product__picture-wrapper img{
-  mix-blend-mode:multiply;
-  background:${IMG_BG}!important;
+  background:transparent!important;
 }
 
 /* ── ÜRÜN DETAY SAYFASI ── */
@@ -220,16 +241,21 @@ body.ml-dark .product-details__product-description{color:${TX2}!important}
 body.ml-dark .product-details{color:${TX2}!important}
 
 /* Ürün detay görseli */
-body.ml-dark .product-details__gallery img,
-body.ml-dark .product-details-module__gallery img{
-  mix-blend-mode:multiply;
-  background:${IMG_BG}!important;
-  border-radius:8px;
-}
 body.ml-dark .product-details__gallery,
-body.ml-dark .product-details-module__gallery{
+body.ml-dark .product-details-module__gallery,
+body.ml-dark .details-gallery,
+body.ml-dark .details-gallery__main-image-wrapper{
   background:${IMG_BG}!important;
   border-radius:10px;
+}
+body.ml-dark .product-details__gallery img,
+body.ml-dark .product-details-module__gallery img,
+body.ml-dark .details-gallery img{
+  background:transparent!important;
+}
+/* Thumbnail backgrounds */
+body.ml-dark .details-gallery__thumb-bg{
+  background:${IMG_BG}!important;
 }
 
 /* Ürün seçenekleri */
@@ -315,6 +341,93 @@ body.ml-dark .ec-footer a{color:${TX3}!important}
 body.ml-dark .ec-footer a:hover{color:${GOLD}!important}
 body.ml-dark .ec-footer__row{border-color:${BD2}!important}
 
+/* ── HELPFULCROWD REVIEW KARTLARI ── */
+body.ml-dark .hc-widget-card,
+body.ml-dark .hc-comment,
+body.ml-dark .hc-review-form-wrapper,
+body.ml-dark .hc-review-form__submit__wrapper{
+  background:${BG2}!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .hc-dropdown__content,
+body.ml-dark .hc-dropdown__item{
+  background:${BG3}!important;
+  color:${TX1}!important;
+}
+body.ml-dark .hc-dropdown__item:hover{
+  background:${BG1}!important;
+}
+body.ml-dark .hc-product-tab-filters__search{
+  background:${BG3}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .hc-rating-chart__bar-wrapper{
+  background:${BG3}!important;
+}
+body.ml-dark .hc-recommended-metric__chart{
+  background:${BG3}!important;
+}
+body.ml-dark .hc-tooltip__content{
+  background:${BG2}!important;
+  color:${TX2}!important;
+}
+body.ml-dark [class*="hc-"] a{
+  color:${GOLD}!important;
+}
+body.ml-dark .hc-flag{
+  background:${BG3}!important;
+  color:${TX2}!important;
+}
+
+/* ── SOSYAL PAYLAŞIM ── */
+body.ml-dark .ec-likely__widget{
+  background:${BG3}!important;
+  color:${TX2}!important;
+  border-color:${BD}!important;
+}
+
+/* ── CHECKBOX / OPSİYON BUTONLARI ── */
+body.ml-dark .form-control--checkbox-button label,
+body.ml-dark .details-product-option label,
+body.ml-dark .form-control--checkbox-button .form-control__inline-label{
+  background:${BG3}!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .form-control--checkbox-button input:checked+label,
+body.ml-dark .form-control--checkbox-button .form-control__radio--checked+label{
+  background:${GOLDDIM}!important;
+  color:${BG1}!important;
+  border-color:${GOLDDIM}!important;
+}
+
+/* ── MİKTAR INPUT ── */
+body.ml-dark .details-product-purchase__qty,
+body.ml-dark .form-control--flexible{
+  background:${BG3}!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
+
+/* ── SAYFALAMA (Pagination) ── */
+body.ml-dark .page-link,
+body.ml-dark .page-link span,
+body.ml-dark .page-link a,
+body.ml-dark .page-link i{
+  background:${BG2}!important;
+  color:${TX2}!important;
+}
+body.ml-dark .page-link a:hover{
+  background:${BG3}!important;
+  color:${GOLD}!important;
+}
+
+/* ── MİNİCART ── */
+body.ml-dark .ec-minicart{
+  background:transparent!important;
+}
+
 /* ── PARA BİRİMİ ── */
 body.ml-dark .ec-currency-converter-element select{
   background:${BG3}!important;
@@ -386,6 +499,13 @@ body.ml-dark .ml-trigger{
 }
 body.ml-dark .ml-trigger:hover{
   border-color:${GOLDDIM}!important;
+}
+body.ml-dark .ml-tier-share{
+  background:${BG3}!important;
+  color:${TX2}!important;
+}
+body.ml-dark .ml-tr-ico{
+  background:${BG3}!important;
 }
 body.ml-dark .ml-signin-input{
   background:${BG3}!important;
