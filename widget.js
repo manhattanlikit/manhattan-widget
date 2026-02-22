@@ -372,8 +372,17 @@ if(fte){setInterval(function(){var t=fte.textContent.split(':');var s=parseInt(t
 window._mlShowFlashCode=function(code){
 var area=document.getElementById('ml-flash-code');if(!area)return;
 var fte=document.getElementById('ml-ft');var timeStr=fte?fte.textContent:'--:--:--';
-area.innerHTML='<div id="ml-fc-title" style="text-align:center;font-size:11px;font-weight:600;color:var(--mlg);letter-spacing:.5px;text-transform:uppercase;padding:6px 0">Ek %2.5 İndirim Kodunuz</div><div style="background:var(--mlbg2);border:2px dashed var(--mlg);border-radius:10px;padding:12px 14px;text-align:center;cursor:pointer;position:relative" onclick="event.stopPropagation();navigator.clipboard.writeText(\''+code+'\');var _t=document.getElementById(\'ml-fc-title\');if(_t){_t.innerHTML=\'<span style=\\\"color:#38a169\\\">\u2713 Kopyaland\u0131!</span> &middot; <span id=ml-fc-exp style=\\\"color:var(--mlg)\\\">\'+(document.getElementById(\'ml-ft\')?document.getElementById(\'ml-ft\').textContent:\'--:--:--\')+\'</span>\';}"><div style="display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;opacity:.6"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><div style="font-size:20px;font-weight:800;color:var(--mlg);letter-spacing:2px;font-family:monospace">'+code+'</div></div></div>';
+area.innerHTML='<div id="ml-fc-title" style="text-align:center;font-size:11px;font-weight:600;color:var(--mlg);letter-spacing:.5px;text-transform:uppercase;padding:6px 0">Ek %2.5 İndirim Kodunuz</div><div style="background:var(--mlbg2);border:2px dashed var(--mlg);border-radius:10px;padding:12px 14px;text-align:center;cursor:pointer" onclick="event.stopPropagation();mlCopyFlash()"><div style="display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;opacity:.6"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><div style="font-size:20px;font-weight:800;color:var(--mlg);letter-spacing:2px;font-family:monospace">'+code+'</div></div></div>';
+window._mlFlashCode=code;
 try{if(window._mlFlashEnd)sessionStorage.setItem('ml_flash_code',JSON.stringify({code:code,end:window._mlFlashEnd}));}catch(e){}
+};
+window.mlCopyFlash=function(){
+var code=window._mlFlashCode;if(!code)return;
+navigator.clipboard.writeText(code);
+var t=document.getElementById('ml-fc-title');if(!t)return;
+var fte=document.getElementById('ml-ft');
+var ts=fte?fte.textContent:'--:--:--';
+t.innerHTML='<span style="color:#38a169">✓ Kopyalandı!</span> · <span id="ml-fc-exp" style="color:var(--mlg)">'+ts+'</span>';
 };
 window.mlFlashCoupon=function(){
 if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
