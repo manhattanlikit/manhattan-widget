@@ -163,8 +163,10 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 
 .ml-hero-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:2px}
 .ml-hero-side{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#af8c3e;text-align:center;line-height:1.3;min-width:56px}
-.ml-brand-txt{background:linear-gradient(135deg,#c9a24e,#f0d78c,#af8c3e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;letter-spacing:1.5px;font-size:11px;position:relative}
-.ml-brand-txt::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,215,0,.4),transparent);animation:mlsweep 4s ease-in-out infinite}
+.ml-brand-txt{background:linear-gradient(135deg,#c9a24e,#f0d78c,#af8c3e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;letter-spacing:1.5px;font-size:11px;position:relative;overflow:hidden;padding:3px 0}
+.ml-brand-txt::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#af8c3e);animation:mlline 1.5s ease-out .5s forwards}
+.ml-brand-txt::before{content:'';position:absolute;top:0;left:0;width:0;height:1px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#af8c3e);animation:mlline 1.5s ease-out 2s forwards}
+@keyframes mlline{to{width:100%}}
 .ml-flash-row{display:flex;gap:0;margin-bottom:6px;align-items:stretch;border-radius:8px;overflow:hidden}
 .ml-flash-row .ml-flash{flex:1;margin-bottom:0;border-radius:0}
 .ml-flash-btn{flex:0 0 auto;width:120px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:12px;font-weight:700;cursor:pointer;padding:8px 6px;transition:opacity .2s;white-space:nowrap;position:relative;overflow:hidden}
