@@ -38,36 +38,36 @@ body.ml-dm-t,body.ml-dm-t *,body.ml-dm-t *::before,body.ml-dm-t *::after{
 
 /* ── TOGGLE BUTON ── */
 .ml-dm-btn{
-  position:fixed;top:18px;right:72px;z-index:999999;
-  width:34px;height:34px;border-radius:50%;
-  border:1.5px solid rgba(175,140,62,.3);
-  background:rgba(255,255,255,.9);
-  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  position:fixed;top:12px;right:16px;z-index:999999;
+  width:40px;height:40px;border-radius:50%;
+  border:1.5px solid rgba(175,140,62,.35);
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   color:#af8c3e;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
-  box-shadow:0 1px 6px rgba(0,0,0,.06);
+  box-shadow:0 2px 8px rgba(0,0,0,.08);
   transition:all .3s ease;
   padding:0;
 }
 .ml-dm-btn:hover{
   transform:scale(1.08);
-  box-shadow:0 2px 12px rgba(175,140,62,.15);
-  border-color:rgba(175,140,62,.5);
+  box-shadow:0 3px 14px rgba(175,140,62,.18);
+  border-color:rgba(175,140,62,.6);
 }
-.ml-dm-btn svg{width:17px;height:17px;transition:transform .4s ease}
+.ml-dm-btn svg{width:20px;height:20px;transition:transform .4s ease}
 .ml-dm-btn:active svg{transform:rotate(30deg)}
 
 body.ml-dark .ml-dm-btn{
-  background:rgba(35,34,30,.9);
-  border-color:${BD};
+  background:rgba(35,34,30,.92);
+  border-color:rgba(175,140,62,.25);
   color:${GOLD};
-  box-shadow:0 1px 8px rgba(0,0,0,.3);
+  box-shadow:0 2px 10px rgba(0,0,0,.35);
 }
 
 @media(max-width:768px){
-  .ml-dm-btn{top:12px;right:56px;width:30px;height:30px}
-  .ml-dm-btn svg{width:15px;height:15px}
+  .ml-dm-btn{top:10px;right:12px;width:36px;height:36px}
+  .ml-dm-btn svg{width:18px;height:18px}
 }
 
 /* ══════════════════════════════════════
@@ -196,17 +196,36 @@ body.ml-dark a:hover{color:${TX1}!important}
 body.ml-dark small,body.ml-dark .ec-text-muted{color:${TX3}!important}
 
 /* ── ÜRÜN KARTLARI ── */
-body.ml-dark .grid-product__wrap,
-body.ml-dark .grid-product__wrap-inner{
+/* Grid parent — box-shadow görünsün diye overflow:visible */
+body.ml-dark .grid__products,
+body.ml-dark .grid__products--classic,
+body.ml-dark [class*="grid__products"]{
+  overflow:visible!important;
+}
+body.ml-dark .grid-product__wrap{
   background:${BG2}!important;
   border-radius:14px!important;
-  border:1px solid ${BD2}!important;
-  box-shadow:${CARD_SHADOW}!important;
+  border:none!important;
+  /* Çift katman efekti: iç border → koyu boşluk → dış border → gölge */
+  box-shadow:
+    0 0 0 1px ${BD2},
+    0 0 0 4px ${BG1},
+    0 0 0 5px ${BD2},
+    0 2px 16px rgba(0,0,0,.35)!important;
+  overflow:hidden;
+}
+body.ml-dark .grid-product__wrap-inner{
+  background:${BG2}!important;
+  border-radius:12px!important;
+  border:none!important;
   overflow:hidden;
 }
 body.ml-dark .grid-product__wrap:hover{
-  border-color:${BD}!important;
-  box-shadow:0 4px 24px rgba(0,0,0,.45)!important;
+  box-shadow:
+    0 0 0 1px ${BD},
+    0 0 0 4px ${BG1},
+    0 0 0 5px ${GOLDDIM},
+    0 4px 24px rgba(0,0,0,.45)!important;
 }
 
 /* Stokta Var label — gold */
@@ -326,7 +345,7 @@ body.ml-dark button.button:hover{
 body.ml-dark .cover__button,
 body.ml-dark .cover-button{
   background:${GOLDDIM}!important;
-  color:${BG1}!important;
+  color:#fff!important;
 }
 
 /* ── FORM / INPUT ── */
@@ -618,19 +637,24 @@ body.ml-dark .ec-cart-step__section{
 }
 
 /* ── ÖNERİLEN ÜRÜNLER KAROSELİ (Bunları da Beğenebilirsiniz) ── */
+body.ml-dark .product-details__related-products,
+body.ml-dark [class*="related-products"],
+body.ml-dark [class*="recently"]{
+  overflow:visible!important;
+}
 body.ml-dark .product-details__related-products .grid-product__wrap,
 body.ml-dark [class*="related"] .grid-product__wrap,
 body.ml-dark [class*="recently"] .grid-product__wrap{
   border-radius:14px!important;
-  border:1px solid ${BD2}!important;
+  border:none!important;
+  box-shadow:
+    0 0 0 1px ${BD2},
+    0 0 0 4px ${BG1},
+    0 0 0 5px ${BD2},
+    0 2px 16px rgba(0,0,0,.35)!important;
   overflow:hidden!important;
 }
-/* Karosel scroller — kenar kartlar sıkışmasın */
-body.ml-dark .grid-product__scroller,
-body.ml-dark [class*="related"] [class*="scroller"],
-body.ml-dark [class*="recently"] [class*="scroller"]{
-  padding:0 4px!important;
-}
+/* Karosel scroller */
 body.ml-dark .product-details__related-products,
 body.ml-dark [class*="related-products"]{
   overflow:visible!important;
@@ -641,7 +665,7 @@ body.ml-dark .tile-cover .cover__button,
 body.ml-dark .tile-cover .cover-button,
 body.ml-dark .cover__button.cover-button{
   background:${GOLDDIM}!important;
-  color:${BG1}!important;
+  color:#fff!important;
   border:none!important;
   font-weight:600!important;
 }
@@ -829,7 +853,8 @@ btn.addEventListener('click',function(e){
 
 // ─── SAYFA HAZIR OLUNCA EKLE ───
 function init(){
-  document.body.appendChild(btn);
+  // documentElement'e ekle — body'deki olası transform/contain fixed'ı bozamaz
+  document.documentElement.appendChild(btn);
   // Kayıtlı tercihi yükle
   try{
     if(localStorage.getItem('ml-dark')==='1'){
