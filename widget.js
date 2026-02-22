@@ -315,7 +315,7 @@ var avgPerMonth=d.spend/12;
 if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var targetDate=new Date();targetDate.setMonth(targetDate.getMonth()+monthsLeft);var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];projHtml='<div style="text-align:center;font-size:10px;color:var(--mlts);margin:4px 0 8px">Tahmini <b style=\"color:var(--mlg)\">'+nx.n+' seviyesine</b> geçiş: <b>'+monthNames[targetDate.getMonth()]+' '+targetDate.getFullYear()+'</b></div>';}
 }
 // Sürpriz indirimler linki
-var surpriseHtml='<div class="ml-acc-hdr" id="ml-acc-bday" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-bday\');var ba=document.getElementById(\'ml-bday-area\');if(ba&&!ba.innerHTML)mlBday();"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Doğum Günü Hediyesi</div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div id="ml-bday-area" style="padding:4px 0"></div></div>';
+var surpriseHtml='<div class="ml-acc-hdr" id="ml-acc-bday" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-bday\');var ba=document.getElementById(\'ml-bday-area\');if(ba&&!ba.innerHTML)mlBday();"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Doğum Günü Hediyesi <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Sürpriz İndirimler</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div id="ml-bday-area" style="padding:4px 0"></div></div>';
 var refHtml='';
 if(REF_RATES[d.tier]){
 var refTiers=['Silver','Gold','Platinum','Diamond'];
@@ -330,19 +330,24 @@ refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" 
 } else {
 refHtml='<div class="ml-ref" style="opacity:.85"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub"><b>Silver</b> seviyesine ulaştığınızda arkadaşlarınızı davet edip <b>ek indirim</b> kazanabilirsiniz!</div><div style="display:flex;justify-content:center;gap:8px;margin-top:6px"><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;background:rgba(175,140,62,.08);color:var(--mlg)"><div style="font-weight:600">Silver</div><div>%5</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Gold</div><div>%7.5</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Platinum</div><div>%10</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Diamond</div><div>%15</div></div></div></div>';
 }
-if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-ref\')"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et <span style="font-weight:400;font-size:9px;color:var(--mlg);margin-left:4px">İndirim Kazan</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body">'+refHtml+'</div>';}
+if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-ref\')"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">İndirim Kazan</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body">'+refHtml+'</div>';}
 // Flash bonus (Cumartesi 16:00 - Pazar 18:00)
 var flashHtml='';
 var now=new Date();var dow=now.getDay(),hr=now.getHours();
 var isFlash=(dow===6&&hr>=16)||(dow===0&&hr<18);
+window._mlFlashEnd=null;
 if(isFlash){
 var end=new Date(now);if(dow===6){end.setDate(end.getDate()+1);}end.setHours(18,0,0,0);
+window._mlFlashEnd=end.getTime();
 var rem=Math.max(0,Math.floor((end-now)/1000));
 var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
 flashHtml='<div class="ml-flash-row" onclick="event.stopPropagation()"><div class="ml-flash"><div class="ml-flash-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="ml-flash-txt"><b>Flash Bonus +%2.5</b><br>Hafta sonu özel ek indirim</div><div class="ml-flash-timer" id="ml-ft">'+String(fh).padStart(2,'0')+':'+String(fm).padStart(2,'0')+':'+String(fs).padStart(2,'0')+'</div></div><button onclick="event.stopPropagation();mlFlashCoupon()" class="ml-flash-btn">Kodumu Oluştur</button></div><div id="ml-flash-code" onclick="event.stopPropagation()" style="margin-bottom:6px"></div>';
+try{var _fc=sessionStorage.getItem('ml_flash_code');if(_fc){var _fcd=JSON.parse(_fc);if(_fcd.end>Date.now()){window._mlCachedFlashCode=_fcd.code;}else{sessionStorage.removeItem('ml_flash_code');}}}catch(e){}
 }
 var btns='<button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta">Alışverişe Devam Et</button>';
 document.getElementById('ct').innerHTML=luHtml+'<div class="ml-tier '+c+'"><div class="ml-hero-row"><div class="ml-hero-side">Sadakat<br>Programı</div><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-hero-side">Manhattan</div></div><div class="ml-tier-name">'+d.tier+'</div>'+greeting+'</div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+compactStats+'<div class="ml-acc-hdr open" id="ml-acc-tiers" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-tiers\')"><div class="ml-acc-title">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div class="ml-tiers-table">'+tt+'</div></div>'+refHtml+surpriseHtml+btns;
+// Show cached flash code
+if(window._mlCachedFlashCode){setTimeout(function(){window._mlShowFlashCode(window._mlCachedFlashCode);},50);}
 // Confetti
 setTimeout(function(){
 var ht=document.getElementById('ml-htitle');if(ht)ht.style.color=TC[d.tier]||'var(--mltp)';
@@ -360,18 +365,25 @@ var tm=setInterval(function(){cur+=inc;if(cur>=target){cur=target;clearInterval(
 },120);
 // Flash timer
 var fte=document.getElementById('ml-ft');
-if(fte){setInterval(function(){var t=fte.textContent.split(':');var s=parseInt(t[0])*3600+parseInt(t[1])*60+parseInt(t[2])-1;if(s<=0)return;var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;fte.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');},1000);}
+if(fte){setInterval(function(){var t=fte.textContent.split(':');var s=parseInt(t[0])*3600+parseInt(t[1])*60+parseInt(t[2])-1;if(s<=0)return;var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sc=s%60;fte.textContent=String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');var fce=document.getElementById('ml-fc-exp');if(fce)fce.textContent='Kod geçerliliği: '+String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sc).padStart(2,'0');},1000);}
 }
 
 // Flash kupon oluştur
+window._mlShowFlashCode=function(code){
+var area=document.getElementById('ml-flash-code');if(!area)return;
+var fte=document.getElementById('ml-ft');var timeStr=fte?fte.textContent:'--:--:--';
+area.innerHTML='<div class="ml-acc-hdr open" id="ml-acc-flash" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-flash\')"><div class="ml-acc-title" style="color:var(--mlg)">Ek %2.5 İndirim Kodunuz</div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div style="background:var(--mlbg2);border:1px solid var(--mlbd);border-radius:0 0 8px 8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--mlg);letter-spacing:2px;font-family:monospace;cursor:pointer" onclick="event.stopPropagation();navigator.clipboard.writeText(\''+code+'\');this.nextElementSibling.textContent=\'Kopyalandı!\'">'+code+'</div><div style="font-size:8px;color:var(--mlts);margin-top:3px">Kopyalamak için koda tıklayın</div><div style="font-size:9px;color:var(--mlg);margin-top:4px;font-weight:600" id="ml-fc-exp">Kod geçerliliği: '+timeStr+'</div></div></div>';
+try{if(window._mlFlashEnd)sessionStorage.setItem('ml_flash_code',JSON.stringify({code:code,end:window._mlFlashEnd}));}catch(e){}
+};
 window.mlFlashCoupon=function(){
 if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
+if(window._mlCachedFlashCode){window._mlShowFlashCode(window._mlCachedFlashCode);return;}
 var area=document.getElementById('ml-flash-code');
 if(!area)return;
 area.innerHTML='<div style="font-size:10px;color:var(--mltt);padding:6px 0">Oluşturuluyor...</div>';
 fetch(WEB_APP+'?action=flash&email='+encodeURIComponent(_mlCache.email)).then(function(r){return r.json()}).then(function(d){
 if(d.success&&d.code){
-area.innerHTML='<div class="ml-acc-hdr open" id="ml-acc-flash" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-flash\')"><div class="ml-acc-title" style="color:var(--mlg)">Ek %2.5 İndirim Kodunuz</div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div style="background:var(--mlbg2);border:1px solid var(--mlbd);border-radius:0 0 8px 8px;padding:8px 12px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--mlg);letter-spacing:2px;font-family:monospace;cursor:pointer" onclick="event.stopPropagation();navigator.clipboard.writeText(\''+d.code+'\');this.nextElementSibling.textContent=\'Kopyalandı!\'">'+d.code+'</div><div style="font-size:8px;color:var(--mlts);margin-top:3px">Kopyalamak için koda tıklayın</div><div style="font-size:9px;color:var(--mltt);margin-top:4px">24 saat geçerli · Tek kullanım</div></div></div>';
+window._mlShowFlashCode(d.code);window._mlCachedFlashCode=d.code;
 }else{
 area.innerHTML='<div style="font-size:10px;color:#c0392b;padding:6px 0">'+(d.error||'Bir hata oluştu.')+'</div>';
 }
