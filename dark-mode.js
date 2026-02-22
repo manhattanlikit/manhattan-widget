@@ -344,13 +344,15 @@ body.ml-dark button.button:hover{
 /* Cover butonlar */
 body.ml-dark .cover__button,
 body.ml-dark .cover-button,
-body.ml-dark .cover__button a,
-body.ml-dark .cover-button a,
 body.ml-dark a.cover__button,
 body.ml-dark a.cover-button{
   background:${GOLDDIM}!important;
   color:#fff!important;
   text-decoration:none!important;
+}
+body.ml-dark .cover__button *,
+body.ml-dark .cover-button *{
+  color:#fff!important;
 }
 
 /* ── FORM / INPUT ── */
@@ -669,8 +671,6 @@ body.ml-dark [class*="related-products"]{
 body.ml-dark .tile-cover .cover__button,
 body.ml-dark .tile-cover .cover-button,
 body.ml-dark .cover__button.cover-button,
-body.ml-dark .tile-cover .cover__button a,
-body.ml-dark .tile-cover .cover-button a,
 body.ml-dark .tile-cover a.cover__button,
 body.ml-dark .tile-cover a.cover-button{
   background:${GOLDDIM}!important;
@@ -678,6 +678,10 @@ body.ml-dark .tile-cover a.cover-button{
   border:none!important;
   font-weight:600!important;
   text-decoration:none!important;
+}
+body.ml-dark .tile-cover .cover__button *,
+body.ml-dark .tile-cover .cover-button *{
+  color:#fff!important;
 }
 body.ml-dark .tile-cover .cover__button:hover{
   background:${GOLD}!important;
