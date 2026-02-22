@@ -607,46 +607,58 @@ async function processResults(file){
 
     var updated=0,skipped=0,notFound=0,errors=0;
     
-    // Toplu eşleştirme — tek GAS çağrısı
-    log('log-import','Toplu eşleştirme başlatılıyor ('+shipments.length+' gönderi)...','info');
+    // 1) Tüm bekleyen siparişleri tek seferde çek
+    log('log-import','Ecwid siparişleri çekiliyor...','info');
     setProgress('pbar-import',30);
-    var batchData=shipments.map(function(s){return{phone:s.phone,trackCode:s.trackCode,name:s.name}});
-    var batchRes=await gasPost({action:'kargoBatchUpdate',pin:SESSION_PIN,shipments:batchData});
-    setProgress('pbar-import',90);
+    var ordersRes=await gasPost({action:'kargoGetOrders',pin:SESSION_PIN});
+    if(!ordersRes.ok){
+      log('log-import','HATA: Siparişler çekilemedi — '+(ordersRes.error||''),'err');
+      return;
+    }
     
-    if(batchRes.ok&&batchRes.results){
-      batchRes.results.forEach(function(r){
-        if(r.status==='updated'){
-          log('log-import','✓ #'+r.orderNumber+' · '+r.name+' → '+r.trackCode,'ok');
-          updated++;
-        }else if(r.status==='alreadyShipped'){
-          log('log-import','⏭ Kargo takibi önceden girilmiş: #'+r.orderNumber+' · '+r.name,'skip');
-          skipped++;
-        }else if(r.status==='notFound'){
-          log('log-import','✗ Eşleşmedi: '+r.name+' — Farklı kargo firması (Sürat, MNG vb.) olabilir','err');
-          notFound++;
-        }else if(r.status==='error'){
-          log('log-import','✗ Güncelleme hatası: '+r.name+' — '+(r.reason||''),'err');
-          errors++;
-        }else if(r.status==='skip'){
-          log('log-import','⏭ '+r.name+' — '+(r.reason||'Atlandı'),'skip');
-          skipped++;
-        }
-      });
-    }else{
-      log('log-import','HATA: '+(batchRes.error||'Toplu güncelleme başarısız'),'err');
+    // 2) Telefon → sipariş haritası oluştur (tarayıcıda)
+    var phoneMap={};
+    (ordersRes.orders||[]).forEach(function(o){
+      var ph=normPhone(o.phone);
+      if(ph&&!phoneMap[ph])phoneMap[ph]={id:o.id,orderNumber:o.orderNumber,name:o.name};
+    });
+    log('log-import',Object.keys(phoneMap).length+' sipariş eşleşme havuzunda.','info');
+    setProgress('pbar-import',50);
+    
+    // 3) Her gönderiyi telefon ile eşleştir
+    for(var i=0;i<shipments.length;i++){
+      var s=shipments[i];
+      setProgress('pbar-import',50+Math.round(i/shipments.length*45));
+      var ph=normPhone(s.phone);
+      var match=ph?phoneMap[ph]:null;
+      
+      if(!match){
+        log('log-import','✗ Eşleşmedi: '+s.name+(ph?' ('+ph+')':'')+' — Farklı kargo veya önceden girilmiş','err');
+        notFound++;
+        continue;
+      }
+      
+      // Güncelle
+      var upd=await gasPost({action:'kargoUpdateTracking',pin:SESSION_PIN,orderId:String(match.id),trackCode:s.trackCode});
+      if(upd.ok){
+        log('log-import','✓ #'+match.orderNumber+' · '+s.name+' → '+s.trackCode,'ok');
+        updated++;
+      }else{
+        log('log-import','✗ Güncelleme hatası #'+match.orderNumber+': '+(upd.error||''),'err');
+        errors++;
+      }
     }
     
     setProgress('pbar-import',100);
     
     var html='<div class="stats">';
     html+='<div class="stat"><div class="stat-val" style="color:var(--green)">'+updated+'</div><div class="stat-label">Güncellendi</div></div>';
-    html+='<div class="stat"><div class="stat-val" style="color:var(--tx3)">'+skipped+'</div><div class="stat-label">Atlandı (önceden girilmiş)</div></div>';
+    if(notFound)html+='<div class="stat"><div class="stat-val" style="color:var(--tx3)">'+notFound+'</div><div class="stat-label">Eşleşmedi / Önceden girilmiş</div></div>';
     if(notFound)html+='<div class="stat"><div class="stat-val" style="color:var(--red)">'+notFound+'</div><div class="stat-label">Eşleşmedi</div></div>';
     if(errors)html+='<div class="stat"><div class="stat-val" style="color:var(--red)">'+errors+'</div><div class="stat-label">Hata</div></div>';
     html+='</div>';
     
-    log('log-import','─── Tamamlandı: '+updated+' güncellendi, '+skipped+' atlandı'+(notFound?', '+notFound+' eşleşmedi':'')+(errors?', '+errors+' hata':''),'info');
+    log('log-import','─── Tamamlandı: '+updated+' güncellendi'+(notFound?', '+notFound+' eşleşmedi':'')+(errors?', '+errors+' hata':''),'info');
     document.getElementById('import-preview').innerHTML=html;
     
   }catch(e){
