@@ -1,4 +1,5 @@
 (function(){
+function _mlInit(){
 // CSS enjekte
 var s=document.createElement('style');
 s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -74,7 +75,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-greeting b{color:var(--mltp);font-weight:600}
 .ml-cta{display:flex;align-items:center;justify-content:center;width:100%;padding:13px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;font-weight:700;letter-spacing:-.1px;border:none;border-radius:10px;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s;box-sizing:border-box;position:relative;overflow:hidden}
 .ml-cta::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite}
-.ml-cta:hover{background:var(--mltp);color:#fff;opacity:1}.ml-cta:hover::after{animation:none}.ml-cta:active{transform:scale(.98)}
+.ml-cta:hover{background:var(--mltp)!important;color:#fff;opacity:1}.ml-cta:hover::after{animation:none!important}.ml-cta:active{transform:scale(.98);background:var(--mltp)}
 .ml-cta-gold{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff !important;position:relative;overflow:hidden}
 .ml-cta-gold::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite}
 .ml-max-msg{text-align:center;padding:8px 0 16px;font-size:15px;font-weight:500;color:var(--mlts);line-height:1.6;letter-spacing:-.1px}
@@ -253,7 +254,7 @@ T.forEach(function(ti){
 var lockIco='<svg viewBox="0 0 24 24" fill="none" stroke="var(--mltt)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>';
 tt+='<div class="ml-tier-row locked"><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+'</div></div><div class="ml-tr-discount">'+lockIco+'</div></div>';
 });
-document.getElementById('ct').innerHTML='<div class="ml-locked-msg">İndirim seviyenizi görmek için<br><a href="https://manhattandan.com/account" target="_self" onclick="event.stopPropagation()" style="color:var(--mlg);font-weight:700;text-decoration:underline">giriş yapın</a>.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div>'+tt+'</div><div class="ml-btns"><a href="https://manhattandan.com/account" target="_self" onclick="event.stopPropagation()" class="ml-cta ml-cta-gold">Giriş Yap</a><button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta-secondary">Mağazaya Git</button></div>';
+document.getElementById('ct').innerHTML='<div class="ml-locked-msg">İndirim seviyenizi görmek için<br><a href="https://www.manhattanlikit2.com/likitler/account" target="_self" onclick="event.stopPropagation()" style="color:var(--mlg);font-weight:700;text-decoration:underline">giriş yapın</a>.</div><div class="ml-tiers-table"><div class="ml-label">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div>'+tt+'</div><div class="ml-btns"><a href="https://www.manhattanlikit2.com/likitler/account" target="_self" onclick="event.stopPropagation()" class="ml-cta ml-cta-gold">Giriş Yap</a><button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta-secondary">Mağazaya Git</button></div>';
 return;
 }
 // LOGGED IN
@@ -290,7 +291,7 @@ tip='<div class="ml-tier-tip"><svg viewBox="0 0 24 24" fill="none" stroke="var(-
 tt+='<div class="ml-tier-row '+cls+'"'+clickAttr+'><div class="ml-tr-ico t-'+ti.n.toLowerCase()+'" style="background:'+TB[ti.n]+'">'+IC[ti.n]+'</div><div class="ml-tr-info"><div class="ml-tr-name">'+ti.n+' '+badge+'</div><div class="ml-tr-desc">'+desc+'</div></div>'+cod+'</div>'+tip;
 });
 // Tasarruf hesapla
-var rawSav=d.spend*(t.d/100)*1.4;var savings;if(rawSav<1000){savings=Math.ceil(rawSav/10)*10;}else{savings=Math.ceil(rawSav/50)*50;}
+var _savSpend=(d.allTimeSpend||d.spend||0);var _savRate=Math.max(t.d,2.5);var rawSav=_savSpend*(_savRate/100)*1.4;var savings;if(rawSav<1000){savings=Math.ceil(rawSav/10)*10;}else{savings=Math.ceil(rawSav/50)*50;}
 var savingsHtml='<div class="ml-savings"><div class="ml-savings-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="ml-savings-txt">'+(savings>0?'Bugüne kadar toplam<br><b>'+f$(savings)+' ₺ ve üzeri</b> tasarruf ettiniz':'Sipariş verin,<br><b>tasarruf etmeye başlayın</b>')+'</div><div class="ml-savings-orders"><div class="ml-savings-orders-val">'+d.orders+'</div><div class="ml-savings-orders-lbl">Sipariş</div></div></div>';
 // İade compact (only if exists)
 var compactStats='';
@@ -315,7 +316,7 @@ var avgPerMonth=d.spend/12;
 if(avgPerMonth>0){var monthsLeft=Math.ceil((nx.mn-d.spend)/avgPerMonth*0.7);var targetDate=new Date();targetDate.setMonth(targetDate.getMonth()+monthsLeft);var monthNames=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];projHtml='<div style="text-align:center;font-size:10px;color:var(--mlts);margin:4px 0 8px">Tahmini <b style=\"color:var(--mlg)\">'+nx.n+' seviyesine</b> geçiş: <b>'+monthNames[targetDate.getMonth()]+' '+targetDate.getFullYear()+'</b></div>';}
 }
 // Sürpriz indirimler linki
-var surpriseHtml='<div class="ml-acc-hdr" id="ml-acc-bday" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-bday\');var ba=document.getElementById(\'ml-bday-area\');if(ba&&!ba.innerHTML)mlBday();"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Doğum Günü Hediyesi <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Sürpriz İndirimler</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div id="ml-bday-area" style="padding:4px 0"></div></div>';
+var surpriseHtml='<div class="ml-acc-hdr" id="ml-acc-bday" onclick="event.stopPropagation();var _r=document.getElementById(\'ml-acc-ref\');if(_r)_r.classList.remove(\'open\');mlAccToggle(\'ml-acc-bday\');var ba=document.getElementById(\'ml-bday-area\');if(ba&&!ba.innerHTML)mlBday();"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M20 12v10H4V12"/><path d="M2 7h20v5H2z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>Doğum Günü Hediyesi <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">Sürpriz İndirimler</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div id="ml-bday-area" style="padding:4px 0"></div></div>';
 var refHtml='';
 if(REF_RATES[d.tier]){
 var refTiers=['Silver','Gold','Platinum','Diamond'];
@@ -330,7 +331,7 @@ refHtml='<div class="ml-ref"><div class="ml-ref-title"><svg viewBox="0 0 24 24" 
 } else {
 refHtml='<div class="ml-ref" style="opacity:.85"><div class="ml-ref-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et</div><div class="ml-ref-sub"><b>Silver</b> seviyesine ulaştığınızda arkadaşlarınızı davet edip <b>ek indirim</b> kazanabilirsiniz!</div><div style="display:flex;justify-content:center;gap:8px;margin-top:6px"><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;background:rgba(175,140,62,.08);color:var(--mlg)"><div style="font-weight:600">Silver</div><div>%5</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Gold</div><div>%7.5</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Platinum</div><div>%10</div></div><div style="text-align:center;padding:3px 6px;border-radius:4px;font-size:9px;color:var(--mlts)"><div style="font-weight:600">Diamond</div><div>%15</div></div></div></div>';
 }
-if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-ref\')"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">İndirim Kazan</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body">'+refHtml+'</div>';}
+if(refHtml){refHtml='<div class="ml-acc-hdr" id="ml-acc-ref" onclick="event.stopPropagation();var _b=document.getElementById(\'ml-acc-bday\');if(_b)_b.classList.remove(\'open\');mlAccToggle(\'ml-acc-ref\')"><div class="ml-acc-title"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="width:12px;height:12px;stroke:var(--mlg);stroke-width:2;fill:none"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>Arkadaşını Davet Et <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px;letter-spacing:.3px">İndirim Kazan</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body">'+refHtml+'</div>';}
 // Flash bonus (Cumartesi 16:00 - Pazar 18:00)
 var flashHtml='';
 var now=new Date();var dow=now.getDay(),hr=now.getHours();
@@ -372,8 +373,18 @@ if(fte){setInterval(function(){var t=fte.textContent.split(':');var s=parseInt(t
 window._mlShowFlashCode=function(code){
 var area=document.getElementById('ml-flash-code');if(!area)return;
 var fte=document.getElementById('ml-ft');var timeStr=fte?fte.textContent:'--:--:--';
-area.innerHTML='<div class="ml-acc-hdr open" id="ml-acc-flash" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-flash\')"><div class="ml-acc-title" style="color:var(--mlg)">Ek %2.5 İndirim Kodunuz</div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div style="background:var(--mlbg2);border:1px solid var(--mlbd);border-radius:0 0 8px 8px;padding:8px 12px;text-align:center"><div style="display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer" onclick="event.stopPropagation();navigator.clipboard.writeText(\''+code+'\');document.getElementById(\'ml-fc-msg\').textContent=\'Kopyalandı!\';setTimeout(function(){var el=document.getElementById(\'ml-fc-msg\');if(el)el.textContent=\'\';},3000)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:16px;height:16px;flex-shrink:0;opacity:.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><div style="font-size:18px;font-weight:800;color:var(--mlg);letter-spacing:2px;font-family:monospace">'+code+'</div></div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px"><span id="ml-fc-msg" style="font-size:9px;color:#38a169;font-weight:600;min-width:0"></span><span style="font-size:9px;color:var(--mlg);font-weight:600" id="ml-fc-exp">Kod geçerliliği: '+timeStr+'</span></div></div></div>';
+area.innerHTML='<div class="ml-acc-hdr open" id="ml-acc-flash" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-flash\')"><div class="ml-acc-title" style="color:var(--mlg)" id="ml-fc-title">Ek %2.5 İndirim Kodunuz</div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div style="background:var(--mlbg2);border:2px dashed var(--mlg);border-radius:0 0 10px 10px;padding:12px 14px;text-align:center;cursor:pointer" onclick="event.stopPropagation();mlCopyFlash()"><div style="display:flex;align-items:center;justify-content:center;gap:8px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--mlg)" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;opacity:.6"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg><div style="font-size:20px;font-weight:800;color:var(--mlg);letter-spacing:2px;font-family:monospace">'+code+'</div></div></div></div>';
+window._mlFlashCode=code;
 try{if(window._mlFlashEnd)sessionStorage.setItem('ml_flash_code',JSON.stringify({code:code,end:window._mlFlashEnd}));}catch(e){}
+};
+window.mlCopyFlash=function(){
+var code=window._mlFlashCode;if(!code)return;
+navigator.clipboard.writeText(code);
+var t=document.getElementById('ml-fc-title');if(!t)return;
+var orig=t.textContent;
+t.innerHTML='<span style="color:#38a169">\u2713 Kopyaland\u0131!</span>';
+clearTimeout(window._mlCopyTimer);
+window._mlCopyTimer=setTimeout(function(){var el=document.getElementById('ml-fc-title');if(el)el.textContent=orig;},2000);
 };
 window.mlFlashCoupon=function(){
 if(!_mlCache||!_mlCache.loggedIn||!_mlCache.email)return;
@@ -392,51 +403,39 @@ area.innerHTML='<div style="font-size:10px;color:#c0392b;padding:6px 0">'+(d.err
 
 var _mlCache=null;window._mlCache=_mlCache;
 
-// Sayfa yüklendiğinde arka planda veriyi çek
-if(typeof Ecwid!=='undefined'&&Ecwid.OnAPILoaded){
-Ecwid.OnAPILoaded.add(function(){
-try{Ecwid.Customer.get(function(c){
-if(c){
-var bp=c.billingPerson||{};var name=c.name?(c.name.split(' ')[0]):(bp.firstName||bp.name&&bp.name.split(' ')[0]||'');var fullName=c.name||bp.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
-if(WEB_APP&&email){
+// Wix: Ecwid iframe'den postMessage ile müşteri verisi al
+window.addEventListener('message',function(e){
+if(e.data&&e.data.mlCustomer){
+var c=e.data.mlCustomer;
+var email=(c.email||'').toLowerCase();
+if(!email)return;
+var name=c.name?(c.name.split(' ')[0]):'';
+var fullName=c.name||'';
+if(WEB_APP){
 fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
 var tier=tierFromSpend(d.spend||0);
 _mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:fullName,email:email,loggedIn:true};
 }).catch(function(){
-var tier=GM[c.customerGroupId]||'Starter';
-var td=T.find(function(t){return t.n===tier});
-_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};
-});
-}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};}
-}else{_mlCache={tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false};}
-});}catch(e){}
+_mlCache=window._mlCache={tier:'Starter',spend:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};
 });
 }
+}
+if(e.data&&e.data.mlLogout){
+_mlCache=null;window._mlCache=null;
+var ov=document.getElementById('ov');if(ov)ov.classList.remove('open');
+}
+});
 
 window.mlOpen=function(){
 document.getElementById('ov').classList.add('open');
 if(_mlCache){go(_mlCache);return;}
 document.getElementById('ct').innerHTML='<div style="text-align:center;padding:30px 0"><svg viewBox="0 0 24 24" fill="none" style="width:32px;height:32px;margin:0 auto 8px;display:block;animation:mlpulse 1.5s ease-in-out infinite"><path d="M2 18L5 8l4 4 3-7 3 7 4-4 3 10z" fill="rgba(175,140,62,.15)" stroke="#af8c3e" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="19" width="20" height="2" rx="1" fill="#af8c3e" opacity=".3"/></svg><div style="font-size:10px;color:var(--mltt);font-weight:500">Yükleniyor...</div></div>';
 if(!document.getElementById('mlspincss')){var sc=document.createElement('style');sc.id='mlspincss';sc.textContent='@keyframes mlspin{to{transform:rotate(360deg)}}@keyframes mlpulse{0%,100%{opacity:.4;transform:scale(.95)}50%{opacity:1;transform:scale(1)}}';document.head.appendChild(sc);}
-if(typeof Ecwid!=='undefined'&&Ecwid.Customer){
-try{Ecwid.Customer.get(function(c){
-if(c){
-var bp=c.billingPerson||{};var name=c.name?(c.name.split(' ')[0]):(bp.firstName||bp.name&&bp.name.split(' ')[0]||'');var fullName=c.name||bp.name||((bp.firstName||'')+' '+(bp.lastName||'')).trim()||'';var email=c.email||'';
-if(WEB_APP&&email){
-fetch(WEB_APP+'?email='+encodeURIComponent(email)).then(function(r){return r.json()}).then(function(d){
-var tier=tierFromSpend(d.spend||0);
-_mlCache=window._mlCache={tier:tier,spend:d.spend||0,orders:d.orders||0,returnRate:d.returnRate,name:name,fullName:fullName,email:email,loggedIn:true};
+if(_mlCache&&_mlCache.loggedIn){
 go(_mlCache);
-}).catch(function(){
-var tier=GM[c.customerGroupId]||'Starter';
-var td=T.find(function(t){return t.n===tier});
-_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};
-go(_mlCache);
-});
-}else{var tier=GM[c.customerGroupId]||'Starter';var td=T.find(function(t){return t.n===tier});_mlCache=window._mlCache={tier:tier,spend:td?td.mn:0,orders:0,name:name,fullName:fullName,email:email,loggedIn:true};go(_mlCache);}
-}else{_mlCache={tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false};go(_mlCache);}
-});}catch(e){go({tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false});}
-}else{go({tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false});}
+}else{
+go({tier:'Starter',spend:0,orders:0,name:'',fullName:'',loggedIn:false});
+}
 };
 
 window.mlClose=function(e){
@@ -597,7 +596,7 @@ ctx.fillStyle=codeGl;
 ctx.fillText(code,W/2,by+bh/2+1);
 // Site info
 ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#636366';
-ctx.fillText('manhattandan.com adresinde geçerlidir',W/2,228);
+ctx.fillText('manhattanlikit2.com adresinde geçerlidir',W/2,228);
 // Separator
 ctx.fillStyle=gl;ctx.fillRect(140,250,W-280,0.5);
 // Sender pride — name + tier badge
@@ -613,7 +612,7 @@ ctx.fillText(senderTier+' Üyesi',W/2,294);
 }
 // Bottom
 ctx.font='400 8px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#4a4a4e';
-ctx.fillText('manhattandan.com',W/2,H-14);
+ctx.fillText('manhattanlikit2.com',W/2,H-14);
 // Overlay — WP + Download + Kapat
 var ov=_mlCardOverlay(c,'');
 ov.querySelector('.ml-share-preview-btns').innerHTML='<button class="ml-sp-share" id="ml-cp-wp" style="background:#25D366;color:#fff">WhatsApp\'ta Gönder</button><button class="ml-sp-share" id="ml-cp-dl">Kartı İndir</button><button class="ml-sp-close" id="ml-cp-x">Kapat</button>';
@@ -626,7 +625,7 @@ var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='m
 // WhatsApp — mobil native share, desktop wa.me
 document.getElementById('ml-cp-wp').onclick=function(){
 var wpText=senderName?senderName+' sana Manhattan Likit\'ten %'+disc+' indirim hediye etti!':'Manhattan Likit\'ten sana %'+disc+' indirim!';
-wpText+='\n\nKod: '+code+'\nmanhattandan.com\n\nTüm indirimlerine ek, sana özel!';
+wpText+='\n\nKod: '+code+'\nmanhattanlikit2.com\n\nTüm indirimlerine ek, sana özel!';
 var isMobile=/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 if(isMobile){
 c.toBlob(function(blob){
@@ -697,7 +696,7 @@ ctx.fillText(displayName,W/2,H-52);
 // Bottom
 ctx.fillStyle=gl;ctx.fillRect(80,H-38,W-160,1);
 ctx.font='400 9px -apple-system,BlinkMacSystemFont,sans-serif';ctx.fillStyle='#7c7c80';
-ctx.fillText('manhattandan.com',W/2,H-18);
+ctx.fillText('manhattanlikit2.com',W/2,H-18);
 // Overlay
 var ov=_mlCardOverlay(c,'<button class="ml-sp-share" id="ml-tc-go">Paylaş</button><button class="ml-sp-close" id="ml-tc-x">Kapat</button>');
 document.getElementById('ml-tc-x').onclick=function(){ov.remove();};
@@ -817,4 +816,7 @@ setTimeout(function(){trig.classList.add('collapsed');},1600);
 },{passive:true});
 
 document.addEventListener('keydown',function(e){if(e.key==='Escape')window.mlClose();});
+}
+// Wix uyumu: body hazır olana kadar bekle
+if(document.body){_mlInit();}else{document.addEventListener('DOMContentLoaded',_mlInit);}
 })();
