@@ -19,7 +19,7 @@ var SEGS=[
 var N=8,SA=360/N,SAR=Math.PI*2/N;
 
 // ====== DURUM ======
-var _spinning=false,_spunSession=false,_rotation=0,_audioCtx=null;
+var _spinning=false,_spunSession=false,_rotation=0,_audioCtx=null,_muted=false;
 
 // ====== SVG İKONLAR (emoji yasak) ======
 var ICO={
@@ -28,12 +28,13 @@ var ICO={
   ticket:'<svg viewBox="0 0 24 24" fill="none" stroke="#d4b05e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><path d="M2 9a3 3 0 010-6h20a3 3 0 010 6"/><path d="M2 15a3 3 0 000 6h20a3 3 0 000-6"/><path d="M2 9v6"/><path d="M22 9v6"/><line x1="9" y1="3" x2="9" y2="21" stroke-dasharray="2 2"/></svg>',
   ship:'<svg viewBox="0 0 24 24" fill="none" stroke="#5ec4a0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><path d="M16 16h6l-3-8h-5"/><path d="M2 16h14V4H4a2 2 0 00-2 2v10z"/><circle cx="6.5" cy="18.5" r="2.5"/><circle cx="16.5" cy="18.5" r="2.5"/></svg>',
   trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="#ffc857" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><path d="M6 2h12v6a6 6 0 01-12 0V2z"/><path d="M6 4H4a2 2 0 00-2 2v1a4 4 0 004 4"/><path d="M18 4h2a2 2 0 012 2v1a4 4 0 01-4 4"/><path d="M12 14v4"/><path d="M8 22h8"/><path d="M8 22a4 4 0 010-4h8a4 4 0 010 4"/></svg>',
-  fire:'<svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;vertical-align:middle;margin-right:4px"><path d="M12 23c-4.97 0-9-2.69-9-6 0-2 .5-3 2-5 .5 2.5 2 3.5 2 3.5C7 12 9 7 13 3c0 3 1.5 5 3 6.5 1 1 2 2.17 2 4.5 0 3.31-4.03 6-9 6z"/><path d="M12 23c-1.66 0-3-1.12-3-2.5S10.34 18 12 18s3 1.12 3 2.5S13.66 23 12 23z"/></svg>'
+  fire:'<svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;vertical-align:middle;margin-right:4px"><path d="M12 23c-4.97 0-9-2.69-9-6 0-2 .5-3 2-5 .5 2.5 2 3.5 2 3.5C7 12 9 7 13 3c0 3 1.5 5 3 6.5 1 1 2 2.17 2 4.5 0 3.31-4.03 6-9 6z"/><path d="M12 23c-1.66 0-3-1.12-3-2.5S10.34 18 12 18s3 1.12 3 2.5S13.66 23 12 23z"/></svg>',
+  sndOn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>',
+  sndOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>'
 };
 
 // ====== CSS ======
 var css=`
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 .sw-trigger{position:fixed;bottom:80px;right:24px;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#af8c3e,#d4b05e);border:2px solid rgba(255,255,255,.15);cursor:pointer;z-index:999998;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(175,140,62,.4);transition:all .3s ease;animation:sw-glow 2.5s ease-in-out infinite}
 .sw-trigger:hover{transform:scale(1.1)}
 .sw-trigger:hover .sw-tip{opacity:1;transform:translateX(-100%) translateY(-50%) scale(1)}
@@ -51,6 +52,10 @@ var css=`
 
 .sw-badge{font:700 11px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;text-shadow:0 2px 12px rgba(0,0,0,.6);display:flex;align-items:center;gap:8px}
 .sw-badge::before,.sw-badge::after{content:'';width:28px;height:1px;background:linear-gradient(90deg,transparent,#d4b05e,transparent)}
+
+.sw-snd{position:fixed;top:16px;left:16px;display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);font:500 11px 'Plus Jakarta Sans',sans-serif;cursor:pointer;z-index:10;transition:all .2s}
+.sw-snd:hover{background:rgba(255,255,255,.15);color:#fff}
+.sw-snd.off{color:rgba(255,255,255,.35)}
 
 .sw-wheel-box{position:relative;width:min(82vw,400px);height:min(82vw,400px);margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none}
 .sw-pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);z-index:5;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))}
@@ -114,6 +119,7 @@ var css=`
 
 // ====== DOM ======
 function build(){
+  if(!document.getElementById('sw-font')){var lk=document.createElement('link');lk.id='sw-font';lk.rel='stylesheet';lk.href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap';document.head.appendChild(lk)}
   var s=document.createElement('style');s.id='sw-css';s.textContent=css;document.head.appendChild(s);
 
   // Trigger
@@ -127,6 +133,7 @@ function build(){
   var ov=document.createElement('div');ov.className='sw-ov';ov.id='sw-ov';
   ov.innerHTML=
     '<button class="sw-x" id="sw-x" onclick="event.stopPropagation();swClose()">✕</button>'+
+    '<button class="sw-snd" id="sw-snd" onclick="event.stopPropagation();swToggleSound()">'+ICO.sndOn+' <span id="sw-snd-txt">Ses Açık</span></button>'+
     '<div class="sw-main" onclick="event.stopPropagation()">'+
       '<div class="sw-badge">ŞANSINI DENE</div>'+
       '<div class="sw-wheel-box" id="sw-box">'+
@@ -274,7 +281,7 @@ function initAudio(){
 }
 
 function tick(){
-  if(!_audioCtx)return;
+  if(!_audioCtx||_muted)return;
   try{
     var o=_audioCtx.createOscillator(),g=_audioCtx.createGain();
     o.connect(g);g.connect(_audioCtx.destination);
@@ -286,7 +293,7 @@ function tick(){
 }
 
 function winSound(){
-  if(!_audioCtx)return;
+  if(!_audioCtx||_muted)return;
   try{
     [523,659,784,1047].forEach(function(f,i){
       setTimeout(function(){
@@ -353,7 +360,7 @@ function animateTo(segment,angleOffset,dur){
   return new Promise(function(resolve){
     var cv=document.getElementById('sw-cv');if(!cv)return resolve();
 
-    var target=segment*SA+SA/2+(angleOffset||0);
+    var target=360-segment*SA-SA/2+(angleOffset||0);
     var fullSpins=(5+Math.floor(Math.random()*3))*360;
     var startRot=_rotation;
     var end=startRot+fullSpins+target-((startRot%360+360)%360);
@@ -581,8 +588,22 @@ function getCountdownText(){
   return'Sonraki hak: '+days+' gün '+hrs+' saat';
 }
 
+// ====== SES TOGGLE ======
+function swToggleSound(){
+  _muted=!_muted;
+  var btn=document.getElementById('sw-snd');
+  var txt=document.getElementById('sw-snd-txt');
+  if(_muted){
+    btn.innerHTML=ICO.sndOff+' <span id="sw-snd-txt">Ses Kapalı</span>';
+    btn.classList.add('off');
+  }else{
+    btn.innerHTML=ICO.sndOn+' <span id="sw-snd-txt">Ses Açık</span>';
+    btn.classList.remove('off');
+  }
+}
+
 // ====== GLOBAL ======
-window.swSpin=swSpin;window.swClose=swClose;window.swCopy=swCopy;
+window.swSpin=swSpin;window.swClose=swClose;window.swCopy=swCopy;window.swToggleSound=swToggleSound;
 
 // ====== INIT ======
 function init(){build();drawWheel();initDrag()}
