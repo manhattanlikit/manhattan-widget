@@ -353,6 +353,7 @@ body.ml-dark button.cover-button{
   color:#fff!important;
   border:none!important;
   border-radius:12px!important;
+  overflow:hidden!important;
   text-decoration:none!important;
 }
 body.ml-dark .cover__button *,
@@ -701,11 +702,13 @@ body.ml-dark .cover-button:hover{
   background:${GOLD}!important;
   background-color:${GOLD}!important;
   border-radius:12px!important;
+  overflow:hidden!important;
 }
 body.ml-dark .cover__button:hover *,
 body.ml-dark .cover-button:hover *{
   background:transparent!important;
   background-color:transparent!important;
+  border-radius:inherit!important;
 }
 
 /* ── ECWID İKON BAR (Ürünleri Ara, Hesabım, Siparişleri İzle, Favoriler, Sepetim) ── */
@@ -890,13 +893,33 @@ btn.addEventListener('click',function(e){
 
 // ─── SAYFA HAZIR OLUNCA EKLE ───
 function init(){
-  // Wrapper div — inline fixed, hiçbir CSS override edemez
-  var wrap=document.createElement('div');
-  wrap.id='ml-dm-wrap';
-  wrap.setAttribute('style','position:fixed!important;top:14px!important;right:16px!important;z-index:999999!important;pointer-events:auto!important;');
-  wrap.appendChild(btn);
-  // documentElement'e ekle (body transform varsa bile etkilenmez)
-  (document.documentElement||document.body).appendChild(wrap);
+  // Nav bar'da "Bize ulaşın" linkini bul, sağına ekle
+  var placed=false;
+  var navLinks=document.querySelectorAll('.menu a, nav a, .nav a, [class*="menu"] a');
+  for(var i=0;i<navLinks.length;i++){
+    if(navLinks[i].textContent.trim().indexOf('Bize')>-1){
+      // Link'in parent'ına ekle
+      var parent=navLinks[i].parentElement;
+      btn.style.marginLeft='12px';
+      btn.style.display='inline-flex';
+      btn.style.verticalAlign='middle';
+      if(navLinks[i].nextSibling){
+        parent.insertBefore(btn,navLinks[i].nextSibling);
+      }else{
+        parent.appendChild(btn);
+      }
+      placed=true;
+      break;
+    }
+  }
+  // Fallback — nav bulunamazsa fixed wrapper
+  if(!placed){
+    var wrap=document.createElement('div');
+    wrap.id='ml-dm-wrap';
+    wrap.setAttribute('style','position:fixed!important;top:14px!important;right:16px!important;z-index:999999!important;pointer-events:auto!important;');
+    wrap.appendChild(btn);
+    (document.documentElement||document.body).appendChild(wrap);
+  }
   // Kayıtlı tercihi yükle
   try{
     if(localStorage.getItem('ml-dark')==='1'){
