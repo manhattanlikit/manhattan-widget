@@ -345,8 +345,11 @@ body.ml-dark button.button:hover{
 body.ml-dark .cover__button,
 body.ml-dark .cover-button,
 body.ml-dark a.cover__button,
-body.ml-dark a.cover-button{
+body.ml-dark a.cover-button,
+body.ml-dark button.cover__button,
+body.ml-dark button.cover-button{
   background:${GOLDDIM}!important;
+  background-color:${GOLDDIM}!important;
   color:#fff!important;
   text-decoration:none!important;
 }
