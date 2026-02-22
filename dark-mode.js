@@ -341,22 +341,23 @@ body.ml-dark button.button:hover{
   background:${GOLD}!important;
 }
 
-/* Cover butonlar — siyah bg + gold yazı + gold çerçeve */
+/* Cover butonlar — gold bg + beyaz yazı + yuvarlak köşe */
 body.ml-dark .cover__button,
 body.ml-dark .cover-button,
 body.ml-dark a.cover__button,
 body.ml-dark a.cover-button,
 body.ml-dark button.cover__button,
 body.ml-dark button.cover-button{
-  background:${BG1}!important;
-  background-color:${BG1}!important;
-  color:${GOLD}!important;
-  border:2px solid ${GOLDDIM}!important;
+  background:${GOLDDIM}!important;
+  background-color:${GOLDDIM}!important;
+  color:#fff!important;
+  border:none!important;
+  border-radius:12px!important;
   text-decoration:none!important;
 }
 body.ml-dark .cover__button *,
 body.ml-dark .cover-button *{
-  color:${GOLD}!important;
+  color:#fff!important;
   background:transparent!important;
   background-color:transparent!important;
 }
@@ -679,16 +680,17 @@ body.ml-dark .tile-cover .cover-button,
 body.ml-dark .cover__button.cover-button,
 body.ml-dark .tile-cover a.cover__button,
 body.ml-dark .tile-cover a.cover-button{
-  background:${BG1}!important;
-  background-color:${BG1}!important;
-  color:${GOLD}!important;
-  border:2px solid ${GOLDDIM}!important;
+  background:${GOLDDIM}!important;
+  background-color:${GOLDDIM}!important;
+  color:#fff!important;
+  border:none!important;
+  border-radius:12px!important;
   font-weight:600!important;
   text-decoration:none!important;
 }
 body.ml-dark .tile-cover .cover__button *,
 body.ml-dark .tile-cover .cover-button *{
-  color:${GOLD}!important;
+  color:#fff!important;
   background:transparent!important;
   background-color:transparent!important;
 }
@@ -696,16 +698,11 @@ body.ml-dark .tile-cover .cover__button:hover,
 body.ml-dark .tile-cover .cover-button:hover,
 body.ml-dark .cover__button:hover,
 body.ml-dark .cover-button:hover{
-  background:${GOLDDIM}!important;
-  background-color:${GOLDDIM}!important;
-  color:${BG1}!important;
-  border-color:${GOLD}!important;
+  background:${GOLD}!important;
+  background-color:${GOLD}!important;
 }
-body.ml-dark .tile-cover .cover__button:hover *,
-body.ml-dark .tile-cover .cover-button:hover *,
 body.ml-dark .cover__button:hover *,
 body.ml-dark .cover-button:hover *{
-  color:${BG1}!important;
   background:transparent!important;
   background-color:transparent!important;
 }
