@@ -29,11 +29,15 @@ var css=`
    ══════════════════════════════════════ */
 
 /* ── GEÇİŞ ANİMASYONU ── */
-body.ml-dm-t,body.ml-dm-t *,body.ml-dm-t *::before,body.ml-dm-t *::after{
-  transition:background-color .45s cubic-bezier(.4,0,.2,1),
-             color .45s cubic-bezier(.4,0,.2,1),
-             border-color .45s cubic-bezier(.4,0,.2,1),
-             box-shadow .45s cubic-bezier(.4,0,.2,1)!important;
+body.ml-dm-t,
+body.ml-dm-t .tiles,
+body.ml-dm-t .menu,
+body.ml-dm-t .store,
+body.ml-dm-t .footer,
+body.ml-dm-t .footer-new,
+body.ml-dm-t .grid-product__wrap,
+body.ml-dm-t .ml-dm-btn{
+  transition:background-color .3s ease,color .3s ease,border-color .3s ease!important;
 }
 
 /* ── TOGGLE BUTON ── */
@@ -929,7 +933,7 @@ function toggle(){
   var dark=document.body.classList.contains('ml-dark');
   btn.innerHTML=dark?sunIco:moonIco;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
-  setTimeout(function(){document.body.classList.remove('ml-dm-t');},500);
+  setTimeout(function(){document.body.classList.remove('ml-dm-t');},350);
 }
 
 btn.addEventListener('click',function(e){
