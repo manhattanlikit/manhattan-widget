@@ -915,26 +915,79 @@ body.ml-dark [class*="popup"]{
    (widget.js CSS değişkenleri)
    ══════════════════════════════════════ */
 body.ml-dark .ml-overlay .ml-card{
-  --mltp:${TX1};
-  --mlts:${TX2};
-  --mltt:${TX3};
+  --mltp:#ece8df;
+  --mlts:#d4cfc4;
+  --mltt:#b5ae9e;
   --mlbg:${BG2};
   --mlbg2:${BG3};
   --mlbgh:#3a3930;
   --mlbd:${BD};
-  --mlgl:rgba(175,140,62,.08);
+  --mlgl:rgba(175,140,62,.12);
+}
+/* Stat kutuları — gold tınılı */
+body.ml-dark .ml-overlay .ml-stat{
+  background:rgba(175,140,62,.08)!important;
+  border-color:rgba(175,140,62,.15)!important;
+}
+body.ml-dark .ml-overlay .ml-stat:hover{
+  background:rgba(175,140,62,.14)!important;
+  border-color:rgba(175,140,62,.25)!important;
+}
+body.ml-dark .ml-overlay .ml-stat-num{
+  color:${GOLD}!important;
+}
+body.ml-dark .ml-overlay .ml-stat-lbl{
+  color:#b5ae9e!important;
+}
+/* Tier ismi — gold (tüm tier'lar) */
+body.ml-dark .ml-overlay .ml-tier-name{
+  color:${GOLD}!important;
+}
+body.ml-dark .ml-overlay .ml-tier-sub{
+  color:#d4cfc4!important;
+}
+/* Header ortalama */
+body.ml-dark .ml-overlay .ml-head{
+  text-align:center!important;
+  justify-content:center!important;
+}
+body.ml-dark .ml-overlay .ml-head-sub,
+body.ml-dark .ml-overlay .ml-head-title{
+  color:#b5ae9e!important;
+}
+/* Progress label ve hint */
+body.ml-dark .ml-overlay .ml-prog-label,
+body.ml-dark .ml-overlay .ml-prog-val{
+  color:#d4cfc4!important;
+}
+body.ml-dark .ml-overlay .ml-prog-hint{
+  color:#d4cfc4!important;
+}
+body.ml-dark .ml-overlay .ml-prog-hint b{
+  color:${GOLD}!important;
+}
+/* Tier tablosu */
+body.ml-dark .ml-overlay .ml-tier-row.current{
+  background:rgba(175,140,62,.1)!important;
+  border-color:rgba(175,140,62,.2)!important;
+}
+body.ml-dark .ml-overlay .ml-tr-name{
+  color:#d4cfc4!important;
+}
+body.ml-dark .ml-overlay .ml-tr-info{
+  color:#b5ae9e!important;
+}
+body.ml-dark .ml-overlay .ml-label{
+  color:#b5ae9e!important;
 }
 /* Widget içi okunabilirlik */
-body.ml-dark .ml-overlay .ml-card *{
-  border-color:${BD}!important;
-}
 body.ml-dark .ml-overlay .ml-card .ml-sub,
 body.ml-dark .ml-overlay .ml-card [class*="desc"],
 body.ml-dark .ml-overlay .ml-card [class*="info"]{
-  color:${TX2}!important;
+  color:#d4cfc4!important;
 }
 body.ml-dark .ml-overlay .ml-card .ml-val{
-  color:${TX1}!important;
+  color:#ece8df!important;
 }
 body.ml-dark .ml-overlay{
   background:rgba(0,0,0,.6)!important;
