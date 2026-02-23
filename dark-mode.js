@@ -28,6 +28,12 @@ var css=`
    MANHATTAN DARK MODE — Warm Premium
    ══════════════════════════════════════ */
 
+/* ── SHIMMER ANİMASYONU ── */
+@keyframes ml-shimmer{
+  0%{background-position:-200% center}
+  100%{background-position:200% center}
+}
+
 /* ── GEÇİŞ ANİMASYONU ── */
 body.ml-dm-t,
 body.ml-dm-t .tiles,
@@ -375,8 +381,8 @@ body.ml-dark .grid-product__picture-wrapper img{
 /* ── ÜRÜN DETAY SAYFASI ── */
 body.ml-dark .product-details__product-title{color:${TX1}!important}
 body.ml-dark .product-details__product-price .ec-price-item{color:${GOLD}!important}
-body.ml-dark .product-details__product-description{color:${TX2}!important}
-body.ml-dark .product-details{color:${TX2}!important}
+body.ml-dark .product-details__product-description{color:${TX1}!important}
+body.ml-dark .product-details{color:${TX1}!important}
 
 /* WYSIWYG ürün açıklaması içerikleri (Koleksiyon tablosu vb.) */
 body.ml-dark .product-details__product-description *,
@@ -387,9 +393,28 @@ body.ml-dark .product-details__product-description p,
 body.ml-dark .product-details__product-description div,
 body.ml-dark .product-details__product-description strong,
 body.ml-dark .product-details__product-description b,
-body.ml-dark .product-details__product-description li{
+body.ml-dark .product-details__product-description li,
+body.ml-dark .product-details__product-description em,
+body.ml-dark .product-details__product-description i,
+body.ml-dark .product-details__product-description a,
+body.ml-dark .product-details__product-description font{
   color:${TX1}!important;
   background-color:transparent!important;
+}
+/* İnline style="color:..." override — WYSIWYG editör kalıntıları */
+body.ml-dark .product-details__product-description [style*="color"],
+body.ml-dark .product-details__product-description [style*="font"],
+body.ml-dark .product-details__product-description [style*="background"]{
+  color:${TX1}!important;
+  background-color:transparent!important;
+}
+/* Açıklama içi başlıklar — gold */
+body.ml-dark .product-details__product-description h1,
+body.ml-dark .product-details__product-description h2,
+body.ml-dark .product-details__product-description h3,
+body.ml-dark .product-details__product-description h4,
+body.ml-dark .product-details__product-description h5{
+  color:${GOLD}!important;
 }
 body.ml-dark .product-details__product-description table{
   border-color:${BD}!important;
@@ -397,6 +422,17 @@ body.ml-dark .product-details__product-description table{
 body.ml-dark .product-details__product-description td,
 body.ml-dark .product-details__product-description th{
   border-color:${BD}!important;
+}
+/* Açıklama içi SVG ikonları */
+body.ml-dark .product-details__product-description svg{
+  fill:${GOLD}!important;
+  color:${GOLD}!important;
+}
+/* Açıklama blockquote / alıntı */
+body.ml-dark .product-details__product-description blockquote,
+body.ml-dark .product-details__product-description [style*="italic"]{
+  color:${TX2}!important;
+  border-left-color:${GOLDDIM}!important;
 }
 
 /* Ürün detay görseli */
@@ -432,29 +468,90 @@ body.ml-dark .ec-breadcrumbs a:hover{color:${GOLD}!important}
 body.ml-dark .form-control__button,
 body.ml-dark .form-control__button--primary,
 body.ml-dark button.button{
-  background:${GOLDDIM}!important;
-  color:${BG1}!important;
-  border-color:${GOLDDIM}!important;
+  background:linear-gradient(110deg,${GOLDDIM} 0%,${GOLDDIM} 40%,${GOLD} 50%,${GOLDDIM} 60%,${GOLDDIM} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 3s ease infinite!important;
+  color:#fff!important;
+  border-color:${GOLD}!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.15)!important;
 }
 body.ml-dark .form-control__button:hover,
 body.ml-dark button.button:hover{
-  background:${GOLD}!important;
+  background:linear-gradient(110deg,${GOLD} 0%,${GOLD} 35%,#e8c96b 50%,${GOLD} 65%,${GOLD} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 2s ease infinite!important;
+  box-shadow:0 4px 16px rgba(175,140,62,.3)!important;
+}
+body.ml-dark .form-control__button *,
+body.ml-dark .form-control__button span,
+body.ml-dark .form-control__button svg,
+body.ml-dark .form-control__button-text{
+  color:#fff!important;
+}
+/* Sepete Ekle — yüksek specificity override */
+body.ml-dark .details-product-purchase__add-to-bag,
+body.ml-dark .details-product-purchase__add-to-bag .form-control__button{
+  background:linear-gradient(110deg,${GOLDDIM} 0%,${GOLDDIM} 40%,${GOLD} 50%,${GOLDDIM} 60%,${GOLDDIM} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 3s ease infinite!important;
+  color:#fff!important;
+  border-color:${GOLD}!important;
+  border-radius:10px!important;
+}
+body.ml-dark .details-product-purchase__add-to-bag *,
+body.ml-dark .details-product-purchase__add-to-bag span{
+  color:#fff!important;
+  background:transparent!important;
+}
+body.ml-dark .details-product-purchase__add-to-bag:hover,
+body.ml-dark .details-product-purchase__add-to-bag:hover .form-control__button{
+  background:linear-gradient(110deg,${GOLD} 0%,${GOLD} 35%,#e8c96b 50%,${GOLD} 65%,${GOLD} 100%)!important;
+  background-size:200% 100%!important;
+  box-shadow:0 4px 20px rgba(175,140,62,.35)!important;
+}
+/* ── FAVORİ BUTONU ── */
+body.ml-dark .favorite-product,
+body.ml-dark .favorite-product__button-add,
+body.ml-dark .favorite-product__button-saved,
+body.ml-dark .favorite-product__button-view{
+  background:transparent!important;
+  border:1.5px solid ${GOLDDIM}!important;
+  border-radius:10px!important;
+  color:${GOLD}!important;
+}
+body.ml-dark .favorite-product *,
+body.ml-dark .favorite-product svg,
+body.ml-dark .favorite-product__title{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+}
+body.ml-dark .favorite-product__button-add:hover,
+body.ml-dark .favorite-product__button-saved:hover,
+body.ml-dark .favorite-product__button-view:hover{
+  background:rgba(175,140,62,.1)!important;
+  border-color:${GOLD}!important;
+}
+/* "Daha sonra almak üzere kaydedin" text */
+body.ml-dark .favorite-product__title{
+  color:${TX1}!important;
 }
 
-/* Cover butonlar — gold bg + beyaz yazı + yuvarlak köşe */
+/* Cover butonlar — gold shimmer + beyaz yazı + yuvarlak köşe */
 body.ml-dark .cover__button,
 body.ml-dark .cover-button,
 body.ml-dark a.cover__button,
 body.ml-dark a.cover-button,
 body.ml-dark button.cover__button,
 body.ml-dark button.cover-button{
-  background:${GOLDDIM}!important;
-  background-color:${GOLDDIM}!important;
+  background:linear-gradient(110deg,${GOLDDIM} 0%,${GOLDDIM} 40%,${GOLD} 50%,${GOLDDIM} 60%,${GOLDDIM} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 3s ease infinite!important;
   color:#fff!important;
   border:none!important;
   border-radius:12px!important;
   overflow:hidden!important;
   text-decoration:none!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.15)!important;
 }
 body.ml-dark .cover__button *,
 body.ml-dark .cover-button *{
@@ -479,6 +576,38 @@ body.ml-dark input:focus,
 body.ml-dark textarea:focus{
   border-color:${GOLDDIM}!important;
   box-shadow:0 0 0 2px rgba(175,140,62,.15)!important;
+}
+
+/* ── ÜRÜN SEÇENEKLERİ SELECT DROPDOWN (1.Seç, 2.Seç...) ── */
+body.ml-dark .details-product-option select,
+body.ml-dark .product-details__product-options select{
+  background:${BG2}!important;
+  color:#fff!important;
+  border:1.5px solid ${BD}!important;
+  border-radius:8px!important;
+  font-weight:500!important;
+  padding:8px 12px!important;
+}
+body.ml-dark .details-product-option select:focus{
+  border-color:${GOLDDIM}!important;
+  box-shadow:0 0 0 2px rgba(175,140,62,.15)!important;
+}
+body.ml-dark .details-product-option select option{
+  background:${BG2}!important;
+  color:#fff!important;
+}
+/* Sipariş notu textarea */
+body.ml-dark .product-details__product-options textarea,
+body.ml-dark .details-product-option textarea{
+  background:${BG2}!important;
+  color:${TX1}!important;
+  border:1.5px solid ${BD}!important;
+  border-radius:8px!important;
+}
+/* "Ürün detayları" başlığı */
+body.ml-dark .product-details__general-info,
+body.ml-dark .product-details__general-info *{
+  color:${TX1}!important;
 }
 
 /* ── SEPET ── */
@@ -629,22 +758,38 @@ body.ml-dark .form-control--checkbox-button,
 body.ml-dark .details-product-option .form-control{
   background:transparent!important;
 }
+/* NORMAL DURUM — gold filled + shimmer + beyaz yazı */
 body.ml-dark .form-control--checkbox-button label,
 body.ml-dark .form-control__inline-label,
 body.ml-dark .details-product-option label,
 body.ml-dark .form-control--checkbox-button .form-control__inline-label{
-  background:${BG3}!important;
-  color:${TX2}!important;
-  border:1.5px solid ${BD}!important;
+  background:linear-gradient(110deg,${GOLDDIM} 0%,${GOLDDIM} 40%,${GOLD} 50%,${GOLDDIM} 60%,${GOLDDIM} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 3s ease infinite!important;
+  color:#fff!important;
+  border:1.5px solid ${GOLD}!important;
   border-radius:8px!important;
+  font-weight:500!important;
+  cursor:pointer!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.2)!important;
 }
+body.ml-dark .form-control--checkbox-button label *,
+body.ml-dark .form-control__inline-label *{
+  color:#fff!important;
+}
+/* HOVER — parlak gold */
 body.ml-dark .form-control--checkbox-button label:hover,
 body.ml-dark .form-control__inline-label:hover,
 body.ml-dark .details-product-option label:hover{
-  border-color:${GOLDDIM}!important;
-  color:${TX1}!important;
+  background:linear-gradient(110deg,${GOLD} 0%,${GOLD} 40%,#e8c96b 50%,${GOLD} 60%,${GOLD} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 2s ease infinite!important;
+  border-color:#e8c96b!important;
+  color:#fff!important;
+  transform:translateY(-1px)!important;
+  box-shadow:0 2px 8px rgba(175,140,62,.3)!important;
 }
-/* SEÇİLİ DURUM — Ecwid .form-control__radio--checked kullanır */
+/* SEÇİLİ DURUM — en parlak gold + shimmer */
 body.ml-dark .form-control--checkbox-button input:checked+label,
 body.ml-dark .form-control--checkbox-button input:checked~label,
 body.ml-dark .form-control--checkbox-button input:checked+.form-control__inline-label,
@@ -655,24 +800,53 @@ body.ml-dark .form-control--checkbox-button.form-control__radio--checked .form-c
 body.ml-dark .details-product-option .form-control__radio--checked,
 body.ml-dark .details-product-option .form-control__radio--checked label,
 body.ml-dark .details-product-option .form-control__radio--checked .form-control__inline-label{
-  background:${GOLDDIM}!important;
-  color:${BG1}!important;
-  border-color:${GOLD}!important;
+  background:linear-gradient(110deg,${GOLD} 0%,${GOLD} 35%,#e8c96b 50%,${GOLD} 65%,${GOLD} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 2.5s ease infinite!important;
+  color:#fff!important;
+  border-color:#e8c96b!important;
   font-weight:600!important;
+  box-shadow:0 0 12px rgba(212,176,94,.25),inset 0 1px 0 rgba(255,255,255,.15)!important;
 }
-/* Seçenek text'leri de koyu olsun seçildiğinde */
+/* Seçenek text'leri seçildiğinde beyaz */
 body.ml-dark .form-control__radio--checked .form-control__inline-label *,
 body.ml-dark .form-control--checkbox-button input:checked+label *,
 body.ml-dark .form-control--checkbox-button input:checked~label *{
-  color:${BG1}!important;
+  color:#fff!important;
+}
+/* Opsiyon başlıkları — daha parlak */
+body.ml-dark .details-product-option__title,
+body.ml-dark .product-details__product-options .form-control__label{
+  color:${TX1}!important;
+  font-weight:500!important;
 }
 
-/* ── MİKTAR INPUT ── */
+/* ── MİKTAR INPUT — radio'dan farklı, net kutu ── */
 body.ml-dark .details-product-purchase__qty,
 body.ml-dark .form-control--flexible{
-  background:${BG3}!important;
+  background:${BG2}!important;
   color:${TX1}!important;
-  border-color:${BD}!important;
+  border:1.5px solid ${BD}!important;
+  border-radius:8px!important;
+}
+body.ml-dark .details-product-purchase__qty input{
+  color:${TX1}!important;
+  font-weight:600!important;
+  font-size:16px!important;
+}
+body.ml-dark .details-product-purchase__qty button,
+body.ml-dark .details-product-purchase__qty [class*="btn"]{
+  color:${GOLD}!important;
+  background:transparent!important;
+}
+/* "Stokta Var" ve "Adet:" label — parlak */
+body.ml-dark .details-product-purchase__place,
+body.ml-dark .details-product-purchase__place *{
+  color:${TX1}!important;
+}
+body.ml-dark .details-product-purchase__qty-label{
+  color:${TX1}!important;
+  font-weight:500!important;
 }
 
 /* ── SAYFALAMA (Pagination) ── */
@@ -799,13 +973,15 @@ body.ml-dark .tile-cover .cover-button,
 body.ml-dark .cover__button.cover-button,
 body.ml-dark .tile-cover a.cover__button,
 body.ml-dark .tile-cover a.cover-button{
-  background:${GOLDDIM}!important;
-  background-color:${GOLDDIM}!important;
+  background:linear-gradient(110deg,${GOLDDIM} 0%,${GOLDDIM} 40%,${GOLD} 50%,${GOLDDIM} 60%,${GOLDDIM} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 3s ease infinite!important;
   color:#fff!important;
   border:none!important;
   border-radius:12px!important;
   font-weight:600!important;
   text-decoration:none!important;
+  text-shadow:0 1px 2px rgba(0,0,0,.15)!important;
 }
 body.ml-dark .tile-cover .cover__button *,
 body.ml-dark .tile-cover .cover-button *{
@@ -817,10 +993,12 @@ body.ml-dark .tile-cover .cover__button:hover,
 body.ml-dark .tile-cover .cover-button:hover,
 body.ml-dark .cover__button:hover,
 body.ml-dark .cover-button:hover{
-  background:${GOLD}!important;
-  background-color:${GOLD}!important;
+  background:linear-gradient(110deg,${GOLD} 0%,${GOLD} 35%,#e8c96b 50%,${GOLD} 65%,${GOLD} 100%)!important;
+  background-size:200% 100%!important;
+  animation:ml-shimmer 2s ease infinite!important;
   border-radius:12px!important;
   overflow:hidden!important;
+  box-shadow:0 4px 16px rgba(175,140,62,.3)!important;
 }
 body.ml-dark .cover__button:hover *,
 body.ml-dark .cover-button:hover *{
@@ -1137,6 +1315,7 @@ function toggle(){
   setTimeout(function(){document.body.classList.remove('ml-dm-t');},350);
   setTimeout(fixStokYok,100);
   setTimeout(fixWhiteBorders,100);
+  setTimeout(fixProductDesc,100);
 }
 
 btn.addEventListener('click',function(e){
@@ -1181,9 +1360,10 @@ function init(){
       btn.innerHTML=sunIco;
     }
   }catch(e){}
-  // Stokta Yok label'larını zorla + beyaz çizgileri düzelt + observer başlat
+  // Stokta Yok label'larını zorla + beyaz çizgileri düzelt + ürün açıklama inline fix + observer başlat
   fixStokYok();
   fixWhiteBorders();
+  fixProductDesc();
   // Observer'ları başlat
   stokObserver.observe(document.body,{childList:true,subtree:true});
 }
@@ -1206,7 +1386,7 @@ function fixStokYok(){
   });
 }
 // Ecwid dinamik yükleme — yeni kartlar gelince de yakala
-var stokObserver=new MutationObserver(function(){fixStokYok();fixWhiteBorders();});
+var stokObserver=new MutationObserver(function(){fixStokYok();fixWhiteBorders();fixProductDesc();});
 
 // ─── BEYAZ KENARLIKLARI GOLD'A ÇEVİR ───
 function fixWhiteBorders(){
@@ -1222,6 +1402,24 @@ function fixWhiteBorders(){
     var s=el.getAttribute('style')||'';
     if(s.indexOf('border')>-1 && (s.indexOf('rgb(255')+s.indexOf('#fff')+s.indexOf('white'))>-3){
       el.style.setProperty('border-color',bd,'important');
+    }
+  });
+}
+
+// ─── ÜRÜN AÇIKLAMASI İNLINE STYLE TEMİZLEYİCİ ───
+function fixProductDesc(){
+  if(!document.body.classList.contains('ml-dark'))return;
+  var desc=document.querySelectorAll('.product-details__product-description [style]');
+  desc.forEach(function(el){
+    var s=el.getAttribute('style')||'';
+    // Koyu renk text'leri (#333, rgb(51..), rgb(0..) vb.) krem'e çevir
+    if(s.indexOf('color')>-1){
+      el.style.setProperty('color','#ece8df','important');
+    }
+    // Arka plan renklerini temizle
+    if(s.indexOf('background')>-1){
+      el.style.setProperty('background-color','transparent','important');
+      el.style.setProperty('background','transparent','important');
     }
   });
 }
