@@ -43,7 +43,7 @@ body.ml-dm-t .ml-dm-btn{
 /* ── TOGGLE BUTON ── */
 .ml-dm-btn{
   z-index:999999;
-  width:40px;height:40px;border-radius:50%;
+  width:40px;height:40px;border-radius:10px;
   border:1.5px solid rgba(175,140,62,.35);
   background:rgba(255,255,255,.92);
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
@@ -51,16 +51,17 @@ body.ml-dm-t .ml-dm-btn{
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
   box-shadow:0 2px 8px rgba(0,0,0,.08);
-  transition:background .3s ease,border-color .3s ease,color .3s ease,box-shadow .3s ease;
+  transition:background .3s ease,border-color .3s ease,color .3s ease,box-shadow .3s ease,transform .3s ease;
   padding:0;
   pointer-events:auto;
 }
 .ml-dm-btn:hover{
   box-shadow:0 3px 14px rgba(175,140,62,.18);
   border-color:rgba(175,140,62,.6);
+  transform:scale(1.05);
 }
 .ml-dm-btn svg{width:20px;height:20px;transition:transform .4s ease}
-.ml-dm-btn:active svg{transform:rotate(30deg)}
+.ml-dm-btn:active svg{transform:rotate(15deg) scale(.9)}
 
 body.ml-dark .ml-dm-btn{
   background:rgba(35,34,30,.92);
@@ -70,7 +71,7 @@ body.ml-dark .ml-dm-btn{
 }
 
 @media(max-width:768px){
-  .ml-dm-btn{width:34px;height:34px}
+  .ml-dm-btn{width:34px;height:34px;border-radius:8px}
   .ml-dm-btn svg{width:16px;height:16px}
 }
 
@@ -1183,6 +1184,13 @@ body.ml-dark .product-details__related-products,
 body.ml-dark [class*="related-products"]{
   overflow:visible!important;
 }
+/* Recently viewed / Related heading */
+body.ml-dark .ec-related-products__title,
+body.ml-dark [class*="related-products"] h2,
+body.ml-dark .ec-related-products h2{
+  color:${TX1}!important;
+  font-weight:700!important;
+}
 
 /* ── ANASAYFA CTA BUTONU (Alışverişe Devam Et / Mağazaya Git) ── */
 body.ml-dark .tile-cover .cover__button,
@@ -1540,9 +1548,9 @@ styleEl.id='ml-dark-mode';
 styleEl.textContent=css;
 document.head.appendChild(styleEl);
 
-// ─── SVG İKONLARI ───
-var moonIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
-var sunIco='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+// ─── SVG İKONLARI — Premium minimalist ay/güneş ───
+var moonIco='<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.8 8-9.8.4-.1.8.1 1 .5s0 .8-.3 1.1C9.3 5.4 8.5 7.6 8.5 10c0 4.6 3.4 8.5 8 9.4.4.1.7.4.7.8s-.2.7-.5.8c-1.5.7-3 1-4.6 1z"/></svg>';
+var sunIco='<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2M12 20.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1.5 12h2M20.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
 
 // ─── TOGGLE BUTON OLUŞTUR ───
 var btn=document.createElement('button');
@@ -1629,6 +1637,7 @@ function fixAll(){
 function _fixAllNow(){
   var dark=document.body.classList.contains('ml-dark');
   fixStokYok();
+  fixLabels(); // Türkçe çeviri + sepet img radius (dark guard içeride)
   if(dark){
     fixSelects();
     fixSweep();
@@ -1673,6 +1682,10 @@ function cleanAll(){
   // Badge temizle
   document.querySelectorAll('.product-details__label-container,.product-details .ec-label').forEach(function(el){
     ['display','width','max-width','padding','border-radius','white-space','box-sizing','line-height','overflow','margin'].forEach(function(p){el.style.removeProperty(p);});
+  });
+  // Sepet ürün görseli temizle
+  document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
+    el.style.removeProperty('border-radius');
   });
 }
 
@@ -1872,6 +1885,31 @@ function fixButtonText(){
 }
 
 // ─── STOKTA VAR BADGE DİKDÖRTGEN ───
+// ─── TÜRKÇE ETİKETLER + SEPET GÖRSEL RADIUS ───
+function fixLabels(){
+  // "Recently viewed products" → "Son Görüntülenenler"
+  document.querySelectorAll('.ec-related-products__title, [class*="related-products"] h2, [class*="recently"] h2').forEach(function(el){
+    if(el.textContent.trim().match(/recently|viewed|son görüntüle/i) && !el._mlFixed){
+      el._mlFixed=true;
+      el.textContent='Son Görüntülenenler';
+    }
+  });
+  // Genel "Recently viewed" text node'ları
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function(el){
+    var t=el.textContent.trim();
+    if(t==='Recently viewed products'||t==='Recently viewed'){
+      el.textContent='Son Görüntülenenler';
+      el._mlFixed=true;
+    }
+  });
+  // Sepet ürün görseli — border-radius inline zorla
+  if(document.body.classList.contains('ml-dark')){
+    document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
+      el.style.setProperty('border-radius','8px','important');
+    });
+  }
+}
+
 function fixBadgeRect(){
   if(!document.body.classList.contains('ml-dark')) return;
   // Container — inline-flex ile sarmalı
