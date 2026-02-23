@@ -131,7 +131,9 @@ body.ml-dark .top-menu__item a:hover{
 /* ── SEARCH PANEL ── */
 body.ml-dark .search-panel{
   background:rgba(22,21,15,.97)!important;
+  border:none!important;
   border-color:transparent!important;
+  box-shadow:none!important;
 }
 body.ml-dark .search-panel input,
 body.ml-dark .search-panel .text-field,
@@ -141,14 +143,14 @@ body.ml-dark .search-panel input[type="text"]{
   border-color:${GOLDDIM}!important;
 }
 body.ml-dark .search-panel input::placeholder{
-  color:${TX3}!important;
+  color:${TX2}!important;
 }
 body.ml-dark .search-panel *{
   color:${TX1}!important;
 }
 body.ml-dark .search-panel svg{
-  color:${TX2}!important;
-  fill:${TX2}!important;
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
 }
 
 /* ── ECWID STORE WRAPPER ── */
