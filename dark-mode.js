@@ -44,35 +44,42 @@ body.ml-dm-t .ml-dm-btn{
 .ml-dm-btn{
   z-index:999999;
   width:40px;height:40px;border-radius:10px;
-  border:1.5px solid rgba(175,140,62,.35);
-  background:rgba(255,255,255,.92);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  color:#af8c3e;
+  border:1px solid rgba(175,140,62,.2);
+  background:rgba(255,255,255,.65);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  color:rgba(175,140,62,.7);
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-  transition:background .3s ease,border-color .3s ease,color .3s ease,box-shadow .3s ease,transform .3s ease;
+  box-shadow:0 2px 8px rgba(0,0,0,.04);
+  transition:all .35s ease;
   padding:0;
   pointer-events:auto;
 }
 .ml-dm-btn:hover{
-  box-shadow:0 3px 14px rgba(175,140,62,.18);
-  border-color:rgba(175,140,62,.6);
+  background:rgba(255,255,255,.85);
+  box-shadow:0 3px 14px rgba(175,140,62,.12);
+  border-color:rgba(175,140,62,.4);
+  color:#af8c3e;
   transform:scale(1.05);
 }
-.ml-dm-btn svg{width:20px;height:20px;transition:transform .4s ease}
+.ml-dm-btn svg{width:18px;height:18px;transition:all .4s ease}
 .ml-dm-btn:active svg{transform:rotate(15deg) scale(.9)}
 
 body.ml-dark .ml-dm-btn{
-  background:rgba(35,34,30,.92);
-  border-color:rgba(175,140,62,.25);
+  background:rgba(35,34,30,.55);
+  border-color:rgba(175,140,62,.2);
   color:${GOLD};
-  box-shadow:0 2px 10px rgba(0,0,0,.35);
+  box-shadow:0 2px 10px rgba(0,0,0,.2);
+}
+body.ml-dark .ml-dm-btn:hover{
+  background:rgba(35,34,30,.75);
+  border-color:rgba(175,140,62,.4);
+  box-shadow:0 3px 16px rgba(175,140,62,.15);
 }
 
 @media(max-width:768px){
   .ml-dm-btn{width:34px;height:34px;border-radius:8px}
-  .ml-dm-btn svg{width:16px;height:16px}
+  .ml-dm-btn svg{width:15px;height:15px}
 }
 
 /* ══════════════════════════════════════
@@ -790,6 +797,7 @@ body.ml-dark .form-control__radio-view{
 }
 body.ml-dark .form-control__radio-view-inner{
   border-radius:50%!important;
+  background:transparent!important;
 }
 body.ml-dark .form-control__radio:checked ~ .form-control__radio-view,
 body.ml-dark .form-control__radio:checked + .form-control__radio-view{
@@ -801,6 +809,9 @@ body.ml-dark .form-control__radio:checked ~ .form-control__radio-view .form-cont
 body.ml-dark .form-control__radio:checked + .form-control__radio-view .form-control__radio-view-inner{
   background:#fff!important;
   border-radius:50%!important;
+}
+body.ml-dark .form-control__radio-view{
+  border-color:${BD}!important;
 }
 /* Bilgi text container */
 body.ml-dark .form-control--radio.form-control--flexible{
@@ -1100,6 +1111,7 @@ body.ml-dark .page-link a:hover{
 /* ── MİNİCART ── */
 body.ml-dark .ec-minicart{
   background:transparent!important;
+  border-color:${BD2}!important;
 }
 
 /* ── ALT NAVİGASYON İKONLARI (Ürünleri Ara, Hesabım vb.) ── */
@@ -1159,6 +1171,65 @@ body.ml-dark [class*="checkout"]{
 body.ml-dark .ec-cart-step__body,
 body.ml-dark .ec-cart-step__section{
   background:${BG1}!important;
+}
+
+/* ── CHECKOUT FORM INPUT WRAPPER'LARI (adres, isim, telefon) ── */
+body.ml-dark .form-control--flexible{
+  background:${BG3}!important;
+  border-color:${BD}!important;
+  border-radius:8px!important;
+}
+
+/* ── BEYAZ BORDER TEMİZLEME — diagnostic'ten ── */
+body.ml-dark .ec-minicart{
+  border-color:${BD2}!important;
+}
+body.ml-dark .ec-cart__products{
+  border-bottom-color:${BD2}!important;
+}
+body.ml-dark .ec-cart-step--current{
+  border-top-color:${BD2}!important;
+}
+body.ml-dark .ec-cart-step__next{
+  border-bottom-color:${BD2}!important;
+}
+body.ml-dark .ec-cart__steps .ec-cart-step{
+  border-color:${BD2}!important;
+}
+body.ml-dark .store .border,
+body.ml-dark .dynamic-product-browser > .border{
+  border-color:${BD2}!important;
+}
+
+/* ── RADIOGROUP (teslimat/ödeme seçim kutuları) ── */
+body.ml-dark .ec-radiogroup__items{
+  border-color:${BD}!important;
+  border-radius:10px!important;
+  overflow:hidden!important;
+}
+body.ml-dark .ec-radiogroup__item{
+  border-color:${BD}!important;
+}
+
+/* ── STEP İKON — mavi → gold ── */
+body.ml-dark .ec-cart-step__icon{
+  border-color:${GOLDDIM}!important;
+  color:${GOLD}!important;
+}
+body.ml-dark .ec-cart-step__icon--done{
+  border-color:${GOLDDIM}!important;
+  background:rgba(175,140,62,.1)!important;
+}
+body.ml-dark .ec-cart-step__icon svg{
+  fill:${GOLD}!important;
+  color:${GOLD}!important;
+}
+
+/* ── SEPET ÜRÜN GÖRSELİ ARKA PLAN (inline override) ── */
+body.ml-dark .ec-cart-item__picture{
+  background-color:${IMG_BG}!important;
+  border-radius:8px!important;
+  overflow:hidden!important;
 }
 
 /* ── ÖNERİLEN ÜRÜNLER KAROSELİ (Bunları da Beğenebilirsiniz) ── */
@@ -1548,16 +1619,16 @@ styleEl.id='ml-dark-mode';
 styleEl.textContent=css;
 document.head.appendChild(styleEl);
 
-// ─── SVG İKONLARI — Premium minimalist ay/güneş ───
-var moonIco='<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12.1 22c-5.5 0-10-4.5-10-10 0-4.8 3.4-8.8 8-9.8.4-.1.8.1 1 .5s0 .8-.3 1.1C9.3 5.4 8.5 7.6 8.5 10c0 4.6 3.4 8.5 8 9.4.4.1.7.4.7.8s-.2.7-.5.8c-1.5.7-3 1-4.6 1z"/></svg>';
-var sunIco='<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="12" r="4.5"/><path d="M12 1.5v2M12 20.5v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1.5 12h2M20.5 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+// ─── SVG İKONLARI — Sadece ay: stroke (açık) / fill (kapalı) ───
+var moonOff='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
+var moonOn='<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
 
 // ─── TOGGLE BUTON OLUŞTUR ───
 var btn=document.createElement('button');
 btn.className='ml-dm-btn';
 btn.setAttribute('aria-label','Karanlık mod');
 btn.setAttribute('title','Karanlık / Aydınlık Mod');
-btn.innerHTML=moonIco;
+btn.innerHTML=moonOff;
 
 // ─── TOGGLE FONKSİYONU ───
 
@@ -1565,7 +1636,7 @@ function toggle(){
   document.body.classList.add('ml-dm-t');
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
-  btn.innerHTML=dark?sunIco:moonIco;
+  btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
   setTimeout(function(){document.body.classList.remove('ml-dm-t');},350);
   setTimeout(fixAll,100);
@@ -1611,7 +1682,7 @@ function init(){
   try{
     if(localStorage.getItem('ml-dark')==='1'){
       document.body.classList.add('ml-dark');
-      btn.innerHTML=sunIco;
+      btn.innerHTML=moonOn;
     }
   }catch(e){}
   // Ecwid-proof düzeltmeleri uygula + observer başlat
@@ -1686,6 +1757,10 @@ function cleanAll(){
   // Sepet ürün görseli temizle
   document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
     el.style.removeProperty('border-radius');
+  });
+  // Cart picture wrapper temizle
+  document.querySelectorAll('.ec-cart-item__picture').forEach(function(el){
+    ['background-color','border-radius','overflow'].forEach(function(p){el.style.removeProperty(p);});
   });
 }
 
@@ -1902,10 +1977,16 @@ function fixLabels(){
       el._mlFixed=true;
     }
   });
-  // Sepet ürün görseli — border-radius inline zorla
+  // Sepet ürün görseli — border-radius + inline bg override
   if(document.body.classList.contains('ml-dark')){
     document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
       el.style.setProperty('border-radius','8px','important');
+    });
+    // Cart item picture wrapper — Ecwid inline style bg override
+    document.querySelectorAll('.ec-cart-item__picture').forEach(function(el){
+      el.style.setProperty('background-color','#e8e4da','important');
+      el.style.setProperty('border-radius','8px','important');
+      el.style.setProperty('overflow','hidden','important');
     });
   }
 }
