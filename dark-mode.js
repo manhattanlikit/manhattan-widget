@@ -130,13 +130,68 @@ body.ml-dark .top-menu__item a:hover{
 
 /* ── SEARCH PANEL ── */
 body.ml-dark .search-panel{
-  background:${BGnav}!important;
-  border-color:${BD2}!important;
+  background:rgba(22,21,15,.95)!important;
+  border-color:transparent!important;
+  position:fixed!important;
+  top:0!important;
+  left:0!important;
+  right:0!important;
+  bottom:0!important;
+  width:100%!important;
+  height:100%!important;
+  z-index:999999!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  padding-top:15vh!important;
+  backdrop-filter:blur(8px)!important;
+  -webkit-backdrop-filter:blur(8px)!important;
 }
-body.ml-dark .search-panel input{
+body.ml-dark .search-panel input,
+body.ml-dark .search-panel .text-field,
+body.ml-dark .search-panel input[type="text"]{
   background:${BG2}!important;
   color:${TX1}!important;
-  border-color:${BD}!important;
+  border:1.5px solid ${GOLDDIM}!important;
+  border-radius:12px!important;
+  font-size:18px!important;
+  padding:14px 20px!important;
+  max-width:560px!important;
+  width:90vw!important;
+  outline:none!important;
+  box-shadow:0 0 0 4px rgba(175,140,62,.1),0 8px 32px rgba(0,0,0,.4)!important;
+}
+body.ml-dark .search-panel input::placeholder{
+  color:${TX3}!important;
+}
+body.ml-dark .search-panel input:focus{
+  border-color:${GOLD}!important;
+  box-shadow:0 0 0 4px rgba(175,140,62,.2),0 8px 32px rgba(0,0,0,.5)!important;
+}
+/* Search panel içindeki tüm metin + ikonlar */
+body.ml-dark .search-panel *{
+  color:${TX1}!important;
+}
+body.ml-dark .search-panel svg{
+  color:${TX2}!important;
+  fill:${TX2}!important;
+}
+/* Arama sonuçları */
+body.ml-dark .search-panel__results,
+body.ml-dark .search-panel [class*="results"],
+body.ml-dark .search-panel [class*="suggest"]{
+  background:${BG2}!important;
+  border-radius:12px!important;
+  border:1px solid ${BD}!important;
+  max-width:560px!important;
+}
+body.ml-dark .search-panel [class*="results"] a,
+body.ml-dark .search-panel [class*="suggest"] a{
+  color:${TX1}!important;
+}
+body.ml-dark .search-panel [class*="results"] a:hover,
+body.ml-dark .search-panel [class*="suggest"] a:hover{
+  background:${BG3}!important;
 }
 
 /* ── ECWID STORE WRAPPER ── */
@@ -823,9 +878,6 @@ body.ml-dark .ec-minicart__icon,
 body.ml-dark .ec-cart-widget svg{
   color:${TX1}!important;
   fill:${TX1}!important;
-}
-body.ml-dark .search-panel svg{
-  color:${TX2}!important;
 }
 
 /* ── HR & KENARLIKLARI ── */
