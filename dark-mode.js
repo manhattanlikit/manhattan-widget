@@ -826,6 +826,17 @@ body.ml-dark .ec-cart-item{
 body.ml-dark .ec-cart-item__title{color:${TX1}!important}
 body.ml-dark .ec-cart-item__price{color:${GOLD}!important}
 body.ml-dark .ec-cart-item__sku{color:${TX3}!important}
+/* Sepet ürün seçenekleri — gri (TX3) → okunabilir (TX2/TX1) */
+body.ml-dark .ec-cart-item__options,
+body.ml-dark .ec-cart-item__option{
+  color:${TX2}!important;
+}
+body.ml-dark .ec-cart-option--key{
+  color:${TX2}!important;
+}
+body.ml-dark .ec-cart-option--value{
+  color:${TX1}!important;
+}
 body.ml-dark .ec-minicart__body{
   background:${BG2}!important;
   border-color:${BD2}!important;
@@ -1644,16 +1655,20 @@ function cleanAll(){
     if(il){il.style.removeProperty('color');il.style.removeProperty('background');}
   });
   // Sepete Ekle wrapper + TÜM primary wrapper temizle
+  // Tüm primary wrapper temizle
   document.querySelectorAll('.form-control--primary').forEach(function(el){
-    ['position','overflow','border-radius'].forEach(function(p){el.style.removeProperty(p);});
+    ['position','overflow','border-radius','background','border'].forEach(function(p){el.style.removeProperty(p);});
   });
   // Cover butonlar temizle
   document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
     ['background','background-color','border-radius','position','overflow','transform','box-shadow'].forEach(function(p){el.style.removeProperty(p);});
   });
-  // Primary/secondary buton text temizle
+  // Primary/secondary buton text + bg temizle
   document.querySelectorAll('.form-control__button-text,.form-control__button-svg,.form-control__button-svg svg').forEach(function(el){
     el.style.removeProperty('color');el.style.removeProperty('fill');
+  });
+  document.querySelectorAll('.form-control--primary .form-control__button').forEach(function(el){
+    ['background','color','border','border-radius'].forEach(function(p){el.style.removeProperty(p);});
   });
   // Badge temizle
   document.querySelectorAll('.product-details__label-container,.product-details .ec-label').forEach(function(el){
@@ -1690,6 +1705,7 @@ function fixStokYok(){
 // CSS placeholder kuralları .form-control--empty class'ına bağlı (Ecwid otomatik toggle eder)
 // JS sadece wrapper'ın position:relative olduğundan emin olur
 function fixSelects(){
+  if(!document.body.classList.contains('ml-dark')) return;
   document.querySelectorAll('.form-control--select').forEach(function(w){
     w.style.setProperty('position','relative','important');
   });
@@ -1739,19 +1755,26 @@ function fixSweep(){
 
   // ═══ 1) TÜM PRIMARY BUTONLAR (Sepete Ekle, Devam Et, Checkout, vb.) ═══
   document.querySelectorAll('.form-control--primary').forEach(function(wrapper){
-    _injectSweep(wrapper);
+    wrapper.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
     wrapper.style.setProperty('border-radius','10px','important');
+    wrapper.style.setProperty('border','none','important');
+    _injectSweep(wrapper);
     var btn=wrapper.querySelector('.form-control__button');
     if(btn) _bindHover(btn,wrapper);
   });
 
   // ═══ 2) COVER BUTONLAR (Anasayfa CTA — "Alışverişe Devam Et") ═══
   document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
-    // Gradient uygula (flat gold → gradient, Sepete Ekle birebir)
+    // Gradient uygula — Sepete Ekle birebir
     el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+    el.style.setProperty('color','#fff','important');
+    el.style.setProperty('border','none','important');
     el.style.setProperty('border-radius','12px','important');
+    el.style.setProperty('font-weight','700','important');
     _injectSweep(el);
     _bindHover(el,el);
+    // Child text'ler de beyaz
+    el.querySelectorAll('*').forEach(function(c){c.style.setProperty('color','#fff','important');c.style.setProperty('background','transparent','important');});
   });
 
   // ═══ 3) OPSİYON BUTONLARI (Boyut, Sertlik) ═══
@@ -1827,7 +1850,14 @@ function fixSweep(){
 // ─── BUTON TEXT RENKLERİ ───
 // Sadece text rengi — bg inline koymak hover'ı bozar
 function fixButtonText(){
-  // Primary buton text — mutlak #fff
+  if(!document.body.classList.contains('ml-dark')) return;
+  // Primary buton — gold gradient bg + #fff text (Ecwid CSS'i eziyor, inline zorla)
+  document.querySelectorAll('.form-control--primary .form-control__button').forEach(function(el){
+    el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+    el.style.setProperty('color','#fff','important');
+    el.style.setProperty('border','none','important');
+    el.style.setProperty('border-radius','10px','important');
+  });
   document.querySelectorAll('.form-control--primary .form-control__button-text').forEach(function(el){
     el.style.setProperty('color','#fff','important');
   });
@@ -1843,6 +1873,7 @@ function fixButtonText(){
 
 // ─── STOKTA VAR BADGE DİKDÖRTGEN ───
 function fixBadgeRect(){
+  if(!document.body.classList.contains('ml-dark')) return;
   // Container — inline-flex ile sarmalı
   document.querySelectorAll('.product-details__label-container').forEach(function(el){
     el.style.setProperty('display','inline-flex','important');
