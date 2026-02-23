@@ -51,18 +51,17 @@ body.ml-dm-t .ml-dm-btn{
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
   box-shadow:0 2px 8px rgba(0,0,0,.04);
-  transition:all .35s ease;
+  transition:background .25s ease,border-color .25s ease,color .25s ease;
   padding:0;
   pointer-events:auto;
+  overflow:hidden;
 }
 .ml-dm-btn:hover{
-  background:rgba(255,255,255,.85);
-  box-shadow:0 3px 14px rgba(175,140,62,.12);
-  border-color:rgba(175,140,62,.4);
+  background:rgba(255,255,255,.9);
+  border-color:rgba(175,140,62,.5);
   color:#af8c3e;
-  transform:scale(1.05);
 }
-.ml-dm-btn svg{width:18px;height:18px;transition:all .4s ease}
+.ml-dm-btn svg{width:18px;height:18px;transition:color .25s ease}
 .ml-dm-btn:active svg{transform:rotate(15deg) scale(.9)}
 
 body.ml-dark .ml-dm-btn{
@@ -70,11 +69,11 @@ body.ml-dark .ml-dm-btn{
   border-color:rgba(175,140,62,.2);
   color:${GOLD};
   box-shadow:0 2px 10px rgba(0,0,0,.2);
+  overflow:hidden;
 }
 body.ml-dark .ml-dm-btn:hover{
-  background:rgba(35,34,30,.75);
-  border-color:rgba(175,140,62,.4);
-  box-shadow:0 3px 16px rgba(175,140,62,.15);
+  background:rgba(45,44,38,.85);
+  border-color:${GOLD};
   color:${GOLD};
 }
 
@@ -422,7 +421,7 @@ body.ml-dark [class*="cart-item"] img,
 body.ml-dark [class*="recently"] img,
 body.ml-dark [class*="related"] img,
 body.ml-dark .product-details__related-products img{
-  border-radius:8px!important;
+  border-radius:12px!important;
 }
 
 /* ── ÜRÜN DETAY SAYFASI ── */
@@ -1092,12 +1091,17 @@ body.ml-dark .ec-radiogroup input:checked+label{
   background:rgba(175,140,62,.08)!important;
 }
 
-/* ── CHECKOUT — Ödeme bildirim kutuları (renkli arka planlar) ── */
+/* ── CHECKOUT — Ödeme bildirim + Kabul kutuları (renkli arka planlar) ── */
 body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 224)"],
 body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 240)"],
+body.ml-dark .ec-cart [style*="background-color: rgb(255, 255, 224)"],
+body.ml-dark .ec-cart [style*="background-color: rgb(255, 255, 240)"],
+body.ml-dark .ec-cart-step [style*="background-color: rgb(255, 255, 224)"],
+body.ml-dark .ec-cart-step [style*="background-color: rgb(255, 255, 240)"],
 body.ml-dark [style*="background-color: rgb(245, 212"],
 body.ml-dark [style*="background-color: rgb(247, 205"]{
   background-color:rgba(175,140,62,.1)!important;
+  color:${TX1}!important;
   border-color:${BD}!important;
 }
 
@@ -1694,7 +1698,8 @@ function cleanAll(){
   });
   // Cover butonlar temizle
   document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
-    ['background','background-color','border-radius','position','overflow','transform','box-shadow'].forEach(function(p){el.style.removeProperty(p);});
+    ['background','background-color','border-radius','position','overflow','transform','box-shadow','color','border','font-weight'].forEach(function(p){el.style.removeProperty(p);});
+    el.querySelectorAll('*').forEach(function(c){c.style.removeProperty('color');c.style.removeProperty('background');});
   });
   // Primary/secondary buton text + bg temizle
   document.querySelectorAll('.form-control__button-text,.form-control__button-svg,.form-control__button-svg svg').forEach(function(el){
@@ -1720,6 +1725,11 @@ function cleanAll(){
     el.style.removeProperty('background-color');
     el.style.removeProperty('color');
     el.querySelectorAll('*').forEach(function(c){c.style.removeProperty('color');});
+  });
+  // Beyaz border JS temizle
+  document.querySelectorAll('.ec-cart__products,.ec-cart-step,.ec-cart-step__next,.ec-radiogroup__items,.ec-minicart,.store .border,.dynamic-product-browser > .border').forEach(function(el){
+    el.style.removeProperty('border-color');
+    el.style.removeProperty('border-bottom-color');
   });
 }
 
@@ -1853,7 +1863,8 @@ function fixSweep(){
       lbl.style.setProperty('background','#2c2b26','important');
       lbl.style.setProperty('color','#ece8df','important');
       lbl.style.setProperty('font-weight','600','important');
-      lbl.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12)','important');
+      lbl.style.setProperty('border','1px solid rgba(175,140,62,.12)','important');
+      lbl.style.setProperty('box-shadow','none','important');
       if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
     }
 
@@ -1868,10 +1879,17 @@ function fixSweep(){
           lbl.style.setProperty('box-shadow','0 1px 4px rgba(0,0,0,.3)','important');
           var sw=lbl.querySelector('.ml-sweep');if(sw)sw.style.animationPlayState='paused';
         }else{
-          lbl.style.setProperty('color','#d4b05e','important');
-          lbl.style.setProperty('box-shadow','inset 0 0 0 1.5px #af8c3e,0 2px 8px rgba(175,140,62,.15)','important');
+          // Seçili değil hover — gold border + sweep
+          lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+          lbl.style.setProperty('color','#fff','important');
+          lbl.style.setProperty('font-weight','700','important');
+          lbl.style.setProperty('border','none','important');
+          lbl.style.setProperty('box-shadow','0 2px 8px rgba(175,140,62,.25)','important');
           lbl.style.setProperty('transform','translateY(-1px)','important');
-          if(innerLbl) innerLbl.style.setProperty('color','#d4b05e','important');
+          lbl.style.setProperty('position','relative','important');
+          lbl.style.setProperty('overflow','hidden','important');
+          if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');}
+          _injectSweep(lbl);
         }
       });
       lbl.addEventListener('mouseleave',function(){
@@ -1884,10 +1902,14 @@ function fixSweep(){
           if(innerLbl) innerLbl.style.setProperty('color','#fff','important');
           var sw=lbl.querySelector('.ml-sweep');if(sw)sw.style.animationPlayState='running';
         }else{
+          // Seçili değil leave — sweep kaldır, koyu'ya dön
+          var old=lbl.querySelector('.ml-sweep');if(old)old.remove();
           lbl.style.setProperty('background','#2c2b26','important');
           lbl.style.setProperty('color','#ece8df','important');
-          lbl.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12)','important');
-          if(innerLbl) innerLbl.style.setProperty('color','#ece8df','important');
+          lbl.style.setProperty('font-weight','600','important');
+          lbl.style.setProperty('border','1px solid rgba(175,140,62,.12)','important');
+          lbl.style.setProperty('box-shadow','none','important');
+          if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
         }
       });
     }
@@ -1939,12 +1961,12 @@ function fixLabels(){
   // Sepet ürün görseli — border-radius + inline bg override
   if(document.body.classList.contains('ml-dark')){
     document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
-      el.style.setProperty('border-radius','8px','important');
+      el.style.setProperty('border-radius','12px','important');
     });
     // Cart item picture wrapper — Ecwid inline style bg override
     document.querySelectorAll('.ec-cart-item__picture').forEach(function(el){
       el.style.setProperty('background-color','#e8e4da','important');
-      el.style.setProperty('border-radius','8px','important');
+      el.style.setProperty('border-radius','12px','important');
       el.style.setProperty('overflow','hidden','important');
     });
     // ── CHECKOUT DUYURU KUTULARI — açık renkli inline bg'leri koyu yap ──
@@ -1981,6 +2003,38 @@ function fixLabels(){
       var bg=cs.backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
       if(m && +m[1]>200 && +m[2]>200 && +m[3]>200){
+        el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
+        el.style.setProperty('color','#ece8df','important');
+      }
+    });
+    // ── BEYAZ BORDER TEMİZLEME (CSS yetmiyor — JS inline zorla) ──
+    document.querySelectorAll('.ec-cart__products').forEach(function(el){
+      el.style.setProperty('border-bottom-color','rgba(175,140,62,.06)','important');
+    });
+    document.querySelectorAll('.ec-cart-step').forEach(function(el){
+      el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
+    });
+    document.querySelectorAll('.ec-cart-step__next').forEach(function(el){
+      el.style.setProperty('border-bottom-color','rgba(175,140,62,.06)','important');
+    });
+    document.querySelectorAll('.ec-radiogroup__items').forEach(function(el){
+      el.style.setProperty('border-color','rgba(175,140,62,.12)','important');
+    });
+    document.querySelectorAll('.ec-minicart').forEach(function(el){
+      el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
+    });
+    // Store .border class (3px top)
+    document.querySelectorAll('.store .border, .dynamic-product-browser > .border').forEach(function(el){
+      el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
+    });
+    // Kabul ediyorum yellow bg — sadece cart/checkout scope
+    document.querySelectorAll('.ec-cart [style*="background-color"], .ec-cart-step [style*="background-color"], .ec-confirmation [style*="background-color"]').forEach(function(el){
+      if(el.offsetHeight<15) return;
+      var cs=getComputedStyle(el);
+      var bg=cs.backgroundColor;
+      var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+      if(m && +m[1]>240 && +m[2]>240 && +m[3]>200 && +m[3]<240){
+        // Yellow-ish bg (rgb 255,255,224 vb)
         el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
         el.style.setProperty('color','#ece8df','important');
       }
