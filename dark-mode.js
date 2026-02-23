@@ -283,8 +283,8 @@ body.ml-dark [class*="grid-category__title"]{
   color:${TX1}!important;
 }
 
-/* Stokta Var label — gold */
-body.ml-dark .grid-product__label{
+/* Stokta Var label — gold (Stokta Yok hariç) */
+body.ml-dark .grid-product__label:not([class*="Stokta-Yok"]):not([class*="Stokta-yok"]){
   background:${GOLDDIM}!important;
   color:${BG1}!important;
   border-radius:6px!important;
@@ -838,17 +838,24 @@ body.ml-dark .ec-label{
   background:${GOLDDIM}!important;
   color:${BG1}!important;
 }
-/* Stokta Yok — kırmızı (badge + grid-product__label kurallarını ezmek için yüksek specificity) */
+/* Stokta Yok — koyu bordo (badge + grid-product__label kurallarını ezmek için yüksek specificity) */
 body.ml-dark .grid-product__label.grid-product__label--Stokta-Yok,
 body.ml-dark .grid-product__label[class*="Stokta-Yok"],
+body.ml-dark .grid-product__label[class*="Stokta-yok"],
 body.ml-dark [class*="label--Stokta-Yok"][class*="label--Stokta-Yok"],
+body.ml-dark [class*="label--Stokta-yok"],
 body.ml-dark [class*="label-container"][class*="Stokta-Yok"],
-body.ml-dark .product-details__label-container.product-details__label--Stokta-Yok{
-  background:#c0392b!important;
+body.ml-dark [class*="label-container"][class*="Stokta-yok"],
+body.ml-dark .product-details__label-container.product-details__label--Stokta-Yok,
+body.ml-dark .product-details__label-container.product-details__label--Stokta-yok{
+  background:#8b3a3a!important;
   color:#fff!important;
+  border-radius:6px!important;
 }
 body.ml-dark [class*="Stokta-Yok"] .label__text,
-body.ml-dark .grid-product__label--Stokta-Yok .label__text{
+body.ml-dark [class*="Stokta-yok"] .label__text,
+body.ml-dark .grid-product__label--Stokta-Yok .label__text,
+body.ml-dark .grid-product__label--Stokta-yok .label__text{
   color:#fff!important;
 }
 
@@ -938,6 +945,7 @@ function toggle(){
   btn.innerHTML=dark?sunIco:moonIco;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
   setTimeout(function(){document.body.classList.remove('ml-dm-t');},350);
+  setTimeout(fixStokYok,100);
 }
 
 btn.addEventListener('click',function(e){
@@ -982,7 +990,25 @@ function init(){
       btn.innerHTML=sunIco;
     }
   }catch(e){}
+  // Stokta Yok label'larını zorla + observer başlat
+  fixStokYok();
+  stokObserver.observe(document.body,{childList:true,subtree:true});
 }
+
+// ─── STOKTA YOK LABEL ZORLAYICI ───
+function fixStokYok(){
+  if(!document.body.classList.contains('ml-dark'))return;
+  var labels=document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]');
+  labels.forEach(function(l){
+    l.style.setProperty('background','#8b3a3a','important');
+    l.style.setProperty('background-color','#8b3a3a','important');
+    l.style.setProperty('color','#fff','important');
+    var txt=l.querySelector('.label__text');
+    if(txt) txt.style.setProperty('color','#fff','important');
+  });
+}
+// Ecwid dinamik yükleme — yeni kartlar gelince de yakala
+var stokObserver=new MutationObserver(function(){fixStokYok();});
 
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',init);
