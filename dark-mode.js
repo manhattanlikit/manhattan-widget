@@ -231,6 +231,15 @@ body.ml-dark [style*="background-color: rgb(44"]{
 body.ml-dark h1,body.ml-dark h2,body.ml-dark h3,body.ml-dark h4,body.ml-dark h5{
   color:${TX1}!important;
 }
+/* Section başlıkları — gold (Neden ML?, Hakkımızda, vb.) */
+body.ml-dark .tile h1,body.ml-dark .tile h2,body.ml-dark .tile h3,body.ml-dark .tile h4,
+body.ml-dark .whyus h1,body.ml-dark .whyus h2,body.ml-dark .whyus h3,body.ml-dark .whyus h4,
+body.ml-dark .owner h1,body.ml-dark .owner h2,body.ml-dark .owner h3,body.ml-dark .owner h4,
+body.ml-dark .contacts h1,body.ml-dark .contacts h2,body.ml-dark .contacts h3,body.ml-dark .contacts h4,
+body.ml-dark .caption h1,body.ml-dark .caption h2,body.ml-dark .caption h3,body.ml-dark .caption h4,
+body.ml-dark [class*="tile-"] h1,body.ml-dark [class*="tile-"] h2,body.ml-dark [class*="tile-"] h3,body.ml-dark [class*="tile-"] h4{
+  color:${GOLD}!important;
+}
 body.ml-dark p{color:${TX2}!important}
 body.ml-dark a{color:${GOLD}!important}
 body.ml-dark a:hover{color:${TX1}!important}
@@ -287,28 +296,23 @@ body.ml-dark .grid-product__wrap:hover{
   transform:translateY(-2px)!important;
 }
 /* Kategori kartları */
-/* Kategori hücre — nefes alanı (ürün kartlarıyla aynı) */
-body.ml-dark .grid-categories .grid-category{
-  padding:4px!important;
-}
 body.ml-dark .grid-category__card,
 body.ml-dark [class*="grid-category__card"]{
   background:${BG2}!important;
   border-radius:14px!important;
   border:none!important;
-  outline:1px solid ${BD}!important;
-  outline-offset:-1px!important;
   box-shadow:
+    inset 0 0 0 1px ${BD},
     0 0 0 2px ${BG1},
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden!important;
-  transition:box-shadow .25s ease,transform .25s ease,outline-color .25s ease!important;
+  transition:box-shadow .25s ease,transform .25s ease!important;
 }
 body.ml-dark .grid-category__card:hover,
 body.ml-dark [class*="grid-category__card"]:hover{
-  outline-color:${GOLDDIM}!important;
   box-shadow:
+    inset 0 0 0 1px ${GOLDDIM},
     0 0 0 2px ${BG1},
     0 0 0 3px ${GOLDDIM},
     0 4px 20px rgba(175,140,62,.15),
@@ -321,7 +325,7 @@ body.ml-dark .grid-category__card img{
 }
 body.ml-dark .grid-category__title,
 body.ml-dark [class*="grid-category__title"]{
-  color:${GOLD}!important;
+  color:${TX1}!important;
 }
 
 /* Stokta Var label — gold (Stokta Yok hariç) */
@@ -693,7 +697,25 @@ body.ml-dark .ec-minicart{
 body.ml-dark .footer-menu,
 body.ml-dark .ec-store__content-wrapper [class*="footer"]{
   background:${BG2}!important;
-  border-top:1px solid ${BD2}!important;
+  border-top:1px solid ${BD}!important;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+}
+/* İkon bar iç container da ortalansın */
+body.ml-dark .footer-menu ul,
+body.ml-dark .footer-menu nav,
+body.ml-dark .footer-menu > div{
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  width:100%!important;
+}
+body.ml-dark .footer-menu li,
+body.ml-dark .footer-menu > div > a,
+body.ml-dark .footer-menu > div > div{
+  flex:1!important;
+  text-align:center!important;
 }
 body.ml-dark .footer-menu a,
 body.ml-dark .footer-menu svg,
@@ -862,7 +884,49 @@ body.ml-dark .ec-cart-widget svg{
 }
 
 /* ── HR & KENARLIKLARI ── */
-body.ml-dark hr{border-color:${BD2}!important}
+body.ml-dark hr{border-color:${BD}!important}
+/* İnline beyaz kenarlıkları yakala */
+body.ml-dark [style*="border-bottom: 1px solid rgb(255"],
+body.ml-dark [style*="border-top: 1px solid rgb(255"],
+body.ml-dark [style*="border-bottom: 1px solid white"],
+body.ml-dark [style*="border-top: 1px solid white"],
+body.ml-dark [style*="border-bottom: 1px solid #fff"],
+body.ml-dark [style*="border-top: 1px solid #fff"],
+body.ml-dark [style*="border-bottom: 1px solid #FFF"],
+body.ml-dark [style*="border: 1px solid rgb(255"],
+body.ml-dark [style*="border: 1px solid #fff"],
+body.ml-dark [style*="border-color: rgb(255"],
+body.ml-dark [style*="border-color: white"],
+body.ml-dark [style*="border-color: #fff"]{
+  border-color:${BD}!important;
+}
+/* Ecwid store wrapper ayracları */
+body.ml-dark .ec-store hr,
+body.ml-dark .ec-wrapper hr,
+body.ml-dark .tiles hr,
+body.ml-dark .tiles-wrapper hr{
+  border-color:${BD}!important;
+  background:${BD}!important;
+}
+/* Tile/section arası çizgiler — beyaz kalmasın */
+body.ml-dark .tile,
+body.ml-dark [class*="tile-"]{
+  border-color:${BD}!important;
+  border-bottom-color:${BD}!important;
+  border-top-color:${BD}!important;
+}
+body.ml-dark .tile::after,
+body.ml-dark [class*="tile-"]::after{
+  background:${BD}!important;
+  background-color:${BD}!important;
+}
+body.ml-dark [class*="section-divider"],
+body.ml-dark [class*="separator"],
+body.ml-dark [class*="divider"]{
+  background:${BD}!important;
+  background-color:${BD}!important;
+  border-color:${BD}!important;
+}
 
 /* ── SCROLLBAR ── */
 body.ml-dark ::-webkit-scrollbar{width:8px;height:8px}
@@ -1008,20 +1072,6 @@ body.ml-dark .ml-overlay .ml-savings-orders-lbl{
 body.ml-dark .ml-overlay .ml-savings-only{
   background:rgba(175,140,62,.08)!important;
 }
-/* Doğum günü formu — dark mode */
-body.ml-dark .ml-overlay .ml-bday-form{
-  background:linear-gradient(135deg,rgba(175,140,62,.14),rgba(175,140,62,.08))!important;
-  border-color:rgba(175,140,62,.2)!important;
-}
-body.ml-dark .ml-overlay .ml-bday-form input{
-  background:${BG3}!important;
-  border-color:${BD}!important;
-  color:#ece8df!important;
-  color-scheme:dark!important;
-}
-body.ml-dark .ml-overlay .ml-bday-form .ml-bday-msg{
-  color:#b5ae9e!important;
-}
 /* Widget içi okunabilirlik */
 body.ml-dark .ml-overlay .ml-card .ml-sub,
 body.ml-dark .ml-overlay .ml-card [class*="desc"],
@@ -1086,6 +1136,7 @@ function toggle(){
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
   setTimeout(function(){document.body.classList.remove('ml-dm-t');},350);
   setTimeout(fixStokYok,100);
+  setTimeout(fixWhiteBorders,100);
 }
 
 btn.addEventListener('click',function(e){
@@ -1130,8 +1181,9 @@ function init(){
       btn.innerHTML=sunIco;
     }
   }catch(e){}
-  // Stokta Yok label'larını zorla + observer başlat
+  // Stokta Yok label'larını zorla + beyaz çizgileri düzelt + observer başlat
   fixStokYok();
+  fixWhiteBorders();
   // Observer'ları başlat
   stokObserver.observe(document.body,{childList:true,subtree:true});
 }
@@ -1154,7 +1206,25 @@ function fixStokYok(){
   });
 }
 // Ecwid dinamik yükleme — yeni kartlar gelince de yakala
-var stokObserver=new MutationObserver(function(){fixStokYok();});
+var stokObserver=new MutationObserver(function(){fixStokYok();fixWhiteBorders();});
+
+// ─── BEYAZ KENARLIKLARI GOLD'A ÇEVİR ───
+function fixWhiteBorders(){
+  if(!document.body.classList.contains('ml-dark'))return;
+  var bd='rgba(175,140,62,.12)';
+  // hr elementleri
+  document.querySelectorAll('hr').forEach(function(el){
+    el.style.setProperty('border-color',bd,'important');
+    el.style.setProperty('background',bd,'important');
+  });
+  // İnline beyaz border taşıyan elementler
+  document.querySelectorAll('[style]').forEach(function(el){
+    var s=el.getAttribute('style')||'';
+    if(s.indexOf('border')>-1 && (s.indexOf('rgb(255')+s.indexOf('#fff')+s.indexOf('white'))>-3){
+      el.style.setProperty('border-color',bd,'important');
+    }
+  });
+}
 
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',init);
