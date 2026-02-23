@@ -479,11 +479,10 @@ body.ml-dark .ec-breadcrumbs a{color:${TX3}!important}
 body.ml-dark .ec-breadcrumbs a:hover{color:${GOLD}!important}
 
 /* ── BUTONLAR — widget.js ml-cta ile birebir ── */
-body.ml-dark .form-control__button,
-body.ml-dark .form-control__button--primary,
+/* PRIMARY butonlar (Sepete Ekle, Sepete Git, Checkout vb.) */
 body.ml-dark .form-control--primary .form-control__button,
-body.ml-dark .details-product-purchase__add-buttons .form-control__button,
-body.ml-dark button.button{
+body.ml-dark .details-product-purchase__add-to-bag .form-control__button,
+body.ml-dark .details-product-purchase__checkout .form-control__button{
   background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
   color:#fff!important;
   border:none!important;
@@ -495,11 +494,17 @@ body.ml-dark button.button{
   overflow:hidden!important;
   transition:all .2s!important;
 }
+/* Buton text span — #fff zorla */
+body.ml-dark .form-control--primary .form-control__button-text,
+body.ml-dark .form-control--primary .form-control__button-svg,
+body.ml-dark .form-control--primary .form-control__button-svg svg,
+body.ml-dark .details-product-purchase__add-to-bag .form-control__button-text{
+  color:#fff!important;
+  fill:#fff!important;
+}
 /* Sweep animasyonu — ml-cta::after ile aynı */
-body.ml-dark .form-control__button::after,
 body.ml-dark .form-control--primary .form-control__button::after,
-body.ml-dark .details-product-purchase__add-buttons .form-control__button::after,
-body.ml-dark button.button::after{
+body.ml-dark .details-product-purchase__add-to-bag .form-control__button::after{
   content:''!important;
   position:absolute!important;
   top:0!important;left:-100%!important;
@@ -510,23 +515,42 @@ body.ml-dark button.button::after{
 }
 @keyframes mlsweep{0%,100%{left:-100%}50%{left:100%}}
 /* Hover — solid gold, sweep durur */
-body.ml-dark .form-control__button:hover,
 body.ml-dark .form-control--primary .form-control__button:hover,
-body.ml-dark .details-product-purchase__add-buttons .form-control__button:hover,
-body.ml-dark button.button:hover{
+body.ml-dark .details-product-purchase__add-to-bag .form-control__button:hover{
   background:#af8c3e!important;
   color:#fff!important;
   opacity:1!important;
 }
-body.ml-dark .form-control__button:hover::after,
-body.ml-dark .form-control--primary .form-control__button:hover::after,
-body.ml-dark button.button:hover::after{
+body.ml-dark .form-control--primary .form-control__button:hover::after{
   animation:none!important;
 }
 /* Active — scale */
-body.ml-dark .form-control__button:active,
-body.ml-dark button.button:active{
+body.ml-dark .form-control--primary .form-control__button:active{
   transform:scale(.98)!important;
+}
+/* SECONDARY butonlar (Tekrar ekle, Favori vb.) — subtle, gold DEĞİL */
+body.ml-dark .form-control--secondary .form-control__button{
+  background:${BG3}!important;
+  color:${TX1}!important;
+  border:1.5px solid ${BD}!important;
+  border-radius:10px!important;
+  font-weight:600!important;
+  cursor:pointer!important;
+  transition:all .2s!important;
+}
+body.ml-dark .form-control--secondary .form-control__button-text,
+body.ml-dark .form-control--secondary .form-control__button-svg,
+body.ml-dark .form-control--secondary .form-control__button-svg svg{
+  color:${TX1}!important;
+  fill:${TX1}!important;
+}
+body.ml-dark .form-control--secondary .form-control__button:hover{
+  background:${BG2}!important;
+  border-color:${GOLDDIM}!important;
+  color:${GOLD}!important;
+}
+body.ml-dark .form-control--secondary .form-control__button:hover .form-control__button-text{
+  color:${GOLD}!important;
 }
 
 /* Cover butonlar — gold bg + beyaz yazı + yuvarlak köşe */
@@ -603,6 +627,34 @@ body.ml-dark select option{
 body.ml-dark .product-details-module__content{
   background:transparent!important;
 }
+/* ── SELECT İÇ ELEMENTLER (Ecwid custom select: select opacity:0, görünen = input + placeholder + arrow) ── */
+/* Seçili değer gösteren readonly input */
+body.ml-dark .form-control--select .form-control__text{
+  background:transparent!important;
+  color:${TX1}!important;
+  border:none!important;
+}
+/* Placeholder — "Lütfen seç" yazısı */
+body.ml-dark .form-control__placeholder{
+  color:${TX2}!important;
+}
+body.ml-dark .form-control__placeholder-inner{
+  color:${TX2}!important;
+}
+/* Seçim yapılmışsa placeholder gizlenir, text gösterilir */
+body.ml-dark .form-control--select:not(.form-control--empty) .form-control__text{
+  color:${TX1}!important;
+}
+/* Ok simgesi container */
+body.ml-dark .form-control__arrow{
+  color:${GOLD}!important;
+  display:flex!important;
+  align-items:center!important;
+}
+body.ml-dark .form-control__arrow svg{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+}
 body.ml-dark input::placeholder,
 body.ml-dark textarea::placeholder{
   color:${TX3}!important;
@@ -623,11 +675,23 @@ body.ml-dark .form-control__radio-wrap{
 }
 body.ml-dark .form-control__radio-view{
   border-color:${GOLDDIM}!important;
+  border-radius:50%!important;
+  width:18px!important;
+  height:18px!important;
+}
+body.ml-dark .form-control__radio-view-inner{
+  border-radius:50%!important;
 }
 body.ml-dark .form-control__radio:checked ~ .form-control__radio-view,
 body.ml-dark .form-control__radio:checked + .form-control__radio-view{
   border-color:${GOLD}!important;
   background:${GOLDDIM}!important;
+  border-radius:50%!important;
+}
+body.ml-dark .form-control__radio:checked ~ .form-control__radio-view .form-control__radio-view-inner,
+body.ml-dark .form-control__radio:checked + .form-control__radio-view .form-control__radio-view-inner{
+  background:#fff!important;
+  border-radius:50%!important;
 }
 /* Bilgi text container */
 body.ml-dark .form-control--radio.form-control--flexible{
@@ -788,46 +852,41 @@ body.ml-dark .form-control--checkbox-button,
 body.ml-dark .details-product-option .form-control{
   background:transparent!important;
 }
-body.ml-dark .form-control--checkbox-button label,
-body.ml-dark .form-control__inline-label,
-body.ml-dark .details-product-option label,
+/* Normal state — dış div border/radius, iç label sadece renk */
 body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   background:${BG3}!important;
   color:${TX1}!important;
   border:1.5px solid ${BD}!important;
   border-radius:8px!important;
+  transition:all .2s!important;
+}
+body.ml-dark .form-control--checkbox-button .form-control__inline-label label{
+  background:transparent!important;
+  color:inherit!important;
 }
 /* Hover — CTA hover ile birebir: gold gradient + beyaz text */
-body.ml-dark .form-control--checkbox-button label:hover,
-body.ml-dark .form-control__inline-label:hover,
-body.ml-dark .details-product-option label:hover{
+body.ml-dark .form-control--checkbox-button .form-control__inline-label:hover{
   background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
   color:#fff!important;
   border-color:${GOLD}!important;
   transform:scale(.98);
-  transition:all .2s!important;
 }
-/* SEÇİLİ DURUM — Ecwid .form-control__radio--checked kullanır */
-body.ml-dark .form-control--checkbox-button input:checked+label,
-body.ml-dark .form-control--checkbox-button input:checked~label,
-body.ml-dark .form-control--checkbox-button input:checked+.form-control__inline-label,
-body.ml-dark .form-control__radio--checked .form-control__inline-label,
-body.ml-dark .form-control__radio--checked label,
-body.ml-dark .form-control--checkbox-button.form-control__radio--checked label,
-body.ml-dark .form-control--checkbox-button.form-control__radio--checked .form-control__inline-label,
-body.ml-dark .details-product-option .form-control__radio--checked,
-body.ml-dark .details-product-option .form-control__radio--checked label,
-body.ml-dark .details-product-option .form-control__radio--checked .form-control__inline-label{
+body.ml-dark .form-control--checkbox-button .form-control__inline-label:hover label{
+  color:#fff!important;
+}
+/* SEÇİLİ DURUM — input:checked + sibling div */
+body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label{
   background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
   color:#fff!important;
   border-color:${GOLD}!important;
   font-weight:600!important;
+  position:relative!important;
+  overflow:hidden!important;
 }
-/* Seçenek text'leri de beyaz olsun seçildiğinde */
-body.ml-dark .form-control__radio--checked .form-control__inline-label *,
-body.ml-dark .form-control--checkbox-button input:checked+label *,
-body.ml-dark .form-control--checkbox-button input:checked~label *{
+body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label label,
+body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label *{
   color:#fff!important;
+  background:transparent!important;
 }
 /* ── SEÇİLİ SEÇENEK PARLAMA ANİMASYONU ── */
 @keyframes mlOptSweep{
@@ -835,19 +894,11 @@ body.ml-dark .form-control--checkbox-button input:checked~label *{
   100%{left:100%}
 }
 /* Light mode — seçili seçenek gold parlama */
-.form-control__radio--checked .form-control__inline-label,
-.form-control--checkbox-button input:checked+label,
-.form-control--checkbox-button input:checked~label,
-.details-product-option .form-control__radio--checked label,
-.details-product-option .form-control__radio--checked .form-control__inline-label{
+.form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label{
   position:relative!important;
   overflow:hidden!important;
 }
-.form-control__radio--checked .form-control__inline-label::after,
-.form-control--checkbox-button input:checked+label::after,
-.form-control--checkbox-button input:checked~label::after,
-.details-product-option .form-control__radio--checked label::after,
-.details-product-option .form-control__radio--checked .form-control__inline-label::after{
+.form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label::after{
   content:'';
   position:absolute;
   top:0;left:-100%;
@@ -856,19 +907,8 @@ body.ml-dark .form-control--checkbox-button input:checked~label *{
   animation:mlOptSweep 2.5s ease-in-out infinite;
   pointer-events:none;
 }
-body.ml-dark .form-control__radio--checked .form-control__inline-label,
-body.ml-dark .form-control--checkbox-button input:checked+label,
-body.ml-dark .form-control--checkbox-button input:checked~label,
-body.ml-dark .details-product-option .form-control__radio--checked label,
-body.ml-dark .details-product-option .form-control__radio--checked .form-control__inline-label{
-  position:relative!important;
-  overflow:hidden!important;
-}
-body.ml-dark .form-control__radio--checked .form-control__inline-label::after,
-body.ml-dark .form-control--checkbox-button input:checked+label::after,
-body.ml-dark .form-control--checkbox-button input:checked~label::after,
-body.ml-dark .details-product-option .form-control__radio--checked label::after,
-body.ml-dark .details-product-option .form-control__radio--checked .form-control__inline-label::after{
+/* Dark mode — beyaz sweep */
+body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label::after{
   content:''!important;
   position:absolute!important;
   top:0!important;left:-100%!important;
@@ -879,20 +919,30 @@ body.ml-dark .details-product-option .form-control__radio--checked .form-control
 }
 
 /* ── MİKTAR INPUT ── */
-body.ml-dark .details-product-purchase__qty,
-body.ml-dark .form-control--flexible{
+body.ml-dark .details-product-purchase__qty{
+  color:${TX1}!important;
+  max-width:180px!important;
+}
+/* Adet input field — beyaz bg fix */
+body.ml-dark .details-product-purchase__qty-field,
+body.ml-dark .details-product-purchase__qty-field.form-control{
   background:${BG3}!important;
   color:${TX1}!important;
-  border-color:${BD}!important;
+  border:1.5px solid ${BD}!important;
   border-radius:8px!important;
 }
-/* Miktar iç elementleri — text görünür olsun */
-body.ml-dark .details-product-purchase__qty *,
-body.ml-dark .form-control--flexible *{
+body.ml-dark .details-product-purchase__qty-field .form-control__text{
+  background:transparent!important;
   color:${TX1}!important;
 }
-body.ml-dark .details-product-purchase__qty svg,
-body.ml-dark .form-control--flexible svg{
+body.ml-dark .details-product-purchase__qty-field .form-control__placeholder-inner{
+  color:${TX1}!important;
+}
+body.ml-dark .details-product-purchase__qty-label{
+  color:${TX1}!important;
+}
+/* Miktar iç SVG'ler */
+body.ml-dark .details-product-purchase__qty svg{
   color:${GOLD}!important;
   fill:${GOLD}!important;
 }
