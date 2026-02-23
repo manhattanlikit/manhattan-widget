@@ -218,6 +218,10 @@ body.ml-dark .grid-categories,
 body.ml-dark [class*="grid-categories"]{
   overflow:visible!important;
 }
+/* Grid hücre — kart etrafında nefes alanı (shadow çakışmasını önler) */
+body.ml-dark .grid-product{
+  padding:4px!important;
+}
 body.ml-dark .grid-product__wrap{
   background:${BG2}!important;
   border-radius:14px!important;
