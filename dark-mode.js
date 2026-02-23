@@ -401,6 +401,20 @@ body.ml-dark .grid-product__picture img,
 body.ml-dark .grid-product__picture-wrapper img{
   background:transparent!important;
 }
+/* ── TÜM ÜRÜN GÖRSELLERİ — yumuşak köşe ── */
+body.ml-dark .grid-product__image img,
+body.ml-dark .grid-product__picture img,
+body.ml-dark .grid-product__picture-wrapper img,
+body.ml-dark .details-gallery img,
+body.ml-dark .details-gallery__thumb img,
+body.ml-dark .details-gallery__thumb-bg img,
+body.ml-dark .ec-cart-item img,
+body.ml-dark [class*="cart-item"] img,
+body.ml-dark [class*="recently"] img,
+body.ml-dark [class*="related"] img,
+body.ml-dark .product-details__related-products img{
+  border-radius:8px!important;
+}
 
 /* ── ÜRÜN DETAY SAYFASI ── */
 body.ml-dark .product-details__product-title{color:${TX1}!important}
@@ -619,12 +633,13 @@ body.ml-dark a.cover__button,
 body.ml-dark a.cover-button,
 body.ml-dark button.cover__button,
 body.ml-dark button.cover-button{
-  background:${GOLDDIM}!important;
-  background-color:${GOLDDIM}!important;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
+  background-color:#af8c3e!important;
   color:#fff!important;
   border:none!important;
   border-radius:12px!important;
   overflow:hidden!important;
+  position:relative!important;
   text-decoration:none!important;
 }
 body.ml-dark .cover__button *,
@@ -1164,13 +1179,15 @@ body.ml-dark .tile-cover .cover-button,
 body.ml-dark .cover__button.cover-button,
 body.ml-dark .tile-cover a.cover__button,
 body.ml-dark .tile-cover a.cover-button{
-  background:${GOLDDIM}!important;
-  background-color:${GOLDDIM}!important;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
+  background-color:#af8c3e!important;
   color:#fff!important;
   border:none!important;
   border-radius:12px!important;
-  font-weight:600!important;
+  font-weight:700!important;
   text-decoration:none!important;
+  position:relative!important;
+  overflow:hidden!important;
 }
 body.ml-dark .tile-cover .cover__button *,
 body.ml-dark .tile-cover .cover-button *{
@@ -1182,10 +1199,11 @@ body.ml-dark .tile-cover .cover__button:hover,
 body.ml-dark .tile-cover .cover-button:hover,
 body.ml-dark .cover__button:hover,
 body.ml-dark .cover-button:hover{
-  background:${GOLD}!important;
-  background-color:${GOLD}!important;
+  background:#af8c3e!important;
+  background-color:#af8c3e!important;
   border-radius:12px!important;
   overflow:hidden!important;
+  transform:scale(.97)!important;
 }
 body.ml-dark .cover__button:hover *,
 body.ml-dark .cover-button:hover *{
@@ -1625,12 +1643,14 @@ function cleanAll(){
     var il=el.querySelector('label');
     if(il){il.style.removeProperty('color');il.style.removeProperty('background');}
   });
-  // Sepete Ekle buton inline temizle
-  var abBtn=document.querySelector('.details-product-purchase__add-to-bag .form-control__button');
-  if(abBtn){['background','transform','box-shadow'].forEach(function(p){abBtn.style.removeProperty(p);});}
-  // Sepete Ekle wrapper temizle
-  var atb=document.querySelector('.details-product-purchase__add-to-bag');
-  if(atb){['position','overflow','border-radius'].forEach(function(p){atb.style.removeProperty(p);});}
+  // Sepete Ekle wrapper + TÜM primary wrapper temizle
+  document.querySelectorAll('.form-control--primary').forEach(function(el){
+    ['position','overflow','border-radius'].forEach(function(p){el.style.removeProperty(p);});
+  });
+  // Cover butonlar temizle
+  document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
+    ['background','background-color','border-radius','position','overflow','transform','box-shadow'].forEach(function(p){el.style.removeProperty(p);});
+  });
   // Primary/secondary buton text temizle
   document.querySelectorAll('.form-control__button-text,.form-control__button-svg,.form-control__button-svg svg').forEach(function(el){
     el.style.removeProperty('color');el.style.removeProperty('fill');
@@ -1678,55 +1698,77 @@ function fixSelects(){
 // ─── SWEEP + HOVER — JS EVENT LISTENER ───
 // Ecwid inline style koyuyor → CSS hover eziliyor
 // Tek çözüm: mouseenter/mouseleave ile inline style yönet
+// ═══════════════════════════════════════════════════════
+// UNIVERSAL SWEEP SYSTEM
+// Tek fonksiyon, tüm gold butonlara sweep + hover
+// ═══════════════════════════════════════════════════════
+var _sweepCSS='position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite;pointer-events:none;z-index:1;border-radius:inherit;';
+
+function _injectSweep(el){
+  if(!el||el.querySelector('.ml-sweep')) return;
+  el.style.setProperty('position','relative','important');
+  el.style.setProperty('overflow','hidden','important');
+  var sw=document.createElement('div');
+  sw.className='ml-sweep';
+  sw.style.cssText=_sweepCSS;
+  el.appendChild(sw);
+}
+
+function _bindHover(el,sweepTarget){
+  if(!el||el._mlHover) return;
+  el._mlHover=true;
+  var target=sweepTarget||el;
+  el.addEventListener('mouseenter',function(){
+    if(!document.body.classList.contains('ml-dark')) return;
+    el.style.setProperty('background','#af8c3e','important');
+    el.style.setProperty('transform','scale(.97)','important');
+    el.style.setProperty('box-shadow','0 2px 12px rgba(175,140,62,.3)','important');
+    var s=target.querySelector('.ml-sweep');if(s)s.style.animationPlayState='paused';
+  });
+  el.addEventListener('mouseleave',function(){
+    if(!document.body.classList.contains('ml-dark')) return;
+    el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+    el.style.removeProperty('transform');
+    el.style.removeProperty('box-shadow');
+    var s=target.querySelector('.ml-sweep');if(s)s.style.animationPlayState='running';
+  });
+}
+
 function fixSweep(){
   if(!document.body.classList.contains('ml-dark')) return;
 
-  // ═══ 1) SEPETE EKLE — sweep + hover ═══
-  var atb=document.querySelector('.details-product-purchase__add-to-bag');
-  if(atb){
-    atb.style.setProperty('position','relative','important');
-    atb.style.setProperty('overflow','hidden','important');
-    atb.style.setProperty('border-radius','10px','important');
-    // Sweep div inject
-    if(!atb.querySelector('.ml-sweep')){
-      var sw=document.createElement('div');
-      sw.className='ml-sweep';
-      sw.style.cssText='position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite;pointer-events:none;z-index:1;border-radius:inherit;';
-      atb.appendChild(sw);
-    }
-    var abBtn=atb.querySelector('.form-control__button');
-    if(abBtn&&!abBtn._mlHover){
-      abBtn._mlHover=true;
-      abBtn.addEventListener('mouseenter',function(){
-        this.style.setProperty('background','#af8c3e','important');
-        this.style.setProperty('transform','scale(.97)','important');
-        this.style.setProperty('box-shadow','0 2px 12px rgba(175,140,62,.3)','important');
-        var s=atb.querySelector('.ml-sweep');if(s)s.style.animationPlayState='paused';
-      });
-      abBtn.addEventListener('mouseleave',function(){
-        this.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
-        this.style.removeProperty('transform');
-        this.style.removeProperty('box-shadow');
-        var s=atb.querySelector('.ml-sweep');if(s)s.style.animationPlayState='running';
-      });
-    }
-  }
+  // ═══ 1) TÜM PRIMARY BUTONLAR (Sepete Ekle, Devam Et, Checkout, vb.) ═══
+  document.querySelectorAll('.form-control--primary').forEach(function(wrapper){
+    _injectSweep(wrapper);
+    wrapper.style.setProperty('border-radius','10px','important');
+    var btn=wrapper.querySelector('.form-control__button');
+    if(btn) _bindHover(btn,wrapper);
+  });
 
-  // ═══ 2) OPSİYON BUTONLARI — Sepete Ekle ile birebir tasarım ═══
+  // ═══ 2) COVER BUTONLAR (Anasayfa CTA — "Alışverişe Devam Et") ═══
+  document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
+    // Gradient uygula (flat gold → gradient, Sepete Ekle birebir)
+    el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+    el.style.setProperty('border-radius','12px','important');
+    _injectSweep(el);
+    _bindHover(el,el);
+  });
+
+  // ═══ 3) OPSİYON BUTONLARI (Boyut, Sertlik) ═══
   document.querySelectorAll('.form-control--checkbox-button').forEach(function(cb){
     var inp=cb.querySelector('.form-control__radio');
     var lbl=cb.querySelector('.form-control__inline-label');
     if(!inp||!lbl) return;
     var innerLbl=lbl.querySelector('label');
 
-    // Ortak — Sepete Ekle birebir
+    // Ortak
     lbl.style.setProperty('border','none','important');
     lbl.style.setProperty('border-radius','10px','important');
     lbl.style.setProperty('transition','all .2s ease','important');
     lbl.style.setProperty('cursor','pointer','important');
 
     if(inp.checked){
-      // ── SEÇİLİ — Sepete Ekle birebir: gold gradient, border yok, beyaz text, SWEEP ──
+      // ── SEÇİLİ — gold gradient + sweep ──
       lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
       lbl.style.setProperty('color','#fff','important');
       lbl.style.setProperty('font-weight','700','important');
@@ -1734,16 +1776,10 @@ function fixSweep(){
       lbl.style.setProperty('position','relative','important');
       lbl.style.setProperty('overflow','hidden','important');
       if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');}
-      // Sweep inject — Sepete Ekle ile birebir
-      if(!lbl.querySelector('.ml-sweep')){
-        var sw=document.createElement('div');
-        sw.className='ml-sweep';
-        sw.style.cssText='position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite;pointer-events:none;z-index:1;border-radius:inherit;';
-        lbl.appendChild(sw);
-      }
+      _injectSweep(lbl);
     }else{
-      // ── SEÇİLİ DEĞİL — koyu, subtle, sweep kaldır ──
-      var oldSw=lbl.querySelector('.ml-sweep');if(oldSw)oldSw.remove();
+      // ── SEÇİLİ DEĞİL — koyu, sweep kaldır ──
+      var old=lbl.querySelector('.ml-sweep');if(old)old.remove();
       lbl.style.setProperty('background','#2c2b26','important');
       lbl.style.setProperty('color','#ece8df','important');
       lbl.style.setProperty('font-weight','600','important');
@@ -1751,20 +1787,17 @@ function fixSweep(){
       if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
     }
 
-    // Hover bind — sadece 1 kere
+    // Hover — sadece 1 kere
     if(!lbl._mlHover){
       lbl._mlHover=true;
       lbl.addEventListener('mouseenter',function(){
         if(!document.body.classList.contains('ml-dark')) return;
-        var isChecked=inp.checked;
-        if(isChecked){
-          // Seçili hover — Sepete Ekle hover birebir: koyu gold + scale + sweep dur
+        if(inp.checked){
           lbl.style.setProperty('background','#af8c3e','important');
           lbl.style.setProperty('transform','scale(.97)','important');
           lbl.style.setProperty('box-shadow','0 1px 4px rgba(0,0,0,.3)','important');
           var sw=lbl.querySelector('.ml-sweep');if(sw)sw.style.animationPlayState='paused';
         }else{
-          // Seçili değil hover — gold text + glow
           lbl.style.setProperty('color','#d4b05e','important');
           lbl.style.setProperty('box-shadow','inset 0 0 0 1.5px #af8c3e,0 2px 8px rgba(175,140,62,.15)','important');
           lbl.style.setProperty('transform','translateY(-1px)','important');
