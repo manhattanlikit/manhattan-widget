@@ -227,8 +227,8 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 <div class="rule-card" id="rule3-card" style="border:2px solid var(--border);border-radius:12px;padding:14px;background:var(--bg)">
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
 <div>
-<p style="margin:0;font-size:16px;font-weight:700;color:var(--tx)">Hafta Sonu</p>
-<p style="margin:2px 0 0;font-size:12px;color:var(--tx3)">Cmt+Paz</p>
+<p style="margin:0;font-size:16px;font-weight:700;color:var(--tx)">Cumartesi</p>
+<p style="margin:2px 0 0;font-size:12px;color:var(--tx3)">Cmt</p>
 </div>
 <button class="btn rule-toggle" id="btn-r3" onclick="toggleRule(3)" style="font-size:14px;padding:8px 18px;min-width:90px;border-radius:10px;font-weight:700;background:var(--bg2);color:var(--tx3);border:2px solid var(--border)">KAPALI</button>
 </div>
@@ -955,7 +955,7 @@ function checkTeslimTime(){
 }
 setInterval(checkTeslimTime,30000);
 // === OTOMATİK HATIRLATMA (3 KURAL) ===
-var RULE_DAYS={r1:[1,2,3,4,5],r2:[1,2,3,4,5],r3:[6,0]};
+var RULE_DAYS={r1:[1,2,3,4,5],r2:[1,2,3,4,5],r3:[6]};
 var RULE_STATES={r1:false,r2:false,r3:false};
 
 function initTimeSelects(){
@@ -1088,7 +1088,7 @@ async function testAutoReminder(){
   if(res.ok){
     var html='<p style="margin:0 0 12px;font-size:18px;font-weight:800;color:var(--tx)">Test Sonucu</p>';
     html+='<p style="margin:0 0 8px;font-size:16px;color:var(--tx2)">Sunucu saati: <strong>'+res.serverTime+'</strong></p>';
-    var rNames=['Mesai','Akşam','Hafta Sonu'];
+    var rNames=['Mesai','Akşam','Cumartesi'];
     var rKeys=['r1','r2','r3'];
     var rMatches=[res.rule1Match,res.rule2Match,res.rule3Match];
     for(var i=0;i<3;i++){
