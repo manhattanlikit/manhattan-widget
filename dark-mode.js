@@ -950,7 +950,7 @@ body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   background:${BG3}!important;
   color:${TX1}!important;
   border:1.5px solid ${BD}!important;
-  border-radius:8px!important;
+  border-radius:10px!important;
   transition:all .25s ease!important;
   position:relative!important;
   overflow:hidden!important;
@@ -1618,6 +1618,26 @@ function cleanAll(){
   document.querySelectorAll('.form-control--select').forEach(function(el){
     el.style.removeProperty('position');
   });
+  // Opsiyon butonları — tüm inline style temizle
+  document.querySelectorAll('.form-control--checkbox-button .form-control__inline-label').forEach(function(el){
+    ['background','color','border-color','font-weight','border-radius','transition','opacity','transform','box-shadow'].forEach(function(p){el.style.removeProperty(p);});
+    var il=el.querySelector('label');
+    if(il){il.style.removeProperty('color');il.style.removeProperty('background');}
+  });
+  // Sepete Ekle buton inline temizle
+  var abBtn=document.querySelector('.details-product-purchase__add-to-bag .form-control__button');
+  if(abBtn){['background','transform','box-shadow'].forEach(function(p){abBtn.style.removeProperty(p);});}
+  // Sepete Ekle wrapper temizle
+  var atb=document.querySelector('.details-product-purchase__add-to-bag');
+  if(atb){['position','overflow','border-radius'].forEach(function(p){atb.style.removeProperty(p);});}
+  // Primary/secondary buton text temizle
+  document.querySelectorAll('.form-control__button-text,.form-control__button-svg,.form-control__button-svg svg').forEach(function(el){
+    el.style.removeProperty('color');el.style.removeProperty('fill');
+  });
+  // Badge temizle
+  document.querySelectorAll('.product-details__label-container,.product-details .ec-label').forEach(function(el){
+    ['display','width','max-width','padding','border-radius','white-space','box-sizing','line-height','overflow','margin'].forEach(function(p){el.style.removeProperty(p);});
+  });
 }
 
 // ─── STOKTA YOK — INLINE STYLE TEMİZLİĞİ ───
@@ -1713,8 +1733,8 @@ function fixSweep(){
       lbl.style.removeProperty('font-weight');
       if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
     }
-    // Ortak style
-    lbl.style.setProperty('border-radius','8px','important');
+    // Ortak style — Sepete Ekle ile birebir köşe
+    lbl.style.setProperty('border-radius','10px','important');
     lbl.style.setProperty('transition','all .2s ease','important');
 
     // Hover bind — sadece 1 kere
