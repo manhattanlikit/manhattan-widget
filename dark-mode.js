@@ -221,8 +221,8 @@ body.ml-dark .grid-product__wrap{
   /* Üçlü çerçeve: iç çizgi → koyu boşluk → dış çizgi → gölge */
   box-shadow:
     inset 0 0 0 1px ${BD},
-    0 0 0 3px ${BG1},
-    0 0 0 4.5px ${BD2},
+    0 0 0 2px ${BG1},
+    0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden;
   transition:box-shadow .25s ease,transform .25s ease!important;
@@ -236,8 +236,8 @@ body.ml-dark .grid-product__wrap-inner{
 body.ml-dark .grid-product__wrap:hover{
   box-shadow:
     inset 0 0 0 1px ${GOLDDIM},
-    0 0 0 3px ${BG1},
-    0 0 0 4.5px ${GOLDDIM},
+    0 0 0 2px ${BG1},
+    0 0 0 3px ${GOLDDIM},
     0 4px 20px rgba(175,140,62,.15),
     0 8px 32px rgba(0,0,0,.35)!important;
   transform:translateY(-2px)!important;
@@ -250,8 +250,8 @@ body.ml-dark [class*="grid-category__card"]{
   border:none!important;
   box-shadow:
     inset 0 0 0 1px ${BD},
-    0 0 0 3px ${BG1},
-    0 0 0 4.5px ${BD2},
+    0 0 0 2px ${BG1},
+    0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden!important;
   transition:box-shadow .25s ease,transform .25s ease!important;
@@ -260,8 +260,8 @@ body.ml-dark .grid-category__card:hover,
 body.ml-dark [class*="grid-category__card"]:hover{
   box-shadow:
     inset 0 0 0 1px ${GOLDDIM},
-    0 0 0 3px ${BG1},
-    0 0 0 4.5px ${GOLDDIM},
+    0 0 0 2px ${BG1},
+    0 0 0 3px ${GOLDDIM},
     0 4px 20px rgba(175,140,62,.15),
     0 8px 32px rgba(0,0,0,.35)!important;
   transform:translateY(-2px)!important;
@@ -711,8 +711,8 @@ body.ml-dark [class*="recently"] .grid-product__wrap{
   border:none!important;
   box-shadow:
     inset 0 0 0 1px ${BD},
-    0 0 0 3px ${BG1},
-    0 0 0 4.5px ${BD2},
+    0 0 0 2px ${BG1},
+    0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden!important;
 }
