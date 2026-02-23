@@ -487,6 +487,42 @@ body.ml-dark .ec-page-title{color:${TX1}!important}
 body.ml-dark .ec-breadcrumbs a{color:${TX3}!important}
 body.ml-dark .ec-breadcrumbs a:hover{color:${GOLD}!important}
 
+/* ── ÜRÜN NAVİGASYON OKLARI (< >) ── */
+body.ml-dark .product-details-navigation__arrow,
+body.ml-dark [class*="product-details-navigation"] a,
+body.ml-dark [class*="product-details-navigation"] button,
+body.ml-dark .product-details__navigation a,
+body.ml-dark .product-details__navigation button{
+  color:${TX2}!important;
+  border-color:${BD}!important;
+  background:${BG2}!important;
+  transition:all .2s!important;
+}
+body.ml-dark .product-details-navigation__arrow:hover,
+body.ml-dark [class*="product-details-navigation"] a:hover,
+body.ml-dark [class*="product-details-navigation"] button:hover,
+body.ml-dark .product-details__navigation a:hover,
+body.ml-dark .product-details__navigation button:hover{
+  color:${GOLD}!important;
+  border-color:${GOLD}!important;
+  background:${BG3}!important;
+}
+body.ml-dark .product-details-navigation__arrow svg,
+body.ml-dark [class*="product-details-navigation"] svg,
+body.ml-dark .product-details__navigation svg{
+  color:${TX2}!important;
+  fill:${TX2}!important;
+  transition:all .2s!important;
+}
+body.ml-dark .product-details-navigation__arrow:hover svg,
+body.ml-dark [class*="product-details-navigation"] a:hover svg,
+body.ml-dark [class*="product-details-navigation"] button:hover svg,
+body.ml-dark .product-details__navigation a:hover svg,
+body.ml-dark .product-details__navigation button:hover svg{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+}
+
 /* ── BUTONLAR — widget.js ml-cta ile birebir ── */
 /* PRIMARY butonlar (Sepete Ekle, Sepete Git, Checkout vb.) */
 body.ml-dark .form-control--primary .form-control__button,
@@ -646,11 +682,15 @@ body.ml-dark .product-details-module__content{
   background:transparent!important;
 }
 /* ── SELECT İÇ ELEMENTLER (Ecwid custom select: select opacity:0, görünen = input + placeholder + arrow) ── */
-/* Seçili değer gösteren readonly input */
-body.ml-dark .form-control--select .form-control__text{
+/* Seçili değer gösteren readonly input — specificity: generic input kuralını ezmek için input tag eklendi */
+body.ml-dark .form-control--select input.form-control__text{
   background:transparent!important;
   color:${TX1}!important;
   border:none!important;
+}
+/* Boş select'te input transparan olmalı ki placeholder görünsün */
+body.ml-dark .form-control--empty input.form-control__text{
+  color:transparent!important;
 }
 /* Placeholder — "Lütfen seç" yazısı */
 body.ml-dark .form-control__placeholder{
@@ -967,7 +1007,7 @@ body.ml-dark .details-product-purchase__qty-field.form-control{
   border:1.5px solid ${BD}!important;
   border-radius:8px!important;
 }
-body.ml-dark .details-product-purchase__qty-field .form-control__text{
+body.ml-dark .details-product-purchase__qty-field input.form-control__text{
   background:transparent!important;
   color:${TX1}!important;
 }
@@ -1457,7 +1497,8 @@ function toggle(){
   btn.innerHTML=dark?sunIco:moonIco;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
   setTimeout(function(){document.body.classList.remove('ml-dm-t');},350);
-  setTimeout(fixStokYok,100);
+  setTimeout(fixAll,100);
+  setTimeout(fixAll,500); // Ecwid geç render için ikinci pas
 }
 
 btn.addEventListener('click',function(e){
@@ -1502,47 +1543,234 @@ function init(){
       btn.innerHTML=sunIco;
     }
   }catch(e){}
-  // Stokta Yok label'larını zorla + observer başlat
+  // Ecwid-proof düzeltmeleri uygula + observer başlat
+  fixAll();
+  setTimeout(fixAll,1000); // Ecwid geç yükleme için
+  setTimeout(fixAll,3000); // Ürün sayfası geç render için
+  // Observer'ı başlat
+  _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+}
+
+// ═══════════════════════════════════════════════════════
+// ECWID-PROOF JS ENFORCEMENT LAYER
+// CSS'e güvenme — inline style + DOM injection
+// Ecwid ne yaparsa yapsın, bu her seferinde düzeltir
+// ═══════════════════════════════════════════════════════
+
+var _fixTimer=null;
+function fixAll(){
+  // Debounce — Ecwid çok sık DOM değiştirir
+  clearTimeout(_fixTimer);
+  _fixTimer=setTimeout(_fixAllNow,80);
+}
+function _fixAllNow(){
+  var dark=document.body.classList.contains('ml-dark');
   fixStokYok();
-  // Observer'ları başlat
-  stokObserver.observe(document.body,{childList:true,subtree:true});
+  if(dark){
+    fixSelects();
+    fixSweep();
+    fixButtonText();
+    fixBadgeRect();
+  }else{
+    cleanAll();
+  }
+}
+
+// ─── TEMİZLİK (light mode'a dönünce) ───
+function cleanAll(){
+  cleanStokYok();
+  // Sweep overlay'ları kaldır
+  document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
+  // Select inline style temizle
+  document.querySelectorAll('.form-control__placeholder,.form-control__placeholder-inner').forEach(function(el){
+    ['display','visibility','opacity','color','position','pointer-events','align-items','height','left','right','top','z-index'].forEach(function(p){el.style.removeProperty(p);});
+  });
+  // Buton text temizle
+  document.querySelectorAll('.form-control__button-text,.form-control__button-svg,.form-control__button-svg svg').forEach(function(el){
+    el.style.removeProperty('color');el.style.removeProperty('fill');
+  });
 }
 
 // ─── STOKTA YOK — INLINE STYLE TEMİZLİĞİ ───
 function cleanStokYok(){
-  var labels=document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]');
-  labels.forEach(function(l){
-    l.style.removeProperty('background');
-    l.style.removeProperty('background-color');
-    l.style.removeProperty('color');
-    var inner=l.querySelectorAll('.ec-label,[class*="label--"],.label__text');
-    inner.forEach(function(el){
-      el.style.removeProperty('background');
-      el.style.removeProperty('background-color');
-      el.style.removeProperty('color');
+  document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]').forEach(function(l){
+    l.style.removeProperty('background');l.style.removeProperty('background-color');l.style.removeProperty('color');
+    l.querySelectorAll('.ec-label,[class*="label--"],.label__text').forEach(function(el){
+      el.style.removeProperty('background');el.style.removeProperty('background-color');el.style.removeProperty('color');
     });
   });
 }
 
-// ─── STOKTA YOK LABEL ZORLAYICI ───
+// ─── STOKTA YOK LABEL ───
 function fixStokYok(){
   if(!document.body.classList.contains('ml-dark')){cleanStokYok();return;}
-  var labels=document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]');
-  labels.forEach(function(l){
+  document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]').forEach(function(l){
     l.style.setProperty('background','#8b3a3a','important');
     l.style.setProperty('background-color','#8b3a3a','important');
     l.style.setProperty('color','#fff','important');
-    // İç elementler — .ec-label, .label__text
-    var inner=l.querySelectorAll('.ec-label,[class*="label--"],.label__text');
-    inner.forEach(function(el){
+    l.querySelectorAll('.ec-label,[class*="label--"],.label__text').forEach(function(el){
       el.style.setProperty('background','#8b3a3a','important');
       el.style.setProperty('background-color','#8b3a3a','important');
       el.style.setProperty('color','#fff','important');
     });
   });
 }
-// Ecwid dinamik yükleme — yeni kartlar gelince de yakala
-var stokObserver=new MutationObserver(function(){fixStokYok();});
+
+// ─── SELECT "LÜTFEN SEÇ" PLACEHOLDER ───
+// Ecwid placeholder div'i gizliyor — JS ile inline zorla
+function fixSelects(){
+  document.querySelectorAll('.form-control--select.form-control--empty').forEach(function(w){
+    // Wrapper'ı position:relative yap (placeholder absolute konumlanacak)
+    w.style.setProperty('position','relative','important');
+    // Placeholder div
+    var ph=w.querySelector('.form-control__placeholder');
+    if(ph){
+      ph.style.setProperty('display','flex','important');
+      ph.style.setProperty('visibility','visible','important');
+      ph.style.setProperty('opacity','1','important');
+      ph.style.setProperty('position','absolute','important');
+      ph.style.setProperty('top','0','important');
+      ph.style.setProperty('left','12px','important');
+      ph.style.setProperty('right','36px','important');
+      ph.style.setProperty('height','100%','important');
+      ph.style.setProperty('align-items','center','important');
+      ph.style.setProperty('pointer-events','none','important');
+      ph.style.setProperty('z-index','1','important');
+      // Inner text
+      var phi=ph.querySelector('.form-control__placeholder-inner');
+      if(phi){
+        phi.style.setProperty('color','#a09b8f','important');
+        phi.style.setProperty('opacity','1','important');
+        phi.style.setProperty('display','flex','important');
+        phi.style.setProperty('align-items','center','important');
+        phi.style.setProperty('height','100%','important');
+        phi.style.setProperty('font-size','14px','important');
+      }
+    }
+    // Arrow
+    var arrow=w.querySelector('.form-control__arrow');
+    if(arrow){
+      arrow.style.setProperty('display','flex','important');
+      arrow.style.setProperty('align-items','center','important');
+      arrow.style.setProperty('opacity','1','important');
+      arrow.style.setProperty('visibility','visible','important');
+      arrow.style.setProperty('z-index','2','important');
+      var svg=arrow.querySelector('svg');
+      if(svg){
+        svg.style.setProperty('fill','#d4b05e','important');
+        svg.style.setProperty('color','#d4b05e','important');
+      }
+    }
+  });
+  // Seçim yapılmış select'ler — placeholder temizle (Ecwid zaten gizler)
+  document.querySelectorAll('.form-control--select:not(.form-control--empty)').forEach(function(w){
+    var ti=w.querySelector('.form-control__text');
+    if(ti) ti.style.setProperty('color','#ece8df','important');
+  });
+}
+
+// ─── SWEEP ANİMASYONU — DOM INJECTION ───
+// CSS ::after yerine gerçek <div> inject → Ecwid ezemeZ
+function fixSweep(){
+  // 1) Sepete Ekle butonu
+  var atb=document.querySelector('.details-product-purchase__add-to-bag');
+  if(atb){
+    atb.style.setProperty('position','relative','important');
+    atb.style.setProperty('overflow','hidden','important');
+    atb.style.setProperty('border-radius','10px','important');
+    if(!atb.querySelector('.ml-sweep')){
+      var sw=document.createElement('div');
+      sw.className='ml-sweep';
+      sw.style.cssText='position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite;pointer-events:none;z-index:1;border-radius:inherit;';
+      atb.appendChild(sw);
+    }
+    // Hover durumunda sweep durdur
+    atb.onmouseenter=function(){var s=atb.querySelector('.ml-sweep');if(s)s.style.animationPlayState='paused';};
+    atb.onmouseleave=function(){var s=atb.querySelector('.ml-sweep');if(s)s.style.animationPlayState='running';};
+  }
+
+  // 2) Seçili opsiyon butonları
+  document.querySelectorAll('.form-control--checkbox-button').forEach(function(cb){
+    var inp=cb.querySelector('.form-control__radio');
+    var label=cb.querySelector('.form-control__inline-label');
+    if(!inp||!label) return;
+    if(inp.checked){
+      // Gold gradient + beyaz text — inline zorla
+      label.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+      label.style.setProperty('color','#fff','important');
+      label.style.setProperty('border-color','#d4b05e','important');
+      label.style.setProperty('font-weight','600','important');
+      label.style.setProperty('position','relative','important');
+      label.style.setProperty('overflow','hidden','important');
+      // İç label de beyaz
+      var il=label.querySelector('label');
+      if(il){il.style.setProperty('color','#fff','important');il.style.setProperty('background','transparent','important');}
+      // Sweep inject
+      if(!label.querySelector('.ml-sweep')){
+        var sw=document.createElement('div');
+        sw.className='ml-sweep';
+        sw.style.cssText='position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlOptSweep 2.5s ease-in-out infinite;pointer-events:none;z-index:1;border-radius:inherit;';
+        label.appendChild(sw);
+      }
+    }else{
+      // Seçili değil — temizle
+      var old=label.querySelector('.ml-sweep');
+      if(old) old.remove();
+      label.style.setProperty('background','#2c2b26','important');
+      label.style.setProperty('color','#ece8df','important');
+      label.style.setProperty('border-color','rgba(175,140,62,.12)','important');
+      label.style.removeProperty('font-weight');
+      var il=label.querySelector('label');
+      if(il){il.style.setProperty('color','#ece8df','important');il.style.setProperty('background','transparent','important');}
+    }
+  });
+}
+
+// ─── BUTON TEXT RENKLERİ ───
+function fixButtonText(){
+  // Primary buton text — mutlak #fff
+  document.querySelectorAll('.form-control--primary .form-control__button-text').forEach(function(el){
+    el.style.setProperty('color','#fff','important');
+  });
+  document.querySelectorAll('.form-control--primary .form-control__button-svg,.form-control--primary .form-control__button-svg svg').forEach(function(el){
+    el.style.setProperty('color','#fff','important');
+    el.style.setProperty('fill','#fff','important');
+  });
+  // Primary buton bg — gold gradient
+  document.querySelectorAll('.form-control--primary .form-control__button').forEach(function(el){
+    el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+    el.style.setProperty('color','#fff','important');
+    el.style.setProperty('border','none','important');
+    el.style.setProperty('border-radius','10px','important');
+  });
+  // Secondary buton — subtle
+  document.querySelectorAll('.form-control--secondary .form-control__button').forEach(function(el){
+    el.style.setProperty('background','#2c2b26','important');
+    el.style.setProperty('color','#ece8df','important');
+    el.style.setProperty('border','1.5px solid rgba(175,140,62,.12)','important');
+  });
+  document.querySelectorAll('.form-control--secondary .form-control__button-text').forEach(function(el){
+    el.style.setProperty('color','#ece8df','important');
+  });
+}
+
+// ─── STOKTA VAR BADGE DİKDÖRTGEN ───
+function fixBadgeRect(){
+  document.querySelectorAll('.product-details .ec-label').forEach(function(el){
+    el.style.setProperty('display','inline-block','important');
+    el.style.setProperty('width','auto','important');
+    el.style.setProperty('max-width','fit-content','important');
+    el.style.setProperty('padding','4px 12px','important');
+    el.style.setProperty('border-radius','4px','important');
+    el.style.setProperty('white-space','nowrap','important');
+    el.style.setProperty('box-sizing','border-box','important');
+    el.style.setProperty('line-height','1.4','important');
+  });
+}
+
+// ─── OBSERVER — Ecwid her DOM değişikliğinde fixAll çağır ───
+var _observer=new MutationObserver(fixAll);
+
 
 if(document.readyState==='loading'){
   document.addEventListener('DOMContentLoaded',init);
