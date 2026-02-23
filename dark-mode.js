@@ -848,7 +848,7 @@ body.ml-dark [class*="label-container"][class*="Stokta-Yok"],
 body.ml-dark [class*="label-container"][class*="Stokta-yok"],
 body.ml-dark .product-details__label-container.product-details__label--Stokta-Yok,
 body.ml-dark .product-details__label-container.product-details__label--Stokta-yok{
-  background:#5c5c5c!important;
+  background:#8b3a3a!important;
   color:#fff!important;
   border-radius:6px!important;
 }
@@ -856,6 +856,17 @@ body.ml-dark [class*="Stokta-Yok"] .label__text,
 body.ml-dark [class*="Stokta-yok"] .label__text,
 body.ml-dark .grid-product__label--Stokta-Yok .label__text,
 body.ml-dark .grid-product__label--Stokta-yok .label__text{
+  color:#fff!important;
+}
+/* Stokta Yok içindeki .ec-label — badge gold kuralını ez */
+body.ml-dark [class*="Stokta-Yok"] .ec-label,
+body.ml-dark [class*="Stokta-yok"] .ec-label,
+body.ml-dark [class*="Stokta-Yok"] [class*="label--"],
+body.ml-dark [class*="Stokta-yok"] [class*="label--"],
+body.ml-dark .grid-product__label--Stokta-Yok .ec-label,
+body.ml-dark .grid-product__label--Stokta-yok .ec-label{
+  background:#8b3a3a!important;
+  background-color:#8b3a3a!important;
   color:#fff!important;
 }
 
@@ -1000,11 +1011,16 @@ function fixStokYok(){
   if(!document.body.classList.contains('ml-dark'))return;
   var labels=document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]');
   labels.forEach(function(l){
-    l.style.setProperty('background','#5c5c5c','important');
-    l.style.setProperty('background-color','#5c5c5c','important');
+    l.style.setProperty('background','#8b3a3a','important');
+    l.style.setProperty('background-color','#8b3a3a','important');
     l.style.setProperty('color','#fff','important');
-    var txt=l.querySelector('.label__text');
-    if(txt) txt.style.setProperty('color','#fff','important');
+    // İç elementler — .ec-label, .label__text
+    var inner=l.querySelectorAll('.ec-label,[class*="label--"],.label__text');
+    inner.forEach(function(el){
+      el.style.setProperty('background','#8b3a3a','important');
+      el.style.setProperty('background-color','#8b3a3a','important');
+      el.style.setProperty('color','#fff','important');
+    });
   });
 }
 // Ecwid dinamik yükleme — yeni kartlar gelince de yakala
