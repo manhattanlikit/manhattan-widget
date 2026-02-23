@@ -908,6 +908,7 @@ async function confirmSendPopup(){
     results.push(res);
     if(res.ok){
       log('log-payment','✓ '+res.message,'ok');
+      if(i<SEND_QUEUE.length-1) await new Promise(function(r){setTimeout(r,2000)});
     }else{
       log('log-payment','✗ #'+o.orderNumber+' — '+(res.error||'Hata'),'err');
     }
