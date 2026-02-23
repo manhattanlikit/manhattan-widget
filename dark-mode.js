@@ -949,11 +949,12 @@ body.ml-dark .details-product-option .form-control{
 body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   background:${BG3}!important;
   color:${TX1}!important;
-  border:1.5px solid ${BD}!important;
+  border:none!important;
   border-radius:10px!important;
   transition:all .25s ease!important;
   position:relative!important;
   overflow:hidden!important;
+  box-shadow:inset 0 0 0 1px ${BD}!important;
 }
 body.ml-dark .form-control--checkbox-button .form-control__inline-label label{
   background:transparent!important;
@@ -975,11 +976,11 @@ body.ml-dark .form-control--checkbox-button .form-control__radio:not(:checked)+.
 body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label{
   background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
   color:#fff!important;
-  border-color:${GOLD}!important;
-  font-weight:600!important;
+  border:none!important;
+  font-weight:700!important;
   position:relative!important;
   overflow:hidden!important;
-  box-shadow:0 2px 8px rgba(175,140,62,.2)!important;
+  box-shadow:0 2px 8px rgba(175,140,62,.25)!important;
 }
 body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label label,
 body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label *{
@@ -1620,7 +1621,7 @@ function cleanAll(){
   });
   // Opsiyon butonları — tüm inline style temizle
   document.querySelectorAll('.form-control--checkbox-button .form-control__inline-label').forEach(function(el){
-    ['background','color','border-color','font-weight','border-radius','transition','opacity','transform','box-shadow'].forEach(function(p){el.style.removeProperty(p);});
+    ['background','color','border-color','border','font-weight','border-radius','transition','opacity','transform','box-shadow','cursor'].forEach(function(p){el.style.removeProperty(p);});
     var il=el.querySelector('label');
     if(il){il.style.removeProperty('color');il.style.removeProperty('background');}
   });
@@ -1711,31 +1712,44 @@ function fixSweep(){
     }
   }
 
-  // ═══ 2) OPSİYON BUTONLARI — hover + seçili state ═══
+  // ═══ 2) OPSİYON BUTONLARI — Sepete Ekle ile birebir tasarım ═══
   document.querySelectorAll('.form-control--checkbox-button').forEach(function(cb){
     var inp=cb.querySelector('.form-control__radio');
     var lbl=cb.querySelector('.form-control__inline-label');
     if(!inp||!lbl) return;
     var innerLbl=lbl.querySelector('label');
 
-    // Seçili → gold gradient
-    if(inp.checked){
-      lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
-      lbl.style.setProperty('color','#fff','important');
-      lbl.style.setProperty('border-color','#d4b05e','important');
-      lbl.style.setProperty('font-weight','600','important');
-      if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');}
-    }else{
-      // Seçili değil → koyu
-      lbl.style.setProperty('background','#2c2b26','important');
-      lbl.style.setProperty('color','#ece8df','important');
-      lbl.style.setProperty('border-color','rgba(175,140,62,.12)','important');
-      lbl.style.removeProperty('font-weight');
-      if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
-    }
-    // Ortak style — Sepete Ekle ile birebir köşe
+    // Ortak — Sepete Ekle birebir
+    lbl.style.setProperty('border','none','important');
     lbl.style.setProperty('border-radius','10px','important');
     lbl.style.setProperty('transition','all .2s ease','important');
+    lbl.style.setProperty('cursor','pointer','important');
+
+    if(inp.checked){
+      // ── SEÇİLİ — Sepete Ekle birebir: gold gradient, border yok, beyaz text, SWEEP ──
+      lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+      lbl.style.setProperty('color','#fff','important');
+      lbl.style.setProperty('font-weight','700','important');
+      lbl.style.setProperty('box-shadow','0 2px 8px rgba(175,140,62,.25)','important');
+      lbl.style.setProperty('position','relative','important');
+      lbl.style.setProperty('overflow','hidden','important');
+      if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');}
+      // Sweep inject — Sepete Ekle ile birebir
+      if(!lbl.querySelector('.ml-sweep')){
+        var sw=document.createElement('div');
+        sw.className='ml-sweep';
+        sw.style.cssText='position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite;pointer-events:none;z-index:1;border-radius:inherit;';
+        lbl.appendChild(sw);
+      }
+    }else{
+      // ── SEÇİLİ DEĞİL — koyu, subtle, sweep kaldır ──
+      var oldSw=lbl.querySelector('.ml-sweep');if(oldSw)oldSw.remove();
+      lbl.style.setProperty('background','#2c2b26','important');
+      lbl.style.setProperty('color','#ece8df','important');
+      lbl.style.setProperty('font-weight','600','important');
+      lbl.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12)','important');
+      if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
+    }
 
     // Hover bind — sadece 1 kere
     if(!lbl._mlHover){
@@ -1744,35 +1758,32 @@ function fixSweep(){
         if(!document.body.classList.contains('ml-dark')) return;
         var isChecked=inp.checked;
         if(isChecked){
-          // Seçili hover → koyu gold + hafif soluk (kapat sinyali)
+          // Seçili hover — Sepete Ekle hover birebir: koyu gold + scale + sweep dur
           lbl.style.setProperty('background','#af8c3e','important');
-          lbl.style.setProperty('opacity','.85','important');
           lbl.style.setProperty('transform','scale(.97)','important');
+          lbl.style.setProperty('box-shadow','0 1px 4px rgba(0,0,0,.3)','important');
+          var sw=lbl.querySelector('.ml-sweep');if(sw)sw.style.animationPlayState='paused';
         }else{
-          // Seçili değil hover → gold border glow + gold text
-          lbl.style.setProperty('border-color','#af8c3e','important');
+          // Seçili değil hover — gold text + glow
           lbl.style.setProperty('color','#d4b05e','important');
-          lbl.style.setProperty('box-shadow','0 0 0 1px rgba(175,140,62,.2),0 2px 8px rgba(175,140,62,.12)','important');
+          lbl.style.setProperty('box-shadow','inset 0 0 0 1.5px #af8c3e,0 2px 8px rgba(175,140,62,.15)','important');
           lbl.style.setProperty('transform','translateY(-1px)','important');
           if(innerLbl) innerLbl.style.setProperty('color','#d4b05e','important');
         }
       });
       lbl.addEventListener('mouseleave',function(){
         if(!document.body.classList.contains('ml-dark')) return;
-        var isChecked=inp.checked;
-        // Reset
-        lbl.style.removeProperty('opacity');
         lbl.style.removeProperty('transform');
-        lbl.style.removeProperty('box-shadow');
-        if(isChecked){
+        if(inp.checked){
           lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
           lbl.style.setProperty('color','#fff','important');
-          lbl.style.setProperty('border-color','#d4b05e','important');
+          lbl.style.setProperty('box-shadow','0 2px 8px rgba(175,140,62,.25)','important');
           if(innerLbl) innerLbl.style.setProperty('color','#fff','important');
+          var sw=lbl.querySelector('.ml-sweep');if(sw)sw.style.animationPlayState='running';
         }else{
           lbl.style.setProperty('background','#2c2b26','important');
           lbl.style.setProperty('color','#ece8df','important');
-          lbl.style.setProperty('border-color','rgba(175,140,62,.12)','important');
+          lbl.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12)','important');
           if(innerLbl) innerLbl.style.setProperty('color','#ece8df','important');
         }
       });
