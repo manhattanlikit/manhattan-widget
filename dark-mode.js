@@ -293,7 +293,6 @@ body.ml-dark [class*="grid-category__card"]{
   border-radius:14px!important;
   border:none!important;
   box-shadow:
-    inset 0 0 0 1px ${BD},
     0 0 0 2px ${BG1},
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
@@ -303,7 +302,6 @@ body.ml-dark [class*="grid-category__card"]{
 body.ml-dark .grid-category__card:hover,
 body.ml-dark [class*="grid-category__card"]:hover{
   box-shadow:
-    inset 0 0 0 1px ${GOLDDIM},
     0 0 0 2px ${BG1},
     0 0 0 3px ${GOLDDIM},
     0 4px 20px rgba(175,140,62,.15),
@@ -1002,6 +1000,20 @@ body.ml-dark .ml-overlay .ml-savings-orders-lbl{
 }
 body.ml-dark .ml-overlay .ml-savings-only{
   background:rgba(175,140,62,.08)!important;
+}
+/* Doğum günü formu — dark mode */
+body.ml-dark .ml-overlay .ml-bday-form{
+  background:linear-gradient(135deg,rgba(175,140,62,.14),rgba(175,140,62,.08))!important;
+  border-color:rgba(175,140,62,.2)!important;
+}
+body.ml-dark .ml-overlay .ml-bday-form input{
+  background:${BG3}!important;
+  border-color:${BD}!important;
+  color:#ece8df!important;
+  color-scheme:dark!important;
+}
+body.ml-dark .ml-overlay .ml-bday-form .ml-bday-msg{
+  color:#b5ae9e!important;
 }
 /* Widget içi okunabilirlik */
 body.ml-dark .ml-overlay .ml-card .ml-sub,
