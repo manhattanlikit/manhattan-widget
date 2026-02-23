@@ -980,6 +980,29 @@ body.ml-dark .ml-overlay .ml-tr-info{
 body.ml-dark .ml-overlay .ml-label{
   color:#b5ae9e!important;
 }
+/* Savings kutusu — gold tınılı */
+body.ml-dark .ml-overlay .ml-savings{
+  background:linear-gradient(135deg,rgba(175,140,62,.14),rgba(175,140,62,.08))!important;
+  border-color:rgba(175,140,62,.2)!important;
+}
+body.ml-dark .ml-overlay .ml-savings-txt{
+  color:#d4cfc4!important;
+}
+body.ml-dark .ml-overlay .ml-savings-txt b{
+  color:${GOLD}!important;
+}
+body.ml-dark .ml-overlay .ml-savings-orders{
+  border-left-color:rgba(175,140,62,.2)!important;
+}
+body.ml-dark .ml-overlay .ml-savings-orders-val{
+  color:${GOLD}!important;
+}
+body.ml-dark .ml-overlay .ml-savings-orders-lbl{
+  color:#b5ae9e!important;
+}
+body.ml-dark .ml-overlay .ml-savings-only{
+  background:rgba(175,140,62,.08)!important;
+}
 /* Widget içi okunabilirlik */
 body.ml-dark .ml-overlay .ml-card .ml-sub,
 body.ml-dark .ml-overlay .ml-card [class*="desc"],
