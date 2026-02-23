@@ -848,7 +848,7 @@ body.ml-dark [class*="label-container"][class*="Stokta-Yok"],
 body.ml-dark [class*="label-container"][class*="Stokta-yok"],
 body.ml-dark .product-details__label-container.product-details__label--Stokta-Yok,
 body.ml-dark .product-details__label-container.product-details__label--Stokta-yok{
-  background:#8b3a3a!important;
+  background:#5c5c5c!important;
   color:#fff!important;
   border-radius:6px!important;
 }
@@ -1000,8 +1000,8 @@ function fixStokYok(){
   if(!document.body.classList.contains('ml-dark'))return;
   var labels=document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]');
   labels.forEach(function(l){
-    l.style.setProperty('background','#8b3a3a','important');
-    l.style.setProperty('background-color','#8b3a3a','important');
+    l.style.setProperty('background','#5c5c5c','important');
+    l.style.setProperty('background-color','#5c5c5c','important');
     l.style.setProperty('color','#fff','important');
     var txt=l.querySelector('.label__text');
     if(txt) txt.style.setProperty('color','#fff','important');
