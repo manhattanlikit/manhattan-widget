@@ -445,7 +445,7 @@ async function fetchOrders(){
   try{
     log('log-export','Ecwid siparişleri çekiliyor...','info');
     
-    var res=await gasPost({action:'kargoGetOrders',pin:SESSION_PIN});
+    var res=await gasPost({action:'kargoGetOrders',pin:SESSION_PIN,mode:'export'});
     setProgress('pbar-export',50);
     
     if(!res.ok){
@@ -610,7 +610,7 @@ async function processResults(file){
     // 1) Tüm bekleyen siparişleri tek seferde çek
     log('log-import','Ecwid siparişleri çekiliyor...','info');
     setProgress('pbar-import',30);
-    var ordersRes=await gasPost({action:'kargoGetOrders',pin:SESSION_PIN});
+    var ordersRes=await gasPost({action:'kargoGetOrders',pin:SESSION_PIN,mode:'import'});
     if(!ordersRes.ok){
       log('log-import','HATA: Siparişler çekilemedi — '+(ordersRes.error||''),'err');
       return;
@@ -643,6 +643,7 @@ async function processResults(file){
       if(upd.ok){
         log('log-import','✓ #'+match.orderNumber+' · '+s.name+' → '+s.trackCode,'ok');
         updated++;
+        if(i<shipments.length-1) await new Promise(function(r){setTimeout(r,2000)});
       }else{
         log('log-import','✗ Güncelleme hatası #'+match.orderNumber+': '+(upd.error||''),'err');
         errors++;
