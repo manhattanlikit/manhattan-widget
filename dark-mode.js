@@ -296,32 +296,18 @@ body.ml-dark [class*="grid-category__card"]{
   background:${BG2}!important;
   border-radius:14px!important;
   border:none!important;
-  position:relative!important;
+  outline:1px solid ${BD}!important;
+  outline-offset:-1px!important;
   box-shadow:
     0 0 0 2px ${BG1},
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
-  overflow:visible!important;
-  transition:box-shadow .25s ease,transform .25s ease!important;
-}
-body.ml-dark .grid-category__card::after,
-body.ml-dark [class*="grid-category__card"]::after{
-  content:''!important;
-  position:absolute!important;
-  inset:0!important;
-  border:1px solid ${BD}!important;
-  border-radius:14px!important;
-  z-index:1!important;
-  pointer-events:none!important;
-  display:block!important;
-}
-body.ml-dark .grid-category__wrap-inner{
   overflow:hidden!important;
-  border-radius:14px!important;
-  background:${BG2}!important;
+  transition:box-shadow .25s ease,transform .25s ease,outline-color .25s ease!important;
 }
 body.ml-dark .grid-category__card:hover,
 body.ml-dark [class*="grid-category__card"]:hover{
+  outline-color:${GOLDDIM}!important;
   box-shadow:
     0 0 0 2px ${BG1},
     0 0 0 3px ${GOLDDIM},
@@ -329,17 +315,13 @@ body.ml-dark [class*="grid-category__card"]:hover{
     0 8px 32px rgba(0,0,0,.35)!important;
   transform:translateY(-2px)!important;
 }
-body.ml-dark .grid-category__card:hover::after,
-body.ml-dark [class*="grid-category__card"]:hover::after{
-  border-color:${GOLDDIM}!important;
-}
 /* Kategori resim + başlık */
 body.ml-dark .grid-category__card img{
   border-radius:12px 12px 0 0!important;
 }
 body.ml-dark .grid-category__title,
 body.ml-dark [class*="grid-category__title"]{
-  color:${TX1}!important;
+  color:${GOLD}!important;
 }
 
 /* Stokta Var label — gold (Stokta Yok hariç) */
