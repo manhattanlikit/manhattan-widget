@@ -478,17 +478,55 @@ body.ml-dark .ec-page-title{color:${TX1}!important}
 body.ml-dark .ec-breadcrumbs a{color:${TX3}!important}
 body.ml-dark .ec-breadcrumbs a:hover{color:${GOLD}!important}
 
-/* ── BUTONLAR ── */
+/* ── BUTONLAR — widget.js ml-cta ile birebir ── */
 body.ml-dark .form-control__button,
 body.ml-dark .form-control__button--primary,
+body.ml-dark .form-control--primary .form-control__button,
+body.ml-dark .details-product-purchase__add-buttons .form-control__button,
 body.ml-dark button.button{
-  background:${GOLDDIM}!important;
-  color:${BG1}!important;
-  border-color:${GOLDDIM}!important;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
+  color:#fff!important;
+  border:none!important;
+  border-radius:10px!important;
+  font-weight:700!important;
+  letter-spacing:-.1px!important;
+  cursor:pointer!important;
+  position:relative!important;
+  overflow:hidden!important;
+  transition:all .2s!important;
 }
+/* Sweep animasyonu — ml-cta::after ile aynı */
+body.ml-dark .form-control__button::after,
+body.ml-dark .form-control--primary .form-control__button::after,
+body.ml-dark .details-product-purchase__add-buttons .form-control__button::after,
+body.ml-dark button.button::after{
+  content:''!important;
+  position:absolute!important;
+  top:0!important;left:-100%!important;
+  width:60%!important;height:100%!important;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent)!important;
+  animation:mlsweep 3s ease-in-out infinite!important;
+  pointer-events:none!important;
+}
+@keyframes mlsweep{0%,100%{left:-100%}50%{left:100%}}
+/* Hover — solid gold, sweep durur */
 body.ml-dark .form-control__button:hover,
+body.ml-dark .form-control--primary .form-control__button:hover,
+body.ml-dark .details-product-purchase__add-buttons .form-control__button:hover,
 body.ml-dark button.button:hover{
-  background:${GOLD}!important;
+  background:#af8c3e!important;
+  color:#fff!important;
+  opacity:1!important;
+}
+body.ml-dark .form-control__button:hover::after,
+body.ml-dark .form-control--primary .form-control__button:hover::after,
+body.ml-dark button.button:hover::after{
+  animation:none!important;
+}
+/* Active — scale */
+body.ml-dark .form-control__button:active,
+body.ml-dark button.button:active{
+  transform:scale(.98)!important;
 }
 
 /* Cover butonlar — gold bg + beyaz yazı + yuvarlak köşe */
@@ -759,11 +797,15 @@ body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   border:1.5px solid ${BD}!important;
   border-radius:8px!important;
 }
+/* Hover — CTA hover ile birebir: gold gradient + beyaz text */
 body.ml-dark .form-control--checkbox-button label:hover,
 body.ml-dark .form-control__inline-label:hover,
 body.ml-dark .details-product-option label:hover{
-  border-color:${GOLDDIM}!important;
-  color:${TX1}!important;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
+  color:#fff!important;
+  border-color:${GOLD}!important;
+  transform:scale(.98);
+  transition:all .2s!important;
 }
 /* SEÇİLİ DURUM — Ecwid .form-control__radio--checked kullanır */
 body.ml-dark .form-control--checkbox-button input:checked+label,
