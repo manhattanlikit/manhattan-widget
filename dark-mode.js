@@ -169,6 +169,36 @@ body.ml-dark .search-panel svg{
   color:${GOLD}!important;
   fill:${GOLD}!important;
 }
+/* Ecwid search widget + overlay (Instant Site) */
+body.ml-dark .ecwid-search-widget,
+body.ml-dark [class*="ecwid-search"],
+body.ml-dark [class*="search-widget"],
+body.ml-dark [id*="search"]{
+  background:${BG2}!important;
+}
+body.ml-dark .ecwid-search-widget *,
+body.ml-dark [class*="ecwid-search"] *,
+body.ml-dark [class*="search-widget"] *{
+  color:${TX1}!important;
+}
+body.ml-dark .ecwid-search-widget input,
+body.ml-dark [class*="ecwid-search"] input,
+body.ml-dark [class*="search-widget"] input{
+  background:${BG3}!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .ecwid-search-widget input::placeholder,
+body.ml-dark [class*="ecwid-search"] input::placeholder,
+body.ml-dark [class*="search-widget"] input::placeholder{
+  color:${TX2}!important;
+}
+body.ml-dark .ecwid-search-widget svg,
+body.ml-dark [class*="ecwid-search"] svg,
+body.ml-dark [class*="search-widget"] svg{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+}
 
 /* ── ECWID STORE WRAPPER ── */
 body.ml-dark .ec-store,
@@ -333,6 +363,9 @@ body.ml-dark .product-details .ec-label{
   display:inline-block!important;
   width:auto!important;
   max-width:fit-content!important;
+  border-radius:6px!important;
+  padding:4px 10px!important;
+  line-height:1.3!important;
 }
 
 /* ── ÜRÜN KART İÇERİK ── */
@@ -397,6 +430,14 @@ body.ml-dark .details-gallery,
 body.ml-dark .details-gallery__main-image-wrapper{
   background:${IMG_BG}!important;
   border-radius:10px;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+}
+body.ml-dark .details-gallery__main-image{
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
 }
 body.ml-dark .product-details__gallery img,
 body.ml-dark .product-details-module__gallery img,
@@ -410,8 +451,10 @@ body.ml-dark .details-gallery__thumb-bg{
 
 /* Ürün seçenekleri */
 body.ml-dark .product-details__product-options .form-control__label,
-body.ml-dark .product-details__product-options label{
-  color:${TX2}!important;
+body.ml-dark .product-details__product-options label,
+body.ml-dark .details-product-option__title,
+body.ml-dark [class*="product-option"] [class*="title"]{
+  color:${TX1}!important;
 }
 
 /* ── KATEGORİ & SAYFA BAŞLIKLARI ── */
@@ -466,10 +509,43 @@ body.ml-dark select{
 /* Select dropdown container (Ecwid wrapper) */
 body.ml-dark .form-control--select,
 body.ml-dark .details-product-option--select .form-control,
-body.ml-dark [class*="product-option"] select{
+body.ml-dark [class*="product-option"] select,
+body.ml-dark .details-product-option select,
+body.ml-dark .product-details__product-options select{
   background:${BG3}!important;
   color:${TX1}!important;
   color-scheme:dark!important;
+  border:1.5px solid ${BD}!important;
+  border-radius:8px!important;
+  padding:10px 36px 10px 12px!important;
+  -webkit-appearance:none!important;
+  -moz-appearance:none!important;
+  appearance:none!important;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23d4b05e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right 12px center!important;
+  background-size:14px!important;
+  cursor:pointer!important;
+}
+body.ml-dark .form-control--select:focus,
+body.ml-dark .details-product-option select:focus,
+body.ml-dark .product-details__product-options select:focus{
+  border-color:${GOLDDIM}!important;
+  box-shadow:0 0 0 2px rgba(175,140,62,.15)!important;
+}
+/* Select wrapper — ok SVG'sini Ecwid kendi ekliyorsa da yakalamak için */
+body.ml-dark .form-control--select svg,
+body.ml-dark .details-product-option svg:not(.ml-acc-chev),
+body.ml-dark .form-control--select [class*="arrow"],
+body.ml-dark .form-control--select::after{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+  border-color:${GOLD}!important;
+}
+/* Select option text (dropdown açılınca) */
+body.ml-dark select option{
+  background:${BG3}!important;
+  color:${TX1}!important;
 }
 body.ml-dark input::placeholder,
 body.ml-dark textarea::placeholder{
@@ -479,6 +555,11 @@ body.ml-dark input:focus,
 body.ml-dark textarea:focus{
   border-color:${GOLDDIM}!important;
   box-shadow:0 0 0 2px rgba(175,140,62,.15)!important;
+}
+/* Native radio & checkbox — gold accent */
+body.ml-dark input[type="radio"],
+body.ml-dark input[type="checkbox"]{
+  accent-color:${GOLDDIM}!important;
 }
 
 /* ── SEPET ── */
@@ -634,7 +715,7 @@ body.ml-dark .form-control__inline-label,
 body.ml-dark .details-product-option label,
 body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   background:${BG3}!important;
-  color:${TX2}!important;
+  color:${TX1}!important;
   border:1.5px solid ${BD}!important;
   border-radius:8px!important;
 }
@@ -655,16 +736,16 @@ body.ml-dark .form-control--checkbox-button.form-control__radio--checked .form-c
 body.ml-dark .details-product-option .form-control__radio--checked,
 body.ml-dark .details-product-option .form-control__radio--checked label,
 body.ml-dark .details-product-option .form-control__radio--checked .form-control__inline-label{
-  background:${GOLDDIM}!important;
-  color:${BG1}!important;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
+  color:#fff!important;
   border-color:${GOLD}!important;
   font-weight:600!important;
 }
-/* Seçenek text'leri de koyu olsun seçildiğinde */
+/* Seçenek text'leri de beyaz olsun seçildiğinde */
 body.ml-dark .form-control__radio--checked .form-control__inline-label *,
 body.ml-dark .form-control--checkbox-button input:checked+label *,
 body.ml-dark .form-control--checkbox-button input:checked~label *{
-  color:${BG1}!important;
+  color:#fff!important;
 }
 /* ── SEÇİLİ SEÇENEK PARLAMA ANİMASYONU ── */
 @keyframes mlOptSweep{
@@ -721,6 +802,30 @@ body.ml-dark .form-control--flexible{
   background:${BG3}!important;
   color:${TX1}!important;
   border-color:${BD}!important;
+  max-width:140px!important;
+  border-radius:8px!important;
+}
+/* Miktar iç elementleri — butonlar ve input */
+body.ml-dark .details-product-purchase__qty input,
+body.ml-dark .form-control--flexible input{
+  background:transparent!important;
+  color:${TX1}!important;
+  text-align:center!important;
+}
+body.ml-dark .details-product-purchase__qty button,
+body.ml-dark .details-product-purchase__qty [class*="btn"],
+body.ml-dark .details-product-purchase__qty svg,
+body.ml-dark .form-control--flexible button,
+body.ml-dark .form-control--flexible [class*="btn"],
+body.ml-dark .form-control--flexible svg{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+  background:transparent!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .details-product-purchase__qty *,
+body.ml-dark .form-control--flexible *{
+  color:${TX1}!important;
 }
 
 /* ── SAYFALAMA (Pagination) ── */
@@ -746,6 +851,11 @@ body.ml-dark .footer-menu,
 body.ml-dark .ec-store__content-wrapper [class*="footer"]{
   background:${BG2}!important;
   border-top:1px solid ${BD2}!important;
+  border-bottom:none!important;
+  text-align:center!important;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
 }
 body.ml-dark .footer-menu a,
 body.ml-dark .footer-menu svg,
