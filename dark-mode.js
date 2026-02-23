@@ -138,8 +138,8 @@ body.ml-dark [class*="search-panel"]{
   outline:none!important;
 }
 body.ml-dark .search-panel{
-  background:${BG1}!important;
-  background-color:${BG1}!important;
+  background:transparent!important;
+  background-color:transparent!important;
 }
 body.ml-dark .search-panel .text-field{
   border:none!important;
@@ -156,14 +156,14 @@ body.ml-dark .search-panel input,
 body.ml-dark .search-panel .text-field,
 body.ml-dark .search-panel input[type="text"]{
   background:${BG2}!important;
-  color:${TX1}!important;
+  color:#fff!important;
   border-color:${GOLDDIM}!important;
 }
 body.ml-dark .search-panel input::placeholder{
-  color:${TX2}!important;
+  color:rgba(255,255,255,.5)!important;
 }
 body.ml-dark .search-panel *{
-  color:${TX1}!important;
+  color:#fff!important;
 }
 body.ml-dark .search-panel svg{
   color:${GOLD}!important;
