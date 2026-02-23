@@ -138,7 +138,19 @@ body.ml-dark [class*="search-panel"]{
   outline:none!important;
 }
 body.ml-dark .search-panel{
-  background:rgba(22,21,15,.97)!important;
+  background:${BG1}!important;
+  background-color:${BG1}!important;
+}
+body.ml-dark .search-panel .text-field{
+  border:none!important;
+  background:transparent!important;
+}
+body.ml-dark .search-panel::before,
+body.ml-dark .search-panel::after,
+body.ml-dark .search-panel *::before,
+body.ml-dark .search-panel *::after{
+  display:none!important;
+  border:none!important;
 }
 body.ml-dark .search-panel input,
 body.ml-dark .search-panel .text-field,
