@@ -568,12 +568,17 @@ body.ml-dark .details-product-purchase__add-to-bag.form-control:hover::after{
   animation:none!important;
 }
 @keyframes mlsweep{0%,100%{left:-100%}50%{left:100%}}
-/* Hover — solid gold, sweep durur */
+/* Hover — koyu gold + scale, sweep durur */
 body.ml-dark .form-control--primary .form-control__button:hover,
 body.ml-dark .details-product-purchase__add-to-bag .form-control__button:hover{
-  background:#af8c3e!important;
+  background:${GOLDDIM}!important;
   color:#fff!important;
   opacity:1!important;
+  transform:scale(.97)!important;
+  box-shadow:0 2px 12px rgba(175,140,62,.25)!important;
+}
+body.ml-dark .form-control--primary .form-control__button:hover .form-control__button-text{
+  color:#fff!important;
 }
 body.ml-dark .form-control--primary .form-control__button:hover::after{
   animation:none!important;
@@ -682,32 +687,44 @@ body.ml-dark .product-details-module__content{
   background:transparent!important;
 }
 /* ── SELECT İÇ ELEMENTLER (Ecwid custom select: select opacity:0, görünen = input + placeholder + arrow) ── */
-/* Seçili değer gösteren readonly input — specificity: generic input kuralını ezmek için input tag eklendi */
+/* Seçili değer gösteren readonly input */
 body.ml-dark .form-control--select input.form-control__text{
   background:transparent!important;
   color:${TX1}!important;
   border:none!important;
 }
-/* Boş select'te input transparan olmalı ki placeholder görünsün */
+/* ── BOŞ SELECT — "Lütfen seç" göster ── */
+/* Input transparan → alttaki placeholder görünsün */
 body.ml-dark .form-control--empty input.form-control__text{
   color:transparent!important;
 }
-/* Placeholder — "Lütfen seç" yazısı */
-body.ml-dark .form-control__placeholder{
-  color:${TX2}!important;
-  opacity:1!important;
+/* Placeholder — BOŞ iken zorla göster (Ecwid display:none yapsa bile) */
+body.ml-dark .form-control--empty .form-control__placeholder{
+  display:flex!important;
   visibility:visible!important;
+  opacity:1!important;
+  position:absolute!important;
+  top:0!important;left:0!important;right:0!important;
+  height:100%!important;
+  align-items:center!important;
+  padding-left:12px!important;
   pointer-events:none!important;
+  z-index:1!important;
 }
-body.ml-dark .form-control__placeholder-inner{
+body.ml-dark .form-control--empty .form-control__placeholder-inner{
   color:${TX2}!important;
   opacity:1!important;
+  display:block!important;
+  font-size:14px!important;
 }
-/* Seçim yapılmışsa placeholder gizlenir, text gösterilir */
+/* ── SEÇİLMİŞ SELECT — placeholder gizle, text göster ── */
+body.ml-dark .form-control--select:not(.form-control--empty) .form-control__placeholder{
+  display:none!important;
+}
 body.ml-dark .form-control--select:not(.form-control--empty) .form-control__text{
   color:${TX1}!important;
 }
-/* Ok simgesi container — z-index ile input'un üstüne çıkar */
+/* ── Ok simgesi — her zaman görünür ── */
 body.ml-dark .form-control__arrow{
   color:${GOLD}!important;
   display:flex!important;
@@ -928,29 +945,33 @@ body.ml-dark .form-control--checkbox-button,
 body.ml-dark .details-product-option .form-control{
   background:transparent!important;
 }
-/* Normal state — dış div border/radius, iç label sadece renk */
+/* ── NORMAL (seçili değil) ── */
 body.ml-dark .form-control--checkbox-button .form-control__inline-label{
   background:${BG3}!important;
   color:${TX1}!important;
   border:1.5px solid ${BD}!important;
   border-radius:8px!important;
-  transition:all .2s!important;
+  transition:all .25s ease!important;
+  position:relative!important;
+  overflow:hidden!important;
 }
 body.ml-dark .form-control--checkbox-button .form-control__inline-label label{
   background:transparent!important;
   color:inherit!important;
+  transition:color .25s ease!important;
 }
-/* Hover — CTA hover ile birebir: gold gradient + beyaz text */
-body.ml-dark .form-control--checkbox-button .form-control__inline-label:hover{
-  background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
-  color:#fff!important;
-  border-color:${GOLD}!important;
-  transform:scale(.98);
+/* ── HOVER (seçili değil) — gold border glow + gold text ── */
+body.ml-dark .form-control--checkbox-button .form-control__radio:not(:checked)+.form-control__inline-label:hover{
+  background:${BG3}!important;
+  color:${GOLD}!important;
+  border-color:${GOLDDIM}!important;
+  box-shadow:0 0 0 1px rgba(175,140,62,.15),0 2px 8px rgba(175,140,62,.1)!important;
+  transform:translateY(-1px)!important;
 }
-body.ml-dark .form-control--checkbox-button .form-control__inline-label:hover label{
-  color:#fff!important;
+body.ml-dark .form-control--checkbox-button .form-control__radio:not(:checked)+.form-control__inline-label:hover label{
+  color:${GOLD}!important;
 }
-/* SEÇİLİ DURUM — input:checked + sibling div */
+/* ── SEÇİLİ — gold gradient + beyaz text ── */
 body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label{
   background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
   color:#fff!important;
@@ -958,11 +979,23 @@ body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-c
   font-weight:600!important;
   position:relative!important;
   overflow:hidden!important;
+  box-shadow:0 2px 8px rgba(175,140,62,.2)!important;
 }
 body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label label,
 body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label *{
   color:#fff!important;
   background:transparent!important;
+}
+/* ── HOVER (seçili) — koyu gold, "kapat" sinyali ── */
+body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label:hover{
+  background:${GOLDDIM}!important;
+  border-color:${GOLDDIM}!important;
+  box-shadow:0 1px 4px rgba(0,0,0,.3)!important;
+  transform:translateY(0)!important;
+  opacity:.85!important;
+}
+body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label:hover label{
+  color:#fff!important;
 }
 /* ── SEÇİLİ SEÇENEK PARLAMA ANİMASYONU ── */
 @keyframes mlOptSweep{
@@ -1581,13 +1614,9 @@ function cleanAll(){
   cleanStokYok();
   // Sweep overlay'ları kaldır
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
-  // Select inline style temizle
-  document.querySelectorAll('.form-control__placeholder,.form-control__placeholder-inner').forEach(function(el){
-    ['display','visibility','opacity','color','position','pointer-events','align-items','height','left','right','top','z-index'].forEach(function(p){el.style.removeProperty(p);});
-  });
-  // Buton text temizle
-  document.querySelectorAll('.form-control__button-text,.form-control__button-svg,.form-control__button-svg svg').forEach(function(el){
-    el.style.removeProperty('color');el.style.removeProperty('fill');
+  // Select wrapper position temizle
+  document.querySelectorAll('.form-control--select').forEach(function(el){
+    el.style.removeProperty('position');
   });
 }
 
@@ -1616,63 +1645,19 @@ function fixStokYok(){
   });
 }
 
-// ─── SELECT "LÜTFEN SEÇ" PLACEHOLDER ───
-// Ecwid placeholder div'i gizliyor — JS ile inline zorla
+// ─── SELECT WRAPPER POSITION ───
+// CSS placeholder kuralları .form-control--empty class'ına bağlı (Ecwid otomatik toggle eder)
+// JS sadece wrapper'ın position:relative olduğundan emin olur
 function fixSelects(){
-  document.querySelectorAll('.form-control--select.form-control--empty').forEach(function(w){
-    // Wrapper'ı position:relative yap (placeholder absolute konumlanacak)
+  document.querySelectorAll('.form-control--select').forEach(function(w){
     w.style.setProperty('position','relative','important');
-    // Placeholder div
-    var ph=w.querySelector('.form-control__placeholder');
-    if(ph){
-      ph.style.setProperty('display','flex','important');
-      ph.style.setProperty('visibility','visible','important');
-      ph.style.setProperty('opacity','1','important');
-      ph.style.setProperty('position','absolute','important');
-      ph.style.setProperty('top','0','important');
-      ph.style.setProperty('left','12px','important');
-      ph.style.setProperty('right','36px','important');
-      ph.style.setProperty('height','100%','important');
-      ph.style.setProperty('align-items','center','important');
-      ph.style.setProperty('pointer-events','none','important');
-      ph.style.setProperty('z-index','1','important');
-      // Inner text
-      var phi=ph.querySelector('.form-control__placeholder-inner');
-      if(phi){
-        phi.style.setProperty('color','#a09b8f','important');
-        phi.style.setProperty('opacity','1','important');
-        phi.style.setProperty('display','flex','important');
-        phi.style.setProperty('align-items','center','important');
-        phi.style.setProperty('height','100%','important');
-        phi.style.setProperty('font-size','14px','important');
-      }
-    }
-    // Arrow
-    var arrow=w.querySelector('.form-control__arrow');
-    if(arrow){
-      arrow.style.setProperty('display','flex','important');
-      arrow.style.setProperty('align-items','center','important');
-      arrow.style.setProperty('opacity','1','important');
-      arrow.style.setProperty('visibility','visible','important');
-      arrow.style.setProperty('z-index','2','important');
-      var svg=arrow.querySelector('svg');
-      if(svg){
-        svg.style.setProperty('fill','#d4b05e','important');
-        svg.style.setProperty('color','#d4b05e','important');
-      }
-    }
-  });
-  // Seçim yapılmış select'ler — placeholder temizle (Ecwid zaten gizler)
-  document.querySelectorAll('.form-control--select:not(.form-control--empty)').forEach(function(w){
-    var ti=w.querySelector('.form-control__text');
-    if(ti) ti.style.setProperty('color','#ece8df','important');
   });
 }
 
-// ─── SWEEP ANİMASYONU — DOM INJECTION ───
-// CSS ::after yerine gerçek <div> inject → Ecwid ezemeZ
+// ─── SWEEP ANİMASYONU — SADECE SEPETE EKLE DOM INJECTION ───
+// Opsiyonlar tamamen CSS ile yönetilir (inline style = hover bozulur)
 function fixSweep(){
-  // 1) Sepete Ekle butonu
+  // Sepete Ekle butonu — wrapper'a <div> inject
   var atb=document.querySelector('.details-product-purchase__add-to-bag');
   if(atb){
     atb.style.setProperty('position','relative','important');
@@ -1684,49 +1669,16 @@ function fixSweep(){
       sw.style.cssText='position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlsweep 3s ease-in-out infinite;pointer-events:none;z-index:1;border-radius:inherit;';
       atb.appendChild(sw);
     }
-    // Hover durumunda sweep durdur
+    // Hover → sweep duraklat
     atb.onmouseenter=function(){var s=atb.querySelector('.ml-sweep');if(s)s.style.animationPlayState='paused';};
     atb.onmouseleave=function(){var s=atb.querySelector('.ml-sweep');if(s)s.style.animationPlayState='running';};
   }
-
-  // 2) Seçili opsiyon butonları
-  document.querySelectorAll('.form-control--checkbox-button').forEach(function(cb){
-    var inp=cb.querySelector('.form-control__radio');
-    var label=cb.querySelector('.form-control__inline-label');
-    if(!inp||!label) return;
-    if(inp.checked){
-      // Gold gradient + beyaz text — inline zorla
-      label.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
-      label.style.setProperty('color','#fff','important');
-      label.style.setProperty('border-color','#d4b05e','important');
-      label.style.setProperty('font-weight','600','important');
-      label.style.setProperty('position','relative','important');
-      label.style.setProperty('overflow','hidden','important');
-      // İç label de beyaz
-      var il=label.querySelector('label');
-      if(il){il.style.setProperty('color','#fff','important');il.style.setProperty('background','transparent','important');}
-      // Sweep inject
-      if(!label.querySelector('.ml-sweep')){
-        var sw=document.createElement('div');
-        sw.className='ml-sweep';
-        sw.style.cssText='position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:mlOptSweep 2.5s ease-in-out infinite;pointer-events:none;z-index:1;border-radius:inherit;';
-        label.appendChild(sw);
-      }
-    }else{
-      // Seçili değil — temizle
-      var old=label.querySelector('.ml-sweep');
-      if(old) old.remove();
-      label.style.setProperty('background','#2c2b26','important');
-      label.style.setProperty('color','#ece8df','important');
-      label.style.setProperty('border-color','rgba(175,140,62,.12)','important');
-      label.style.removeProperty('font-weight');
-      var il=label.querySelector('label');
-      if(il){il.style.setProperty('color','#ece8df','important');il.style.setProperty('background','transparent','important');}
-    }
-  });
+  // Opsiyon butonları — sadece eski sweep div'leri temizle, CSS ::after halleder
+  document.querySelectorAll('.form-control--checkbox-button .form-control__inline-label .ml-sweep').forEach(function(el){el.remove();});
 }
 
 // ─── BUTON TEXT RENKLERİ ───
+// Sadece text rengi — bg inline koymak hover'ı bozar
 function fixButtonText(){
   // Primary buton text — mutlak #fff
   document.querySelectorAll('.form-control--primary .form-control__button-text').forEach(function(el){
@@ -1736,19 +1688,7 @@ function fixButtonText(){
     el.style.setProperty('color','#fff','important');
     el.style.setProperty('fill','#fff','important');
   });
-  // Primary buton bg — gold gradient
-  document.querySelectorAll('.form-control--primary .form-control__button').forEach(function(el){
-    el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
-    el.style.setProperty('color','#fff','important');
-    el.style.setProperty('border','none','important');
-    el.style.setProperty('border-radius','10px','important');
-  });
-  // Secondary buton — subtle
-  document.querySelectorAll('.form-control--secondary .form-control__button').forEach(function(el){
-    el.style.setProperty('background','#2c2b26','important');
-    el.style.setProperty('color','#ece8df','important');
-    el.style.setProperty('border','1.5px solid rgba(175,140,62,.12)','important');
-  });
+  // Secondary buton text
   document.querySelectorAll('.form-control--secondary .form-control__button-text').forEach(function(el){
     el.style.setProperty('color','#ece8df','important');
   });
