@@ -167,7 +167,7 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 
 .ml-hero-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:2px}
 .ml-hero-side{font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#af8c3e;text-align:center;line-height:1.3;min-width:56px;flex:1}
-.ml-brand-txt{background:linear-gradient(90deg,#af8c3e 0%,#af8c3e 35%,#f5e6b8 50%,#af8c3e 65%,#af8c3e 100%);background-size:250% 100%;background-position:100% 0;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;letter-spacing:1.5px;font-size:11px;position:relative;overflow:hidden;padding:3px 0;animation:mlglow 2.5s ease-in-out 4s infinite}
+.ml-brand-txt{background:linear-gradient(90deg,#af8c3e 0%,#af8c3e 35%,#f5e6b8 50%,#af8c3e 65%,#af8c3e 100%);background-size:250% 100%;background-position:100% 0;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:800;letter-spacing:1.5px;font-size:11px;position:relative;overflow:hidden;padding:3px 2px 3px 0;animation:mlglow 2.5s ease-in-out 4s infinite}
 .ml-brand-txt::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#af8c3e);animation:mlline 1.5s ease-out .5s forwards}
 .ml-brand-txt::before{content:'';position:absolute;top:0;left:0;width:0;height:1px;background:linear-gradient(90deg,#af8c3e,#d4b05e,#af8c3e);animation:mlline 1.5s ease-out 2s forwards}
 @keyframes mlline{to{width:100%}}
