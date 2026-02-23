@@ -20,7 +20,7 @@ var GOLDDIM='#af8c3e';  // koyu gold
 var BD='rgba(175,140,62,.12)'; // kenarlık
 var BD2='rgba(175,140,62,.06)';
 var CARD_SHADOW='0 2px 16px rgba(0,0,0,.35)';
-var IMG_BG='#f0ece4';   // ürün görseli container — açık krem (sırıtmaz)
+var IMG_BG='#2c2b26';   // ürün görseli container — koyu sıcak (kartla uyumlu)
 
 // ─── CSS ───
 var css=`
@@ -97,6 +97,7 @@ body.ml-dark .store,
 body.ml-dark .dynamic-product-browser{
   background:${BG1}!important;
   color:${TX1}!important;
+  overflow:visible!important;
 }
 body.ml-dark .footer,
 body.ml-dark .footer-new{
@@ -196,26 +197,35 @@ body.ml-dark a:hover{color:${TX1}!important}
 body.ml-dark small,body.ml-dark .ec-text-muted{color:${TX3}!important}
 
 /* ── ÜRÜN KARTLARI ── */
-/* Grid parent — kenar kartlar için padding, shadow kırpılmasın */
+/* Tüm grid ancestor'ları — shadow kırpılmasın */
 body.ml-dark .grid__products,
 body.ml-dark .grid__products--classic,
-body.ml-dark [class*="grid__products"]{
+body.ml-dark [class*="grid__products"],
+body.ml-dark .grid__wrap,
+body.ml-dark .grid__wrap-row,
+body.ml-dark [class*="grid__wrap"],
+body.ml-dark .grid,
+body.ml-dark .ec-grid,
+body.ml-dark .grid__products-row{
   overflow:visible!important;
-  padding:6px!important;
 }
-/* Kategori grid'leri de aynı */
+/* Kategori grid'leri */
 body.ml-dark .grid-categories,
 body.ml-dark [class*="grid-categories"]{
   overflow:visible!important;
-  padding:6px!important;
 }
 body.ml-dark .grid-product__wrap{
   background:${BG2}!important;
   border-radius:14px!important;
-  border:1.5px solid ${BD}!important;
-  box-shadow:0 2px 12px rgba(0,0,0,.3)!important;
+  border:none!important;
+  /* Üçlü çerçeve: iç çizgi → koyu boşluk → dış çizgi → gölge */
+  box-shadow:
+    inset 0 0 0 1px ${BD},
+    0 0 0 3px ${BG1},
+    0 0 0 4.5px ${BD2},
+    0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden;
-  transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease!important;
+  transition:box-shadow .25s ease,transform .25s ease!important;
 }
 body.ml-dark .grid-product__wrap-inner{
   background:${BG2}!important;
@@ -224,8 +234,12 @@ body.ml-dark .grid-product__wrap-inner{
   overflow:hidden;
 }
 body.ml-dark .grid-product__wrap:hover{
-  border-color:${GOLDDIM}!important;
-  box-shadow:0 0 0 1px ${GOLDDIM},0 4px 20px rgba(175,140,62,.2),0 8px 32px rgba(0,0,0,.4)!important;
+  box-shadow:
+    inset 0 0 0 1px ${GOLDDIM},
+    0 0 0 3px ${BG1},
+    0 0 0 4.5px ${GOLDDIM},
+    0 4px 20px rgba(175,140,62,.15),
+    0 8px 32px rgba(0,0,0,.35)!important;
   transform:translateY(-2px)!important;
 }
 /* Kategori kartları */
@@ -233,18 +247,26 @@ body.ml-dark .grid-category__card,
 body.ml-dark [class*="grid-category__card"]{
   background:${BG2}!important;
   border-radius:14px!important;
-  border:1.5px solid ${BD}!important;
-  box-shadow:0 2px 12px rgba(0,0,0,.3)!important;
+  border:none!important;
+  box-shadow:
+    inset 0 0 0 1px ${BD},
+    0 0 0 3px ${BG1},
+    0 0 0 4.5px ${BD2},
+    0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden!important;
-  transition:border-color .25s ease,box-shadow .25s ease,transform .25s ease!important;
+  transition:box-shadow .25s ease,transform .25s ease!important;
 }
 body.ml-dark .grid-category__card:hover,
 body.ml-dark [class*="grid-category__card"]:hover{
-  border-color:${GOLDDIM}!important;
-  box-shadow:0 0 0 1px ${GOLDDIM},0 4px 20px rgba(175,140,62,.2),0 8px 32px rgba(0,0,0,.4)!important;
+  box-shadow:
+    inset 0 0 0 1px ${GOLDDIM},
+    0 0 0 3px ${BG1},
+    0 0 0 4.5px ${GOLDDIM},
+    0 4px 20px rgba(175,140,62,.15),
+    0 8px 32px rgba(0,0,0,.35)!important;
   transform:translateY(-2px)!important;
 }
-/* Kategori resim container'ları */
+/* Kategori resim + başlık */
 body.ml-dark .grid-category__card img{
   border-radius:12px 12px 0 0!important;
 }
@@ -681,14 +703,17 @@ body.ml-dark .product-details__related-products,
 body.ml-dark [class*="related-products"],
 body.ml-dark [class*="recently"]{
   overflow:visible!important;
-  padding:6px!important;
 }
 body.ml-dark .product-details__related-products .grid-product__wrap,
 body.ml-dark [class*="related"] .grid-product__wrap,
 body.ml-dark [class*="recently"] .grid-product__wrap{
   border-radius:14px!important;
-  border:1.5px solid ${BD}!important;
-  box-shadow:0 2px 12px rgba(0,0,0,.3)!important;
+  border:none!important;
+  box-shadow:
+    inset 0 0 0 1px ${BD},
+    0 0 0 3px ${BG1},
+    0 0 0 4.5px ${BD2},
+    0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden!important;
 }
 /* Karosel scroller */
