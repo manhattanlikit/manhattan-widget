@@ -301,8 +301,13 @@ body.ml-dark [class*="grid-category__card"]{
     0 0 0 2px ${BG1},
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
-  overflow:hidden!important;
+  overflow:visible!important;
   transition:box-shadow .25s ease,transform .25s ease!important;
+}
+body.ml-dark .grid-category__wrap-inner{
+  overflow:hidden!important;
+  border-radius:12px!important;
+  background:${BG2}!important;
 }
 body.ml-dark .grid-category__card:hover,
 body.ml-dark [class*="grid-category__card"]:hover{
