@@ -129,11 +129,16 @@ body.ml-dark .top-menu__item a:hover{
 }
 
 /* ── SEARCH PANEL ── */
+body.ml-dark .search-panel,
+body.ml-dark .search-panel > *,
+body.ml-dark .search-panel div,
+body.ml-dark [class*="search-panel"]{
+  border:none!important;
+  box-shadow:none!important;
+  outline:none!important;
+}
 body.ml-dark .search-panel{
   background:rgba(22,21,15,.97)!important;
-  border:none!important;
-  border-color:transparent!important;
-  box-shadow:none!important;
 }
 body.ml-dark .search-panel input,
 body.ml-dark .search-panel .text-field,
