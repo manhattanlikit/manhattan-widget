@@ -356,13 +356,22 @@ body.ml-dark .grid-product__label:not([class*="Stokta-Yok"]):not([class*="Stokta
   border-radius:6px!important;
 }
 /* Stokta Yok — eski kural kaldırıldı, badge section sonrasına taşındı */
-/* Ürün detaydaki Stokta var badge — genişleme düzeltme */
-body.ml-dark .product-details__label-container,
-body.ml-dark .details-product-purchase__place .ec-label,
-body.ml-dark .product-details .ec-label{
+/* Ürün detaydaki Stokta var/yok badge — düzgün dikdörtgen */
+body.ml-dark .product-details__label-container{
+  display:inline-flex!important;
+  width:auto!important;
+  max-width:fit-content!important;
+}
+body.ml-dark .product-details .ec-label,
+body.ml-dark .details-product-purchase__place .ec-label{
   display:inline-block!important;
   width:auto!important;
   max-width:fit-content!important;
+  padding:4px 12px!important;
+  border-radius:4px!important;
+  box-sizing:border-box!important;
+  line-height:1.4!important;
+  white-space:nowrap!important;
 }
 
 /* ── ÜRÜN KART İÇERİK ── */
@@ -502,9 +511,14 @@ body.ml-dark .details-product-purchase__add-to-bag .form-control__button-text{
   color:#fff!important;
   fill:#fff!important;
 }
-/* Sweep animasyonu — ml-cta::after ile aynı */
-body.ml-dark .form-control--primary .form-control__button::after,
-body.ml-dark .details-product-purchase__add-to-bag .form-control__button::after{
+/* Sweep animasyonu — widget.js ml-cta::after birebir kopyası */
+/* Wrapper'a taşındı çünkü Ecwid button::after'ı --animated ile kullanır */
+body.ml-dark .details-product-purchase__add-to-bag.form-control{
+  position:relative!important;
+  overflow:hidden!important;
+  border-radius:10px!important;
+}
+body.ml-dark .details-product-purchase__add-to-bag.form-control::after{
   content:''!important;
   position:absolute!important;
   top:0!important;left:-100%!important;
@@ -512,6 +526,10 @@ body.ml-dark .details-product-purchase__add-to-bag .form-control__button::after{
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent)!important;
   animation:mlsweep 3s ease-in-out infinite!important;
   pointer-events:none!important;
+  z-index:1!important;
+}
+body.ml-dark .details-product-purchase__add-to-bag.form-control:hover::after{
+  animation:none!important;
 }
 @keyframes mlsweep{0%,100%{left:-100%}50%{left:100%}}
 /* Hover — solid gold, sweep durur */
@@ -637,23 +655,41 @@ body.ml-dark .form-control--select .form-control__text{
 /* Placeholder — "Lütfen seç" yazısı */
 body.ml-dark .form-control__placeholder{
   color:${TX2}!important;
+  opacity:1!important;
+  visibility:visible!important;
+  pointer-events:none!important;
 }
 body.ml-dark .form-control__placeholder-inner{
   color:${TX2}!important;
+  opacity:1!important;
 }
 /* Seçim yapılmışsa placeholder gizlenir, text gösterilir */
 body.ml-dark .form-control--select:not(.form-control--empty) .form-control__text{
   color:${TX1}!important;
 }
-/* Ok simgesi container */
+/* Ok simgesi container — z-index ile input'un üstüne çıkar */
 body.ml-dark .form-control__arrow{
   color:${GOLD}!important;
   display:flex!important;
   align-items:center!important;
+  opacity:1!important;
+  visibility:visible!important;
+  z-index:2!important;
+  pointer-events:none!important;
 }
 body.ml-dark .form-control__arrow svg{
   color:${GOLD}!important;
   fill:${GOLD}!important;
+  stroke:${GOLD}!important;
+  opacity:1!important;
+  width:auto!important;
+  height:auto!important;
+}
+body.ml-dark .form-control__arrow svg path,
+body.ml-dark .form-control__arrow svg polyline,
+body.ml-dark .form-control__arrow svg line{
+  fill:${GOLD}!important;
+  stroke:${GOLD}!important;
 }
 body.ml-dark input::placeholder,
 body.ml-dark textarea::placeholder{
@@ -1094,10 +1130,10 @@ body.ml-dark .ec-store [class*="icon-bar"] svg{
 }
 
 /* ── ÜRÜN DETAY — ek düzeltmeler ── */
-/* Stokta var badge genişleme düzeltme */
+/* Stokta var badge genişleme düzeltme — ek güvenlik */
 body.ml-dark .product-details .ec-label[class*="Stokta"],
 body.ml-dark .product-details__label-container{
-  display:inline-block!important;
+  display:inline-flex!important;
   width:auto!important;
   max-width:fit-content!important;
 }
