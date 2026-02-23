@@ -75,6 +75,7 @@ body.ml-dark .ml-dm-btn:hover{
   background:rgba(35,34,30,.75);
   border-color:rgba(175,140,62,.4);
   box-shadow:0 3px 16px rgba(175,140,62,.15);
+  color:${GOLD};
 }
 
 @media(max-width:768px){
@@ -661,7 +662,7 @@ body.ml-dark .cover-button *{
 body.ml-dark input:not([type="checkbox"]):not([type="radio"]),
 body.ml-dark textarea,
 body.ml-dark select{
-  background:${BG3}!important;
+  background:#353430!important;
   color:${TX1}!important;
   border-color:${BD}!important;
   color-scheme:dark!important;
@@ -849,6 +850,21 @@ body.ml-dark .ec-cart-option--key{
 body.ml-dark .ec-cart-option--value{
   color:${TX1}!important;
 }
+/* ── SEPET ÖZET TABLOSU (Ürünler, İndirim, Kargo, Toplam) ── */
+body.ml-dark .ec-cart-summary__row{
+  color:${TX2}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .ec-cart-summary__cell--price{
+  color:${TX2}!important;
+}
+body.ml-dark .ec-cart-summary__row--total{
+  color:${TX1}!important;
+  border-color:${BD2}!important;
+}
+body.ml-dark .ec-cart-summary__row--total .ec-cart-summary__cell--price{
+  color:${GOLD}!important;
+}
 body.ml-dark .ec-minicart__body{
   background:${BG2}!important;
   border-color:${BD2}!important;
@@ -983,87 +999,11 @@ body.ml-dark .form-control--checkbox-button,
 body.ml-dark .details-product-option .form-control{
   background:transparent!important;
 }
-/* ── NORMAL (seçili değil) ── */
-body.ml-dark .form-control--checkbox-button .form-control__inline-label{
-  background:${BG3}!important;
-  color:${TX1}!important;
-  border:none!important;
-  border-radius:10px!important;
-  transition:all .25s ease!important;
-  position:relative!important;
-  overflow:hidden!important;
-  box-shadow:inset 0 0 0 1px ${BD}!important;
-}
-body.ml-dark .form-control--checkbox-button .form-control__inline-label label{
-  background:transparent!important;
-  color:inherit!important;
-  transition:color .25s ease!important;
-}
-/* ── HOVER (seçili değil) — gold border glow + gold text ── */
-body.ml-dark .form-control--checkbox-button .form-control__radio:not(:checked)+.form-control__inline-label:hover{
-  background:${BG3}!important;
-  color:${GOLD}!important;
-  border-color:${GOLDDIM}!important;
-  box-shadow:0 0 0 1px rgba(175,140,62,.15),0 2px 8px rgba(175,140,62,.1)!important;
-  transform:translateY(-1px)!important;
-}
-body.ml-dark .form-control--checkbox-button .form-control__radio:not(:checked)+.form-control__inline-label:hover label{
-  color:${GOLD}!important;
-}
-/* ── SEÇİLİ — gold gradient + beyaz text ── */
-body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label{
-  background:linear-gradient(135deg,#af8c3e,#d4b05e)!important;
-  color:#fff!important;
-  border:none!important;
-  font-weight:700!important;
-  position:relative!important;
-  overflow:hidden!important;
-  box-shadow:0 2px 8px rgba(175,140,62,.25)!important;
-}
-body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label label,
-body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label *{
-  color:#fff!important;
-  background:transparent!important;
-}
-/* ── HOVER (seçili) — koyu gold, "kapat" sinyali ── */
-body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label:hover{
-  background:${GOLDDIM}!important;
-  border-color:${GOLDDIM}!important;
-  box-shadow:0 1px 4px rgba(0,0,0,.3)!important;
-  transform:translateY(0)!important;
-  opacity:.85!important;
-}
-body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label:hover label{
-  color:#fff!important;
-}
-/* ── SEÇİLİ SEÇENEK PARLAMA ANİMASYONU ── */
-@keyframes mlOptSweep{
-  0%{left:-100%}
-  100%{left:100%}
-}
-/* Light mode — seçili seçenek gold parlama */
-.form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label{
-  position:relative!important;
-  overflow:hidden!important;
-}
-.form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label::after{
-  content:'';
-  position:absolute;
-  top:0;left:-100%;
-  width:60%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(175,140,62,.18),transparent);
-  animation:mlOptSweep 2.5s ease-in-out infinite;
-  pointer-events:none;
-}
-/* Dark mode — beyaz sweep */
+/* ::after pseudo sweep kaldır — JS _injectSweep kullanıyoruz */
+.form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label::after,
 body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label::after{
-  content:''!important;
-  position:absolute!important;
-  top:0!important;left:-100%!important;
-  width:60%!important;height:100%!important;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent)!important;
-  animation:mlOptSweep 2.5s ease-in-out infinite!important;
-  pointer-events:none!important;
+  content:none!important;
+  display:none!important;
 }
 
 /* ── MİKTAR INPUT ── */
@@ -1175,7 +1115,7 @@ body.ml-dark .ec-cart-step__section{
 
 /* ── CHECKOUT FORM INPUT WRAPPER'LARI (adres, isim, telefon) ── */
 body.ml-dark .form-control--flexible{
-  background:${BG3}!important;
+  background:#353430!important;
   border-color:${BD}!important;
   border-radius:8px!important;
 }
@@ -1241,6 +1181,7 @@ body.ml-dark [class*="recently"]{
 body.ml-dark .product-details__related-products .grid-product__wrap,
 body.ml-dark [class*="related"] .grid-product__wrap,
 body.ml-dark [class*="recently"] .grid-product__wrap{
+  background:${BG2}!important;
   border-radius:14px!important;
   border:none!important;
   box-shadow:
@@ -1249,6 +1190,18 @@ body.ml-dark [class*="recently"] .grid-product__wrap{
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden!important;
+  transition:box-shadow .25s ease,transform .25s ease!important;
+}
+body.ml-dark .product-details__related-products .grid-product__wrap:hover,
+body.ml-dark [class*="related"] .grid-product__wrap:hover,
+body.ml-dark [class*="recently"] .grid-product__wrap:hover{
+  box-shadow:
+    inset 0 0 0 1px ${GOLDDIM},
+    0 0 0 2px ${BG1},
+    0 0 0 3px ${GOLDDIM},
+    0 4px 20px rgba(175,140,62,.15),
+    0 8px 32px rgba(0,0,0,.35)!important;
+  transform:translateY(-2px)!important;
 }
 /* Karosel scroller */
 body.ml-dark .product-details__related-products,
@@ -1762,6 +1715,12 @@ function cleanAll(){
   document.querySelectorAll('.ec-cart-item__picture').forEach(function(el){
     ['background-color','border-radius','overflow'].forEach(function(p){el.style.removeProperty(p);});
   });
+  // Checkout duyuru kutuları temizle
+  document.querySelectorAll('.ec-cart-step [style*="background"], .ec-cart [style*="background-color"]').forEach(function(el){
+    el.style.removeProperty('background-color');
+    el.style.removeProperty('color');
+    el.querySelectorAll('*').forEach(function(c){c.style.removeProperty('color');});
+  });
 }
 
 // ─── STOKTA YOK — INLINE STYLE TEMİZLİĞİ ───
@@ -1987,6 +1946,44 @@ function fixLabels(){
       el.style.setProperty('background-color','#e8e4da','important');
       el.style.setProperty('border-radius','8px','important');
       el.style.setProperty('overflow','hidden','important');
+    });
+    // ── CHECKOUT DUYURU KUTULARI — açık renkli inline bg'leri koyu yap ──
+    document.querySelectorAll('.ec-cart-step [style*="background"], .ec-cart-step [style*="background-color"]').forEach(function(el){
+      if(el.offsetHeight<20) return;
+      var cs=getComputedStyle(el);
+      var bg=cs.backgroundColor;
+      var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+      if(m && +m[1]>180 && +m[2]>180 && +m[3]>180){
+        // Açık renkli bg → koyu gold tint
+        el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
+        el.style.setProperty('color','#ece8df','important');
+        // Border rengini koru ama koyu versiyonuna çevir
+        var blc=cs.borderLeftColor;
+        var bm=blc.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+        if(bm && parseFloat(cs.borderLeftWidth)>=2){
+          el.style.setProperty('border-left-color',blc,'important');
+        }
+        // İçerideki tüm text elementleri
+        el.querySelectorAll('*').forEach(function(c){
+          var ccs=getComputedStyle(c);
+          var cc=ccs.color;
+          var cm=cc.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+          if(cm && +cm[1]<100 && +cm[2]<100 && +cm[3]<100){
+            c.style.setProperty('color','#ece8df','important');
+          }
+        });
+      }
+    });
+    // ── CHECKOUT DOĞRUDAN STYLE İLE RENKLENEN TÜM ELEMENTLER ──
+    document.querySelectorAll('.ec-cart [style*="background-color"]').forEach(function(el){
+      if(el.offsetHeight<15) return;
+      var cs=getComputedStyle(el);
+      var bg=cs.backgroundColor;
+      var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+      if(m && +m[1]>200 && +m[2]>200 && +m[3]>200){
+        el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
+        el.style.setProperty('color','#ece8df','important');
+      }
     });
   }
 }
