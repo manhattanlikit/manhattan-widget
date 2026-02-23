@@ -954,16 +954,42 @@ var LOGO_DARK='https://static.wixstatic.com/media/1ca398_eb2ce0b39e06419fa00da66
 var LOGO_LIGHT='';// aydınlık logo henüz belirlenmedi — boşsa swap yapma
 
 function swapLogo(){
-  var img=document.querySelector('.logo img, div.logo img');
+  var container=document.querySelector('.logo');
+  if(!container)return;
+  var img=container.querySelector('img');
   if(!img)return;
   var dark=document.body.classList.contains('ml-dark');
-  if(dark && LOGO_DARK){
-    if(!img.dataset.lightSrc) img.dataset.lightSrc=img.src;
-    img.src=LOGO_DARK;
-  }else if(!dark && img.dataset.lightSrc){
-    img.src=img.dataset.lightSrc;
+  // Orijinal src'yi sakla (ilk çalışmada)
+  if(!container.dataset.lightSrc){
+    container.dataset.lightSrc=img.src;
   }
+  var targetSrc=dark?LOGO_DARK:container.dataset.lightSrc;
+  if(!targetSrc)return;
+  // 1. Cache-bust
+  var bustSrc=targetSrc+(targetSrc.indexOf('?')>-1?'&':'?')+'v='+Date.now();
+  // 2. srcset temizle
+  img.removeAttribute('srcset');
+  img.removeAttribute('data-src');
+  img.removeAttribute('data-orig-src');
+  // 3. Parent bg temizle
+  container.style.setProperty('background-image','none','important');
+  container.style.setProperty('background','transparent','important');
+  // 4. src ata
+  img.src=bustSrc;
+  img.setAttribute('src',bustSrc);
 }
+// Logo observer — Ecwid src geri yazarsa tekrar swap
+var logoObs=new MutationObserver(function(muts){
+  muts.forEach(function(m){
+    if(m.type==='attributes'&&m.attributeName==='src'){
+      var img=m.target;
+      var dark=document.body.classList.contains('ml-dark');
+      if(dark&&img.src.indexOf('wixstatic')<0){
+        img.src=LOGO_DARK+'?v='+Date.now();
+      }
+    }
+  });
+});
 
 function toggle(){
   document.body.classList.add('ml-dm-t');
@@ -1021,7 +1047,10 @@ function init(){
   // Stokta Yok label'larını zorla + observer başlat
   fixStokYok();
   swapLogo();
+  // Observer'ları başlat
   stokObserver.observe(document.body,{childList:true,subtree:true});
+  var logoImg=document.querySelector('.logo img');
+  if(logoImg) logoObs.observe(logoImg,{attributes:true,attributeFilter:['src']});
 }
 
 // ─── STOKTA YOK LABEL ZORLAYICI ───
