@@ -287,12 +287,17 @@ body.ml-dark .grid-product__wrap:hover{
   transform:translateY(-2px)!important;
 }
 /* Kategori kartları */
+/* Kategori hücre — nefes alanı (ürün kartlarıyla aynı) */
+body.ml-dark .grid-categories .grid-category{
+  padding:4px!important;
+}
 body.ml-dark .grid-category__card,
 body.ml-dark [class*="grid-category__card"]{
   background:${BG2}!important;
   border-radius:14px!important;
   border:none!important;
   box-shadow:
+    inset 0 0 0 1px ${BD},
     0 0 0 2px ${BG1},
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
@@ -302,6 +307,7 @@ body.ml-dark [class*="grid-category__card"]{
 body.ml-dark .grid-category__card:hover,
 body.ml-dark [class*="grid-category__card"]:hover{
   box-shadow:
+    inset 0 0 0 1px ${GOLDDIM},
     0 0 0 2px ${BG1},
     0 0 0 3px ${GOLDDIM},
     0 4px 20px rgba(175,140,62,.15),
