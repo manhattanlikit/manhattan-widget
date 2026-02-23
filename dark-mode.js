@@ -949,6 +949,22 @@ btn.setAttribute('title','Karanlık / Aydınlık Mod');
 btn.innerHTML=moonIco;
 
 // ─── TOGGLE FONKSİYONU ───
+// ─── LOGO SWAP (dark/light) ───
+var LOGO_DARK='https://static.wixstatic.com/media/1ca398_eb2ce0b39e06419fa00da66903e58dc5~mv2.png';
+var LOGO_LIGHT='';// aydınlık logo henüz belirlenmedi — boşsa swap yapma
+
+function swapLogo(){
+  var img=document.querySelector('.logo img, div.logo img');
+  if(!img)return;
+  var dark=document.body.classList.contains('ml-dark');
+  if(dark && LOGO_DARK){
+    if(!img.dataset.lightSrc) img.dataset.lightSrc=img.src;
+    img.src=LOGO_DARK;
+  }else if(!dark && img.dataset.lightSrc){
+    img.src=img.dataset.lightSrc;
+  }
+}
+
 function toggle(){
   document.body.classList.add('ml-dm-t');
   document.body.classList.toggle('ml-dark');
@@ -957,6 +973,7 @@ function toggle(){
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
   setTimeout(function(){document.body.classList.remove('ml-dm-t');},350);
   setTimeout(fixStokYok,100);
+  setTimeout(swapLogo,50);
 }
 
 btn.addEventListener('click',function(e){
@@ -1003,6 +1020,7 @@ function init(){
   }catch(e){}
   // Stokta Yok label'larını zorla + observer başlat
   fixStokYok();
+  swapLogo();
   stokObserver.observe(document.body,{childList:true,subtree:true});
 }
 
