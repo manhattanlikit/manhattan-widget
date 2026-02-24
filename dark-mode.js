@@ -2399,9 +2399,8 @@ function fixLabels(){
         // Kabul kutusu = sarımsı → dikkat çekici gold tint
         if(+m[3]<245){
           el.style.setProperty('background-color','rgba(175,140,62,.15)','important');
-          el.style.setProperty('border','1px solid rgba(175,140,62,.3)','important');
+          el.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.3)','important');
           el.style.setProperty('border-radius','8px','important');
-          el.style.setProperty('padding','8px','important');
         } else {
           el.style.setProperty('background-color','rgba(175,140,62,.06)','important');
         }
