@@ -1126,7 +1126,17 @@ body.ml-dark [class*="store-footer"] svg{
 body.ml-dark .ec-footer__cell{
   text-align:center!important;
   flex:1!important;
-  padding:10px 8px!important;
+  padding:6px 2px!important;
+  font-size:11px!important;
+  line-height:1.2!important;
+  overflow:hidden!important;
+}
+body.ml-dark .ec-footer__cell a{
+  font-size:11px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  gap:2px!important;
 }
 body.ml-dark [class*="store-footer"] span{
   color:${TX2}!important;
@@ -1171,6 +1181,27 @@ body.ml-dark .ec-radiogroup__item{
 
 /* ── FİLTRE SIDEBAR (Cümle ile ara, Stok, Marka, Fiyat) ── */
 /* Aktif filtre tag/chip'leri */
+body.ml-dark .ec-pill,
+body.ml-dark .ec-pill--small{
+  background:${BG2}!important;
+  color:${TX1}!important;
+  border:1px solid ${BD}!important;
+  border-radius:16px!important;
+}
+body.ml-dark .ec-pill__text,
+body.ml-dark .ec-pill__text-inner{
+  color:${TX1}!important;
+}
+body.ml-dark .ec-pill__control,
+body.ml-dark .ec-pill__control-inner{
+  color:${TX2}!important;
+}
+body.ml-dark .ec-filters__applied,
+body.ml-dark .ec-filters__applied-body,
+body.ml-dark .ec-filters__applied-head{
+  background:transparent!important;
+  color:${TX1}!important;
+}
 body.ml-dark [class*="ec-filter"] [class*="tag"],
 body.ml-dark [class*="ec-filter"] [class*="chip"],
 body.ml-dark [class*="ec-filter"] [class*="pill"],
