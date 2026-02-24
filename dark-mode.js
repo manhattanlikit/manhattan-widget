@@ -1119,13 +1119,16 @@ body.ml-dark [class*="checkout"] [class*="step"] label{
   background:${BG2}!important;
   color:${TX1}!important;
   border-color:${BD}!important;
+  box-shadow:none!important;
 }
-/* Ecwid high specificity override — blue checked border */
+/* Ecwid high specificity override — blue box-shadow + border kill */
 body.ml-dark .ec-size .ec-store .ec-radiogroup label,
 body.ml-dark .ec-size .ec-store .ec-radiogroup__item label,
+body.ml-dark .ec-size .ec-store .ec-radiogroup__item,
 body.ml-dark .ec-size .ec-store .ec-radiogroup input:checked+label,
 body.ml-dark .ec-size .ec-store .ec-radiogroup input:checked~label{
   border-color:${BD}!important;
+  box-shadow:none!important;
 }
 body.ml-dark [class*="shipping"] [class*="radio"]:hover,
 body.ml-dark .ec-radiogroup label:hover{
@@ -1137,10 +1140,12 @@ body.ml-dark .ec-radiogroup input:checked+label,
 body.ml-dark .ec-size .ec-store .ec-radiogroup input:checked+label{
   border-color:${GOLD}!important;
   background:rgba(175,140,62,.08)!important;
+  box-shadow:0 0 0 1px ${GOLD}, 0 0 0 1px ${GOLD} inset!important;
 }
 /* Radiogroup item arası beyaz çizgi */
 body.ml-dark .ec-radiogroup__item{
   border-color:${BD2}!important;
+  box-shadow:none!important;
 }
 
 /* ── CHECKOUT — Ödeme bildirim + Kabul kutuları (renkli arka planlar) ── */
@@ -2141,10 +2146,22 @@ function fixLabels(){
     document.querySelectorAll('.ec-radiogroup label').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.12)','important');
     });
-    // Checked radio — blue border override
+    // Checked radio — blue box-shadow override
     document.querySelectorAll('.ec-radiogroup input:checked+label,.ec-radiogroup input:checked~label').forEach(function(el){
       el.style.setProperty('border-color','#af8c3e','important');
       el.style.setProperty('background','rgba(175,140,62,.08)','important');
+      el.style.setProperty('box-shadow','0 0 0 1px #af8c3e, 0 0 0 1px #af8c3e inset','important');
+    });
+    // Unchecked radio labels — kill box-shadow
+    document.querySelectorAll('.ec-radiogroup label').forEach(function(el){
+      var prev=el.previousElementSibling;
+      if(!prev||!prev.checked){
+        el.style.setProperty('box-shadow','none','important');
+      }
+    });
+    // Radiogroup items — kill box-shadow
+    document.querySelectorAll('.ec-radiogroup__item').forEach(function(el){
+      el.style.setProperty('box-shadow','none','important');
     });
     document.querySelectorAll('.ec-minicart').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
