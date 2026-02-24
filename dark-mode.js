@@ -1291,15 +1291,15 @@ body.ml-dark .ec-filter__items::after{
   background:${BD2}!important;
   opacity:.3!important;
 }
-/* Checkbox iç kare — koyu bg, gold border */
+/* Checkbox iç kare — unchecked gizle, checked tick göster */
 body.ml-dark .form-control__checkbox-view::after{
-  background:${BG3}!important;
-  border-color:${BD}!important;
+  background:transparent!important;
+  border-color:transparent!important;
 }
 body.ml-dark .form-control__checkbox:checked~.form-control__checkbox-view::after,
 body.ml-dark .form-control__checkbox:checked+.form-control__checkbox-view::after{
   background:#fff!important;
-  border-color:${GOLD}!important;
+  border-color:#fff!important;
 }
 /* Slider uç kapaklar */
 body.ml-dark .ec-range__track-line::before,
@@ -1309,6 +1309,14 @@ body.ml-dark .ec-range__track-line::after{
 /* Sepet sayaç mavi → gold */
 body.ml-dark .ec-minicart__counter::after{
   background:${GOLD}!important;
+}
+/* Radiogroup pseudo çizgiler */
+body.ml-dark .ec-radiogroup::before,
+body.ml-dark .ec-radiogroup::after,
+body.ml-dark .ml-rg-fix::before,
+body.ml-dark .ml-rg-fix::after{
+  background:${BD2}!important;
+  opacity:.2!important;
 }
 /* Checkout separator beyaz çizgi */
 body.ml-dark .ec-cart-next__header,
@@ -2373,8 +2381,35 @@ function fixLabels(){
       var bg=getComputedStyle(el).backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
       if(m && +m[1]>200 && +m[2]>200 && +m[3]>100){
-        el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
+        // Kabul kutusu = sarımsı → dikkat çekici gold tint
+        if(+m[3]<245){
+          el.style.setProperty('background-color','rgba(175,140,62,.15)','important');
+          el.style.setProperty('border','1px solid rgba(175,140,62,.3)','important');
+          el.style.setProperty('border-radius','8px','important');
+          el.style.setProperty('padding','8px','important');
+        } else {
+          el.style.setProperty('background-color','rgba(175,140,62,.06)','important');
+        }
         el.style.setProperty('color','#ece8df','important');
+      }
+    });
+    // Radiogroup pseudo çizgiler — border kill
+    document.querySelectorAll('.ec-radiogroup').forEach(function(rg){
+      var cs=getComputedStyle(rg,'::before');
+      if(cs.content!=='none'){
+        rg.classList.add('ml-rg-fix');
+      }
+      cs=getComputedStyle(rg,'::after');
+      if(cs.content!=='none'){
+        rg.classList.add('ml-rg-fix');
+      }
+    });
+    // Radio-view — force visible if hidden
+    document.querySelectorAll('.form-control__radio-view').forEach(function(rv){
+      if(rv.offsetWidth<5){
+        // Ecwid native radio kullanıyor — accent-color ile devam
+        var inp=rv.previousElementSibling||rv.parentElement.querySelector('.form-control__radio');
+        if(inp) inp.style.setProperty('accent-color','#af8c3e','important');
       }
     });
     // Range slider — blue → gold
