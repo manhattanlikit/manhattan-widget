@@ -675,7 +675,7 @@ body.ml-dark .cover-button *:not(.ml-sweep){
 body.ml-dark input:not([type="checkbox"]):not([type="radio"]),
 body.ml-dark textarea,
 body.ml-dark select{
-  background:#353430!important;
+  background:#3d3c36!important;
   color:${TX1}!important;
   border-color:${BD}!important;
   color-scheme:dark!important;
@@ -790,23 +790,11 @@ body.ml-dark .ec-radiogroup input[type="radio"],
 body.ml-dark .ec-radiogroup .form-control__radio,
 body.ml-dark .form-control__radio{
   accent-color:${GOLD}!important;
-  -webkit-appearance:none!important;
-  appearance:none!important;
-  width:20px!important;
-  height:20px!important;
-  border:2px solid ${BD}!important;
-  border-radius:50%!important;
-  background:${BG2}!important;
-  cursor:pointer!important;
-  position:relative!important;
-  flex-shrink:0!important;
 }
 body.ml-dark .ec-radiogroup input[type="radio"]:checked,
 body.ml-dark .ec-radiogroup .form-control__radio:checked,
 body.ml-dark .form-control__radio:checked{
-  border-color:${GOLD}!important;
-  background:${GOLD}!important;
-  box-shadow:inset 0 0 0 3px ${BG2}!important;
+  accent-color:${GOLD}!important;
 }
 /* Ecwid radio wrap — Bilgi bölümü */
 body.ml-dark .form-control__radio-wrap{
@@ -2269,13 +2257,12 @@ function fixLabels(){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
     });
     // Kabul ediyorum yellow bg — sadece cart/checkout scope
-    document.querySelectorAll('.ec-cart [style*="background-color"], .ec-cart-step [style*="background-color"], .ec-confirmation [style*="background-color"]').forEach(function(el){
-      if(el.offsetHeight<15) return;
-      var cs=getComputedStyle(el);
-      var bg=cs.backgroundColor;
+    document.querySelectorAll('.ec-cart [style*="background"], .ec-cart-step [style*="background"], .ec-confirmation [style*="background"]').forEach(function(el){
+      if(el.offsetHeight<10) return;
+      var bg=getComputedStyle(el).backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
-      if(m && +m[1]>240 && +m[2]>240 && +m[3]>200 && +m[3]<240){
-        // Yellow-ish bg (rgb 255,255,224 vb)
+      if(m && +m[1]>200 && +m[2]>200 && +m[3]>150){
+        // Any light bg in checkout → dark override
         el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
         el.style.setProperty('color','#ece8df','important');
       }
