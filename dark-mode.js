@@ -1858,13 +1858,14 @@ body.ml-dark .recently-viewed{
   border-radius:14px!important;
   border:none!important;
   margin:0 8px!important;
+  padding:0!important;
   box-shadow:
     inset 0 0 0 1px ${BD},
     0 0 0 2px ${BG1},
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
   overflow:hidden!important;
-  transition:box-shadow .25s ease,transform .25s ease!important;
+  transition:box-shadow .3s ease,transform .3s ease!important;
 }
 body.ml-dark .recently-viewed:hover{
   box-shadow:
@@ -1881,27 +1882,44 @@ body.ml-dark .recently-viewed:hover{
 body.ml-dark .recently-viewed__url{
   color:inherit!important;
   text-decoration:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  height:100%!important;
 }
-/* Thumbnail — grid-product__image ile aynı */
+/* Thumbnail — sabit oran, beyaz bg (ürün fotoğrafları beyaz arka planlı) */
 body.ml-dark .recently-viewed__thumb{
-  background:${IMG_BG}!important;
+  background:#fff!important;
   border:none!important;
-  border-radius:12px 12px 0 0!important;
+  border-radius:0!important;
+  overflow:hidden!important;
+  height:200px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
 }
 body.ml-dark .recently-viewed__thumb img{
-  border-radius:12px!important;
+  border-radius:0!important;
   background:transparent!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
 }
-/* Ürün adı — grid-product__title ile aynı */
+/* Ürün adı */
 body.ml-dark .recently-viewed__name{
   color:${TX1}!important;
   text-align:center!important;
+  font-size:14px!important;
+  padding:10px 8px 4px!important;
+  line-height:1.3!important;
 }
-/* Fiyat — grid-product__price ile aynı */
+/* Fiyat */
 body.ml-dark .recently-viewed__price,
 body.ml-dark .recently-viewed__price .ec-price-item{
   color:${GOLD}!important;
   text-align:center!important;
+  font-size:16px!important;
+  font-weight:600!important;
+  padding:4px 8px 12px!important;
 }
 body.ml-dark .recently-viewed__price .ec-price-item--old{
   color:${TX3}!important;
@@ -2564,17 +2582,18 @@ function cleanAll(){
     });
   });
   document.querySelectorAll('.recently-viewed[class*="recently-viewed--"]').forEach(function(card){
-    ['background','border','border-radius','overflow','box-shadow','transform','margin'].forEach(function(p){card.style.removeProperty(p);});
+    ['background','border','border-radius','overflow','box-shadow','transform','margin','padding'].forEach(function(p){card.style.removeProperty(p);});
     var name=card.querySelector('.recently-viewed__name');
-    if(name) name.style.removeProperty('color');
+    if(name){['color','text-align','font-size','padding','line-height'].forEach(function(p){name.style.removeProperty(p);});}
     card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item,.recently-viewed__price .ec-price-item--old').forEach(function(p){
-      p.style.removeProperty('color');
+      ['color','text-align','font-size','font-weight','padding'].forEach(function(pp){p.style.removeProperty(pp);});
     });
     var thumb=card.querySelector('.recently-viewed__thumb');
-    if(thumb){thumb.style.removeProperty('background');thumb.style.removeProperty('border');}
-    // text-align temizle
-    var nm=card.querySelector('.recently-viewed__name');
-    if(nm) nm.style.removeProperty('text-align');
+    if(thumb){
+      ['background','border','border-radius','overflow','height','display','align-items','justify-content'].forEach(function(p){thumb.style.removeProperty(p);});
+      var img=thumb.querySelector('img');
+      if(img){['border-radius','width','height','object-fit'].forEach(function(p){img.style.removeProperty(p);});}
+    }
     card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item').forEach(function(p){
       p.style.removeProperty('text-align');
     });
@@ -3214,33 +3233,53 @@ function fixLabels(){
     document.querySelectorAll('.recently-viewed-title').forEach(function(el){
       el.style.setProperty('color','#ece8df','important');
     });
-    // Kart container — grid-product__wrap ile aynı
+    // Kart container
     document.querySelectorAll('.recently-viewed[class*="recently-viewed--"]').forEach(function(card){
       card.style.setProperty('background','#23221e','important');
       card.style.setProperty('border','none','important');
       card.style.setProperty('border-radius','14px','important');
       card.style.setProperty('overflow','hidden','important');
-      card.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12), 0 0 0 2px #1b1a17, 0 0 0 3px rgba(175,140,62,.06), 0 2px 12px rgba(0,0,0,.3)','important');
+      card.style.setProperty('padding','0','important');
       card.style.setProperty('margin','0 8px','important');
-      // Ürün adı — centered
+      card.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12), 0 0 0 2px #1b1a17, 0 0 0 3px rgba(175,140,62,.06), 0 2px 12px rgba(0,0,0,.3)','important');
+      // Ürün adı
       var name=card.querySelector('.recently-viewed__name');
       if(name){
         name.style.setProperty('color','#ece8df','important');
         name.style.setProperty('text-align','center','important');
+        name.style.setProperty('font-size','14px','important');
+        name.style.setProperty('padding','10px 8px 4px','important');
+        name.style.setProperty('line-height','1.3','important');
       }
-      // Fiyat — centered + gold
+      // Fiyat
       card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item').forEach(function(p){
         p.style.setProperty('color','#d4b05e','important');
         p.style.setProperty('text-align','center','important');
+        p.style.setProperty('font-size','16px','important');
+        p.style.setProperty('font-weight','600','important');
+        p.style.setProperty('padding','4px 8px 12px','important');
       });
       card.querySelectorAll('.recently-viewed__price .ec-price-item--old').forEach(function(p){
         p.style.setProperty('color','#706c62','important');
       });
-      // Thumbnail — sadece bg + border, img'e DOKUNMA
+      // Thumbnail — beyaz bg, sabit yükseklik, contain
       var thumb=card.querySelector('.recently-viewed__thumb');
       if(thumb){
-        thumb.style.setProperty('background','#2c2b26','important');
+        thumb.style.setProperty('background','#fff','important');
         thumb.style.setProperty('border','none','important');
+        thumb.style.setProperty('border-radius','0','important');
+        thumb.style.setProperty('overflow','hidden','important');
+        thumb.style.setProperty('height','200px','important');
+        thumb.style.setProperty('display','flex','important');
+        thumb.style.setProperty('align-items','center','important');
+        thumb.style.setProperty('justify-content','center','important');
+        var img=thumb.querySelector('img');
+        if(img){
+          img.style.setProperty('border-radius','0','important');
+          img.style.setProperty('width','100%','important');
+          img.style.setProperty('height','100%','important');
+          img.style.setProperty('object-fit','contain','important');
+        }
       }
       // Hover
       if(!card._mlRVHover){
