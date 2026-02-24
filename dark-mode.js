@@ -1012,6 +1012,25 @@ body.ml-dark .form-control--checkbox-button,
 body.ml-dark .details-product-option .form-control{
   background:transparent!important;
 }
+/* ══ ECWID İÇ LABEL BORDER KILL ══ */
+/* Ecwid .ec-size .ec-store ile 5-class specificity kullanıyor */
+/* Aynı prefix + body.ml-dark ile eziyoruz (6-class) */
+body.ml-dark .ec-size .ec-store .form-control--checkbox-button .form-control__inline-label label,
+body.ml-dark .ec-size .ec-store .form-control--checkbox-button .form-control__inline-label label:hover,
+body.ml-dark .ec-size .ec-store .form-control--checkbox-button .form-control__inline-label label:active,
+body.ml-dark .ec-size .ec-store .form-control--checkbox-button .form-control__inline-label label:focus,
+body.ml-dark .ec-size .ec-store .form-control--checkbox-button .form-control__radio:checked~.form-control__inline-label label,
+body.ml-dark .ec-size .ec-store .form-control--checkbox-button .form-control__radio:checked~.form-control__inline-label label:hover,
+body.ml-dark .ec-size .ec-store .form-control--checkbox-button .form-control__radio:checked~.form-control__inline-label label:active,
+body.ml-dark .form-control--checkbox-button .form-control__inline-label label,
+body.ml-dark .form-control--checkbox-button .form-control__inline-label label:hover,
+body.ml-dark .form-control--checkbox-button .form-control__inline-label label:active{
+  border:none!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+  outline:none!important;
+  background:transparent!important;
+}
 /* ::after pseudo sweep kaldır — JS _injectSweep kullanıyoruz */
 .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label::after,
 body.ml-dark .form-control--checkbox-button .form-control__radio:checked+.form-control__inline-label::after{
@@ -1630,6 +1649,8 @@ function toggle(){
     // Observer'ı tekrar başlat
     _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
   },400);
+  // Ecwid geç render için 2. pas
+  setTimeout(fixAll,1200);
 }
 
 btn.addEventListener('click',function(e){
@@ -1721,7 +1742,7 @@ function cleanAll(){
   document.querySelectorAll('.form-control--checkbox-button .form-control__inline-label').forEach(function(el){
     ['background','color','border-color','border','font-weight','border-radius','transition','opacity','transform','box-shadow','cursor','position','overflow'].forEach(function(p){el.style.removeProperty(p);});
     var il=el.querySelector('label');
-    if(il){il.style.removeProperty('color');il.style.removeProperty('background');}
+    if(il){il.style.removeProperty('color');il.style.removeProperty('background');il.style.removeProperty('border');}
   });
   // Sepete Ekle wrapper + TÜM primary wrapper temizle
   // Tüm primary wrapper temizle
@@ -1887,7 +1908,7 @@ function fixSweep(){
       lbl.style.setProperty('box-shadow','0 0 0 1.5px #af8c3e, 0 2px 8px rgba(175,140,62,.25)','important');
       lbl.style.setProperty('position','relative','important');
       lbl.style.setProperty('overflow','hidden','important');
-      if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');}
+      if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');innerLbl.style.setProperty('border','none','important');}
       _injectSweep(lbl);
     }else{
       // ── SEÇİLİ DEĞİL — koyu, sweep kaldır ──
@@ -1896,7 +1917,7 @@ function fixSweep(){
       lbl.style.setProperty('color','#ece8df','important');
       lbl.style.setProperty('font-weight','600','important');
       lbl.style.setProperty('box-shadow','0 0 0 1px rgba(175,140,62,.15)','important');
-      if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
+      if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');innerLbl.style.setProperty('border','none','important');}
     }
 
     // Hover — sadece 1 kere
@@ -1919,7 +1940,7 @@ function fixSweep(){
           lbl.style.setProperty('transform','translateY(-1px)','important');
           lbl.style.setProperty('position','relative','important');
           lbl.style.setProperty('overflow','hidden','important');
-          if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');}
+          if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');innerLbl.style.setProperty('border','none','important');}
           _injectSweep(lbl);
         }
       });
@@ -1931,7 +1952,7 @@ function fixSweep(){
           lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
           lbl.style.setProperty('color','#fff','important');
           lbl.style.setProperty('box-shadow','0 0 0 1.5px #af8c3e, 0 2px 8px rgba(175,140,62,.25)','important');
-          if(innerLbl) innerLbl.style.setProperty('color','#fff','important');
+          if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('border','none','important');}
           var sw=lbl.querySelector('.ml-sweep');if(sw)sw.style.animationPlayState='running';
         }else{
           // Seçili değil leave — sweep kaldır, koyu'ya dön
@@ -1940,7 +1961,7 @@ function fixSweep(){
           lbl.style.setProperty('color','#ece8df','important');
           lbl.style.setProperty('font-weight','600','important');
           lbl.style.setProperty('box-shadow','0 0 0 1px rgba(175,140,62,.15)','important');
-          if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
+          if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');innerLbl.style.setProperty('border','none','important');}
         }
       });
     }
