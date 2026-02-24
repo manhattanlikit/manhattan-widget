@@ -1833,49 +1833,6 @@ body.ml-dark [class*="recently"] > div:last-child{
   border-top:none!important;
   background:transparent!important;
 }
-/* ── HOVER FIX — metin alanı picture-additional üstünde kalsın ── */
-body.ml-dark .grid-product__wrap-inner{
-  position:relative!important;
-  z-index:2!important;
-}
-body.ml-dark .grid-product__image-wrap{
-  position:relative!important;
-  z-index:1!important;
-  overflow:hidden!important;
-}
-/* Related/recently hover'da metin kesinlikle görünsün */
-body.ml-dark [class*="recently"] .grid-product__wrap:hover .grid-product__title,
-body.ml-dark [class*="recently"] .grid-product__wrap:hover .grid-product__title-inner,
-body.ml-dark .ec-related-products .grid-product__wrap:hover .grid-product__title,
-body.ml-dark .ec-related-products .grid-product__wrap:hover .grid-product__title-inner,
-body.ml-dark .product-details__related-products .grid-product__wrap:hover .grid-product__title,
-body.ml-dark .product-details__related-products .grid-product__wrap:hover .grid-product__title-inner,
-body.ml-dark [class*="related"] .grid-product__wrap:hover .grid-product__title,
-body.ml-dark [class*="related"] .grid-product__wrap:hover .grid-product__title-inner{
-  color:${TX1}!important;
-  opacity:1!important;
-  visibility:visible!important;
-}
-body.ml-dark [class*="recently"] .grid-product__wrap:hover .grid-product__subtitle,
-body.ml-dark .ec-related-products .grid-product__wrap:hover .grid-product__subtitle,
-body.ml-dark .product-details__related-products .grid-product__wrap:hover .grid-product__subtitle,
-body.ml-dark [class*="related"] .grid-product__wrap:hover .grid-product__subtitle{
-  color:${TX2}!important;
-  opacity:1!important;
-  visibility:visible!important;
-}
-body.ml-dark [class*="recently"] .grid-product__wrap:hover .grid-product__price,
-body.ml-dark [class*="recently"] .grid-product__wrap:hover .grid-product__price-value,
-body.ml-dark .ec-related-products .grid-product__wrap:hover .grid-product__price,
-body.ml-dark .ec-related-products .grid-product__wrap:hover .grid-product__price-value,
-body.ml-dark .product-details__related-products .grid-product__wrap:hover .grid-product__price,
-body.ml-dark .product-details__related-products .grid-product__wrap:hover .grid-product__price-value,
-body.ml-dark [class*="related"] .grid-product__wrap:hover .grid-product__price,
-body.ml-dark [class*="related"] .grid-product__wrap:hover .grid-product__price-value{
-  color:${GOLD}!important;
-  opacity:1!important;
-  visibility:visible!important;
-}
 /* ══ SON GÖRÜNTÜLENENLER — Gerçek DOM: .recently-viewed class ailesi ══ */
 /* Section title */
 body.ml-dark .recently-viewed-title{
