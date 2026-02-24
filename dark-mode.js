@@ -58,10 +58,10 @@ body.ml-dm-t input,body.ml-dm-t textarea,body.ml-dm-t select{
 .ml-dm-btn{
   z-index:999999;
   width:40px;height:40px;border-radius:10px;
-  border:1px solid rgba(175,140,62,.35);
+  border:1.5px solid rgba(175,140,62,.55);
   background:transparent;
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  color:rgba(175,140,62,.7);
+  color:#af8c3e;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
   box-shadow:none;
@@ -71,8 +71,8 @@ body.ml-dm-t input,body.ml-dm-t textarea,body.ml-dm-t select{
   overflow:hidden;
 }
 .ml-dm-btn:hover{
-  background:rgba(175,140,62,.08);
-  border-color:rgba(175,140,62,.5);
+  background:rgba(175,140,62,.1);
+  border-color:#af8c3e;
   color:#af8c3e;
 }
 .ml-dm-btn svg{width:18px;height:18px;transition:color .25s ease}
@@ -1838,9 +1838,10 @@ body.ml-dark .grid-product__wrap-inner{
   position:relative!important;
   z-index:2!important;
 }
-body.ml-dark .grid-product__image{
+body.ml-dark .grid-product__image-wrap{
   position:relative!important;
   z-index:1!important;
+  overflow:hidden!important;
 }
 /* Related/recently hover'da metin kesinlikle görünsün */
 body.ml-dark [class*="recently"] .grid-product__wrap:hover .grid-product__title,
@@ -1879,6 +1880,7 @@ body.ml-dark [class*="related"] .grid-product__wrap:hover .grid-product__price-v
 /* Section title */
 body.ml-dark .recently-viewed-title{
   color:${TX1}!important;
+  font-weight:700!important;
 }
 /* Kart container */
 body.ml-dark .recently-viewed{
@@ -1909,27 +1911,38 @@ body.ml-dark .recently-viewed__url{
   color:inherit!important;
   text-decoration:none!important;
 }
-/* Thumbnail */
+/* Thumbnail — görsel alanı doldursun */
 body.ml-dark .recently-viewed__thumb{
   background:${IMG_BG}!important;
   border:none!important;
   border-radius:12px 12px 0 0!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
 }
 body.ml-dark .recently-viewed__thumb img{
-  border-radius:12px 12px 0 0!important;
+  border-radius:0!important;
   background:transparent!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
 }
 /* Ürün adı */
 body.ml-dark .recently-viewed__name{
   color:${TX1}!important;
+  padding:8px 10px 4px!important;
 }
 /* Fiyat */
 body.ml-dark .recently-viewed__price,
 body.ml-dark .recently-viewed__price .ec-price-item{
   color:${GOLD}!important;
+  padding:0 10px 10px!important;
+  font-weight:700!important;
 }
 body.ml-dark .recently-viewed__price .ec-price-item--old{
   color:${TX3}!important;
+  font-weight:400!important;
 }
 
 /* Karosel/scrollbar temizliği */
@@ -2596,7 +2609,10 @@ function cleanAll(){
       p.style.removeProperty('color');
     });
     var thumb=card.querySelector('.recently-viewed__thumb');
-    if(thumb){thumb.style.removeProperty('background');thumb.style.removeProperty('border');}
+    if(thumb){thumb.style.removeProperty('background');thumb.style.removeProperty('border');thumb.style.removeProperty('overflow');thumb.style.removeProperty('border-radius');
+      var timg=thumb.querySelector('img');
+      if(timg){timg.style.removeProperty('width');timg.style.removeProperty('height');timg.style.removeProperty('object-fit');}
+    }
   });
   // Statik sayfa inline stil temizle
   document.querySelectorAll('.ec-page-body, [class*="ec-page"], [class*="page-body"], [class*="store-page"]').forEach(function(pg){
@@ -3255,6 +3271,14 @@ function fixLabels(){
       if(thumb){
         thumb.style.setProperty('background','#2c2b26','important');
         thumb.style.setProperty('border','none','important');
+        thumb.style.setProperty('overflow','hidden','important');
+        thumb.style.setProperty('border-radius','12px 12px 0 0','important');
+        var timg=thumb.querySelector('img');
+        if(timg){
+          timg.style.setProperty('width','100%','important');
+          timg.style.setProperty('height','100%','important');
+          timg.style.setProperty('object-fit','contain','important');
+        }
       }
       // Hover
       if(!card._mlRVHover){
