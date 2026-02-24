@@ -31,7 +31,7 @@ var css=`
 /* ── GEÇİŞ ANİMASYONU — opacity fade (parçalı geçiş yok) ── */
 body.ml-dm-fade{
   opacity:0!important;
-  transition:opacity .15s ease!important;
+  transition:opacity .08s ease!important;
 }
 
 /* ── TOGGLE BUTON ── */
@@ -2385,14 +2385,14 @@ function toggle(){
       if(!dark){
         setTimeout(function(){
           document.documentElement.style.setProperty('background','','important');
-        },170);
+        },100);
       }
       // Observer'ı tekrar başlat
       _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
     });
     // Ecwid geç render için 2. pas
     setTimeout(fixAll,1000);
-  },170); // fade out süresi + buffer
+  },100); // fade out süresi + buffer
 }
 
 btn.addEventListener('click',function(e){
