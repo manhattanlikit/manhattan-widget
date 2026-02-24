@@ -1628,19 +1628,8 @@ function toggle(){
   var dark=document.body.classList.contains('ml-dark');
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
-  // Cover button — HEMEN uygula (400ms beklemeye gerek yok)
-  document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
-    if(dark){
-      el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
-      el.style.setProperty('color','#fff','important');
-      el.style.setProperty('border','none','important');
-      el.style.setProperty('border-radius','12px','important');
-      el.querySelectorAll('*').forEach(function(c){if(!c.classList.contains('ml-sweep')){c.style.setProperty('color','#fff','important');}});
-    }else{
-      ['background','background-color','color','border','border-radius','font-weight','position','overflow','transform','box-shadow'].forEach(function(p){el.style.removeProperty(p);});
-      el.querySelectorAll('*').forEach(function(c){c.style.removeProperty('color');c.style.removeProperty('background');});
-    }
-  });
+  // CSS body.ml-dark kuralları otomatik devreye girer/çıkar
+  // JS inline stil KOYMA — Ecwid'in doğal akışını bozar
   // Transition bittikten SONRA fixAll + observer tekrar aç
   setTimeout(function(){
     fixAll();
@@ -1876,17 +1865,9 @@ function fixSweep(){
   });
 
   // ═══ 2) COVER BUTONLAR (Anasayfa CTA — "Alışverişe Devam Et") ═══
+  // CSS body.ml-dark .cover__button kuralları yeterli — sadece sweep inject
   document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
-    // Gradient uygula — Sepete Ekle birebir
-    el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
-    el.style.setProperty('color','#fff','important');
-    el.style.setProperty('border','none','important');
-    el.style.setProperty('border-radius','12px','important');
-    el.style.setProperty('font-weight','700','important');
     _injectSweep(el);
-    _bindHover(el,el);
-    // Child text'ler de beyaz — sweep hariç!
-    el.querySelectorAll('*').forEach(function(c){if(c.classList.contains('ml-sweep'))return;c.style.setProperty('color','#fff','important');c.style.setProperty('background','transparent','important');});
   });
 
   // ═══ 3) OPSİYON BUTONLARI (Boyut, Sertlik) ═══
