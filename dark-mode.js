@@ -2393,7 +2393,7 @@ function toggle(){
     fixAll();
     document.body.classList.remove('ml-dm-t');
     // Observer'ı tekrar başlat
-    _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+    _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
   },400);
   // Ecwid geç render için 2. pas
   setTimeout(fixAll,1200);
@@ -2447,7 +2447,7 @@ function init(){
   setTimeout(fixAll,1000); // Ecwid geç yükleme için
   setTimeout(fixAll,3000); // Ürün sayfası geç render için
   // Observer'ı başlat
-  _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']});
+  _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2463,7 +2463,13 @@ function fixAll(){
   clearTimeout(_fixTimer);
   if(_fixRAF) cancelAnimationFrame(_fixRAF);
   _fixTimer=setTimeout(function(){
-    _fixRAF=requestAnimationFrame(_fixAllNow);
+    _fixRAF=requestAnimationFrame(function(){
+      // Observer'ı kapat — fixAll'ın yazdığı style'lar tekrar tetiklemesin
+      _observer.disconnect();
+      _fixAllNow();
+      // Observer'ı geri aç
+      _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+    });
   },80);
 }
 function _fixAllNow(){
