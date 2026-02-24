@@ -130,13 +130,22 @@ body.ml-dark .body{
 /* ── SİTE SECTION BLOKLARI ── */
 body.ml-dark .menu,
 body.ml-dark .container,
-body.ml-dark .caption,
 body.ml-dark .whyus,
 body.ml-dark .contacts,
 body.ml-dark .owner,
 body.ml-dark .store,
 body.ml-dark .dynamic-product-browser{
   background:${BG1}!important;
+  color:${TX1}!important;
+  overflow:visible!important;
+}
+/* ── HERO GRADIENT — Amber Sunset (Orta) ── */
+body.ml-dark .caption{
+  background:linear-gradient(180deg,
+    rgba(139,90,30,.22) 0%,
+    rgba(175,140,62,.10) 30%,
+    ${BG1} 60%,
+    ${BG1} 100%)!important;
   color:${TX1}!important;
   overflow:visible!important;
 }
@@ -318,6 +327,11 @@ body.ml-dark [class*="tile-"]{
 body.ml-dark .tile [class*="cover"],
 body.ml-dark [class*="tile-"] [class*="cover"]{
   background:${BG1}!important;
+}
+/* Caption cover: gradient alttan görünsün */
+body.ml-dark .caption [class*="cover"],
+body.ml-dark .caption[class*="tile"] [class*="cover"]{
+  background:transparent!important;
 }
 
 /* Farklı arka plan tonları olan section'lar */
@@ -2553,6 +2567,9 @@ function cleanAll(){
   // Caption gradient temizle
   document.querySelectorAll('.caption').forEach(function(el){
     el.style.removeProperty('background');
+    el.querySelectorAll('[class*="cover"]').forEach(function(cv){
+      cv.style.removeProperty('background');
+    });
   });
   // Hakkında bölümü inline stil temizle
   document.querySelectorAll('.tile-about,.owner,.whyus,.contacts').forEach(function(sec){
@@ -3186,7 +3203,11 @@ function fixLabels(){
 
     // ── HERO/KAPAK GRADIENT ENFORCEMENTİ — Amber Sunset (sadece .caption) ──
     document.querySelectorAll('.caption').forEach(function(el){
-      el.style.setProperty('background','linear-gradient(180deg, rgba(139,90,30,.12) 0%, rgba(175,140,62,.06) 25%, #1b1a17 55%, #1b1a17 100%)','important');
+      el.style.setProperty('background','linear-gradient(180deg, rgba(139,90,30,.22) 0%, rgba(175,140,62,.10) 30%, #1b1a17 60%, #1b1a17 100%)','important');
+      // Cover overlay'ı transparent yap — gradient görünsün
+      el.querySelectorAll('[class*="cover"]').forEach(function(cv){
+        cv.style.setProperty('background','transparent','important');
+      });
     });
 
     // ── HAKKINDA / ABOUT BÖLÜMÜ ENFORCEMENTİ ──
