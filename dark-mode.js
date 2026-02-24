@@ -106,6 +106,15 @@ html:has(body.ml-dark){
   background:${BG1}!important;
   color:${TX1}!important;
 }
+/* Text selection + cursor */
+body.ml-dark ::selection{
+  background:rgba(175,140,62,.35)!important;
+  color:${TX1}!important;
+}
+body.ml-dark input,
+body.ml-dark textarea{
+  caret-color:${GOLD}!important;
+}
 
 /* ── TILES WRAPPER (Instant Site ana container) ── */
 body.ml-dark .tiles-wrapper,
@@ -1232,6 +1241,26 @@ body.ml-dark .ec-range__track-inner,
 body.ml-dark .ec-range__track-line{
   background:${BD}!important;
 }
+/* ── PSEUDO-ELEMENT FIXLERİ ── */
+/* Filtre separator çizgi */
+body.ml-dark .ec-filter__items::after{
+  background:${BD2}!important;
+  opacity:.3!important;
+}
+/* Checkbox beyaz kare + mavi border */
+body.ml-dark .form-control__checkbox-view::after{
+  background:transparent!important;
+  border-color:transparent!important;
+}
+/* Slider uç kapaklar */
+body.ml-dark .ec-range__track-line::before,
+body.ml-dark .ec-range__track-line::after{
+  background:${BD}!important;
+}
+/* Sepet sayaç mavi → gold */
+body.ml-dark .ec-minicart__counter::after{
+  background:${GOLD}!important;
+}
 /* Checkout separator beyaz çizgi */
 body.ml-dark .ec-cart-next__header,
 body.ml-dark [class*="ec-cart-next"]{
@@ -1245,14 +1274,17 @@ body.ml-dark .ec-cart [style*="background-color: rgb(255, 255, 224)"],
 body.ml-dark .ec-cart [style*="background-color: rgb(255, 255, 240)"],
 body.ml-dark .ec-cart-step [style*="background-color: rgb(255, 255, 224)"],
 body.ml-dark .ec-cart-step [style*="background-color: rgb(255, 255, 240)"],
-body.ml-dark [style*="background-color: rgb(245, 212"],
-body.ml-dark [style*="background-color: rgb(247, 205"],
-body.ml-dark [style*="background: rgb(255"],
-body.ml-dark [style*="background-color: rgb(255"],
-body.ml-dark [style*="background-color: lightyellow"],
-body.ml-dark [style*="background-color: rgb(253"],
-body.ml-dark [style*="background-color: rgb(250"],
-body.ml-dark [style*="background-color: rgb(248"]{
+body.ml-dark .ec-cart [style*="background-color: rgb(245, 212"],
+body.ml-dark .ec-cart [style*="background-color: rgb(247, 205"],
+body.ml-dark .ec-cart [style*="background: rgb(255"],
+body.ml-dark .ec-cart [style*="background-color: rgb(255"],
+body.ml-dark .ec-cart-step [style*="background-color: rgb(255"],
+body.ml-dark .ec-cart-step [style*="background-color: rgb(253"],
+body.ml-dark .ec-cart-step [style*="background-color: rgb(250"],
+body.ml-dark .ec-cart-step [style*="background-color: rgb(248"],
+body.ml-dark .ec-confirmation [style*="background-color: rgb(255"],
+body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 224)"],
+body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 240)"]{
   background-color:rgba(175,140,62,.1)!important;
   color:${TX1}!important;
   border-color:${BD}!important;
