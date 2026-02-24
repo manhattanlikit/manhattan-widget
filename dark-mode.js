@@ -6,6 +6,18 @@
 (function(){
 'use strict';
 
+// ─── ANTI-FOUC: Script çalıştığı anda dark modu uygula (First Paint'ten ÖNCE) ───
+try{
+  if(localStorage.getItem('ml-dark')==='1'){
+    document.documentElement.classList.add('ml-dark');
+    document.documentElement.style.setProperty('background','#1b1a17','important');
+    if(document.body){
+      document.body.classList.add('ml-dark');
+      document.body.style.setProperty('background','#1b1a17','important');
+    }
+  }
+}catch(e){}
+
 // ─── RENK PALETİ ───
 // Sıcak koyu tonlar — saf siyah değil, hafif kahve/altın alt ton
 var BG1='#1b1a17';      // ana arka plan (sıcak kömür)
@@ -51,7 +63,7 @@ body.ml-dm-t .cover__button,
 body.ml-dm-t .cover-button,
 body.ml-dm-t .form-control__button,
 body.ml-dm-t input,body.ml-dm-t textarea,body.ml-dm-t select{
-  transition:background-color .35s ease,color .35s ease,border-color .35s ease!important;
+  transition:background-color .2s ease,color .2s ease,border-color .2s ease!important;
 }
 
 /* ── TOGGLE BUTON ── */
@@ -107,6 +119,7 @@ body.ml-dark .ml-dm-btn:hover{
 
 /* ── BODY & GENEL ── */
 body.ml-dark,
+html.ml-dark,
 html:has(body.ml-dark){
   background:${BG1}!important;
   color:${TX1}!important;
@@ -1864,8 +1877,8 @@ body.ml-dark .recently-viewed{
     0 0 0 2px ${BG1},
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
-  overflow:hidden!important;
-  transition:box-shadow .25s ease,transform .25s ease!important;
+  overflow:visible!important;
+  transition:box-shadow .3s ease,transform .3s ease!important;
 }
 body.ml-dark .recently-viewed:hover{
   box-shadow:
@@ -1882,29 +1895,44 @@ body.ml-dark .recently-viewed:hover{
 body.ml-dark .recently-viewed__url{
   color:inherit!important;
   text-decoration:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  height:100%!important;
 }
-/* Thumbnail — grid-product__image ile birebir aynı */
+/* Thumbnail — beyaz bg, sabit yükseklik, contain */
 body.ml-dark .recently-viewed__thumb{
-  background:${IMG_BG}!important;
+  background:#fff!important;
   border:none!important;
-  border-radius:12px 12px 0 0!important;
+  border-radius:14px 14px 0 0!important;
   overflow:hidden!important;
+  height:150px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
 }
 body.ml-dark .recently-viewed__thumb img{
+  border-radius:0!important;
   background:transparent!important;
+  width:100%!important;
+  height:100%!important;
+  object-fit:contain!important;
 }
-/* Ürün adı — grid-product__title ile aynı */
+/* Ürün adı */
 body.ml-dark .recently-viewed__name{
   color:${TX1}!important;
   text-align:center!important;
+  font-size:14px!important;
   padding:10px 8px 4px!important;
   line-height:1.3!important;
 }
-/* Fiyat — grid-product__price ile aynı */
+/* Fiyat */
 body.ml-dark .recently-viewed__price,
 body.ml-dark .recently-viewed__price .ec-price-item{
   color:${GOLD}!important;
   text-align:center!important;
+  font-size:16px!important;
+  font-weight:600!important;
+  padding:4px 8px 12px!important;
 }
 body.ml-dark .recently-viewed__price .ec-price-item--old{
   color:${TX3}!important;
@@ -2364,6 +2392,12 @@ function toggle(){
   document.body.classList.add('ml-dm-t');
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
+  // html elementini de senkronize tut (anti-FOUC ile uyumlu)
+  if(dark){
+    document.documentElement.classList.add('ml-dark');
+  }else{
+    document.documentElement.classList.remove('ml-dark');
+  }
   document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
@@ -2373,15 +2407,15 @@ function toggle(){
   if(!dark){
     document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
   }
-  // Transition bittikten SONRA fixAll + observer tekrar aç
+  // Transition bittikten SONRA fixAll + observer tekrar aç (.2s + buffer)
   setTimeout(function(){
     fixAll();
     document.body.classList.remove('ml-dm-t');
     // Observer'ı tekrar başlat
     _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-  },400);
+  },250);
   // Ecwid geç render için 2. pas
-  setTimeout(fixAll,1200);
+  setTimeout(fixAll,600);
 }
 
 btn.addEventListener('click',function(e){
@@ -2468,6 +2502,9 @@ function _fixAllNow(){
 
 // ─── TEMİZLİK (light mode'a dönünce) ───
 function cleanAll(){
+  // html elementindeki dark class'ı da temizle
+  document.documentElement.classList.remove('ml-dark');
+  document.documentElement.style.removeProperty('background');
   cleanStokYok();
   // Sweep overlay'ları kaldır
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
@@ -2569,13 +2606,15 @@ function cleanAll(){
   document.querySelectorAll('.recently-viewed[class*="recently-viewed--"]').forEach(function(card){
     ['background','border','border-radius','overflow','box-shadow','transform','margin','padding'].forEach(function(p){card.style.removeProperty(p);});
     var name=card.querySelector('.recently-viewed__name');
-    if(name){['color','text-align','padding','line-height'].forEach(function(p){name.style.removeProperty(p);});}
+    if(name){['color','text-align','font-size','padding','line-height'].forEach(function(p){name.style.removeProperty(p);});}
     card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item,.recently-viewed__price .ec-price-item--old').forEach(function(p){
-      ['color','text-align'].forEach(function(pp){p.style.removeProperty(pp);});
+      ['color','text-align','font-size','font-weight','padding'].forEach(function(pp){p.style.removeProperty(pp);});
     });
     var thumb=card.querySelector('.recently-viewed__thumb');
     if(thumb){
-      ['background','border','border-radius','overflow'].forEach(function(p){thumb.style.removeProperty(p);});
+      ['background','border','border-radius','overflow','height','display','align-items','justify-content'].forEach(function(p){thumb.style.removeProperty(p);});
+      var img=thumb.querySelector('img');
+      if(img){['border-radius','width','height','object-fit'].forEach(function(p){img.style.removeProperty(p);});}
     }
     card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item').forEach(function(p){
       p.style.removeProperty('text-align');
@@ -3216,12 +3255,12 @@ function fixLabels(){
     document.querySelectorAll('.recently-viewed-title').forEach(function(el){
       el.style.setProperty('color','#ece8df','important');
     });
-    // Kart container — grid-product__wrap ile birebir aynı
+    // Kart container
     document.querySelectorAll('.recently-viewed[class*="recently-viewed--"]').forEach(function(card){
       card.style.setProperty('background','#23221e','important');
       card.style.setProperty('border','none','important');
       card.style.setProperty('border-radius','14px','important');
-      card.style.setProperty('overflow','hidden','important');
+      card.style.setProperty('overflow','visible','important');
       card.style.setProperty('padding','0','important');
       card.style.setProperty('margin','0 8px','important');
       card.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12), 0 0 0 2px #1b1a17, 0 0 0 3px rgba(175,140,62,.06), 0 2px 12px rgba(0,0,0,.3)','important');
@@ -3230,22 +3269,39 @@ function fixLabels(){
       if(name){
         name.style.setProperty('color','#ece8df','important');
         name.style.setProperty('text-align','center','important');
+        name.style.setProperty('font-size','14px','important');
+        name.style.setProperty('padding','10px 8px 4px','important');
+        name.style.setProperty('line-height','1.3','important');
       }
       // Fiyat
       card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item').forEach(function(p){
         p.style.setProperty('color','#d4b05e','important');
         p.style.setProperty('text-align','center','important');
+        p.style.setProperty('font-size','16px','important');
+        p.style.setProperty('font-weight','600','important');
+        p.style.setProperty('padding','4px 8px 12px','important');
       });
       card.querySelectorAll('.recently-viewed__price .ec-price-item--old').forEach(function(p){
         p.style.setProperty('color','#706c62','important');
       });
-      // Thumbnail — grid-product__image ile birebir aynı
+      // Thumbnail — beyaz bg, sabit yükseklik, contain
       var thumb=card.querySelector('.recently-viewed__thumb');
       if(thumb){
-        thumb.style.setProperty('background','#2c2b26','important');
+        thumb.style.setProperty('background','#fff','important');
         thumb.style.setProperty('border','none','important');
-        thumb.style.setProperty('border-radius','12px 12px 0 0','important');
+        thumb.style.setProperty('border-radius','14px 14px 0 0','important');
         thumb.style.setProperty('overflow','hidden','important');
+        thumb.style.setProperty('height','150px','important');
+        thumb.style.setProperty('display','flex','important');
+        thumb.style.setProperty('align-items','center','important');
+        thumb.style.setProperty('justify-content','center','important');
+        var img=thumb.querySelector('img');
+        if(img){
+          img.style.setProperty('border-radius','0','important');
+          img.style.setProperty('width','100%','important');
+          img.style.setProperty('height','100%','important');
+          img.style.setProperty('object-fit','contain','important');
+        }
       }
       // Hover
       if(!card._mlRVHover){
