@@ -546,7 +546,17 @@ body.ml-dark [class*="legal"] *{
 }
 body.ml-dark .ec-page-body h1,
 body.ml-dark .ec-page-body h2,
-body.ml-dark .ec-page-body h3{
+body.ml-dark .ec-page-body h3,
+body.ml-dark .ec-page-body h4{
+  color:${GOLD}!important;
+}
+body.ml-dark .ec-page-body p,
+body.ml-dark .ec-page-body li,
+body.ml-dark .ec-page-body span{
+  color:${TX2}!important;
+}
+body.ml-dark .ec-page-body strong,
+body.ml-dark .ec-page-body b{
   color:${TX1}!important;
 }
 body.ml-dark .ec-page-body a{
@@ -567,6 +577,97 @@ body.ml-dark .ec-page-body tr{
   background:transparent!important;
   color:${TX1}!important;
   border-color:${BD}!important;
+}
+/* ── İADE / ŞARTLAR / GİZLİLİK — ml-*-wrapper dark mode ── */
+body.ml-dark [class*="ml-"][class*="-wrapper"]{
+  background:${BG1}!important;
+  color:${TX1}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] h1,
+body.ml-dark [class*="ml-"][class*="-wrapper"] h3,
+body.ml-dark [class*="ml-"][class*="-wrapper"] h4{
+  color:${GOLD}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] p,
+body.ml-dark [class*="ml-"][class*="-wrapper"] li,
+body.ml-dark [class*="ml-"][class*="-wrapper"] span{
+  color:${TX2}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] strong,
+body.ml-dark [class*="ml-"][class*="-wrapper"] b{
+  color:${TX1}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] a{
+  color:${GOLD}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-card,
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-detail-box,
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-detail-content{
+  background:${BG2}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-card-header{
+  border-bottom-color:${BD}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-detail-title{
+  color:${TX1}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-detail-title:hover{
+  background:${BG3}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-tag{
+  background:${BG3}!important;
+  color:${TX2}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-highlight{
+  background:rgba(5,150,105,.08)!important;
+  border-color:rgba(5,150,105,.25)!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-time{
+  background:${BG3}!important;
+  color:${TX2}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-trust{
+  border-top-color:${BD}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-trust-icon{
+  background:${GOLD}!important;
+  color:${BG1}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-trust-item h4{
+  color:${TX1}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-support{
+  border-top-color:rgba(5,150,105,.2)!important;
+  color:${TX3}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-footer strong{
+  color:${GOLD}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-label{
+  color:${TX3}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-card ul li+li{
+  border-top-color:${BD}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-arrow{
+  color:${TX3}!important;
+}
+body.ml-dark [class*="ml-"][class*="-wrapper"] .ml-detail-content{
+  border-top-color:${BD}!important;
+}
+/* ── ÜRÜN AÇIKLAMALARI ── */
+body.ml-dark .product-details__description,
+body.ml-dark .product-details__description *{
+  color:${TX2}!important;
+  background:transparent!important;
+}
+body.ml-dark .product-details__description h1,
+body.ml-dark .product-details__description h2,
+body.ml-dark .product-details__description h3,
+body.ml-dark .product-details__description h4,
+body.ml-dark .product-details__description strong{
+  color:${GOLD}!important;
 }
 
 /* ── ÜRÜN NAVİGASYON OKLARI (< >) ── */
@@ -867,7 +968,8 @@ body.ml-dark .form-control__radio-view-inner{
   background:transparent!important;
   border-color:transparent!important;
 }
-body.ml-dark .form-control__radio-view::after{
+body.ml-dark .form-control__radio-view::after,
+body.ml-dark .ml-radio-fix::after{
   background:transparent!important;
   border-color:transparent!important;
 }
@@ -883,7 +985,9 @@ body.ml-dark .form-control__radio:checked + .form-control__radio-view .form-cont
   border-radius:50%!important;
 }
 body.ml-dark .form-control__radio:checked ~ .form-control__radio-view::after,
-body.ml-dark .form-control__radio:checked + .form-control__radio-view::after{
+body.ml-dark .form-control__radio:checked + .form-control__radio-view::after,
+body.ml-dark .form-control__radio:checked ~ .ml-radio-fix::after,
+body.ml-dark .form-control__radio:checked + .ml-radio-fix::after{
   background:#fff!important;
   border-color:#fff!important;
 }
@@ -1282,7 +1386,9 @@ body.ml-dark .ec-filter .ec-openable-block{
   color:${TX1}!important;
 }
 body.ml-dark [class*="filter-section-sticky-bar"]::before,
-body.ml-dark [class*="filter-section-sticky-bar"]::after{
+body.ml-dark [class*="filter-section-sticky-bar"]::after,
+body.ml-dark [class*="filters-sticky-bar"]::before,
+body.ml-dark [class*="filters-sticky-bar"]::after{
   background:${BG1}!important;
 }
 body.ml-dark .ec-filter input[type="text"],
@@ -2517,12 +2623,15 @@ function fixLabels(){
     document.querySelectorAll('.ec-cart-next__header,[class*="ec-cart-next"]').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
     });
-    // ── STATİK SAYFA İÇERİK TEMİZLİĞİ ──
-    document.querySelectorAll('.ec-page-body *').forEach(function(el){
-      if(el.tagName==='IMG'||el.tagName==='VIDEO'||el.tagName==='IFRAME') return;
+    // ── STATİK SAYFA + ML-WRAPPER İÇERİK TEMİZLİĞİ ──
+    document.querySelectorAll('.ec-page-body *, [class*="ml-"][class*="-wrapper"] *').forEach(function(el){
+      if(el.tagName==='IMG'||el.tagName==='VIDEO'||el.tagName==='IFRAME'||el.tagName==='SVG'||el.tagName==='svg') return;
       var bg=getComputedStyle(el).backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
       if(m && +m[1]>200 && +m[2]>200 && +m[3]>200){
+        // ml-icon-success/danger ikonları koru
+        var cn=typeof el.className==='string'?el.className:'';
+        if(cn.indexOf('ml-icon-')>-1||cn.indexOf('ml-step-num')>-1||cn.indexOf('ml-check')>-1||cn.indexOf('ml-trust-icon')>-1) return;
         el.style.setProperty('background-color','transparent','important');
       }
       var c=getComputedStyle(el).color;
@@ -2530,6 +2639,15 @@ function fixLabels(){
       if(cm && +cm[1]<80 && +cm[2]<80 && +cm[3]<80){
         el.style.setProperty('color','#ece8df','important');
       }
+    });
+    // ml-wrapper kendisi
+    document.querySelectorAll('[class*="ml-"][class*="-wrapper"]').forEach(function(w){
+      w.style.setProperty('background','#1b1a17','important');
+      w.style.setProperty('color','#ece8df','important');
+    });
+    // Radio-view::after — CSS yetmiyor, class ile zorla
+    document.querySelectorAll('.form-control__radio-view').forEach(function(rv){
+      rv.classList.add('ml-radio-fix');
     });
     // ── CHECKBOX VİSİBİLİTY ENFORCEMENTİ ──
     document.querySelectorAll('.form-control__checkbox-view').forEach(function(cv){
