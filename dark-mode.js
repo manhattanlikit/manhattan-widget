@@ -125,13 +125,23 @@ body.ml-dark .body{
 /* ── SİTE SECTION BLOKLARI ── */
 body.ml-dark .menu,
 body.ml-dark .container,
-body.ml-dark .caption,
 body.ml-dark .whyus,
 body.ml-dark .contacts,
 body.ml-dark .owner,
 body.ml-dark .store,
 body.ml-dark .dynamic-product-browser{
   background:${BG1}!important;
+  color:${TX1}!important;
+  overflow:visible!important;
+}
+/* ── HERO/KAPAK — Sıcak premium gradient (üstten karararak) ── */
+body.ml-dark .caption{
+  background:linear-gradient(180deg,
+    #0f0e0b 0%,
+    #181610 18%,
+    rgba(175,140,62,.05) 40%,
+    #1b1a17 65%,
+    #1b1a17 100%)!important;
   color:${TX1}!important;
   overflow:visible!important;
 }
@@ -312,7 +322,12 @@ body.ml-dark [class*="tile-"]{
 }
 body.ml-dark .tile [class*="cover"],
 body.ml-dark [class*="tile-"] [class*="cover"]{
-  background:${BG1}!important;
+  background:linear-gradient(180deg,
+    #0f0e0b 0%,
+    #181610 18%,
+    rgba(175,140,62,.05) 40%,
+    #1b1a17 65%,
+    #1b1a17 100%)!important;
 }
 
 /* Farklı arka plan tonları olan section'lar */
@@ -2552,6 +2567,10 @@ function cleanAll(){
       el.style.removeProperty('color');
     });
   });
+  // Caption gradient temizle
+  document.querySelectorAll('.caption,[class*="tile-cover"] [class*="cover"]').forEach(function(el){
+    el.style.removeProperty('background');
+  });
   document.querySelectorAll('.recently-viewed[class*="recently-viewed--"]').forEach(function(card){
     ['background','border','border-radius','overflow','box-shadow','transform'].forEach(function(p){card.style.removeProperty(p);});
     var name=card.querySelector('.recently-viewed__name');
@@ -3173,6 +3192,11 @@ function fixLabels(){
           k.style.setProperty('border-bottom','none','important');
         }
       }
+    });
+
+    // ── HERO/KAPAK GRADIENT ENFORCEMENTİ ──
+    document.querySelectorAll('.caption,[class*="tile-cover"] [class*="cover"]').forEach(function(el){
+      el.style.setProperty('background','linear-gradient(180deg, #0f0e0b 0%, #181610 18%, rgba(175,140,62,.05) 40%, #1b1a17 65%, #1b1a17 100%)','important');
     });
 
     // ── HAKKINDA / ABOUT BÖLÜMÜ ENFORCEMENTİ ──
