@@ -317,11 +317,7 @@ body.ml-dark [class*="tile-"]{
 }
 body.ml-dark .tile [class*="cover"],
 body.ml-dark [class*="tile-"] [class*="cover"]{
-  background:linear-gradient(180deg,
-    rgba(139,90,30,.12) 0%,
-    rgba(175,140,62,.06) 25%,
-    #1b1a17 55%,
-    #1b1a17 100%)!important;
+  background:${BG1}!important;
 }
 
 /* Farklı arka plan tonları olan section'lar */
@@ -2554,8 +2550,8 @@ function cleanAll(){
   document.querySelectorAll('.recently-viewed-title').forEach(function(el){
     el.style.removeProperty('color');
   });
-  // Caption/cover gradient temizle
-  document.querySelectorAll('.caption,.tile [class*="cover"],[class*="tile-"] [class*="cover"]').forEach(function(el){
+  // Caption gradient temizle
+  document.querySelectorAll('.caption').forEach(function(el){
     el.style.removeProperty('background');
   });
   // Hakkında bölümü inline stil temizle
@@ -3188,10 +3184,9 @@ function fixLabels(){
       }
     });
 
-    // ── HERO/KAPAK GRADIENT ENFORCEMENTİ — Amber Sunset ──
-    var _sunsetGrad='linear-gradient(180deg, rgba(139,90,30,.12) 0%, rgba(175,140,62,.06) 25%, #1b1a17 55%, #1b1a17 100%)';
-    document.querySelectorAll('.caption,.tile [class*="cover"],[class*="tile-"] [class*="cover"]').forEach(function(el){
-      el.style.setProperty('background',_sunsetGrad,'important');
+    // ── HERO/KAPAK GRADIENT ENFORCEMENTİ — Amber Sunset (sadece .caption) ──
+    document.querySelectorAll('.caption').forEach(function(el){
+      el.style.setProperty('background','linear-gradient(180deg, rgba(139,90,30,.12) 0%, rgba(175,140,62,.06) 25%, #1b1a17 55%, #1b1a17 100%)','important');
     });
 
     // ── HAKKINDA / ABOUT BÖLÜMÜ ENFORCEMENTİ ──
