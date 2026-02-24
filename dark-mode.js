@@ -1074,15 +1074,22 @@ body.ml-dark .ec-minicart{
 
 /* ── ALT NAVİGASYON İKONLARI (Ürünleri Ara, Hesabım vb.) ── */
 body.ml-dark .footer-menu,
-body.ml-dark .ec-store__content-wrapper [class*="footer"]{
+body.ml-dark .ec-store__content-wrapper > [class*="footer"]{
   background:${BG2}!important;
   border:1px solid ${BD}!important;
   border-radius:14px!important;
   margin:12px auto!important;
   max-width:90%!important;
-  display:flex!important;
-  justify-content:center!important;
-  align-items:center!important;
+  padding:8px 0!important;
+}
+/* Footer iç elementler — border YOK, sadece layout */
+body.ml-dark .footer-menu *,
+body.ml-dark .ec-footer__row,
+body.ml-dark .ec-footer__cell,
+body.ml-dark .ec-footer__row *{
+  border:none!important;
+  border-radius:0!important;
+  background:transparent!important;
 }
 body.ml-dark .footer-menu a,
 body.ml-dark .footer-menu svg,
@@ -1365,6 +1372,17 @@ body.ml-dark .ec-minicart__icon,
 body.ml-dark .ec-cart-widget svg{
   color:${TX1}!important;
   fill:${TX1}!important;
+}
+/* Sepet + Arama yuvarlak ikon çerçeveleri — gold accent */
+body.ml-dark .ec-cart-widget,
+body.ml-dark [class*="cart-widget__body"],
+body.ml-dark [class*="cart-widget__icon"],
+body.ml-dark .ecwid-SearchPanel,
+body.ml-dark [class*="search-panel"],
+body.ml-dark .ec-minicart-mini{
+  background:${BG2}!important;
+  border:1px solid ${BD}!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.3)!important;
 }
 
 /* ── HR & KENARLIKLARI ── */
