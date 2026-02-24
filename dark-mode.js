@@ -1769,15 +1769,13 @@ body.ml-dark [class*="recently"] > div:last-child{
   border-top:none!important;
   background:transparent!important;
 }
-/* ── HOVER FIX — picture-additional kartın text alanını kapatmasın ── */
+/* ── HOVER FIX — metin alanı picture-additional üstünde kalsın ── */
+body.ml-dark .grid-product__wrap-inner{
+  position:relative!important;
+  z-index:2!important;
+}
 body.ml-dark .grid-product__image{
   position:relative!important;
-  overflow:hidden!important;
-}
-body.ml-dark .grid-product__picture-additional{
-  position:absolute!important;
-  top:0!important;left:0!important;
-  width:100%!important;height:100%!important;
   z-index:1!important;
 }
 /* Related/recently hover'da metin kesinlikle görünsün */
@@ -2249,7 +2247,7 @@ styleEl.textContent=css;
 document.head.appendChild(styleEl);
 
 // ─── SVG İKONLARI — Sadece ay: stroke (açık) / fill (kapalı) ───
-var moonOff='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
+var moonOff='<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
 var moonOn='<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
 
 // ─── TOGGLE BUTON OLUŞTUR ───
@@ -2434,11 +2432,18 @@ function cleanAll(){
   document.querySelectorAll('.float-icons__wrap svg').forEach(function(s){s.style.removeProperty('color');s.style.removeProperty('fill');});
   // Related/recently viewed ürün kartları — inline stil temizle
   document.querySelectorAll('[class*="recently"] .grid-product__wrap, .ec-related-products .grid-product__wrap, [class*="related"] .grid-product__wrap, .product-details__related-products .grid-product__wrap').forEach(function(w){
-    ['background','border','border-radius','overflow','box-shadow'].forEach(function(p){w.style.removeProperty(p);});
+    ['background','border','border-radius','overflow','box-shadow','transform'].forEach(function(p){w.style.removeProperty(p);});
     var inner=w.querySelector('.grid-product__wrap-inner,[class*="wrap-inner"]');
     if(inner){inner.style.removeProperty('background');inner.style.removeProperty('border');}
     w.querySelectorAll('.grid-product__image,.grid-product__picture,.grid-product__picture-wrapper,[class*="image-wrap"]').forEach(function(img){
       img.style.removeProperty('background');img.style.removeProperty('border');
+    });
+    // Title/price inline renk temizle
+    w.querySelectorAll('.grid-product__title,.grid-product__title-inner,.grid-product__subtitle,.grid-product__sku,.grid-product__description').forEach(function(t){
+      t.style.removeProperty('color');
+    });
+    w.querySelectorAll('.grid-product__price .ec-price-item,.grid-product__price-value,.grid-product__old-price,.grid-product__price-old').forEach(function(t){
+      t.style.removeProperty('color');
     });
   });
   // Related/recently section container temizle
@@ -2672,16 +2677,16 @@ function fixButtonText(){
 // ─── TÜRKÇE ETİKETLER + SEPET GÖRSEL RADIUS ───
 function fixLabels(){
   // "Recently viewed products" → "Son Görüntülenenler"
-  document.querySelectorAll('.ec-related-products__title, [class*="related-products"] h2, [class*="recently"] h2').forEach(function(el){
-    if(el.textContent.trim().match(/recently|viewed|son görüntüle/i) && !el._mlFixed){
+  document.querySelectorAll('.ec-related-products__title, [class*="related-products"] h2, [class*="recently"] h2, [class*="recently"] h3, [class*="recently"] [class*="title"], [class*="recently-viewed"] [class*="title"]').forEach(function(el){
+    if(el.textContent.trim().match(/recently|viewed/i) && !el._mlFixed){
       el._mlFixed=true;
       el.textContent='Son Görüntülenenler';
     }
   });
-  // Genel "Recently viewed" text node'ları
-  document.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function(el){
+  // Genel "Recently viewed" text node'ları — heading + div/span
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6,div,span').forEach(function(el){
     var t=el.textContent.trim();
-    if(t==='Recently viewed products'||t==='Recently viewed'){
+    if((t==='Recently viewed products'||t==='Recently viewed')&& el.children.length===0){
       el.textContent='Son Görüntülenenler';
       el._mlFixed=true;
     }
@@ -3000,12 +3005,40 @@ function fixLabels(){
         img.style.setProperty('background','#2c2b26','important');
         img.style.setProperty('border','none','important');
       });
-      // Hover white border kill — event listener
+      // Title renk — gri kalmasın
+      w.querySelectorAll('.grid-product__title,.grid-product__title-inner').forEach(function(t){
+        t.style.setProperty('color','#ece8df','important');
+      });
+      // Subtitle/description renk
+      w.querySelectorAll('.grid-product__subtitle,.grid-product__sku,.grid-product__description').forEach(function(t){
+        t.style.setProperty('color','#a09b8f','important');
+      });
+      // Fiyat renk — gold
+      w.querySelectorAll('.grid-product__price .ec-price-item,.grid-product__price-value').forEach(function(t){
+        t.style.setProperty('color','#d4b05e','important');
+      });
+      // Eski fiyat
+      w.querySelectorAll('.grid-product__old-price,.grid-product__price-old').forEach(function(t){
+        t.style.setProperty('color','#706c62','important');
+      });
+      // Hover white border kill + dark hover style enforce
       if(!w._mlHover){
         w._mlHover=true;
         w.addEventListener('mouseenter',function(){
+          if(!document.body.classList.contains('ml-dark')) return;
           this.style.setProperty('border','none','important');
           this.style.setProperty('outline','none','important');
+          this.style.setProperty('background','#23221e','important');
+          this.style.setProperty('box-shadow','inset 0 0 0 1px #af8c3e, 0 0 0 2px #1b1a17, 0 0 0 3px #af8c3e, 0 4px 20px rgba(175,140,62,.15), 0 8px 32px rgba(0,0,0,.35)','important');
+          this.style.setProperty('transform','translateY(-2px)','important');
+        });
+        w.addEventListener('mouseleave',function(){
+          if(!document.body.classList.contains('ml-dark')) return;
+          this.style.setProperty('border','none','important');
+          this.style.setProperty('outline','none','important');
+          this.style.setProperty('background','#23221e','important');
+          this.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12), 0 0 0 2px #1b1a17, 0 0 0 3px rgba(175,140,62,.06), 0 2px 12px rgba(0,0,0,.3)','important');
+          this.style.setProperty('transform','none','important');
         });
       }
     });
