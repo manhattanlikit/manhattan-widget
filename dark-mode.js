@@ -1120,15 +1120,27 @@ body.ml-dark [class*="checkout"] [class*="step"] label{
   color:${TX1}!important;
   border-color:${BD}!important;
 }
+/* Ecwid high specificity override — blue checked border */
+body.ml-dark .ec-size .ec-store .ec-radiogroup label,
+body.ml-dark .ec-size .ec-store .ec-radiogroup__item label,
+body.ml-dark .ec-size .ec-store .ec-radiogroup input:checked+label,
+body.ml-dark .ec-size .ec-store .ec-radiogroup input:checked~label{
+  border-color:${BD}!important;
+}
 body.ml-dark [class*="shipping"] [class*="radio"]:hover,
 body.ml-dark .ec-radiogroup label:hover{
   border-color:${GOLDDIM}!important;
 }
 body.ml-dark [class*="shipping"] input:checked~label,
 body.ml-dark [class*="shipping"] input:checked+label,
-body.ml-dark .ec-radiogroup input:checked+label{
-  border-color:${GOLDDIM}!important;
+body.ml-dark .ec-radiogroup input:checked+label,
+body.ml-dark .ec-size .ec-store .ec-radiogroup input:checked+label{
+  border-color:${GOLD}!important;
   background:rgba(175,140,62,.08)!important;
+}
+/* Radiogroup item arası beyaz çizgi */
+body.ml-dark .ec-radiogroup__item{
+  border-color:${BD2}!important;
 }
 
 /* ── CHECKOUT — Ödeme bildirim + Kabul kutuları (renkli arka planlar) ── */
@@ -2128,6 +2140,11 @@ function fixLabels(){
     // Radiogroup label borders
     document.querySelectorAll('.ec-radiogroup label').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.12)','important');
+    });
+    // Checked radio — blue border override
+    document.querySelectorAll('.ec-radiogroup input:checked+label,.ec-radiogroup input:checked~label').forEach(function(el){
+      el.style.setProperty('border-color','#af8c3e','important');
+      el.style.setProperty('background','rgba(175,140,62,.08)','important');
     });
     document.querySelectorAll('.ec-minicart').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
