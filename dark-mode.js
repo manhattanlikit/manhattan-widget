@@ -6,18 +6,6 @@
 (function(){
 'use strict';
 
-// ─── ANTI-FOUC: Script çalıştığı anda dark modu uygula (First Paint'ten ÖNCE) ───
-try{
-  if(localStorage.getItem('ml-dark')==='1'){
-    document.documentElement.classList.add('ml-dark');
-    document.documentElement.style.setProperty('background','#1b1a17','important');
-    if(document.body){
-      document.body.classList.add('ml-dark');
-      document.body.style.setProperty('background','#1b1a17','important');
-    }
-  }
-}catch(e){}
-
 // ─── RENK PALETİ ───
 // Sıcak koyu tonlar — saf siyah değil, hafif kahve/altın alt ton
 var BG1='#1b1a17';      // ana arka plan (sıcak kömür)
@@ -63,7 +51,7 @@ body.ml-dm-t .cover__button,
 body.ml-dm-t .cover-button,
 body.ml-dm-t .form-control__button,
 body.ml-dm-t input,body.ml-dm-t textarea,body.ml-dm-t select{
-  transition:background-color .2s ease,color .2s ease,border-color .2s ease!important;
+  transition:background-color .35s ease,color .35s ease,border-color .35s ease!important;
 }
 
 /* ── TOGGLE BUTON ── */
@@ -119,7 +107,6 @@ body.ml-dark .ml-dm-btn:hover{
 
 /* ── BODY & GENEL ── */
 body.ml-dark,
-html.ml-dark,
 html:has(body.ml-dark){
   background:${BG1}!important;
   color:${TX1}!important;
@@ -2392,12 +2379,6 @@ function toggle(){
   document.body.classList.add('ml-dm-t');
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
-  // html elementini de senkronize tut (anti-FOUC ile uyumlu)
-  if(dark){
-    document.documentElement.classList.add('ml-dark');
-  }else{
-    document.documentElement.classList.remove('ml-dark');
-  }
   document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
@@ -2407,15 +2388,15 @@ function toggle(){
   if(!dark){
     document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
   }
-  // Transition bittikten SONRA fixAll + observer tekrar aç (.2s + buffer)
+  // Transition bittikten SONRA fixAll + observer tekrar aç
   setTimeout(function(){
     fixAll();
     document.body.classList.remove('ml-dm-t');
     // Observer'ı tekrar başlat
     _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-  },250);
+  },400);
   // Ecwid geç render için 2. pas
-  setTimeout(fixAll,600);
+  setTimeout(fixAll,1200);
 }
 
 btn.addEventListener('click',function(e){
@@ -2502,9 +2483,6 @@ function _fixAllNow(){
 
 // ─── TEMİZLİK (light mode'a dönünce) ───
 function cleanAll(){
-  // html elementindeki dark class'ı da temizle
-  document.documentElement.classList.remove('ml-dark');
-  document.documentElement.style.removeProperty('background');
   cleanStokYok();
   // Sweep overlay'ları kaldır
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
