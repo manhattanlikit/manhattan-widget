@@ -1170,6 +1170,19 @@ body.ml-dark .ec-radiogroup__item{
 }
 
 /* ── FİLTRE SIDEBAR (Cümle ile ara, Stok, Marka, Fiyat) ── */
+/* Aktif filtre tag/chip'leri */
+body.ml-dark [class*="ec-filter"] [class*="tag"],
+body.ml-dark [class*="ec-filter"] [class*="chip"],
+body.ml-dark [class*="ec-filter"] [class*="pill"],
+body.ml-dark [class*="ec-filter"] [class*="applied"],
+body.ml-dark [class*="filter-applied"],
+body.ml-dark [class*="applied-filter"],
+body.ml-dark .ec-filter [class*="tag"],
+body.ml-dark .ec-filter [class*="selected"]{
+  background:${BG3}!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
 body.ml-dark .ec-filter,
 body.ml-dark [class*="ec-filter"],
 body.ml-dark .ec-filter__body{
@@ -1247,10 +1260,15 @@ body.ml-dark .ec-filter__items::after{
   background:${BD2}!important;
   opacity:.3!important;
 }
-/* Checkbox beyaz kare + mavi border */
+/* Checkbox iç kare — koyu bg, gold border */
 body.ml-dark .form-control__checkbox-view::after{
-  background:transparent!important;
-  border-color:transparent!important;
+  background:${BG3}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .form-control__checkbox:checked~.form-control__checkbox-view::after,
+body.ml-dark .form-control__checkbox:checked+.form-control__checkbox-view::after{
+  background:#fff!important;
+  border-color:${GOLD}!important;
 }
 /* Slider uç kapaklar */
 body.ml-dark .ec-range__track-line::before,
