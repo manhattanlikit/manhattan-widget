@@ -621,7 +621,7 @@ body.ml-dark .details-product-purchase__add-to-bag.form-control:hover::after{
 }
 /* Agreement checkbox — unchecked dikkat çekici */
 body.ml-dark .ml-agree-pulse .form-control__checkbox-view{
-  animation:mlCheckPulse 1.5s ease-in-out 3!important;
+  animation:mlCheckPulse 1.5s ease-in-out infinite!important;
   border-color:${GOLD}!important;
 }
 /* Hover — koyu gold + scale, sweep durur */
@@ -2392,7 +2392,7 @@ function fixLabels(){
       if(el.offsetHeight<10||el.offsetWidth<10) return;
       if(el.tagName==='IMG'||el.tagName==='BUTTON') return;
       var cn=typeof el.className==='string'?el.className:'';
-      if(cn.indexOf('picture')>-1||cn.indexOf('image')>-1||cn.indexOf('btn')>-1) return;
+      if(cn.indexOf('picture')>-1||cn.indexOf('image')>-1||cn.indexOf('btn')>-1||cn.indexOf('form-control--primary')>-1||cn.indexOf('form-control__button')>-1) return;
       var bg=getComputedStyle(el).backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
       if(m && +m[1]>200 && +m[2]>200 && +m[3]>100){
