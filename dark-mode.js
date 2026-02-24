@@ -1738,10 +1738,11 @@ function cleanAll(){
   document.querySelectorAll('.form-control--primary').forEach(function(el){
     ['position','overflow','border-radius','background','border'].forEach(function(p){el.style.removeProperty(p);});
   });
-  // Cover butonlar temizle
+  // Cover butonlar — sadece _injectSweep'in koyduğu position+overflow temizle
+  // Ecwid orijinal stillerine DOKUNMA (beyaz buton sorunu)
   document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
-    ['background','background-color','border-radius','position','overflow','transform','box-shadow','color','border','font-weight'].forEach(function(p){el.style.removeProperty(p);});
-    el.querySelectorAll('*').forEach(function(c){c.style.removeProperty('color');c.style.removeProperty('background');});
+    el.style.removeProperty('position');
+    el.style.removeProperty('overflow');
   });
   // Primary/secondary buton text + bg temizle
   document.querySelectorAll('.form-control__button-text,.form-control__button-svg,.form-control__button-svg svg').forEach(function(el){
@@ -1875,6 +1876,8 @@ function fixSweep(){
     var inp=cb.querySelector('.form-control__radio');
     var lbl=cb.querySelector('.form-control__inline-label');
     if(!inp||!lbl) return;
+    // Hover aktifken DOKUNMA — observer fixAll tetiklese bile hover state korunsun
+    if(lbl._mlHoverActive) return;
     var innerLbl=lbl.querySelector('label');
 
     // Ortak — BORDER YOK, box-shadow ile çerçeve (tırtık önleme: layout shift yok)
@@ -1908,6 +1911,7 @@ function fixSweep(){
       lbl._mlHover=true;
       lbl.addEventListener('mouseenter',function(){
         if(!document.body.classList.contains('ml-dark')) return;
+        lbl._mlHoverActive=true;
         if(inp.checked){
           // Seçili hover — koyu gold, sweep duraklat
           lbl.style.setProperty('background','#af8c3e','important');
@@ -1929,6 +1933,7 @@ function fixSweep(){
       });
       lbl.addEventListener('mouseleave',function(){
         if(!document.body.classList.contains('ml-dark')) return;
+        lbl._mlHoverActive=false;
         lbl.style.removeProperty('transform');
         if(inp.checked){
           // Seçili leave — gradient'e dön, sweep devam
