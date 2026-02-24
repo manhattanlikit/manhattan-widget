@@ -882,11 +882,11 @@ body.ml-dark .ec-cart-email__input input{
 body.ml-dark .ec-footer{
   background:${BGnav}!important;
   color:${TX3}!important;
-  border-top:1px solid ${BD2}!important;
+  border:none!important;
 }
 body.ml-dark .ec-footer a{color:${TX3}!important}
 body.ml-dark .ec-footer a:hover{color:${GOLD}!important}
-body.ml-dark .ec-footer__row{border-color:${BD2}!important}
+body.ml-dark .ec-footer__row{border-color:transparent!important;border:none!important}
 
 /* ── HELPFULCROWD REVIEW KARTLARI ── */
 body.ml-dark .hc-widget-card,
@@ -1076,8 +1076,13 @@ body.ml-dark .ec-minicart{
 body.ml-dark .footer-menu,
 body.ml-dark .ec-store__content-wrapper [class*="footer"]{
   background:${BG2}!important;
-  border-top:1px solid ${BD2}!important;
-  border-bottom:none!important;
+  border:1px solid ${BD}!important;
+  border-radius:14px!important;
+  margin:12px auto!important;
+  max-width:90%!important;
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
 }
 body.ml-dark .footer-menu a,
 body.ml-dark .footer-menu svg,
@@ -1085,6 +1090,12 @@ body.ml-dark [class*="store-footer"] a,
 body.ml-dark [class*="store-footer"] svg{
   color:${GOLD}!important;
   fill:${GOLD}!important;
+}
+/* Footer nav cell — ortalanmış, eşit aralık */
+body.ml-dark .ec-footer__cell{
+  text-align:center!important;
+  flex:1!important;
+  padding:10px 8px!important;
 }
 body.ml-dark [class*="store-footer"] span{
   color:${TX2}!important;
