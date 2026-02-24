@@ -2356,6 +2356,11 @@ btn.innerHTML=moonOff;
 function toggle(){
   // Observer'ı KAPAT — yoksa class değişiminde fixAll anında tetiklenir → flash
   _observer.disconnect();
+  var goingDark=!document.body.classList.contains('ml-dark');
+  // html arka planını HEMEN ayarla — fade sırasında beyaz görünmesin
+  if(goingDark){
+    document.documentElement.style.setProperty('background','#1b1a17','important');
+  }
   // 1. Fade out (150ms)
   document.body.classList.add('ml-dm-fade');
   setTimeout(function(){
@@ -2376,6 +2381,12 @@ function toggle(){
     // 3. Fade in (150ms)
     requestAnimationFrame(function(){
       document.body.classList.remove('ml-dm-fade');
+      // Açık moda geçişte html bg'yi fade bittikten sonra temizle
+      if(!dark){
+        setTimeout(function(){
+          document.documentElement.style.setProperty('background','','important');
+        },170);
+      }
       // Observer'ı tekrar başlat
       _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
     });
