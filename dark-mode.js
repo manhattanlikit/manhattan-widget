@@ -785,8 +785,10 @@ body.ml-dark input[type="radio"],
 body.ml-dark input[type="checkbox"]{
   accent-color:${GOLDDIM}!important;
 }
-/* Checkout radiogroup — native radio gold override */
-body.ml-dark .ec-radiogroup input[type="radio"]{
+/* Checkout radiogroup — radio gold override */
+body.ml-dark .ec-radiogroup input[type="radio"],
+body.ml-dark .ec-radiogroup .form-control__radio,
+body.ml-dark .form-control__radio{
   accent-color:${GOLD}!important;
   -webkit-appearance:none!important;
   appearance:none!important;
@@ -799,7 +801,9 @@ body.ml-dark .ec-radiogroup input[type="radio"]{
   position:relative!important;
   flex-shrink:0!important;
 }
-body.ml-dark .ec-radiogroup input[type="radio"]:checked{
+body.ml-dark .ec-radiogroup input[type="radio"]:checked,
+body.ml-dark .ec-radiogroup .form-control__radio:checked,
+body.ml-dark .form-control__radio:checked{
   border-color:${GOLD}!important;
   background:${GOLD}!important;
   box-shadow:inset 0 0 0 3px ${BG2}!important;
@@ -1167,6 +1171,66 @@ body.ml-dark .ec-radiogroup__item{
   box-shadow:none!important;
 }
 
+/* ── FİLTRE SIDEBAR (Cümle ile ara, Stok, Marka, Fiyat) ── */
+body.ml-dark .ec-filter,
+body.ml-dark [class*="ec-filter"],
+body.ml-dark .ec-filter__body{
+  background:${BG1}!important;
+  color:${TX1}!important;
+}
+body.ml-dark .ec-filter input[type="text"],
+body.ml-dark .ec-filter input[type="number"],
+body.ml-dark .ec-filter input[type="search"],
+body.ml-dark [class*="ec-filter"] input{
+  background:${BG3}!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .ec-filter label,
+body.ml-dark [class*="ec-filter"] label{
+  color:${TX1}!important;
+}
+/* Checkbox gold — tüm site */
+body.ml-dark input[type="checkbox"]{
+  accent-color:${GOLD}!important;
+}
+body.ml-dark .form-control__checkbox-view{
+  border-color:${BD}!important;
+  background:${BG2}!important;
+}
+body.ml-dark .form-control__checkbox:checked~.form-control__checkbox-view,
+body.ml-dark .form-control__checkbox:checked+.form-control__checkbox-view{
+  background:${GOLD}!important;
+  border-color:${GOLD}!important;
+}
+/* Fiyat range slider — gold */
+body.ml-dark .ec-filter [class*="range"],
+body.ml-dark [class*="range-slider"]{
+  accent-color:${GOLD}!important;
+}
+body.ml-dark .ec-filter [class*="range"] [class*="track"],
+body.ml-dark [class*="range-slider"] [class*="track"]{
+  background:${BD}!important;
+}
+body.ml-dark .ec-filter [class*="range"] [class*="fill"],
+body.ml-dark [class*="range-slider"] [class*="fill"],
+body.ml-dark .ec-filter [class*="range"] [class*="active"]{
+  background:${GOLD}!important;
+}
+body.ml-dark .ec-filter [class*="range"] [class*="thumb"],
+body.ml-dark [class*="range-slider"] [class*="thumb"],
+body.ml-dark .ec-filter [class*="range"] [class*="handle"]{
+  background:${TX1}!important;
+  border-color:${GOLD}!important;
+}
+/* Filtre separator çizgiler */
+body.ml-dark .ec-filter__section,
+body.ml-dark [class*="ec-filter"] [class*="section"],
+body.ml-dark .ec-filter hr,
+body.ml-dark .ec-filter__item{
+  border-color:${BD2}!important;
+}
+
 /* ── CHECKOUT — Ödeme bildirim + Kabul kutuları (renkli arka planlar) ── */
 body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 224)"],
 body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 240)"],
@@ -1216,6 +1280,11 @@ body.ml-dark .ec-cart-step,
 body.ml-dark .ec-cart-step__body,
 body.ml-dark .ec-cart-step__next,
 body.ml-dark .ec-cart-step__section,
+body.ml-dark .ec-cart-step__wrap,
+body.ml-dark .ec-cart-step__block,
+body.ml-dark .ec-cart-step__anchor,
+body.ml-dark .ec-cart-step__title,
+body.ml-dark .ec-cart-step__text,
 body.ml-dark .ec-cart__cell,
 body.ml-dark .ec-confirmation,
 body.ml-dark .ec-confirmation__body,
@@ -2183,8 +2252,14 @@ function fixLabels(){
       el.style.setProperty('box-shadow','none','important');
     });
     // Native radio circles — gold
-    document.querySelectorAll('.ec-radiogroup input[type="radio"]').forEach(function(el){
+    document.querySelectorAll('.ec-radiogroup input[type="radio"],.ec-radiogroup .form-control__radio,.form-control__radio').forEach(function(el){
       el.style.setProperty('accent-color','#af8c3e','important');
+    });
+    // Filtre sidebar — slider + checkbox + input borders
+    document.querySelectorAll('.ec-filter input,.ec-filter label,[class*="ec-filter"] input').forEach(function(el){
+      var t=el.type;
+      if(t==='checkbox'||t==='radio') el.style.setProperty('accent-color','#af8c3e','important');
+      if(t==='text'||t==='number'||t==='search') el.style.setProperty('border-color','rgba(175,140,62,.12)','important');
     });
     document.querySelectorAll('.ec-minicart').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
