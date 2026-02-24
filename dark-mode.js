@@ -130,24 +130,13 @@ body.ml-dark .body{
 /* ── SİTE SECTION BLOKLARI ── */
 body.ml-dark .menu,
 body.ml-dark .container,
+body.ml-dark .caption,
 body.ml-dark .whyus,
 body.ml-dark .contacts,
 body.ml-dark .owner,
 body.ml-dark .store,
 body.ml-dark .dynamic-product-browser{
   background:${BG1}!important;
-  color:${TX1}!important;
-  overflow:visible!important;
-}
-/* ── HERO/KAPAK — Sunset Blaze gradient ── */
-body.ml-dark .caption{
-  background:linear-gradient(180deg,
-    rgba(190,120,40,.25) 0%,
-    rgba(170,110,35,.14) 12%,
-    rgba(150,100,35,.07) 30%,
-    rgba(175,140,62,.02) 48%,
-    #1b1a17 62%,
-    #1b1a17 100%)!important;
   color:${TX1}!important;
   overflow:visible!important;
 }
@@ -329,11 +318,9 @@ body.ml-dark [class*="tile-"]{
 body.ml-dark .tile [class*="cover"],
 body.ml-dark [class*="tile-"] [class*="cover"]{
   background:linear-gradient(180deg,
-    rgba(190,120,40,.25) 0%,
-    rgba(170,110,35,.14) 12%,
-    rgba(150,100,35,.07) 30%,
-    rgba(175,140,62,.02) 48%,
-    #1b1a17 62%,
+    rgba(139,90,30,.12) 0%,
+    rgba(175,140,62,.06) 25%,
+    #1b1a17 55%,
     #1b1a17 100%)!important;
 }
 
@@ -3201,12 +3188,9 @@ function fixLabels(){
       }
     });
 
-    // ── HERO/KAPAK GRADIENT ENFORCEMENTİ — Sunset Blaze ──
-    var _sunsetGrad='linear-gradient(180deg, rgba(190,120,40,.25) 0%, rgba(170,110,35,.14) 12%, rgba(150,100,35,.07) 30%, rgba(175,140,62,.02) 48%, #1b1a17 62%, #1b1a17 100%)';
-    document.querySelectorAll('.caption').forEach(function(el){
-      el.style.setProperty('background',_sunsetGrad,'important');
-    });
-    document.querySelectorAll('.tile [class*="cover"],[class*="tile-"] [class*="cover"]').forEach(function(el){
+    // ── HERO/KAPAK GRADIENT ENFORCEMENTİ — Amber Sunset ──
+    var _sunsetGrad='linear-gradient(180deg, rgba(139,90,30,.12) 0%, rgba(175,140,62,.06) 25%, #1b1a17 55%, #1b1a17 100%)';
+    document.querySelectorAll('.caption,.tile [class*="cover"],[class*="tile-"] [class*="cover"]').forEach(function(el){
       el.style.setProperty('background',_sunsetGrad,'important');
     });
 
