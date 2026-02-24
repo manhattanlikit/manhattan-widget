@@ -1218,6 +1218,24 @@ body.ml-dark .ec-filter hr,
 body.ml-dark .ec-filter__item{
   border-color:${BD2}!important;
 }
+/* Fiyat range slider — Ecwid ec-range class'ları */
+body.ml-dark .ec-range__slider{
+  background:${GOLD}!important;
+}
+body.ml-dark .ec-range__runner{
+  background:${GOLD}!important;
+  border-color:${GOLD}!important;
+  box-shadow:0 0 0 3px rgba(175,140,62,.2)!important;
+}
+body.ml-dark .ec-range__track-inner,
+body.ml-dark .ec-range__track-line{
+  background:${BD}!important;
+}
+/* Checkout separator beyaz çizgi */
+body.ml-dark .ec-cart-next__header,
+body.ml-dark [class*="ec-cart-next"]{
+  border-color:${BD2}!important;
+}
 
 /* ── CHECKOUT — Ödeme bildirim + Kabul kutuları (renkli arka planlar) ── */
 body.ml-dark [class*="checkout"] [style*="background-color: rgb(255, 255, 224)"],
@@ -2256,16 +2274,30 @@ function fixLabels(){
     document.querySelectorAll('.store .border, .dynamic-product-browser > .border').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
     });
-    // Kabul ediyorum yellow bg — sadece cart/checkout scope
-    document.querySelectorAll('.ec-cart [style*="background"], .ec-cart-step [style*="background"], .ec-confirmation [style*="background"]').forEach(function(el){
-      if(el.offsetHeight<10) return;
+    // Kabul ediyorum yellow bg — tüm sayfa scope (ürün görseli hariç)
+    document.querySelectorAll('[style*="background"]').forEach(function(el){
+      if(el.offsetHeight<10||el.offsetWidth<10) return;
+      var cn=typeof el.className==='string'?el.className:'';
+      if(cn.indexOf('picture')>-1||cn.indexOf('image')>-1||el.tagName==='IMG') return;
       var bg=getComputedStyle(el).backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
       if(m && +m[1]>200 && +m[2]>200 && +m[3]>150){
-        // Any light bg in checkout → dark override
         el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
         el.style.setProperty('color','#ece8df','important');
       }
+    });
+    // Range slider — blue → gold
+    document.querySelectorAll('.ec-range__slider,.ec-range__runner').forEach(function(el){
+      el.style.setProperty('background','#af8c3e','important');
+      el.style.setProperty('border-color','#af8c3e','important');
+      el.style.setProperty('box-shadow','0 0 0 3px rgba(175,140,62,.2)','important');
+    });
+    document.querySelectorAll('.ec-range__track-inner,.ec-range__track-line').forEach(function(el){
+      el.style.setProperty('background','rgba(175,140,62,.12)','important');
+    });
+    // Cart-next header separator
+    document.querySelectorAll('.ec-cart-next__header,[class*="ec-cart-next"]').forEach(function(el){
+      el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
     });
   }
 }
