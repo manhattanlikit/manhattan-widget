@@ -895,6 +895,15 @@ body.ml-dark select{
   color:${TX1}!important;
   border-color:${BD}!important;
   color-scheme:dark!important;
+  outline:none!important;
+}
+/* Genel mavi focus outline → gold */
+body.ml-dark *:focus{
+  outline-color:rgba(175,140,62,.5)!important;
+}
+body.ml-dark *:focus-visible{
+  outline-color:rgba(175,140,62,.5)!important;
+  outline-offset:2px!important;
 }
 /* Select dropdown container (Ecwid wrapper) — SAFE: no appearance override */
 body.ml-dark .form-control--select,
@@ -1078,6 +1087,37 @@ body.ml-dark .ec-cart-item{
 body.ml-dark .ec-cart-item__title{color:${TX1}!important}
 body.ml-dark .ec-cart-item__price{color:${GOLD}!important}
 body.ml-dark .ec-cart-item__sku{color:${TX3}!important}
+/* Sepet adet (quantity) input/select — mavi border → gold */
+body.ml-dark .ec-cart-item__qty,
+body.ml-dark .ec-cart-item__count,
+body.ml-dark [class*="cart-item__qty"],
+body.ml-dark [class*="cart-item__count"],
+body.ml-dark [class*="cart-item"] select,
+body.ml-dark [class*="cart-item"] input[type="number"],
+body.ml-dark [class*="cart-item"] .form-control,
+body.ml-dark [class*="cart-item"] .form-control--select{
+  background:${BG3}!important;
+  color:${TX1}!important;
+  border:1px solid ${BD2}!important;
+  border-radius:6px!important;
+  outline:none!important;
+}
+body.ml-dark [class*="cart-item__qty"]:focus,
+body.ml-dark [class*="cart-item__count"]:focus,
+body.ml-dark [class*="cart-item"] select:focus,
+body.ml-dark [class*="cart-item"] input[type="number"]:focus,
+body.ml-dark [class*="cart-item"] .form-control:focus-within{
+  border-color:${GOLDDIM}!important;
+  box-shadow:0 0 0 2px rgba(175,140,62,.15)!important;
+  outline:none!important;
+}
+/* Dropdown ok (▼) — mavi → gold */
+body.ml-dark [class*="cart-item"] .form-control--select::after,
+body.ml-dark [class*="cart-item"] select + svg,
+body.ml-dark [class*="cart-item"] [class*="select"]::after{
+  color:${GOLD}!important;
+  border-color:${GOLD}!important;
+}
 /* Sepet ürün seçenekleri — gri (TX3) → okunabilir (TX2/TX1) */
 body.ml-dark .ec-cart-item__options,
 body.ml-dark .ec-cart-item__option{
@@ -1803,6 +1843,20 @@ body.ml-dark [class*="recently"] .grid-product__spacer,
 body.ml-dark .ec-related-products .grid-product__spacer{
   border:none!important;
   background:transparent!important;
+}
+/* Recently viewed — hr + separator çizgi */
+body.ml-dark [class*="recently"] hr,
+body.ml-dark [class*="recently"] + hr,
+body.ml-dark .ec-related-products hr,
+body.ml-dark .ec-related-products + hr{
+  border:none!important;
+  border-top:1px solid ${BD}!important;
+  background:transparent!important;
+}
+body.ml-dark [class*="recently"] [class*="separator"],
+body.ml-dark [class*="recently"] [class*="divider"]{
+  background:${BD}!important;
+  border-color:${BD}!important;
 }
 
 /* ── ANASAYFA CTA BUTONU (Alışverişe Devam Et / Mağazaya Git) ── */
@@ -2598,15 +2652,25 @@ function fixButtonText(){
 // ─── TÜRKÇE ETİKETLER + SEPET GÖRSEL RADIUS ───
 function fixLabels(){
   // "Recently viewed products" → "Son Görüntülenenler"
-  document.querySelectorAll('.ec-related-products__title, [class*="related-products"] h2, [class*="recently"] h2').forEach(function(el){
-    if(el.textContent.trim().match(/recently|viewed|son görüntüle/i) && !el._mlFixed){
+  // Ecwid native + 3rd party app selectors
+  document.querySelectorAll('.ec-related-products__title, [class*="related-products"] h2, [class*="recently"] h2, [class*="recently"] h3, [class*="recently"] [class*="title"], [class*="recentlyViewed"] [class*="title"]').forEach(function(el){
+    if(el.textContent.trim().match(/recently|viewed/i) && !el._mlFixed){
       el._mlFixed=true;
       el.textContent='Son Görüntülenenler';
     }
   });
-  // Genel "Recently viewed" text node'ları
-  document.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(function(el){
+  // Genel catch-all — tüm heading + p + span + div
+  document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,div').forEach(function(el){
     var t=el.textContent.trim();
+    if((t==='Recently viewed products'||t==='Recently viewed'||t==='Recently Viewed Products')&&!el._mlFixed){
+      el.textContent='Son Görüntülenenler';
+      el._mlFixed=true;
+    }
+  });
+  // 3rd party app — .ecwid-productBrowser içine inject edilen recently viewed
+  document.querySelectorAll('.ecwid-productBrowser *').forEach(function(el){
+    if(el._mlFixed) return;
+    var t=(el.textContent||'').trim();
     if(t==='Recently viewed products'||t==='Recently viewed'){
       el.textContent='Son Görüntülenenler';
       el._mlFixed=true;
@@ -2940,19 +3004,37 @@ function fixLabels(){
       sec.style.setProperty('background','#1b1a17','important');
       sec.style.setProperty('border','none','important');
       sec.style.setProperty('border-bottom','none','important');
-      // Child divs'de beyaz bg/border temizle
-      var kids=sec.children;
-      for(var i=0;i<kids.length;i++){
-        var k=kids[i];
-        if(k.tagName==='DIV'){
-          var kbg=getComputedStyle(k).backgroundColor;
-          var km=kbg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
-          if(km&&+km[1]>180&&+km[2]>180&&+km[3]>180){
-            k.style.setProperty('background','transparent','important');
-          }
-          k.style.setProperty('border','none','important');
-          k.style.setProperty('border-bottom','none','important');
+      sec.style.setProperty('border-top','none','important');
+      // hr temizle
+      sec.querySelectorAll('hr').forEach(function(hr){
+        hr.style.setProperty('border','none','important');
+        hr.style.setProperty('border-color','rgba(175,140,62,.12)','important');
+        hr.style.setProperty('background','rgba(175,140,62,.12)','important');
+        hr.style.setProperty('height','1px','important');
+      });
+      // Tüm child'lar — beyaz bg + border temizle
+      sec.querySelectorAll('*').forEach(function(k){
+        if(k.tagName==='IMG'||k.tagName==='SVG') return;
+        var kbg=getComputedStyle(k).backgroundColor;
+        var km=kbg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+        if(km&&+km[1]>180&&+km[2]>180&&+km[3]>180){
+          k.style.setProperty('background-color','transparent','important');
         }
+        // Beyaz border → gold
+        ['borderTop','borderBottom','borderLeft','borderRight'].forEach(function(bp){
+          var bv=getComputedStyle(k)[bp+'Color'];
+          if(bv){
+            var bm=bv.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+            if(bm&&+bm[1]>200&&+bm[2]>200&&+bm[3]>200){
+              k.style.setProperty(bp.replace(/([A-Z])/g,function(m){return '-'+m.toLowerCase()})+'-color','rgba(175,140,62,.12)','important');
+            }
+          }
+        });
+      });
+      // Parent border de temizle
+      if(sec.parentElement){
+        sec.parentElement.style.setProperty('border-bottom','none','important');
+        sec.parentElement.style.setProperty('border-top','none','important');
       }
     });
 
