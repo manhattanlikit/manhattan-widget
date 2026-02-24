@@ -586,6 +586,24 @@ body.ml-dark .ec-page-body [class*="collapse"]{
   color:${TX1}!important;
   border-color:${BD}!important;
 }
+/* Statik sayfa — hover/focus/active beyaz flash önle */
+body.ml-dark .ec-page-body summary:hover,
+body.ml-dark .ec-page-body details summary:hover,
+body.ml-dark .ec-page-body [class*="accordion"]:hover,
+body.ml-dark .ec-page-body [onclick]:hover,
+body.ml-dark .ec-page-body [role="button"]:hover,
+body.ml-dark .ec-page-body [class*="toggle"]:hover,
+body.ml-dark .ec-page-body [class*="expand"]:hover,
+body.ml-dark .ec-page-body [class*="collaps"]:hover{
+  background-color:${BG3}!important;
+  color:${TX1}!important;
+}
+body.ml-dark .ec-page-body summary:focus,
+body.ml-dark .ec-page-body details:focus,
+body.ml-dark .ec-page-body details[open] summary{
+  background-color:${BG2}!important;
+  outline:none!important;
+}
 body.ml-dark .ec-page-body table,
 body.ml-dark .ec-page-body td,
 body.ml-dark .ec-page-body th,
@@ -1712,6 +1730,23 @@ body.ml-dark [class*="recently"] .grid-product__title-inner,
 body.ml-dark .ec-related-products .grid-product__title,
 body.ml-dark .ec-related-products .grid-product__title-inner{
   color:${TX1}!important;
+}
+/* Recently viewed ürün resim alanı — beyaz bg temizle */
+body.ml-dark [class*="recently"] .grid-product__image,
+body.ml-dark [class*="recently"] .grid-product__picture,
+body.ml-dark [class*="recently"] .grid-product__picture-wrapper,
+body.ml-dark [class*="recently"] .grid-product__image-wrap,
+body.ml-dark .ec-related-products .grid-product__image,
+body.ml-dark .ec-related-products .grid-product__picture,
+body.ml-dark .ec-related-products .grid-product__picture-wrapper,
+body.ml-dark .ec-related-products .grid-product__image-wrap{
+  background:${IMG_BG}!important;
+  border:none!important;
+  border-radius:12px 12px 0 0!important;
+}
+body.ml-dark [class*="recently"] .grid-product__image img,
+body.ml-dark .ec-related-products .grid-product__image img{
+  border-radius:12px 12px 0 0!important;
 }
 body.ml-dark [class*="recently"] .grid-product__price,
 body.ml-dark [class*="recently"] .grid-product__price-value,
@@ -2878,6 +2913,7 @@ function fixLabels(){
       w.style.setProperty('background','#23221e','important');
       w.style.setProperty('border','none','important');
       w.style.setProperty('border-radius','14px','important');
+      w.style.setProperty('overflow','hidden','important');
       w.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12), 0 0 0 2px #1b1a17, 0 0 0 3px rgba(175,140,62,.06), 0 2px 12px rgba(0,0,0,.3)','important');
       // wrap-inner
       var inner=w.querySelector('.grid-product__wrap-inner,[class*="wrap-inner"]');
@@ -2885,11 +2921,23 @@ function fixLabels(){
         inner.style.setProperty('background','#23221e','important');
         inner.style.setProperty('border','none','important');
       }
+      // Image wrapper bg
+      w.querySelectorAll('.grid-product__image,.grid-product__picture,.grid-product__picture-wrapper,[class*="image-wrap"]').forEach(function(img){
+        img.style.setProperty('background','#2c2b26','important');
+        img.style.setProperty('border','none','important');
+      });
+      // Hover white border kill — event listener
+      if(!w._mlHover){
+        w._mlHover=true;
+        w.addEventListener('mouseenter',function(){
+          this.style.setProperty('border','none','important');
+          this.style.setProperty('outline','none','important');
+        });
+      }
     });
     // Recently viewed container bg + alt çizgi temizliği
     document.querySelectorAll('[class*="recently"], .ec-related-products, [class*="related-products"]').forEach(function(sec){
       sec.style.setProperty('background','#1b1a17','important');
-      // Alt separator/border yok et
       sec.style.setProperty('border','none','important');
       sec.style.setProperty('border-bottom','none','important');
       // Child divs'de beyaz bg/border temizle
@@ -2912,12 +2960,34 @@ function fixLabels(){
     document.querySelectorAll('.ec-page-body, [class*="ec-page"], [class*="page-body"], [class*="store-page"]').forEach(function(pg){
       pg.style.setProperty('background-color','#1b1a17','important');
       pg.style.setProperty('color','#ece8df','important');
-      // İçindeki tüm div'leri dark yap
+      // İçindeki tüm div'leri dark yap + hover beyaz flash önle
       pg.querySelectorAll('div').forEach(function(d){
         var dbg=getComputedStyle(d).backgroundColor;
         var dm=dbg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
         if(dm&&+dm[1]>180&&+dm[2]>180&&+dm[3]>180){
           d.style.setProperty('background-color','#1b1a17','important');
+        }
+        // Tıklanabilir/hover elementlere dark hover zorla
+        if(d.onclick||d.getAttribute('onclick')||d.style.cursor==='pointer'||getComputedStyle(d).cursor==='pointer'){
+          if(!d._mlHoverFix){
+            d._mlHoverFix=true;
+            d.addEventListener('mouseenter',function(){
+              this.style.setProperty('background-color','#2c2b26','important');
+            });
+            d.addEventListener('mouseleave',function(){
+              this.style.setProperty('background-color','#23221e','important');
+            });
+          }
+        }
+      });
+      // border temizliği
+      pg.querySelectorAll('div,section,article').forEach(function(el){
+        var bc=getComputedStyle(el).borderColor;
+        if(bc){
+          var bm=bc.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+          if(bm&&+bm[1]>200&&+bm[2]>200&&+bm[3]>200){
+            el.style.setProperty('border-color','rgba(175,140,62,.12)','important');
+          }
         }
       });
     });
