@@ -58,37 +58,42 @@ body.ml-dm-t input,body.ml-dm-t textarea,body.ml-dm-t select{
 .ml-dm-btn{
   z-index:999999;
   width:40px;height:40px;border-radius:10px;
-  border:1.5px solid #af8c3e;
+  border:2px solid #a07830;
   background:transparent;
   backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  color:#af8c3e;
+  color:#a07830;
   display:flex;align-items:center;justify-content:center;
   cursor:pointer;
-  box-shadow:none;
-  transition:background .25s ease,border-color .25s ease,color .25s ease;
+  box-shadow:0 2px 6px rgba(160,120,48,.25);
+  transition:background .25s ease,border-color .25s ease,color .25s ease,box-shadow .25s ease,transform .25s ease;
   padding:0;
   pointer-events:auto;
   overflow:hidden;
 }
+/* Hover açık: #6 Sıcak İç Glow */
 .ml-dm-btn:hover{
-  background:rgba(175,140,62,.12);
-  border-color:#d4b05e;
-  color:#d4b05e;
+  border-color:#a07830;
+  color:#a07830;
+  background:transparent;
+  box-shadow:0 2px 8px rgba(160,120,48,.3), inset 0 0 10px rgba(160,120,48,.08);
 }
 .ml-dm-btn svg{width:18px;height:18px;transition:color .25s ease}
 .ml-dm-btn:active svg{transform:rotate(15deg) scale(.9)}
 
+/* Dark mode base: #7 Antik + Parlak Gölge */
 body.ml-dark .ml-dm-btn{
   background:rgba(35,34,30,.55);
-  border-color:rgba(175,140,62,.2);
+  border-color:rgba(160,120,48,.35);
   color:${GOLD};
-  box-shadow:0 2px 10px rgba(0,0,0,.2);
+  box-shadow:0 2px 10px rgba(0,0,0,.2), 0 0 12px rgba(175,140,62,.06);
   overflow:hidden;
 }
+/* Hover dark: #7 Altın Glow Ring */
 body.ml-dark .ml-dm-btn:hover{
   background:rgba(45,44,38,.85);
   border-color:${GOLD};
   color:${GOLD};
+  box-shadow:0 0 0 3px rgba(212,176,94,.1), 0 2px 12px rgba(0,0,0,.25), 0 0 18px rgba(212,176,94,.08);
 }
 
 @media(max-width:768px){
@@ -125,13 +130,24 @@ body.ml-dark .body{
 /* ── SİTE SECTION BLOKLARI ── */
 body.ml-dark .menu,
 body.ml-dark .container,
-body.ml-dark .caption,
 body.ml-dark .whyus,
 body.ml-dark .contacts,
 body.ml-dark .owner,
 body.ml-dark .store,
 body.ml-dark .dynamic-product-browser{
   background:${BG1}!important;
+  color:${TX1}!important;
+  overflow:visible!important;
+}
+/* ── HERO/KAPAK — Sunset Blaze gradient ── */
+body.ml-dark .caption{
+  background:linear-gradient(180deg,
+    rgba(190,120,40,.25) 0%,
+    rgba(170,110,35,.14) 12%,
+    rgba(150,100,35,.07) 30%,
+    rgba(175,140,62,.02) 48%,
+    #1b1a17 62%,
+    #1b1a17 100%)!important;
   color:${TX1}!important;
   overflow:visible!important;
 }
@@ -312,7 +328,13 @@ body.ml-dark [class*="tile-"]{
 }
 body.ml-dark .tile [class*="cover"],
 body.ml-dark [class*="tile-"] [class*="cover"]{
-  background:${BG1}!important;
+  background:linear-gradient(180deg,
+    rgba(190,120,40,.25) 0%,
+    rgba(170,110,35,.14) 12%,
+    rgba(150,100,35,.07) 30%,
+    rgba(175,140,62,.02) 48%,
+    #1b1a17 62%,
+    #1b1a17 100%)!important;
 }
 
 /* Farklı arka plan tonları olan section'lar */
@@ -2545,6 +2567,10 @@ function cleanAll(){
   document.querySelectorAll('.recently-viewed-title').forEach(function(el){
     el.style.removeProperty('color');
   });
+  // Caption/cover gradient temizle
+  document.querySelectorAll('.caption,.tile [class*="cover"],[class*="tile-"] [class*="cover"]').forEach(function(el){
+    el.style.removeProperty('background');
+  });
   // Hakkında bölümü inline stil temizle
   document.querySelectorAll('.tile-about,.owner,.whyus,.contacts').forEach(function(sec){
     sec.style.removeProperty('color');
@@ -3173,6 +3199,15 @@ function fixLabels(){
           k.style.setProperty('border-bottom','none','important');
         }
       }
+    });
+
+    // ── HERO/KAPAK GRADIENT ENFORCEMENTİ — Sunset Blaze ──
+    var _sunsetGrad='linear-gradient(180deg, rgba(190,120,40,.25) 0%, rgba(170,110,35,.14) 12%, rgba(150,100,35,.07) 30%, rgba(175,140,62,.02) 48%, #1b1a17 62%, #1b1a17 100%)';
+    document.querySelectorAll('.caption').forEach(function(el){
+      el.style.setProperty('background',_sunsetGrad,'important');
+    });
+    document.querySelectorAll('.tile [class*="cover"],[class*="tile-"] [class*="cover"]').forEach(function(el){
+      el.style.setProperty('background',_sunsetGrad,'important');
     });
 
     // ── HAKKINDA / ABOUT BÖLÜMÜ ENFORCEMENTİ ──
