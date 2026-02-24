@@ -139,24 +139,8 @@ body.ml-dark .dynamic-product-browser{
   color:${TX1}!important;
   overflow:visible!important;
 }
-/* ── HERO GRADIENT — Amber Sunset (Orta) ── */
-body.ml-dark .tile-cover > .cover{
-  background:linear-gradient(180deg,
-    rgba(139,90,30,.22) 0%,
-    rgba(175,140,62,.10) 30%,
-    ${BG1} 60%,
-    ${BG1} 100%)!important;
-}
-/* Hero alt katmanları transparent — gradient görünsün */
-body.ml-dark .tile-cover .cover__background,
-body.ml-dark .tile-cover .cover__container,
-body.ml-dark .tile-cover .cover__body,
-body.ml-dark .tile-cover .cover__content,
-body.ml-dark .tile-cover .cover__content-inner,
-body.ml-dark .tile-cover .cover__subtitle{
-  background:transparent!important;
-}
 body.ml-dark .caption{
+  background:${BG1}!important;
   color:${TX1}!important;
   overflow:visible!important;
 }
@@ -339,7 +323,7 @@ body.ml-dark .tile [class*="cover"],
 body.ml-dark [class*="tile-"] [class*="cover"]{
   background:${BG1}!important;
 }
-/* (caption cover kaldırıldı — gradient artık .tile-cover > .cover'da, alt katmanlar explicit transparent) */
+
 
 /* Farklı arka plan tonları olan section'lar */
 body.ml-dark [class*="section"],
@@ -2571,13 +2555,6 @@ function cleanAll(){
   document.querySelectorAll('.recently-viewed-title').forEach(function(el){
     el.style.removeProperty('color');
   });
-  // Hero gradient temizle
-  document.querySelectorAll('.tile-cover > .cover').forEach(function(el){
-    el.style.removeProperty('background');
-  });
-  document.querySelectorAll('.tile-cover .cover__background, .tile-cover .cover__container, .tile-cover .cover__body, .tile-cover .cover__content, .tile-cover .cover__content-inner, .tile-cover .cover__subtitle').forEach(function(el){
-    el.style.removeProperty('background');
-  });
   // Hakkında bölümü inline stil temizle
   document.querySelectorAll('.tile-about,.owner,.whyus,.contacts').forEach(function(sec){
     sec.style.removeProperty('color');
@@ -3206,15 +3183,6 @@ function fixLabels(){
           k.style.setProperty('border-bottom','none','important');
         }
       }
-    });
-
-    // ── HERO/KAPAK GRADIENT ENFORCEMENTİ — Amber Sunset (.tile-cover > .cover) ──
-    document.querySelectorAll('.tile-cover > .cover').forEach(function(el){
-      el.style.setProperty('background','linear-gradient(180deg, rgba(139,90,30,.22) 0%, rgba(175,140,62,.10) 30%, #1b1a17 60%, #1b1a17 100%)','important');
-    });
-    // Alt katmanları transparent yap
-    document.querySelectorAll('.tile-cover .cover__background, .tile-cover .cover__container, .tile-cover .cover__body, .tile-cover .cover__content, .tile-cover .cover__content-inner, .tile-cover .cover__subtitle').forEach(function(el){
-      el.style.setProperty('background','transparent','important');
     });
 
     // ── HAKKINDA / ABOUT BÖLÜMÜ ENFORCEMENTİ ──
