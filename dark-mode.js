@@ -28,22 +28,10 @@ var css=`
    MANHATTAN DARK MODE — Warm Premium
    ══════════════════════════════════════ */
 
-/* ── GEÇİŞ ANİMASYONU — sadece container'lar (performans) ── */
-body.ml-dm-t,
-body.ml-dm-t .tiles,
-body.ml-dm-t .tiles-wrapper,
-body.ml-dm-t .menu,
-body.ml-dm-t .store,
-body.ml-dm-t .footer,
-body.ml-dm-t .footer-new,
-body.ml-dm-t .tile,
-body.ml-dm-t .tile-cover,
-body.ml-dm-t .ml-dm-btn,
-body.ml-dm-t .grid-product__wrap,
-body.ml-dm-t .grid-category__card,
-body.ml-dm-t .cover__button,
-body.ml-dm-t .form-control__button{
-  transition:background-color .35s ease,color .35s ease,border-color .35s ease!important;
+/* ── GEÇİŞ ANİMASYONU — opacity fade (parçalı geçiş yok) ── */
+body.ml-dm-fade{
+  opacity:0!important;
+  transition:opacity .15s ease!important;
 }
 
 /* ── TOGGLE BUTON ── */
@@ -2368,28 +2356,32 @@ btn.innerHTML=moonOff;
 function toggle(){
   // Observer'ı KAPAT — yoksa class değişiminde fixAll anında tetiklenir → flash
   _observer.disconnect();
-  document.body.classList.add('ml-dm-t');
-  document.body.classList.toggle('ml-dark');
-  var dark=document.body.classList.contains('ml-dark');
-  document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
-  btn.innerHTML=dark?moonOn:moonOff;
-  try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
-  // CSS body.ml-dark kuralları otomatik devreye girer/çıkar
-  // JS inline stil KOYMA — Ecwid'in doğal akışını bozar
-  // SALT HTML .D class toggle
-  if(!dark){
-    document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
-  }
-  // Transition bittikten SONRA ml-dm-t kaldır + observer tekrar aç (HAFİF)
+  // 1. Fade out (150ms)
+  document.body.classList.add('ml-dm-fade');
   setTimeout(function(){
-    document.body.classList.remove('ml-dm-t');
-    // Observer'ı tekrar başlat
-    _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-  },400);
-  // fixAll — transition bittikten SONRA, ayrı frame'de (above-fold CSS ile zaten doğru)
-  setTimeout(fixAll,500);
-  // Ecwid geç render için 2. pas
-  setTimeout(fixAll,1500);
+    // 2. Karanlık → aydınlık veya tersi (görünmez iken)
+    document.body.classList.toggle('ml-dark');
+    var dark=document.body.classList.contains('ml-dark');
+    document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
+    btn.innerHTML=dark?moonOn:moonOff;
+    try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
+    if(!dark){
+      document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
+    }
+    // fixAll senkron — sayfa gizli iken tüm stilleri uygula
+    _lastFixTime=0; // guard'ı sıfırla
+    clearTimeout(_fixTimer);
+    if(_fixRAF) cancelAnimationFrame(_fixRAF);
+    _fixAllNow();
+    // 3. Fade in (150ms)
+    requestAnimationFrame(function(){
+      document.body.classList.remove('ml-dm-fade');
+      // Observer'ı tekrar başlat
+      _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+    });
+    // Ecwid geç render için 2. pas
+    setTimeout(fixAll,1000);
+  },170); // fade out süresi + buffer
 }
 
 btn.addEventListener('click',function(e){
