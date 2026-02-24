@@ -785,6 +785,25 @@ body.ml-dark input[type="radio"],
 body.ml-dark input[type="checkbox"]{
   accent-color:${GOLDDIM}!important;
 }
+/* Checkout radiogroup — native radio gold override */
+body.ml-dark .ec-radiogroup input[type="radio"]{
+  accent-color:${GOLD}!important;
+  -webkit-appearance:none!important;
+  appearance:none!important;
+  width:20px!important;
+  height:20px!important;
+  border:2px solid ${BD}!important;
+  border-radius:50%!important;
+  background:${BG2}!important;
+  cursor:pointer!important;
+  position:relative!important;
+  flex-shrink:0!important;
+}
+body.ml-dark .ec-radiogroup input[type="radio"]:checked{
+  border-color:${GOLD}!important;
+  background:${GOLD}!important;
+  box-shadow:inset 0 0 0 3px ${BG2}!important;
+}
 /* Ecwid radio wrap — Bilgi bölümü */
 body.ml-dark .form-control__radio-wrap{
   background:transparent!important;
@@ -2162,6 +2181,10 @@ function fixLabels(){
     // Radiogroup items — kill box-shadow
     document.querySelectorAll('.ec-radiogroup__item').forEach(function(el){
       el.style.setProperty('box-shadow','none','important');
+    });
+    // Native radio circles — gold
+    document.querySelectorAll('.ec-radiogroup input[type="radio"]').forEach(function(el){
+      el.style.setProperty('accent-color','#af8c3e','important');
     });
     document.querySelectorAll('.ec-minicart').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
