@@ -1,4 +1,4 @@
-// Manhattan Likit — Dark Mode v1.0
+// Manhattan Likit — Dark Mode v2.7d
 // Standalone file — widget.js'e dokunmaz, ayrı yüklenir
 // Toggle: sağ üst sabit buton (ay/güneş)
 // Tasarım: Premium warm-dark, Apple siyahı DEĞİL
@@ -664,8 +664,8 @@ body.ml-dark button.cover-button{
   position:relative!important;
   text-decoration:none!important;
 }
-body.ml-dark .cover__button *,
-body.ml-dark .cover-button *{
+body.ml-dark .cover__button *:not(.ml-sweep),
+body.ml-dark .cover-button *:not(.ml-sweep){
   color:#fff!important;
   background:transparent!important;
   background-color:transparent!important;
@@ -1139,6 +1139,18 @@ body.ml-dark .form-control--flexible{
 }
 
 /* ── BEYAZ BORDER TEMİZLEME — diagnostic'ten ── */
+/* NÜKLEER: Tüm cart/checkout bölgesindeki border'ları koyu yap */
+body.ml-dark .ec-cart *,
+body.ml-dark .ec-cart-step *,
+body.ml-dark .ec-radiogroup *,
+body.ml-dark .ec-confirmation *{
+  border-color:${BD2}!important;
+}
+body.ml-dark .ec-radiogroup__items,
+body.ml-dark .ec-radiogroup__item,
+body.ml-dark .ec-radiogroup label{
+  border-color:${BD}!important;
+}
 body.ml-dark .ec-minicart{
   border-color:${BD2}!important;
 }
@@ -1250,8 +1262,8 @@ body.ml-dark .tile-cover a.cover-button{
   position:relative!important;
   overflow:hidden!important;
 }
-body.ml-dark .tile-cover .cover__button *,
-body.ml-dark .tile-cover .cover-button *{
+body.ml-dark .tile-cover .cover__button *:not(.ml-sweep),
+body.ml-dark .tile-cover .cover-button *:not(.ml-sweep){
   color:#fff!important;
   background:transparent!important;
   background-color:transparent!important;
@@ -1266,8 +1278,8 @@ body.ml-dark .cover-button:hover{
   overflow:hidden!important;
   transform:scale(.97)!important;
 }
-body.ml-dark .cover__button:hover *,
-body.ml-dark .cover-button:hover *{
+body.ml-dark .cover__button:hover *:not(.ml-sweep),
+body.ml-dark .cover-button:hover *:not(.ml-sweep){
   background:transparent!important;
   background-color:transparent!important;
   border-radius:inherit!important;
@@ -1604,14 +1616,20 @@ btn.innerHTML=moonOff;
 // ─── TOGGLE FONKSİYONU ───
 
 function toggle(){
+  // Observer'ı KAPAT — yoksa class değişiminde fixAll anında tetiklenir → flash
+  _observer.disconnect();
   document.body.classList.add('ml-dm-t');
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
-  // fixAll transition bittikten SONRA — flash önleme
-  setTimeout(fixAll,400);
-  setTimeout(function(){document.body.classList.remove('ml-dm-t');},450);
+  // Transition bittikten SONRA fixAll + observer tekrar aç
+  setTimeout(function(){
+    fixAll();
+    document.body.classList.remove('ml-dm-t');
+    // Observer'ı tekrar başlat
+    _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+  },400);
 }
 
 btn.addEventListener('click',function(e){
@@ -1701,7 +1719,7 @@ function cleanAll(){
   });
   // Opsiyon butonları — tüm inline style temizle
   document.querySelectorAll('.form-control--checkbox-button .form-control__inline-label').forEach(function(el){
-    ['background','color','border-color','border','font-weight','border-radius','transition','opacity','transform','box-shadow','cursor'].forEach(function(p){el.style.removeProperty(p);});
+    ['background','color','border-color','border','font-weight','border-radius','transition','opacity','transform','box-shadow','cursor','position','overflow'].forEach(function(p){el.style.removeProperty(p);});
     var il=el.querySelector('label');
     if(il){il.style.removeProperty('color');il.style.removeProperty('background');}
   });
@@ -1855,10 +1873,10 @@ function fixSweep(){
     if(!inp||!lbl) return;
     var innerLbl=lbl.querySelector('label');
 
-    // Ortak — border her zaman 1px (tırtık önleme: boyut sabit)
-    lbl.style.setProperty('border','1px solid transparent','important');
+    // Ortak — BORDER YOK, box-shadow ile çerçeve (tırtık önleme: layout shift yok)
+    lbl.style.setProperty('border','none','important');
     lbl.style.setProperty('border-radius','10px','important');
-    lbl.style.setProperty('transition','background .2s ease,color .2s ease,border-color .2s ease,box-shadow .2s ease,transform .2s ease','important');
+    lbl.style.setProperty('transition','background .2s ease,color .2s ease,box-shadow .2s ease,transform .15s ease','important');
     lbl.style.setProperty('cursor','pointer','important');
 
     if(inp.checked){
@@ -1866,8 +1884,7 @@ function fixSweep(){
       lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
       lbl.style.setProperty('color','#fff','important');
       lbl.style.setProperty('font-weight','700','important');
-      lbl.style.setProperty('border-color','transparent','important');
-      lbl.style.setProperty('box-shadow','0 2px 8px rgba(175,140,62,.25)','important');
+      lbl.style.setProperty('box-shadow','0 0 0 1.5px #af8c3e, 0 2px 8px rgba(175,140,62,.25)','important');
       lbl.style.setProperty('position','relative','important');
       lbl.style.setProperty('overflow','hidden','important');
       if(innerLbl){innerLbl.style.setProperty('color','#fff','important');innerLbl.style.setProperty('background','transparent','important');}
@@ -1878,8 +1895,7 @@ function fixSweep(){
       lbl.style.setProperty('background','#2c2b26','important');
       lbl.style.setProperty('color','#ece8df','important');
       lbl.style.setProperty('font-weight','600','important');
-      lbl.style.setProperty('border-color','rgba(175,140,62,.12)','important');
-      lbl.style.setProperty('box-shadow','none','important');
+      lbl.style.setProperty('box-shadow','0 0 0 1px rgba(175,140,62,.15)','important');
       if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
     }
 
@@ -1889,17 +1905,17 @@ function fixSweep(){
       lbl.addEventListener('mouseenter',function(){
         if(!document.body.classList.contains('ml-dark')) return;
         if(inp.checked){
+          // Seçili hover — koyu gold, sweep duraklat
           lbl.style.setProperty('background','#af8c3e','important');
           lbl.style.setProperty('transform','scale(.97)','important');
-          lbl.style.setProperty('box-shadow','0 1px 4px rgba(0,0,0,.3)','important');
+          lbl.style.setProperty('box-shadow','0 0 0 1.5px #8a6f32, 0 1px 4px rgba(0,0,0,.3)','important');
           var sw=lbl.querySelector('.ml-sweep');if(sw)sw.style.animationPlayState='paused';
         }else{
           // Seçili değil hover — gold gradient + sweep
           lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
           lbl.style.setProperty('color','#fff','important');
           lbl.style.setProperty('font-weight','700','important');
-          lbl.style.setProperty('border-color','transparent','important');
-          lbl.style.setProperty('box-shadow','0 2px 8px rgba(175,140,62,.25)','important');
+          lbl.style.setProperty('box-shadow','0 0 0 1.5px #af8c3e, 0 2px 8px rgba(175,140,62,.25)','important');
           lbl.style.setProperty('transform','translateY(-1px)','important');
           lbl.style.setProperty('position','relative','important');
           lbl.style.setProperty('overflow','hidden','important');
@@ -1911,9 +1927,10 @@ function fixSweep(){
         if(!document.body.classList.contains('ml-dark')) return;
         lbl.style.removeProperty('transform');
         if(inp.checked){
+          // Seçili leave — gradient'e dön, sweep devam
           lbl.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
           lbl.style.setProperty('color','#fff','important');
-          lbl.style.setProperty('box-shadow','0 2px 8px rgba(175,140,62,.25)','important');
+          lbl.style.setProperty('box-shadow','0 0 0 1.5px #af8c3e, 0 2px 8px rgba(175,140,62,.25)','important');
           if(innerLbl) innerLbl.style.setProperty('color','#fff','important');
           var sw=lbl.querySelector('.ml-sweep');if(sw)sw.style.animationPlayState='running';
         }else{
@@ -1922,8 +1939,7 @@ function fixSweep(){
           lbl.style.setProperty('background','#2c2b26','important');
           lbl.style.setProperty('color','#ece8df','important');
           lbl.style.setProperty('font-weight','600','important');
-          lbl.style.setProperty('border-color','rgba(175,140,62,.12)','important');
-          lbl.style.setProperty('box-shadow','none','important');
+          lbl.style.setProperty('box-shadow','0 0 0 1px rgba(175,140,62,.15)','important');
           if(innerLbl){innerLbl.style.setProperty('color','#ece8df','important');innerLbl.style.setProperty('background','transparent','important');}
         }
       });
