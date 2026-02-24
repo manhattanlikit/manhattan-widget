@@ -2458,17 +2458,18 @@ function init(){
 
 var _fixTimer=null;
 var _fixRAF=null;
+var _lastFixTime=0;
 function fixAll(){
   // Debounce — Ecwid çok sık DOM değiştirir
   clearTimeout(_fixTimer);
   if(_fixRAF) cancelAnimationFrame(_fixRAF);
   _fixTimer=setTimeout(function(){
+    var now=Date.now();
+    // fixAll kendi style yazımından tetiklenen observer'ı yoksay (150ms guard)
+    if(now-_lastFixTime<150) return;
     _fixRAF=requestAnimationFrame(function(){
-      // Observer'ı kapat — fixAll'ın yazdığı style'lar tekrar tetiklemesin
-      _observer.disconnect();
+      _lastFixTime=Date.now();
       _fixAllNow();
-      // Observer'ı geri aç
-      _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
     });
   },80);
 }
