@@ -1376,10 +1376,19 @@ body.ml-dark .ec-cart-widget svg{
   color:${TX1}!important;
   fill:${TX1}!important;
 }
-/* Sepet + Arama yuvarlak ikon çerçeveleri — gold accent */
-body.ml-dark .float-icons__wrap a,
-body.ml-dark .float-icons__wrap div[class*="icon"],
-body.ml-dark .float-icons__wrap button{
+/* Sepet + Arama floating ikonları */
+body.ml-dark .float-icons,
+body.ml-dark .float-icons__wrap,
+body.ml-dark .float-icons__icon,
+body.ml-dark .float-icons__icon > div,
+body.ml-dark .float-icons__wrap .ec-minicart__body,
+body.ml-dark .float-icons__wrap .ec-minicart__icon{
+  background:transparent!important;
+  border:none!important;
+  box-shadow:none!important;
+}
+/* Sadece yuvarlak daire (.ec-minicart, radius:40px) */
+body.ml-dark .float-icons__wrap .ec-minicart{
   background:${BG2}!important;
   border:1px solid ${BD}!important;
   box-shadow:0 2px 8px rgba(0,0,0,.3)!important;
@@ -1387,9 +1396,6 @@ body.ml-dark .float-icons__wrap button{
 body.ml-dark .float-icons__wrap svg{
   color:${GOLD}!important;
   fill:${GOLD}!important;
-}
-body.ml-dark .float-icons__wrap *{
-  color:${GOLD}!important;
 }
 
 /* ── HR & KENARLIKLARI ── */
@@ -1824,10 +1830,9 @@ function cleanAll(){
     el.style.removeProperty('border-bottom-color');
   });
   // Floating ikon temizle
-  document.querySelectorAll('.float-icons__wrap a, .float-icons__wrap div, .float-icons__wrap button').forEach(function(el){
-    el.style.removeProperty('background-color');
-    el.style.removeProperty('border');
-    el.style.removeProperty('box-shadow');
+  document.querySelectorAll('.float-icons,.float-icons__wrap,.float-icons__icon,.float-icons__icon > div,.float-icons__wrap .ec-minicart,.float-icons__wrap .ec-minicart__body,.float-icons__wrap .ec-minicart__icon').forEach(function(el){
+    el.style.removeProperty('background');el.style.removeProperty('background-color');
+    el.style.removeProperty('border');el.style.removeProperty('box-shadow');
   });
   document.querySelectorAll('.float-icons__wrap svg').forEach(function(s){s.style.removeProperty('color');s.style.removeProperty('fill');});
 }
@@ -2174,11 +2179,15 @@ function fixBadgeRect(){
 // ─── FLOATING İKONLAR (Sepet + Arama daireleri) ───
 function fixFloatingIcons(){
   if(!document.body.classList.contains('ml-dark')) return;
-  // Ecwid floating cart/search — .float-icons__wrap içindeki butonlar
-  document.querySelectorAll('.float-icons__wrap a, .float-icons__wrap div, .float-icons__wrap button').forEach(function(el){
-    var w=el.offsetWidth, h=el.offsetHeight;
-    if(w<20||h<20) return;
-    el.style.setProperty('background-color','#23221e','important');
+  // Kare wrapper'ları temizle
+  document.querySelectorAll('.float-icons,.float-icons__wrap,.float-icons__icon,.float-icons__icon > div,.float-icons__wrap .ec-minicart__body,.float-icons__wrap .ec-minicart__icon').forEach(function(el){
+    el.style.setProperty('background','transparent','important');
+    el.style.setProperty('border','none','important');
+    el.style.setProperty('box-shadow','none','important');
+  });
+  // Sadece yuvarlak ec-minicart daireler
+  document.querySelectorAll('.float-icons__wrap .ec-minicart').forEach(function(el){
+    el.style.setProperty('background','#23221e','important');
     el.style.setProperty('border','1px solid rgba(175,140,62,.2)','important');
     el.style.setProperty('box-shadow','0 2px 8px rgba(0,0,0,.3)','important');
   });
