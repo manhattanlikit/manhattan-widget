@@ -533,6 +533,40 @@ body.ml-dark .ec-page-title{color:${TX1}!important}
 body.ml-dark .ec-breadcrumbs a{color:${TX3}!important}
 body.ml-dark .ec-breadcrumbs a:hover{color:${GOLD}!important}
 
+/* ── STATİK SAYFALAR (Şartlar, Gizlilik, İade, vb.) ── */
+body.ml-dark .ec-page-body,
+body.ml-dark .ec-page-body *,
+body.ml-dark [class*="page-body"],
+body.ml-dark [class*="page-content"],
+body.ml-dark [class*="legal"] *{
+  background-color:transparent!important;
+  color:${TX1}!important;
+}
+body.ml-dark .ec-page-body h1,
+body.ml-dark .ec-page-body h2,
+body.ml-dark .ec-page-body h3{
+  color:${TX1}!important;
+}
+body.ml-dark .ec-page-body a{
+  color:${GOLD}!important;
+}
+body.ml-dark .ec-page-body details,
+body.ml-dark .ec-page-body summary,
+body.ml-dark .ec-page-body [class*="accordion"],
+body.ml-dark .ec-page-body [class*="collapse"]{
+  background:${BG2}!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
+body.ml-dark .ec-page-body table,
+body.ml-dark .ec-page-body td,
+body.ml-dark .ec-page-body th,
+body.ml-dark .ec-page-body tr{
+  background:transparent!important;
+  color:${TX1}!important;
+  border-color:${BD}!important;
+}
+
 /* ── ÜRÜN NAVİGASYON OKLARI (< >) ── */
 body.ml-dark .product-details-navigation__arrow,
 body.ml-dark [class*="product-details-navigation"] a,
@@ -2439,6 +2473,20 @@ function fixLabels(){
     // Cart-next header separator
     document.querySelectorAll('.ec-cart-next__header,[class*="ec-cart-next"]').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
+    });
+    // ── STATİK SAYFA İÇERİK TEMİZLİĞİ ──
+    document.querySelectorAll('.ec-page-body *').forEach(function(el){
+      if(el.tagName==='IMG'||el.tagName==='VIDEO'||el.tagName==='IFRAME') return;
+      var bg=getComputedStyle(el).backgroundColor;
+      var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+      if(m && +m[1]>200 && +m[2]>200 && +m[3]>200){
+        el.style.setProperty('background-color','transparent','important');
+      }
+      var c=getComputedStyle(el).color;
+      var cm=c.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+      if(cm && +cm[1]<80 && +cm[2]<80 && +cm[3]<80){
+        el.style.setProperty('color','#ece8df','important');
+      }
     });
     // ── CHECKBOX VİSİBİLİTY ENFORCEMENTİ ──
     document.querySelectorAll('.form-control__checkbox-view').forEach(function(cv){
