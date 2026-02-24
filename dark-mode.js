@@ -1,4 +1,4 @@
-// Manhattan Likit — Dark Mode v2.7d
+// Manhattan Likit — Dark Mode v2.7f
 // Standalone file — widget.js'e dokunmaz, ayrı yüklenir
 // Toggle: sağ üst sabit buton (ay/güneş)
 // Tasarım: Premium warm-dark, Apple siyahı DEĞİL
@@ -614,6 +614,16 @@ body.ml-dark .details-product-purchase__add-to-bag.form-control:hover::after{
   animation:none!important;
 }
 @keyframes mlsweep{0%,100%{left:-100%}50%{left:100%}}
+@keyframes mlCheckPulse{
+  0%{box-shadow:0 0 0 0 rgba(175,140,62,.5)}
+  70%{box-shadow:0 0 0 8px rgba(175,140,62,0)}
+  100%{box-shadow:0 0 0 0 rgba(175,140,62,0)}
+}
+/* Agreement checkbox — unchecked dikkat çekici */
+body.ml-dark .ml-agree-pulse .form-control__checkbox-view{
+  animation:mlCheckPulse 1.5s ease-in-out 3!important;
+  border-color:${GOLD}!important;
+}
 /* Hover — koyu gold + scale, sweep durur */
 body.ml-dark .form-control--primary .form-control__button:hover,
 body.ml-dark .details-product-purchase__add-to-bag .form-control__button:hover{
@@ -1237,8 +1247,9 @@ body.ml-dark input[type="checkbox"]{
   accent-color:${GOLD}!important;
 }
 body.ml-dark .form-control__checkbox-view{
-  border-color:${BD}!important;
-  background:${BG2}!important;
+  border:1.5px solid rgba(175,140,62,.5)!important;
+  background:${BG1}!important;
+  border-radius:3px!important;
 }
 body.ml-dark .form-control__checkbox:checked~.form-control__checkbox-view,
 body.ml-dark .form-control__checkbox:checked+.form-control__checkbox-view{
@@ -1298,7 +1309,7 @@ body.ml-dark .form-control__checkbox-view::after{
 }
 body.ml-dark .form-control__checkbox:checked~.form-control__checkbox-view::after,
 body.ml-dark .form-control__checkbox:checked+.form-control__checkbox-view::after{
-  background:#fff!important;
+  background:transparent!important;
   border-color:#fff!important;
 }
 /* Slider uç kapaklar */
@@ -1961,10 +1972,14 @@ function init(){
 // ═══════════════════════════════════════════════════════
 
 var _fixTimer=null;
+var _fixRAF=null;
 function fixAll(){
   // Debounce — Ecwid çok sık DOM değiştirir
   clearTimeout(_fixTimer);
-  _fixTimer=setTimeout(_fixAllNow,80);
+  if(_fixRAF) cancelAnimationFrame(_fixRAF);
+  _fixTimer=setTimeout(function(){
+    _fixRAF=requestAnimationFrame(_fixAllNow);
+  },80);
 }
 function _fixAllNow(){
   var dark=document.body.classList.contains('ml-dark');
@@ -2424,6 +2439,36 @@ function fixLabels(){
     // Cart-next header separator
     document.querySelectorAll('.ec-cart-next__header,[class*="ec-cart-next"]').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
+    });
+    // ── CHECKBOX VİSİBİLİTY ENFORCEMENTİ ──
+    document.querySelectorAll('.form-control__checkbox-view').forEach(function(cv){
+      // Unchecked — görünür border zorla
+      cv.style.setProperty('border','1.5px solid rgba(175,140,62,.5)','important');
+      cv.style.setProperty('border-radius','3px','important');
+      // Checked kontrolü
+      var inp=cv.previousElementSibling;
+      if(!inp) inp=cv.parentElement.querySelector('.form-control__checkbox');
+      if(inp && inp.checked){
+        cv.style.setProperty('background','#af8c3e','important');
+        cv.style.setProperty('border-color','#af8c3e','important');
+      } else {
+        cv.style.setProperty('background','#1b1a17','important');
+      }
+    });
+    // ── AGREEMENT CHECKBOX — dikkat çekici pulse ──
+    document.querySelectorAll('.ec-cart-step label,.ec-cart [class*="agreement"],.ec-cart [class*="consent"]').forEach(function(lbl){
+      var txt=(lbl.textContent||'').toLowerCase();
+      if(txt.indexOf('kabul')>-1||txt.indexOf('accept')>-1||txt.indexOf('şartlar')>-1){
+        var wrap=lbl.closest('.form-control')||lbl.closest('[class*="checkbox"]')||lbl.parentElement;
+        if(wrap){
+          var cb=wrap.querySelector('.form-control__checkbox');
+          if(cb && !cb.checked){
+            wrap.classList.add('ml-agree-pulse');
+          } else {
+            wrap.classList.remove('ml-agree-pulse');
+          }
+        }
+      }
     });
   }
 }
