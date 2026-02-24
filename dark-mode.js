@@ -1857,6 +1857,7 @@ body.ml-dark .recently-viewed{
   background:${BG2}!important;
   border-radius:14px!important;
   border:none!important;
+  margin:0 8px!important;
   box-shadow:
     inset 0 0 0 1px ${BD},
     0 0 0 2px ${BG1},
@@ -2563,7 +2564,7 @@ function cleanAll(){
     });
   });
   document.querySelectorAll('.recently-viewed[class*="recently-viewed--"]').forEach(function(card){
-    ['background','border','border-radius','overflow','box-shadow','transform'].forEach(function(p){card.style.removeProperty(p);});
+    ['background','border','border-radius','overflow','box-shadow','transform','margin'].forEach(function(p){card.style.removeProperty(p);});
     var name=card.querySelector('.recently-viewed__name');
     if(name) name.style.removeProperty('color');
     card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item,.recently-viewed__price .ec-price-item--old').forEach(function(p){
@@ -3220,6 +3221,7 @@ function fixLabels(){
       card.style.setProperty('border-radius','14px','important');
       card.style.setProperty('overflow','hidden','important');
       card.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12), 0 0 0 2px #1b1a17, 0 0 0 3px rgba(175,140,62,.06), 0 2px 12px rgba(0,0,0,.3)','important');
+      card.style.setProperty('margin','0 8px','important');
       // Ürün adı — centered
       var name=card.querySelector('.recently-viewed__name');
       if(name){
