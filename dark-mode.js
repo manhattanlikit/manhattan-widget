@@ -1377,15 +1377,19 @@ body.ml-dark .ec-cart-widget svg{
   fill:${TX1}!important;
 }
 /* Sepet + Arama yuvarlak ikon çerçeveleri — gold accent */
-body.ml-dark .ec-cart-widget,
-body.ml-dark [class*="cart-widget__body"],
-body.ml-dark [class*="cart-widget__icon"],
-body.ml-dark .ecwid-SearchPanel,
-body.ml-dark [class*="search-panel"],
-body.ml-dark .ec-minicart-mini{
+body.ml-dark .float-icons__wrap a,
+body.ml-dark .float-icons__wrap div[class*="icon"],
+body.ml-dark .float-icons__wrap button{
   background:${BG2}!important;
   border:1px solid ${BD}!important;
   box-shadow:0 2px 8px rgba(0,0,0,.3)!important;
+}
+body.ml-dark .float-icons__wrap svg{
+  color:${GOLD}!important;
+  fill:${GOLD}!important;
+}
+body.ml-dark .float-icons__wrap *{
+  color:${GOLD}!important;
 }
 
 /* ── HR & KENARLIKLARI ── */
@@ -1820,14 +1824,12 @@ function cleanAll(){
     el.style.removeProperty('border-bottom-color');
   });
   // Floating ikon temizle
-  document.querySelectorAll('[style*="position: fixed"],[style*="position:fixed"]').forEach(function(el){
-    if(el.offsetWidth>25&&el.offsetWidth<90){
-      el.style.removeProperty('background-color');
-      el.style.removeProperty('border');
-      el.style.removeProperty('box-shadow');
-      el.querySelectorAll('svg').forEach(function(s){s.style.removeProperty('color');s.style.removeProperty('fill');});
-    }
+  document.querySelectorAll('.float-icons__wrap a, .float-icons__wrap div, .float-icons__wrap button').forEach(function(el){
+    el.style.removeProperty('background-color');
+    el.style.removeProperty('border');
+    el.style.removeProperty('box-shadow');
   });
+  document.querySelectorAll('.float-icons__wrap svg').forEach(function(s){s.style.removeProperty('color');s.style.removeProperty('fill');});
 }
 
 // ─── STOKTA YOK — INLINE STYLE TEMİZLİĞİ ───
@@ -2172,27 +2174,17 @@ function fixBadgeRect(){
 // ─── FLOATING İKONLAR (Sepet + Arama daireleri) ───
 function fixFloatingIcons(){
   if(!document.body.classList.contains('ml-dark')) return;
-  // Ecwid inline style ile position:fixed + border-radius koyuyor
-  // CSS erişemiyor, JS ile override
-  document.querySelectorAll('[style*="position: fixed"],[style*="position:fixed"]').forEach(function(el){
-    var cs=getComputedStyle(el);
+  // Ecwid floating cart/search — .float-icons__wrap içindeki butonlar
+  document.querySelectorAll('.float-icons__wrap a, .float-icons__wrap div, .float-icons__wrap button').forEach(function(el){
     var w=el.offsetWidth, h=el.offsetHeight;
-    // 30-80px arası yuvarlak element = floating icon
-    if(w>25 && w<90 && h>25 && h<90){
-      var bg=cs.backgroundColor;
-      var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
-      // Açık renkli bg = override
-      if(m && (+m[1]>150 || +m[2]>150 || +m[3]>150)){
-        el.style.setProperty('background-color','#23221e','important');
-        el.style.setProperty('border','1px solid rgba(175,140,62,.2)','important');
-        el.style.setProperty('box-shadow','0 2px 12px rgba(0,0,0,.4)','important');
-      }
-      // SVG rengi
-      el.querySelectorAll('svg').forEach(function(svg){
-        svg.style.setProperty('color','#d4b05e','important');
-        svg.style.setProperty('fill','#d4b05e','important');
-      });
-    }
+    if(w<20||h<20) return;
+    el.style.setProperty('background-color','#23221e','important');
+    el.style.setProperty('border','1px solid rgba(175,140,62,.2)','important');
+    el.style.setProperty('box-shadow','0 2px 8px rgba(0,0,0,.3)','important');
+  });
+  document.querySelectorAll('.float-icons__wrap svg').forEach(function(svg){
+    svg.style.setProperty('color','#d4b05e','important');
+    svg.style.setProperty('fill','#d4b05e','important');
   });
 }
 
