@@ -1143,18 +1143,30 @@ body.ml-dark .form-control--flexible{
   border-radius:8px!important;
 }
 
-/* ── BEYAZ BORDER TEMİZLEME — diagnostic'ten ── */
-/* NÜKLEER: Tüm cart/checkout bölgesindeki border'ları koyu yap */
-body.ml-dark .ec-cart *,
-body.ml-dark .ec-cart-step *,
-body.ml-dark .ec-radiogroup *,
-body.ml-dark .ec-confirmation *{
-  border-color:${BD2}!important;
-}
+/* ── BEYAZ BORDER TEMİZLEME — spesifik hedef (wildcard kaldırıldı) ── */
+/* Sadece gerçek container/divider'lar — collapsed form elementlere dokunma */
+body.ml-dark .ec-cart,
+body.ml-dark .ec-cart__body,
+body.ml-dark .ec-cart__products,
+body.ml-dark .ec-cart-item,
+body.ml-dark .ec-cart-item__wrap,
+body.ml-dark .ec-cart-item__image,
+body.ml-dark .ec-cart-item__options,
+body.ml-dark .ec-cart-summary,
+body.ml-dark .ec-cart-summary__row,
+body.ml-dark .ec-cart-summary__total,
+body.ml-dark .ec-cart-step,
+body.ml-dark .ec-cart-step__body,
+body.ml-dark .ec-cart-step__next,
+body.ml-dark .ec-cart-step__section,
+body.ml-dark .ec-cart__cell,
+body.ml-dark .ec-confirmation,
+body.ml-dark .ec-confirmation__body,
+body.ml-dark .ec-radiogroup,
 body.ml-dark .ec-radiogroup__items,
 body.ml-dark .ec-radiogroup__item,
 body.ml-dark .ec-radiogroup label{
-  border-color:${BD}!important;
+  border-color:${BD2}!important;
 }
 body.ml-dark .ec-minicart{
   border-color:${BD2}!important;
