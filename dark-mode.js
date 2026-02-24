@@ -423,7 +423,9 @@ body.ml-dark .grid-product__price-value{
 /* ── ÜRÜN GÖRSELLERİ — Açık container, blend yok ── */
 body.ml-dark .grid-product__image,
 body.ml-dark .grid-product__bg,
-body.ml-dark .grid-product__bg[style]{
+body.ml-dark .grid-product__bg[style],
+body.ml-dark .grid-product__picture-additional,
+body.ml-dark .grid-product__picture-additional[style]{
   background:${IMG_BG}!important;
   background-color:${IMG_BG}!important;
   border-radius:12px 12px 0 0!important;
@@ -863,6 +865,11 @@ body.ml-dark .form-control__radio-view{
 body.ml-dark .form-control__radio-view-inner{
   border-radius:50%!important;
   background:transparent!important;
+  border-color:transparent!important;
+}
+body.ml-dark .form-control__radio-view::after{
+  background:transparent!important;
+  border-color:transparent!important;
 }
 body.ml-dark .form-control__radio:checked ~ .form-control__radio-view,
 body.ml-dark .form-control__radio:checked + .form-control__radio-view{
@@ -874,6 +881,11 @@ body.ml-dark .form-control__radio:checked ~ .form-control__radio-view .form-cont
 body.ml-dark .form-control__radio:checked + .form-control__radio-view .form-control__radio-view-inner{
   background:#fff!important;
   border-radius:50%!important;
+}
+body.ml-dark .form-control__radio:checked ~ .form-control__radio-view::after,
+body.ml-dark .form-control__radio:checked + .form-control__radio-view::after{
+  background:#fff!important;
+  border-color:#fff!important;
 }
 body.ml-dark .form-control__radio-view{
   border-color:${BD}!important;
@@ -1264,6 +1276,15 @@ body.ml-dark .ec-filter__body{
   background:${BG1}!important;
   color:${TX1}!important;
 }
+body.ml-dark .ec-openable-block,
+body.ml-dark .ec-filter .ec-openable-block{
+  background:${BG1}!important;
+  color:${TX1}!important;
+}
+body.ml-dark [class*="filter-section-sticky-bar"]::before,
+body.ml-dark [class*="filter-section-sticky-bar"]::after{
+  background:${BG1}!important;
+}
 body.ml-dark .ec-filter input[type="text"],
 body.ml-dark .ec-filter input[type="number"],
 body.ml-dark .ec-filter input[type="search"],
@@ -1615,6 +1636,28 @@ body.ml-dark .ec-currency-converter-element select{
 body.ml-dark [class*="tabs__"] a,
 body.ml-dark [class*="tabs__"] span{
   color:${TX2}!important;
+}
+body.ml-dark [class*="tabs__"] a:hover,
+body.ml-dark [class*="tabs__"] a.active,
+body.ml-dark [class*="tabs__"] a[aria-selected="true"]{
+  color:${GOLD}!important;
+}
+/* Statik sayfa — iç sekmeler (Şartlar & Koşullar vb.) */
+body.ml-dark .ec-page-body nav a,
+body.ml-dark [class*="content-page"] nav a,
+body.ml-dark [class*="legal"] nav a{
+  color:${TX2}!important;
+  transition:color .2s!important;
+}
+body.ml-dark .ec-page-body nav a:hover,
+body.ml-dark [class*="content-page"] nav a:hover,
+body.ml-dark .ec-page-body nav a.active{
+  color:${GOLD}!important;
+}
+/* Statik sayfa SVG/icon'lar */
+body.ml-dark .ec-page-body svg,
+body.ml-dark .ec-page-body img:not([src*=".jpg"]):not([src*=".png"]):not([src*=".webp"]){
+  filter:invert(1) brightness(.85)!important;
 }
 
 /* ── PUSHMENU / MOBİL MENÜ ── */
