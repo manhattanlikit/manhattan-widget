@@ -101,7 +101,8 @@ body.ml-dark .ml-dm-btn:hover{
    ══════════════════════════════════════ */
 
 /* ── BODY & GENEL ── */
-body.ml-dark{
+body.ml-dark,
+html:has(body.ml-dark){
   background:${BG1}!important;
   color:${TX1}!important;
 }
@@ -1245,7 +1246,13 @@ body.ml-dark .ec-cart [style*="background-color: rgb(255, 255, 240)"],
 body.ml-dark .ec-cart-step [style*="background-color: rgb(255, 255, 224)"],
 body.ml-dark .ec-cart-step [style*="background-color: rgb(255, 255, 240)"],
 body.ml-dark [style*="background-color: rgb(245, 212"],
-body.ml-dark [style*="background-color: rgb(247, 205"]{
+body.ml-dark [style*="background-color: rgb(247, 205"],
+body.ml-dark [style*="background: rgb(255"],
+body.ml-dark [style*="background-color: rgb(255"],
+body.ml-dark [style*="background-color: lightyellow"],
+body.ml-dark [style*="background-color: rgb(253"],
+body.ml-dark [style*="background-color: rgb(250"],
+body.ml-dark [style*="background-color: rgb(248"]{
   background-color:rgba(175,140,62,.1)!important;
   color:${TX1}!important;
   border-color:${BD}!important;
@@ -1791,6 +1798,7 @@ function toggle(){
   document.body.classList.add('ml-dm-t');
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
+  document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
   // CSS body.ml-dark kuralları otomatik devreye girer/çıkar
@@ -1845,6 +1853,7 @@ function init(){
   try{
     if(localStorage.getItem('ml-dark')==='1'){
       document.body.classList.add('ml-dark');
+      document.documentElement.style.setProperty('background','#1b1a17','important');
       btn.innerHTML=moonOn;
     }
   }catch(e){}
@@ -2274,14 +2283,15 @@ function fixLabels(){
     document.querySelectorAll('.store .border, .dynamic-product-browser > .border').forEach(function(el){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
     });
-    // Kabul ediyorum yellow bg — tüm sayfa scope (ürün görseli hariç)
-    document.querySelectorAll('[style*="background"]').forEach(function(el){
+    // Açık arka planlar — inline VE CSS-based (ürün görseli + HTML hariç)
+    document.querySelectorAll('.ec-cart *, .ec-cart-step *, .ec-confirmation *, [class*="checkout"] *').forEach(function(el){
       if(el.offsetHeight<10||el.offsetWidth<10) return;
+      if(el.tagName==='IMG'||el.tagName==='BUTTON') return;
       var cn=typeof el.className==='string'?el.className:'';
-      if(cn.indexOf('picture')>-1||cn.indexOf('image')>-1||el.tagName==='IMG') return;
+      if(cn.indexOf('picture')>-1||cn.indexOf('image')>-1||cn.indexOf('btn')>-1) return;
       var bg=getComputedStyle(el).backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
-      if(m && +m[1]>200 && +m[2]>200 && +m[3]>150){
+      if(m && +m[1]>200 && +m[2]>200 && +m[3]>100){
         el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
         el.style.setProperty('color','#ece8df','important');
       }
