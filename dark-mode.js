@@ -1864,7 +1864,7 @@ body.ml-dark .recently-viewed{
     0 0 0 2px ${BG1},
     0 0 0 3px ${BD2},
     0 2px 12px rgba(0,0,0,.3)!important;
-  overflow:hidden!important;
+  overflow:visible!important;
   transition:box-shadow .3s ease,transform .3s ease!important;
 }
 body.ml-dark .recently-viewed:hover{
@@ -1890,9 +1890,9 @@ body.ml-dark .recently-viewed__url{
 body.ml-dark .recently-viewed__thumb{
   background:#fff!important;
   border:none!important;
-  border-radius:0!important;
+  border-radius:14px 14px 0 0!important;
   overflow:hidden!important;
-  height:200px!important;
+  height:150px!important;
   display:flex!important;
   align-items:center!important;
   justify-content:center!important;
@@ -3238,7 +3238,7 @@ function fixLabels(){
       card.style.setProperty('background','#23221e','important');
       card.style.setProperty('border','none','important');
       card.style.setProperty('border-radius','14px','important');
-      card.style.setProperty('overflow','hidden','important');
+      card.style.setProperty('overflow','visible','important');
       card.style.setProperty('padding','0','important');
       card.style.setProperty('margin','0 8px','important');
       card.style.setProperty('box-shadow','inset 0 0 0 1px rgba(175,140,62,.12), 0 0 0 2px #1b1a17, 0 0 0 3px rgba(175,140,62,.06), 0 2px 12px rgba(0,0,0,.3)','important');
@@ -3267,9 +3267,9 @@ function fixLabels(){
       if(thumb){
         thumb.style.setProperty('background','#fff','important');
         thumb.style.setProperty('border','none','important');
-        thumb.style.setProperty('border-radius','0','important');
+        thumb.style.setProperty('border-radius','14px 14px 0 0','important');
         thumb.style.setProperty('overflow','hidden','important');
-        thumb.style.setProperty('height','200px','important');
+        thumb.style.setProperty('height','150px','important');
         thumb.style.setProperty('display','flex','important');
         thumb.style.setProperty('align-items','center','important');
         thumb.style.setProperty('justify-content','center','important');
