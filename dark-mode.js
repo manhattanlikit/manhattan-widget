@@ -888,7 +888,7 @@ body.ml-dark .ec-footer{
   max-width:90%!important;
   padding:8px 0!important;
 }
-body.ml-dark .ec-footer a{color:${GOLD}!important}
+body.ml-dark .ec-footer a{color:${GOLD}!important;background:transparent!important}
 body.ml-dark .ec-footer a:hover{color:${TX1}!important}
 /* Footer iç — hepsi transparent, border yok */
 body.ml-dark .ec-footer *{
@@ -1756,6 +1756,7 @@ function _fixAllNow(){
     fixSweep();
     fixButtonText();
     fixBadgeRect();
+    fixFloatingIcons();
   }else{
     cleanAll();
   }
@@ -1817,6 +1818,15 @@ function cleanAll(){
   document.querySelectorAll('.ec-cart__products,.ec-cart-step,.ec-cart-step__next,.ec-radiogroup__items,.ec-radiogroup__item,.ec-radiogroup label,.ec-minicart,.store .border,.dynamic-product-browser > .border').forEach(function(el){
     el.style.removeProperty('border-color');
     el.style.removeProperty('border-bottom-color');
+  });
+  // Floating ikon temizle
+  document.querySelectorAll('[style*="position: fixed"],[style*="position:fixed"]').forEach(function(el){
+    if(el.offsetWidth>25&&el.offsetWidth<90){
+      el.style.removeProperty('background-color');
+      el.style.removeProperty('border');
+      el.style.removeProperty('box-shadow');
+      el.querySelectorAll('svg').forEach(function(s){s.style.removeProperty('color');s.style.removeProperty('fill');});
+    }
   });
 }
 
@@ -2156,6 +2166,33 @@ function fixBadgeRect(){
     el.style.setProperty('line-height','1.4','important');
     el.style.setProperty('overflow','hidden','important');
     el.style.setProperty('margin','0','important');
+  });
+}
+
+// ─── FLOATING İKONLAR (Sepet + Arama daireleri) ───
+function fixFloatingIcons(){
+  if(!document.body.classList.contains('ml-dark')) return;
+  // Ecwid inline style ile position:fixed + border-radius koyuyor
+  // CSS erişemiyor, JS ile override
+  document.querySelectorAll('[style*="position: fixed"],[style*="position:fixed"]').forEach(function(el){
+    var cs=getComputedStyle(el);
+    var w=el.offsetWidth, h=el.offsetHeight;
+    // 30-80px arası yuvarlak element = floating icon
+    if(w>25 && w<90 && h>25 && h<90){
+      var bg=cs.backgroundColor;
+      var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
+      // Açık renkli bg = override
+      if(m && (+m[1]>150 || +m[2]>150 || +m[3]>150)){
+        el.style.setProperty('background-color','#23221e','important');
+        el.style.setProperty('border','1px solid rgba(175,140,62,.2)','important');
+        el.style.setProperty('box-shadow','0 2px 12px rgba(0,0,0,.4)','important');
+      }
+      // SVG rengi
+      el.querySelectorAll('svg').forEach(function(svg){
+        svg.style.setProperty('color','#d4b05e','important');
+        svg.style.setProperty('fill','#d4b05e','important');
+      });
+    }
   });
 }
 
