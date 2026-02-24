@@ -28,11 +28,7 @@ var css=`
    MANHATTAN DARK MODE — Warm Premium
    ══════════════════════════════════════ */
 
-/* ── GEÇİŞ ANİMASYONU — opacity fade (parçalı geçiş yok) ── */
-body.ml-dm-fade{
-  opacity:0!important;
-  transition:opacity .08s ease!important;
-}
+/* ── GEÇİŞ: animasyon yok, anında ── */
 
 /* ── TOGGLE BUTON ── */
 .ml-dm-btn{
@@ -2354,45 +2350,22 @@ btn.innerHTML=moonOff;
 // ─── TOGGLE FONKSİYONU ───
 
 function toggle(){
-  // Observer'ı KAPAT — yoksa class değişiminde fixAll anında tetiklenir → flash
   _observer.disconnect();
-  var goingDark=!document.body.classList.contains('ml-dark');
-  // html arka planını HEMEN ayarla — fade sırasında beyaz görünmesin
-  if(goingDark){
-    document.documentElement.style.setProperty('background','#1b1a17','important');
+  document.body.classList.toggle('ml-dark');
+  var dark=document.body.classList.contains('ml-dark');
+  document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
+  btn.innerHTML=dark?moonOn:moonOff;
+  try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
+  if(!dark){
+    document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
   }
-  // 1. Fade out (150ms)
-  document.body.classList.add('ml-dm-fade');
-  setTimeout(function(){
-    // 2. Karanlık → aydınlık veya tersi (görünmez iken)
-    document.body.classList.toggle('ml-dark');
-    var dark=document.body.classList.contains('ml-dark');
-    document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
-    btn.innerHTML=dark?moonOn:moonOff;
-    try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
-    if(!dark){
-      document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
-    }
-    // fixAll senkron — sayfa gizli iken tüm stilleri uygula
-    _lastFixTime=0; // guard'ı sıfırla
-    clearTimeout(_fixTimer);
-    if(_fixRAF) cancelAnimationFrame(_fixRAF);
-    _fixAllNow();
-    // 3. Fade in (150ms)
-    requestAnimationFrame(function(){
-      document.body.classList.remove('ml-dm-fade');
-      // Açık moda geçişte html bg'yi fade bittikten sonra temizle
-      if(!dark){
-        setTimeout(function(){
-          document.documentElement.style.setProperty('background','','important');
-        },100);
-      }
-      // Observer'ı tekrar başlat
-      _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-    });
-    // Ecwid geç render için 2. pas
-    setTimeout(fixAll,1000);
-  },100); // fade out süresi + buffer
+  _lastFixTime=0;
+  clearTimeout(_fixTimer);
+  if(_fixRAF) cancelAnimationFrame(_fixRAF);
+  _fixAllNow();
+  _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+  // Ecwid geç render için 2. pas
+  setTimeout(fixAll,1000);
 }
 
 btn.addEventListener('click',function(e){
