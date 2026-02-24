@@ -880,13 +880,21 @@ body.ml-dark .ec-cart-email__input input{
 
 /* ── FOOTER ── */
 body.ml-dark .ec-footer{
-  background:${BGnav}!important;
+  background:${BG2}!important;
   color:${TX3}!important;
-  border:none!important;
+  border:1px solid ${BD}!important;
+  border-radius:14px!important;
+  margin:12px auto!important;
+  max-width:90%!important;
+  padding:8px 0!important;
 }
-body.ml-dark .ec-footer a{color:${TX3}!important}
-body.ml-dark .ec-footer a:hover{color:${GOLD}!important}
-body.ml-dark .ec-footer__row{border-color:transparent!important;border:none!important}
+body.ml-dark .ec-footer a{color:${GOLD}!important}
+body.ml-dark .ec-footer a:hover{color:${TX1}!important}
+/* Footer iç — hepsi transparent, border yok */
+body.ml-dark .ec-footer *{
+  border:none!important;
+  background:transparent!important;
+}
 
 /* ── HELPFULCROWD REVIEW KARTLARI ── */
 body.ml-dark .hc-widget-card,
@@ -1073,8 +1081,7 @@ body.ml-dark .ec-minicart{
 }
 
 /* ── ALT NAVİGASYON İKONLARI (Ürünleri Ara, Hesabım vb.) ── */
-body.ml-dark .footer-menu,
-body.ml-dark .ec-store__content-wrapper > [class*="footer"]{
+body.ml-dark .footer-menu{
   background:${BG2}!important;
   border:1px solid ${BD}!important;
   border-radius:14px!important;
@@ -1082,13 +1089,9 @@ body.ml-dark .ec-store__content-wrapper > [class*="footer"]{
   max-width:90%!important;
   padding:8px 0!important;
 }
-/* Footer iç elementler — border YOK, sadece layout */
-body.ml-dark .footer-menu *,
-body.ml-dark .ec-footer__row,
-body.ml-dark .ec-footer__cell,
-body.ml-dark .ec-footer__row *{
+/* Footer iç elementler — border YOK */
+body.ml-dark .footer-menu *{
   border:none!important;
-  border-radius:0!important;
   background:transparent!important;
 }
 body.ml-dark .footer-menu a,
