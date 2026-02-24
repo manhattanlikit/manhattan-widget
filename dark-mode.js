@@ -28,7 +28,7 @@ var css=`
    MANHATTAN DARK MODE — Warm Premium
    ══════════════════════════════════════ */
 
-/* ── GEÇİŞ ANİMASYONU ── */
+/* ── GEÇİŞ ANİMASYONU — sadece container'lar (performans) ── */
 body.ml-dm-t,
 body.ml-dm-t .tiles,
 body.ml-dm-t .tiles-wrapper,
@@ -36,21 +36,13 @@ body.ml-dm-t .menu,
 body.ml-dm-t .store,
 body.ml-dm-t .footer,
 body.ml-dm-t .footer-new,
-body.ml-dm-t .grid-product__wrap,
-body.ml-dm-t .grid-product__wrap-inner,
-body.ml-dm-t .grid-category__card,
-body.ml-dm-t .ml-dm-btn,
-body.ml-dm-t .ec-cart,
-body.ml-dm-t .ec-store,
-body.ml-dm-t h1,body.ml-dm-t h2,body.ml-dm-t h3,
-body.ml-dm-t p,body.ml-dm-t a,body.ml-dm-t span,
 body.ml-dm-t .tile,
-body.ml-dm-t [class*="tile-"],
-body.ml-dm-t .product-details,
+body.ml-dm-t .tile-cover,
+body.ml-dm-t .ml-dm-btn,
+body.ml-dm-t .grid-product__wrap,
+body.ml-dm-t .grid-category__card,
 body.ml-dm-t .cover__button,
-body.ml-dm-t .cover-button,
-body.ml-dm-t .form-control__button,
-body.ml-dm-t input,body.ml-dm-t textarea,body.ml-dm-t select{
+body.ml-dm-t .form-control__button{
   transition:background-color .35s ease,color .35s ease,border-color .35s ease!important;
 }
 
@@ -2388,15 +2380,16 @@ function toggle(){
   if(!dark){
     document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
   }
-  // Transition bittikten SONRA fixAll + observer tekrar aç
+  // Transition bittikten SONRA ml-dm-t kaldır + observer tekrar aç (HAFİF)
   setTimeout(function(){
-    fixAll();
     document.body.classList.remove('ml-dm-t');
     // Observer'ı tekrar başlat
     _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
   },400);
+  // fixAll — transition bittikten SONRA, ayrı frame'de (above-fold CSS ile zaten doğru)
+  setTimeout(fixAll,500);
   // Ecwid geç render için 2. pas
-  setTimeout(fixAll,1200);
+  setTimeout(fixAll,1500);
 }
 
 btn.addEventListener('click',function(e){
