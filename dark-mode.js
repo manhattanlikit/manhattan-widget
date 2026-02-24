@@ -730,29 +730,15 @@ body.ml-dark .form-control--select input.form-control__text{
   color:${TX1}!important;
   border:none!important;
 }
-/* ── BOŞ SELECT — "Lütfen seç" göster ── */
-/* Input transparan → alttaki placeholder görünsün */
+/* ── BOŞ SELECT — Ecwid doğal akış, sadece renkler ── */
 body.ml-dark .form-control--empty input.form-control__text{
   color:transparent!important;
 }
-/* Placeholder — BOŞ iken zorla göster (Ecwid display:none yapsa bile) */
-body.ml-dark .form-control--empty .form-control__placeholder{
-  display:flex!important;
-  visibility:visible!important;
-  opacity:1!important;
-  position:absolute!important;
-  top:0!important;left:0!important;right:0!important;
-  height:100%!important;
-  align-items:center!important;
-  padding-left:12px!important;
-  pointer-events:none!important;
-  z-index:1!important;
-}
+body.ml-dark .form-control--empty .form-control__placeholder,
 body.ml-dark .form-control--empty .form-control__placeholder-inner{
   color:${TX2}!important;
   opacity:1!important;
-  display:block!important;
-  font-size:14px!important;
+  visibility:visible!important;
 }
 /* ── SEÇİLMİŞ SELECT — placeholder gizle, text göster ── */
 body.ml-dark .form-control--select:not(.form-control--empty) .form-control__placeholder{
@@ -1642,6 +1628,19 @@ function toggle(){
   var dark=document.body.classList.contains('ml-dark');
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
+  // Cover button — HEMEN uygula (400ms beklemeye gerek yok)
+  document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
+    if(dark){
+      el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
+      el.style.setProperty('color','#fff','important');
+      el.style.setProperty('border','none','important');
+      el.style.setProperty('border-radius','12px','important');
+      el.querySelectorAll('*').forEach(function(c){if(!c.classList.contains('ml-sweep')){c.style.setProperty('color','#fff','important');}});
+    }else{
+      ['background','background-color','color','border','border-radius','font-weight','position','overflow','transform','box-shadow'].forEach(function(p){el.style.removeProperty(p);});
+      el.querySelectorAll('*').forEach(function(c){c.style.removeProperty('color');c.style.removeProperty('background');});
+    }
+  });
   // Transition bittikten SONRA fixAll + observer tekrar aç
   setTimeout(function(){
     fixAll();
@@ -1734,9 +1733,10 @@ function cleanAll(){
   cleanStokYok();
   // Sweep overlay'ları kaldır
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
-  // Select wrapper position temizle
-  document.querySelectorAll('.form-control--select').forEach(function(el){
-    el.style.removeProperty('position');
+  // Select temizle
+  document.querySelectorAll('.form-control--empty .form-control__placeholder').forEach(function(el){
+    el.style.removeProperty('opacity');
+    el.style.removeProperty('visibility');
   });
   // Opsiyon butonları — tüm inline style temizle
   document.querySelectorAll('.form-control--checkbox-button .form-control__inline-label').forEach(function(el){
@@ -1816,8 +1816,10 @@ function fixStokYok(){
 // JS sadece wrapper'ın position:relative olduğundan emin olur
 function fixSelects(){
   if(!document.body.classList.contains('ml-dark')) return;
-  document.querySelectorAll('.form-control--select').forEach(function(w){
-    w.style.setProperty('position','relative','important');
+  // Ecwid placeholder'ı gizliyorsa zorla göster
+  document.querySelectorAll('.form-control--empty .form-control__placeholder').forEach(function(el){
+    el.style.setProperty('opacity','1','important');
+    el.style.setProperty('visibility','visible','important');
   });
 }
 
