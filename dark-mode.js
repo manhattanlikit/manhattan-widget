@@ -99,7 +99,9 @@ body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;
 .ml-topbar .ml-brand{
   flex:1;text-align:center;font-size:14px;font-weight:700;
   letter-spacing:1.5px;color:#2c2a25;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;gap:8px;
 }
+.ml-brand-logo{width:24px;height:24px;object-fit:contain}
 body.ml-dark .ml-topbar{background:rgba(22,21,15,.85);border-color:${BD2};backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
@@ -160,10 +162,25 @@ body.ml-dark .ml-sidebar{background:rgba(22,21,15,.92);border-right:1px solid rg
 body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)}
 
 /* Sidebar Header */
-.ml-sb-head{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,.06)}
+.ml-sb-head{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;cursor:pointer}
+.ml-sb-head:hover{background:rgba(0,0,0,.02)}
+.ml-sb-logo{width:28px;height:28px;object-fit:contain;border-radius:4px}
 .ml-sb-head .ml-sb-brand{font-size:12px;font-weight:700;letter-spacing:1.5px;color:#2c2a25}
 body.ml-dark .ml-sb-head{border-color:rgba(175,140,62,.1)}
+body.ml-dark .ml-sb-head:hover{background:rgba(175,140,62,.04)}
 body.ml-dark .ml-sb-head .ml-sb-brand{color:${GOLD}}
+body.ml-dark .ml-sb-logo,
+body.ml-dark .ml-brand-logo{
+  content:url('https://static.wixstatic.com/media/1ca398_eb2ce0b39e06419fa00da66903e58dc5~mv2.png')!important;
+}
+
+/* Nav bottom section */
+.ml-sb-nav-bottom{margin-top:12px;padding-top:8px;border-top:1px solid rgba(0,0,0,.06)}
+body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.08)}
+.ml-sb-nav-link{font-size:12px!important;color:#999!important}
+.ml-sb-nav-link:hover{color:#af8c3e!important}
+body.ml-dark .ml-sb-nav-link{color:${TX2}!important}
+body.ml-dark .ml-sb-nav-link:hover{color:${GOLD}!important}
 
 /* Section Label */
 .ml-sb-section{
@@ -2533,13 +2550,20 @@ function _toggleSidebar(){
   _sidebar.classList.toggle('open');
   _sbOverlay.classList.toggle('open');
   _hamburger.classList.toggle('open');
-  document.body.style.overflow=isOpen?'':'hidden';
+  if(!isOpen){
+    document.documentElement.style.overflow='hidden';
+    document.body.style.overflow='hidden';
+  }else{
+    document.documentElement.style.overflow='';
+    document.body.style.overflow='';
+  }
 }
 
 function _closeSidebar(){
   _sidebar.classList.remove('open');
   _sbOverlay.classList.remove('open');
   _hamburger.classList.remove('open');
+  document.documentElement.style.overflow='';
   document.body.style.overflow='';
 }
 
@@ -2621,7 +2645,10 @@ function _buildNavbar(){
 
   var brand=document.createElement('div');
   brand.className='ml-brand';
-  brand.textContent='MANHATTAN';
+  // Logo from site
+  var siteLogo2=document.querySelector('.logo img');
+  var logoSrc2=siteLogo2?(siteLogo2.src||siteLogo2.currentSrc||''):'';
+  brand.innerHTML=(logoSrc2?'<img class="ml-brand-logo" src="'+logoSrc2+'" alt="">':'')+'MANHATTAN';
 
   // btn = existing toggle (already created above)
   btn.style.marginLeft='';
@@ -2643,7 +2670,14 @@ function _buildNavbar(){
 
   var sbHead=document.createElement('div');
   sbHead.className='ml-sb-head';
-  sbHead.innerHTML='<div class="ml-sb-brand">MANHATTAN</div>';
+  sbHead.style.cursor='pointer';
+  // Logo from site
+  var logoSrc='';
+  var siteLogo=document.querySelector('.logo img');
+  if(siteLogo) logoSrc=siteLogo.src||siteLogo.currentSrc||'';
+  sbHead.innerHTML=(logoSrc?'<img class="ml-sb-logo" src="'+logoSrc+'" alt="Manhattan">':'')+
+    '<span class="ml-sb-brand">MANHATTAN</span>';
+  sbHead.addEventListener('click',function(e){e.stopPropagation();_closeSidebar();});
 
   // Anasayfa
   var homeItem=document.createElement('div');
@@ -2663,10 +2697,32 @@ function _buildNavbar(){
   _catContainer=document.createElement('div');
   _catContainer.id='ml-cat-list';
 
+  // Nav links: Mağaza, Hakkında, Bize ulaşın
+  var navSection=document.createElement('div');
+  navSection.className='ml-sb-nav-bottom';
+  var navLinks=[
+    {text:'Mağaza',sel:'a[href*="store"],a[href*="magaza"],.top-menu__item--store a',fallback:'#!/'},
+    {text:'Hakkında',sel:'a[href*="hakkinda"],a[href*="Hakkinda"],a[href*="about"],.top-menu__item--about a',fallback:'#!/page/hakkinda'},
+    {text:'Bize ulaşın',sel:'a[href*="bize-ulas"],a[href*="contact"],.top-menu__item--contacts a',fallback:'#!/page/bize-ulasin'}
+  ];
+  navLinks.forEach(function(nl){
+    var item=document.createElement('div');
+    item.className='ml-sb-item ml-sb-nav-link';
+    item.textContent=nl.text;
+    item.addEventListener('click',function(e){
+      e.stopPropagation();_closeSidebar();
+      var link=document.querySelector(nl.sel);
+      if(link&&link.href) window.location.href=link.href;
+      else window.location.hash=nl.fallback;
+    });
+    navSection.appendChild(item);
+  });
+
   _sidebar.appendChild(sbHead);
   _sidebar.appendChild(homeItem);
   _sidebar.appendChild(catSection);
   _sidebar.appendChild(_catContainer);
+  _sidebar.appendChild(navSection);
 
   // ─ Overlay ─
   _sbOverlay=document.createElement('div');
