@@ -169,14 +169,14 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
 .ml-sidebar{
   position:fixed;top:0;bottom:0;left:-100vw;
   width:84vw;max-width:320px;
-  background:rgba(255,255,255,.45);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
-  border-right:1px solid rgba(255,255,255,.3);
+  background:rgba(255,255,255,.94);
+  border-right:1px solid rgba(0,0,0,.04);
   z-index:999992;
   overflow-y:auto;overflow-x:hidden;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
 }
 .ml-sidebar.open{left:0}
-body.ml-dark .ml-sidebar{background:rgba(22,21,15,.55);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border-right:1px solid rgba(175,140,62,.1)}
+body.ml-dark .ml-sidebar{background:rgba(27,26,23,.96);border-right:1px solid rgba(175,140,62,.1)}
 .ml-sidebar::-webkit-scrollbar{width:3px}
 .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
 body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)}
@@ -234,8 +234,71 @@ body.ml-dark .ml-sb-item::before{background:${GOLD}}
 body.ml-dark .ml-sb-item:active{color:${GOLD};background:rgba(175,140,62,.06)}
 body.ml-dark .ml-sb-item.active{color:${GOLD}}
 
+/* Sidebar User Section (greeting or login) */
+.ml-sb-user{
+  padding:12px 20px;border-bottom:1px solid rgba(0,0,0,.05);
+}
+.ml-sb-greeting{
+  font-size:14px;color:#2c2a25;font-weight:500;
+  display:flex;align-items:center;gap:8px;
+}
+.ml-sb-tier{
+  font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  padding:2px 8px;border-radius:10px;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
+  white-space:nowrap;
+}
+body.ml-dark .ml-sb-user{border-color:rgba(175,140,62,.08)}
+body.ml-dark .ml-sb-greeting{color:${TX1}}
+/* Login form in sidebar */
+.ml-sb-login-label{
+  font-size:11px;color:#888;margin-bottom:8px;text-align:center;
+}
+.ml-sb-login-row{
+  display:flex;gap:6px;
+}
+.ml-sb-login-input{
+  flex:1;padding:8px 12px;border:1px solid rgba(0,0,0,.12);border-radius:8px;
+  font-size:13px;font-family:inherit;background:rgba(255,255,255,.6);color:#333;
+  outline:none;box-sizing:border-box;
+}
+.ml-sb-login-input:focus{border-color:#af8c3e;box-shadow:0 0 0 2px rgba(175,140,62,.15)}
+.ml-sb-login-input::placeholder{color:#aaa}
+.ml-sb-login-btn{
+  padding:8px 14px;border:none;border-radius:8px;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
+  font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;
+  white-space:nowrap;
+}
+.ml-sb-login-btn:active{opacity:.8;transform:scale(.97)}
+.ml-sb-login-btn:disabled{opacity:.5;cursor:not-allowed}
+.ml-sb-login-msg{font-size:11px;margin-top:6px;min-height:16px;text-align:center}
+body.ml-dark .ml-sb-login-label{color:${TX3}}
+body.ml-dark .ml-sb-login-input{background:rgba(255,255,255,.06);border-color:rgba(175,140,62,.15);color:${TX1}}
+body.ml-dark .ml-sb-login-input::placeholder{color:${TX3}}
+body.ml-dark .ml-sb-login-input:focus{border-color:${GOLD};box-shadow:0 0 0 2px rgba(175,140,62,.12)}
+
+/* Sidebar Footer — account icons row */
+.ml-sb-footer{
+  padding:12px 16px;border-top:1px solid rgba(0,0,0,.06);
+  display:flex;justify-content:space-around;align-items:center;
+  flex-shrink:0;
+}
+body.ml-dark .ml-sb-footer{border-color:rgba(175,140,62,.08)}
+.ml-sb-ficon{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  cursor:pointer;padding:6px 8px;border-radius:8px;
+  -webkit-tap-highlight-color:transparent;min-width:52px;
+}
+.ml-sb-ficon:active{background:rgba(175,140,62,.06)}
+.ml-sb-ficon svg{width:20px;height:20px;stroke:#777;stroke-width:1.5;fill:none}
+.ml-sb-ficon span{font-size:9px;color:#888;letter-spacing:.3px;white-space:nowrap}
+body.ml-dark .ml-sb-ficon svg{stroke:${TX2}}
+body.ml-dark .ml-sb-ficon span{color:${TX3}}
+body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.08)}
+
 /* Sidebar flex layout for bottom nav */
-.ml-sidebar{display:flex;flex-direction:column;padding-bottom:16px}
+.ml-sidebar{display:flex;flex-direction:column;padding-bottom:0}
 
 /* Desktop adjustments */
 @media(min-width:768px){
@@ -252,6 +315,13 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
   .ml-sb-item{font-size:16px;padding:14px 24px}
   .ml-sb-section{padding:14px 24px 6px;font-size:10.5px}
   .ml-sb-nav-link{font-size:15px!important}
+  .ml-sb-user{padding:14px 24px}
+  .ml-sb-greeting{font-size:15px}
+  .ml-sb-login-input{font-size:14px;padding:10px 14px}
+  .ml-sb-login-btn{font-size:13px;padding:10px 16px}
+  .ml-sb-footer{padding:14px 20px}
+  .ml-sb-ficon svg{width:22px;height:22px}
+  .ml-sb-ficon span{font-size:10px}
 }
 
 /* ══════════════════════════════════════
@@ -2814,11 +2884,131 @@ function _buildNavbar(){
     navSection.appendChild(item);
   });
 
+  // ─ User Section (greeting or login) ─
+  var sbUser=document.createElement('div');
+  sbUser.className='ml-sb-user';
+  sbUser.id='ml-sb-user';
+  function _updateSbUser(){
+    var c=window._mlCache;
+    if(c && c.loggedIn && c.name){
+      sbUser.innerHTML='<div class="ml-sb-greeting">'+
+        'Merhaba, <b>'+c.name+'</b>'+
+        (c.tier?'<span class="ml-sb-tier">'+c.tier+'</span>':'')+
+        '</div>';
+    } else {
+      sbUser.innerHTML='<div class="ml-sb-login-label">Giriş yapın</div>'+
+        '<div class="ml-sb-login-row">'+
+        '<input type="email" class="ml-sb-login-input" id="mlSbEmail" placeholder="E-posta adresiniz" autocomplete="email">'+
+        '<button type="button" class="ml-sb-login-btn" id="mlSbLoginBtn">Gönder</button>'+
+        '</div>'+
+        '<div class="ml-sb-login-msg" id="mlSbLoginMsg"></div>';
+      // Wire up login
+      setTimeout(function(){
+        var inp=document.getElementById('mlSbEmail');
+        var btn=document.getElementById('mlSbLoginBtn');
+        if(!inp||!btn) return;
+        inp.addEventListener('click',function(e){e.stopPropagation();});
+        inp.addEventListener('keydown',function(e){
+          e.stopPropagation();
+          if(e.key==='Enter'){e.preventDefault();_sbLogin();}
+        });
+        btn.addEventListener('click',function(e){e.stopPropagation();_sbLogin();});
+      },50);
+    }
+  }
+  // Login function — same mechanism as widget.js
+  function _sbLogin(){
+    var inp=document.getElementById('mlSbEmail');
+    var btn=document.getElementById('mlSbLoginBtn');
+    var msg=document.getElementById('mlSbLoginMsg');
+    if(!inp||!btn) return;
+    var email=inp.value.trim();
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      if(msg) msg.innerHTML='<span style="color:#e53e3e">Geçerli bir e-posta girin</span>';
+      return;
+    }
+    btn.disabled=true;btn.textContent='...';if(msg) msg.innerHTML='';
+    var prevPage=window.location.hash||'';
+    _closeSidebar();
+    if(typeof Ecwid==='undefined'||!Ecwid.openPage){
+      btn.disabled=false;btn.textContent='Gönder';
+      if(msg) msg.innerHTML='<span style="color:#e53e3e">Ecwid yüklenemedi</span>';
+      return;
+    }
+    Ecwid.openPage('account');
+    var attempts=0;
+    var waitForForm=setInterval(function(){
+      attempts++;
+      var ecInp=document.querySelector('.ec-cart-email__input input');
+      if(ecInp){
+        clearInterval(waitForForm);
+        var ns=Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype,'value').set;
+        ns.call(ecInp,email);
+        ecInp.dispatchEvent(new Event('input',{bubbles:true}));
+        ecInp.dispatchEvent(new Event('change',{bubbles:true}));
+        setTimeout(function(){
+          var ecBtn=document.querySelector('button.form-control__button');
+          if(ecBtn){
+            ecBtn.click();
+            setTimeout(function(){
+              if(prevPage) window.location.hash=prevPage;
+              else if(typeof Ecwid!=='undefined'&&Ecwid.openPage) Ecwid.openPage('');
+              btn.disabled=false;btn.textContent='Gönder';
+              if(msg) msg.innerHTML='<span style="color:#38a169">✓ Giriş bağlantısı gönderildi!</span>';
+              setTimeout(function(){if(msg) msg.innerHTML='';},5000);
+            },1500);
+          }else{
+            btn.disabled=false;btn.textContent='Gönder';
+            if(msg) msg.innerHTML='<span style="color:#e53e3e">Hata. Tekrar deneyin.</span>';
+          }
+        },1000);
+      }
+      if(attempts>15){
+        clearInterval(waitForForm);
+        btn.disabled=false;btn.textContent='Gönder';
+        if(msg) msg.innerHTML='<span style="color:#e53e3e">Bağlantı kurulamadı</span>';
+      }
+    },500);
+  }
+  _updateSbUser();
+  // Auto-update when _mlCache becomes available (widget.js async)
+  var _sbUserTimer=setInterval(function(){
+    var c=window._mlCache;
+    if(c && c.loggedIn && c.name){
+      _updateSbUser();
+      clearInterval(_sbUserTimer);
+    }
+  },2000);
+  setTimeout(function(){clearInterval(_sbUserTimer);},30000); // Max 30s
+
+  // ─ Footer (account icons) ─
+  var sbFooter=document.createElement('div');
+  sbFooter.className='ml-sb-footer';
+  var _ficonData=[
+    {label:'Profilim',icon:'<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/>',
+     action:function(){_closeSidebar();if(typeof Ecwid!=='undefined'&&Ecwid.openPage)Ecwid.openPage('account');else window.location.hash='#!/~/account';}},
+    {label:'Siparişlerim',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/>',
+     action:function(){_closeSidebar();window.location.hash='#!/~/orders';}},
+    {label:'Favorilerim',icon:'<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>',
+     action:function(){_closeSidebar();window.location.hash='#!/~/favorites';}},
+    {label:'Sepetim',icon:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>',
+     action:function(){_closeSidebar();if(typeof Ecwid!=='undefined'&&Ecwid.openPage)Ecwid.openPage('cart');else window.location.hash='#!/~/cart';}}
+  ];
+  _ficonData.forEach(function(fi){
+    var el=document.createElement('div');
+    el.className='ml-sb-ficon';
+    el.innerHTML='<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">'+fi.icon+'</svg><span>'+fi.label+'</span>';
+    el.addEventListener('click',function(e){e.stopPropagation();fi.action();});
+    sbFooter.appendChild(el);
+  });
+
   _sidebar.appendChild(sbHead);
+  _sidebar.appendChild(sbUser);
   _sidebar.appendChild(homeItem);
   _sidebar.appendChild(catSection);
   _sidebar.appendChild(_catContainer);
   _sidebar.appendChild(navSection);
+  _sidebar.appendChild(sbFooter);
 
   // ─ Overlay ─
   _sbOverlay=document.createElement('div');
