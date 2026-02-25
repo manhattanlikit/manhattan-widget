@@ -3496,16 +3496,15 @@ function _buildNavbar(){
   // Ecwid sayfa değişiminde: aktif kategori highlight + fade transition
   if(typeof Ecwid!=='undefined' && Ecwid.OnPageLoaded){
     Ecwid.OnPageLoaded.add(function(page){
-      // Ürün sayfası: cover'ı atlayıp ürüne scroll (Ecwid orijinal davranışı)
+      // Ürün sayfası: cover'ı atlayıp ürüne scroll (SPA + full reload)
       if(page.type==='PRODUCT'){
-        var cover=document.querySelector('.cover');
-        if(cover){
-          var coverH=cover.getBoundingClientRect().height;
-          var scrollTarget=cover.offsetTop+coverH;
-          if(window.scrollY<scrollTarget){
+        setTimeout(function(){
+          var cover=document.querySelector('.cover');
+          if(cover){
+            var scrollTarget=cover.offsetTop+cover.offsetHeight;
             window.scrollTo({top:scrollTarget,behavior:'auto'});
           }
-        }
+        },50);
       }
       // Fade-in micro animation (double RAF = browser opacity:0'ı boyar sonra 1'e geçer)
       var store=document.querySelector('.ec-store,.store');
