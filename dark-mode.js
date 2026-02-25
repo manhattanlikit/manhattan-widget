@@ -88,12 +88,11 @@ body.ml-nav .cover__menu .pushmenu-btn,
 body.ml-nav .cover__menu .content{display:none!important}
 body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;min-height:0!important}
 body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
-body.ml-nav{padding-top:86px}
 
 /* Top Bar */
 .ml-topbar{
   display:flex;align-items:center;padding:10px 14px;
-  background:rgba(255,255,255,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(253,248,238,.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(0,0,0,.06);
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
 }
@@ -103,13 +102,21 @@ body.ml-nav{padding-top:86px}
   display:flex;align-items:center;justify-content:center;gap:8px;
 }
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
+.ml-loyalty-btn{
+  width:36px;height:36px;border-radius:8px;border:1.5px solid rgba(175,140,62,.3);
+  background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:#af8c3e;padding:0;
+}
+.ml-loyalty-btn:active{background:rgba(175,140,62,.1)}
+body.ml-dark .ml-loyalty-btn{color:${GOLD};border-color:rgba(212,176,94,.3)}
+body.ml-dark .ml-loyalty-btn:active{background:rgba(175,140,62,.15)}
 body.ml-dark .ml-topbar{background:rgba(22,21,15,.6);border-color:${BD2};backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
 /* Motto Bar */
 .ml-motto{
   padding:8px 14px;text-align:center;line-height:1.4;
-  background:rgba(255,255,255,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:rgba(253,248,238,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border-bottom:1px solid rgba(0,0,0,.04);
   position:fixed;top:46px;left:0;right:0;z-index:999989;
 }
@@ -187,8 +194,6 @@ body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.08)}
 .ml-sb-nav-link:active{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
 body.ml-dark .ml-sb-nav-link{color:${TX2}!important}
 body.ml-dark .ml-sb-nav-link:active{color:${GOLD}!important}
-.ml-sb-highlight{color:#af8c3e!important;font-weight:500!important}
-body.ml-dark .ml-sb-highlight{color:${GOLD}!important}
 
 /* Section Label */
 .ml-sb-section{
@@ -227,7 +232,6 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
   .ml-topbar .ml-brand{font-size:17px;letter-spacing:2px}
   .ml-motto-en{font-size:11.5px;letter-spacing:3px}
   .ml-motto-tr{font-size:10px}
-  body.ml-nav{padding-top:92px}
   .ml-sidebar{width:360px;max-width:360px;left:-380px}
   .ml-sidebar.open{left:0}
   .ml-sb-head{padding:18px 24px;min-height:60px}
@@ -2621,7 +2625,6 @@ function _parseCats(){
       if(h.indexOf('#')===0) window.location.hash=h;
       else if(h.indexOf('#')>0) window.location.hash=h.substring(h.indexOf('#'));
       else window.location.hash='#!/'+encodeURIComponent(cat.name);
-      _closeSidebar();
     });
     _catContainer.appendChild(item);
   });
@@ -2650,8 +2653,21 @@ function _buildNavbar(){
   btn.style.display='';
   btn.style.verticalAlign='';
 
+  // İndirim Seviyem badge — premium star icon
+  var loyaltyBtn=document.createElement('button');
+  loyaltyBtn.className='ml-loyalty-btn';
+  loyaltyBtn.setAttribute('aria-label','İndirim Seviyem');
+  loyaltyBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+  loyaltyBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    var wBtn=document.querySelector('.ml-trigger');
+    if(wBtn) wBtn.click();
+    else if(typeof mlOpen==='function') mlOpen();
+  });
+
   topbar.appendChild(_hamburger);
   topbar.appendChild(brand);
+  topbar.appendChild(loyaltyBtn);
   topbar.appendChild(btn);
 
   // ─ Motto Bar ─
@@ -2683,7 +2699,6 @@ function _buildNavbar(){
   homeItem.addEventListener('click',function(e){
     e.stopPropagation();
     window.location.hash='#!/';
-    _closeSidebar();
   });
 
   // Category section
@@ -2700,27 +2715,16 @@ function _buildNavbar(){
   var navLinks=[
     {text:'Mağaza',hash:'#!/'},
     {text:'Hakkında',hash:'#!/page/hakkinda'},
-    {text:'Bize ulaşın',hash:'#!/page/bize-ulasin'},
-    {text:'⭐ İndirim Seviyem',hash:'_widget_'}
+    {text:'Bize ulaşın',hash:'#!/page/bize-ulasin'}
   ];
   navLinks.forEach(function(nl){
     var item=document.createElement('div');
     item.className='ml-sb-item ml-sb-nav-link';
-    if(nl.hash==='_widget_') item.classList.add('ml-sb-highlight');
     item.textContent=nl.text;
     item.addEventListener('click',function(e){
       e.stopPropagation();
-      if(nl.hash==='_widget_'){
-        // İndirim Seviyem widget'ını aç
-        _closeSidebar();
-        var wBtn=document.querySelector('.ml-trigger');
-        if(wBtn) wBtn.click();
-        else if(typeof mlOpen==='function') mlOpen();
-        return;
-      }
-      // Ecwid SPA routing — hash değiştir, sayfa yenilenmesin
+      // Ecwid SPA routing — sidebar kapanmaz
       window.location.hash=nl.hash;
-      _closeSidebar();
     });
     navSection.appendChild(item);
   });
@@ -2749,13 +2753,16 @@ function _buildNavbar(){
   // Ecwid default nav'ı gizle
   document.body.classList.add('ml-nav');
 
-  // Dinamik offset hesapla (fixed bar yüksekliklerine göre)
-  requestAnimationFrame(function(){
+  // Dinamik offset hesapla — hemen + rAF + retry
+  function _calcOffset(){
     var tbH=topbar.offsetHeight||46;
     var mtH=motto.offsetHeight||40;
     motto.style.top=tbH+'px';
     document.body.style.paddingTop=(tbH+mtH)+'px';
-  });
+  }
+  _calcOffset(); // Hemen
+  requestAnimationFrame(_calcOffset); // Paint sonrası
+  setTimeout(_calcOffset,500); // Gecikmeli retry
 
   // Gecikmeli retry (Ecwid geç yükleyebilir)
   setTimeout(_parseCats,2000);
