@@ -3496,10 +3496,15 @@ function _buildNavbar(){
   // Ecwid sayfa değişiminde: aktif kategori highlight + fade transition
   if(typeof Ecwid!=='undefined' && Ecwid.OnPageLoaded){
     Ecwid.OnPageLoaded.add(function(page){
-      // Ürün sayfası: cover gizle (topbar+motto kalır, ürün direkt görünür)
-      var cover=document.querySelector('.cover');
-      if(cover){
-        cover.style.display=page.type==='PRODUCT'?'none':'';
+      // Ürün sayfası: store başlangıcına scroll (topbar yüksekliği kadar offset)
+      // rAF + 100ms: Ecwid kendi scroll-to-top'unu yapabilir, ondan SONRA çalışmalı
+      if(page.type==='PRODUCT'){
+        var _doProductScroll=function(){
+          var store=document.querySelector('.ec-store,.store');
+          var navH=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ml-nav-h'))||90;
+          if(store) window.scrollTo({top:store.offsetTop-navH,behavior:'auto'});
+        };
+        requestAnimationFrame(function(){setTimeout(_doProductScroll,100);});
       }
       // Fade-in micro animation (double RAF = browser opacity:0'ı boyar sonra 1'e geçer)
       var store=document.querySelector('.ec-store,.store');
