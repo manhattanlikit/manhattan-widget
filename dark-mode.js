@@ -2945,18 +2945,6 @@ function _buildNavbar(){
     e.stopPropagation();_goStore();_closeSidebar();
   });
   sbHead.appendChild(sbLogoWrap);
-  // Back button
-  var backBtn=document.createElement('button');
-  backBtn.className='ml-sb-action';
-  backBtn.setAttribute('aria-label','Geri');
-  backBtn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
-  backBtn.addEventListener('click',function(e){
-    e.stopPropagation();
-    try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
-    _closeSidebar();
-    setTimeout(function(){window.history.back();},300);
-  });
-  sbHead.appendChild(backBtn);
   // Home button
   var homeBtn=document.createElement('button');
   homeBtn.className='ml-sb-action';
@@ -3648,15 +3636,15 @@ function fixAll(){
 }
 function _fixAllNow(){
   var dark=document.body.classList.contains('ml-dark');
-  // Store bg şeffaf yap — Ecwid inline style override
-  document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
-    if(el.style.backgroundColor||getComputedStyle(el).backgroundColor==='rgb(255, 255, 255)'){
-      el.style.setProperty('background','transparent','important');
-    }
-  });
   fixStokYok();
   fixLabels(); // Türkçe çeviri + sepet img radius (dark guard içeride)
   if(dark){
+    // Store bg şeffaf yap — Ecwid inline style override (SADECE dark mode)
+    document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+      if(el.style.backgroundColor||getComputedStyle(el).backgroundColor==='rgb(255, 255, 255)'){
+        el.style.setProperty('background','transparent','important');
+      }
+    });
     fixSelects();
     fixSweep();
     fixButtonText();
@@ -3670,6 +3658,10 @@ function _fixAllNow(){
 // ─── TEMİZLİK (light mode'a dönünce) ───
 function cleanAll(){
   cleanStokYok();
+  // Store bg — dark mode'un transparent override'ını kaldır
+  document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+    el.style.removeProperty('background');
+  });
   // Sweep overlay'ları kaldır
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
   // Ürün açıklamaları — dark mode inline renk kalıntılarını temizle
