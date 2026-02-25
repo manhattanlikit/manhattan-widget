@@ -99,8 +99,10 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
 /* Top Bar */
 .ml-topbar{
   display:flex;align-items:center;padding:6px 14px;
-  background:rgba(255,255,255,.3);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
-  border-bottom:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid rgba(255,255,255,.5);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(0,0,0,.04);
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
 }
 .ml-topbar .ml-brand{
@@ -109,8 +111,8 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
   display:flex;align-items:center;gap:8px;cursor:pointer;
 }
 .ml-topbar .ml-brand:active{opacity:.7}
-.ml-topbar.ml-scrolled{box-shadow:0 1px 8px rgba(0,0,0,.08)}
-body.ml-dark .ml-topbar.ml-scrolled{box-shadow:0 1px 12px rgba(0,0,0,.25)}
+.ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 2px 12px rgba(0,0,0,.1)}
+body.ml-dark .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 16px rgba(0,0,0,.3)}
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
 /* Sidebar star (İndirim Seviyem) */
 .ml-sb-star{
@@ -121,19 +123,21 @@ body.ml-dark .ml-topbar.ml-scrolled{box-shadow:0 1px 12px rgba(0,0,0,.25)}
 .ml-sb-star:active{background:rgba(175,140,62,.1);transform:scale(.92)}
 body.ml-dark .ml-sb-star{color:${GOLD};border-color:rgba(212,176,94,.3)}
 body.ml-dark .ml-sb-star:active{background:rgba(175,140,62,.15)}
-body.ml-dark .ml-topbar{background:rgba(22,21,15,.35);border-color:rgba(255,255,255,.06);backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3)}
+body.ml-dark .ml-topbar{background:rgba(22,21,15,.25);border-color:rgba(255,255,255,.08);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 6px rgba(0,0,0,.15)}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
 /* Motto Bar */
 .ml-motto{
   padding:5px 14px;text-align:center;line-height:1.4;
-  background:rgba(255,255,255,.2);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
+  background:rgba(255,255,255,.1);
+  backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);
   border-bottom:1px solid rgba(255,255,255,.3);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
   position:fixed;top:46px;left:0;right:0;z-index:999989;
 }
 .ml-motto-en{font-size:10.5px;letter-spacing:2.5px;font-weight:500;text-transform:uppercase;color:#8b7a4e}
 .ml-motto-tr{font-size:9.5px;letter-spacing:.8px;font-weight:300;margin-top:1px;opacity:.4;color:#8b7a4e}
-body.ml-dark .ml-motto{background:rgba(22,21,15,.25);border-color:rgba(255,255,255,.04);backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3)}
+body.ml-dark .ml-motto{background:rgba(22,21,15,.2);border-color:rgba(255,255,255,.05);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
 body.ml-dark .ml-motto-en{color:${GOLD}}
 body.ml-dark .ml-motto-tr{color:${GOLD}}
 
@@ -291,10 +295,10 @@ body.ml-dark .ml-sb-footer{border-color:rgba(175,140,62,.08)}
   -webkit-tap-highlight-color:transparent;min-width:52px;
 }
 .ml-sb-ficon:active{background:rgba(175,140,62,.06)}
-.ml-sb-ficon svg{width:20px;height:20px;stroke:#777;stroke-width:1.5;fill:none}
-.ml-sb-ficon span{font-size:9px;color:#888;letter-spacing:.3px;white-space:nowrap}
-body.ml-dark .ml-sb-ficon svg{stroke:${TX2}}
-body.ml-dark .ml-sb-ficon span{color:${TX3}}
+.ml-sb-ficon svg{width:20px;height:20px;stroke:#af8c3e;stroke-width:1.2;fill:none}
+.ml-sb-ficon span{font-size:9px;color:#8b7a4e;letter-spacing:.3px;white-space:nowrap;font-weight:500}
+body.ml-dark .ml-sb-ficon svg{stroke:${GOLD}}
+body.ml-dark .ml-sb-ficon span{color:${GOLD};opacity:.7}
 body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.08)}
 
 /* Sidebar flex layout for bottom nav */
@@ -2888,12 +2892,11 @@ function _buildNavbar(){
   var sbUser=document.createElement('div');
   sbUser.className='ml-sb-user';
   sbUser.id='ml-sb-user';
-  function _updateSbUser(){
-    var c=window._mlCache;
-    if(c && c.loggedIn && c.name){
+  function _updateSbUser(name,tier){
+    if(name){
       sbUser.innerHTML='<div class="ml-sb-greeting">'+
-        'Merhaba, <b>'+c.name+'</b>'+
-        (c.tier?'<span class="ml-sb-tier">'+c.tier+'</span>':'')+
+        'Merhaba, <b>'+name+'</b>'+
+        (tier?'<span class="ml-sb-tier">'+tier+'</span>':'')+
         '</div>';
     } else {
       sbUser.innerHTML='<div class="ml-sb-login-label">Giriş yapın</div>'+
@@ -2902,7 +2905,6 @@ function _buildNavbar(){
         '<button type="button" class="ml-sb-login-btn" id="mlSbLoginBtn">Gönder</button>'+
         '</div>'+
         '<div class="ml-sb-login-msg" id="mlSbLoginMsg"></div>';
-      // Wire up login
       setTimeout(function(){
         var inp=document.getElementById('mlSbEmail');
         var btn=document.getElementById('mlSbLoginBtn');
@@ -2970,29 +2972,44 @@ function _buildNavbar(){
       }
     },500);
   }
-  _updateSbUser();
-  // Auto-update when _mlCache becomes available (widget.js async)
-  var _sbUserTimer=setInterval(function(){
-    var c=window._mlCache;
-    if(c && c.loggedIn && c.name){
-      _updateSbUser();
-      clearInterval(_sbUserTimer);
-    }
-  },2000);
-  setTimeout(function(){clearInterval(_sbUserTimer);},30000); // Max 30s
+  _updateSbUser(); // Default: login form
+  // Ecwid.Customer.get — doğrudan müşteri bilgisi çek
+  // Gerçek yapı: c.name=undefined, c.billingPerson.name="Manhattan Likit", c.membership.name="Silver"
+  if(typeof Ecwid!=='undefined' && Ecwid.Customer){
+    var _sbCustRetry=0;
+    var _sbCustTimer=setInterval(function(){
+      _sbCustRetry++;
+      try{
+        Ecwid.Customer.get(function(c){
+          if(c && c.email){
+            clearInterval(_sbCustTimer);
+            var bp=c.billingPerson||{};
+            var rawName=c.name||bp.name||bp.firstName||'';
+            var firstName=rawName.split(' ')[0]||'';
+            var tier=(c.membership&&c.membership.name)?c.membership.name:'';
+            // _mlCache'den de kontrol (widget.js doldurmuş olabilir)
+            if(!firstName && window._mlCache && window._mlCache.name) firstName=window._mlCache.name;
+            if(!tier && window._mlCache && window._mlCache.tier) tier=window._mlCache.tier;
+            if(firstName) _updateSbUser(firstName,tier);
+          }
+        });
+      }catch(e){}
+      if(_sbCustRetry>10) clearInterval(_sbCustTimer);
+    },2000);
+  }
 
   // ─ Footer (account icons) ─
   var sbFooter=document.createElement('div');
   sbFooter.className='ml-sb-footer';
   var _ficonData=[
-    {label:'Profilim',icon:'<circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/>',
-     action:function(){_closeSidebar();if(typeof Ecwid!=='undefined'&&Ecwid.openPage)Ecwid.openPage('account');else window.location.hash='#!/~/account';}},
-    {label:'Siparişlerim',icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/>',
-     action:function(){_closeSidebar();window.location.hash='#!/~/orders';}},
-    {label:'Favorilerim',icon:'<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>',
-     action:function(){_closeSidebar();window.location.hash='#!/~/favorites';}},
-    {label:'Sepetim',icon:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>',
-     action:function(){_closeSidebar();if(typeof Ecwid!=='undefined'&&Ecwid.openPage)Ecwid.openPage('cart');else window.location.hash='#!/~/cart';}}
+    {label:'Profilim',icon:'<circle cx="12" cy="7.5" r="3.5"/><path d="M3.5 21c0-4.42 3.58-8 8.5-8s8.5 3.58 8.5 8"/>',
+     action:function(){_closeSidebar();window.location.href='/account';}},
+    {label:'Siparişlerim',icon:'<path d="M21 8V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2v-2"/><path d="M7 8h10M7 12h6"/>',
+     action:function(){_closeSidebar();window.location.href='/account';}},
+    {label:'Favorilerim',icon:'<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>',
+     action:function(){_closeSidebar();window.location.href='/account/favorites';}},
+    {label:'Sepetim',icon:'<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/>',
+     action:function(){_closeSidebar();window.location.href='/cart';}}
   ];
   _ficonData.forEach(function(fi){
     var el=document.createElement('div');
