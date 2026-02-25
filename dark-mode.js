@@ -84,31 +84,37 @@ body.ml-dark .ml-dm-btn:hover{
 /* Ecwid default nav → hidden when custom navbar active */
 body.ml-nav .menu .main-nav,
 body.ml-nav .menu .top-menu,
-body.ml-nav .menu .top-menu__item{display:none!important}
-body.ml-nav .menu{padding:0!important;min-height:0!important;border:none!important}
+body.ml-nav .menu .top-menu__item,
+body.ml-nav .menu .pushmenu-btn,
+body.ml-nav .menu .cat-name,
+body.ml-nav .menu [class*="top-menu__item--"],
+body.ml-nav .menu [class*="cat-name"]{display:none!important}
+body.ml-nav .menu{padding:0!important;min-height:0!important;border:none!important;height:0!important;overflow:hidden!important}
 
 /* Top Bar */
 .ml-topbar{
   display:flex;align-items:center;padding:10px 14px;
-  background:#fff;border-bottom:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,0,0,.06);
   gap:10px;position:sticky;top:0;z-index:999990;
 }
 .ml-topbar .ml-brand{
   flex:1;text-align:center;font-size:14px;font-weight:700;
   letter-spacing:1.5px;color:#2c2a25;pointer-events:none;
 }
-body.ml-dark .ml-topbar{background:${BGnav};border-color:${BD2}}
+body.ml-dark .ml-topbar{background:${BGnav};border-color:${BD2};backdrop-filter:none;-webkit-backdrop-filter:none}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
 /* Motto Bar */
 .ml-motto{
   padding:8px 14px;text-align:center;line-height:1.4;
-  background:#faf8f5;border-bottom:1px solid rgba(0,0,0,.05);
+  background:rgba(255,255,255,.65);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(0,0,0,.04);
   position:sticky;top:58px;z-index:999989;
 }
 .ml-motto-en{font-size:10.5px;letter-spacing:2.5px;font-weight:500;text-transform:uppercase;color:#8b7a4e}
 .ml-motto-tr{font-size:9.5px;letter-spacing:.8px;font-weight:300;margin-top:1px;opacity:.4;color:#8b7a4e}
-body.ml-dark .ml-motto{background:#13120e;border-color:${BD2}}
+body.ml-dark .ml-motto{background:#13120e;border-color:${BD2};backdrop-filter:none;-webkit-backdrop-filter:none}
 body.ml-dark .ml-motto-en{color:${GOLD}}
 body.ml-dark .ml-motto-tr{color:${GOLD}}
 
@@ -136,7 +142,7 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
 .ml-sb-overlay{
   position:fixed;top:0;left:0;right:0;bottom:0;
   background:rgba(0,0,0,0);z-index:999991;
-  pointer-events:none;transition:background .3s;
+  pointer-events:none;
 }
 .ml-sb-overlay.open{background:rgba(0,0,0,.45);pointer-events:auto}
 
@@ -145,7 +151,6 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
   position:fixed;top:0;left:0;bottom:0;width:280px;
   background:#fff;border-right:1px solid rgba(0,0,0,.08);
   z-index:999992;transform:translateX(-100%);
-  transition:transform .3s cubic-bezier(.4,0,.2,1);
   overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;
 }
 .ml-sidebar.open{transform:translateX(0)}
@@ -2563,26 +2568,24 @@ function _parseCats(){
   if(!_catContainer) return;
   // Already populated?
   if(_catContainer.querySelector('.ml-sb-item')) return;
-  // Find Ecwid category links — grid cards OR nav links with #!/...-c pattern
   var cats=[];
   var seen={};
-  // Method 1: grid-category cards
-  document.querySelectorAll('.grid-category__card a, .grid-category__title a, a[href*="-c"]').forEach(function(a){
-    var href=a.getAttribute('href')||'';
-    var text=(a.textContent||'').trim();
-    // Must be a category link (contains -c followed by digits)
-    if(!text||!/-c\d+/.test(href)) return;
-    if(seen[text]) return;
+  // Ecwid menu: .cat-name elements contain category links
+  document.querySelectorAll('.cat-name').forEach(function(el){
+    var a=el.tagName==='A'?el:el.querySelector('a');
+    if(!a) a=el.closest('a');
+    var text=(el.textContent||'').trim();
+    var href=a?a.getAttribute('href'):'';
+    if(!text||seen[text]) return;
     seen[text]=true;
-    cats.push({name:text,href:href});
+    cats.push({name:text,href:href||('#!'+text)});
   });
-  // Method 2: pushmenu items (Ecwid mobile sidebar)
+  // Fallback: any link with -cNNNN pattern
   if(cats.length===0){
-    document.querySelectorAll('.pushmenu a, [class*="pushmenu"] a').forEach(function(a){
+    document.querySelectorAll('a[href*="-c"]').forEach(function(a){
       var href=a.getAttribute('href')||'';
       var text=(a.textContent||'').trim();
-      if(!text||!/-c\d+/.test(href)) return;
-      if(seen[text]) return;
+      if(!text||!/-c\d+/.test(href)||seen[text]) return;
       seen[text]=true;
       cats.push({name:text,href:href});
     });
