@@ -88,12 +88,11 @@ body.ml-nav .cover__menu .pushmenu-btn,
 body.ml-nav .cover__menu .content{display:none!important}
 body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;min-height:0!important}
 body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
-body.ml-nav{padding-top:90px;background-color:#fde8d0}
-html{background-color:#fde8d0}
+body.ml-nav{padding-top:90px;background-color:#ffbd92}
+html{background-color:#ffbd92}
 body.ml-dark{background-color:#1b1a17!important}
 body.ml-nav .store.dynamic-product-browser{background:transparent!important}
-body.ml-nav .cover{margin-top:-109px}
-body.ml-nav{background:linear-gradient(180deg,#fde8d0 0%,#fff 400px)!important}
+body.ml-nav{background:linear-gradient(180deg,#ffbd92 0%,#fff 400px)!important}
 body.ml-nav.ml-dark{background:#1b1a17!important}
 
 /* Top Bar */
@@ -201,7 +200,7 @@ body.ml-dark .ml-brand-logo{
 /* Nav bottom section */
 .ml-sb-nav-bottom{margin-top:auto;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
 body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.08)}
-.ml-sb-nav-link{font-size:13px!important;color:#999!important}
+.ml-sb-nav-link{font-size:14px!important;color:#666!important}
 .ml-sb-nav-link:active{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
 body.ml-dark .ml-sb-nav-link{color:${TX2}!important}
 body.ml-dark .ml-sb-nav-link:active{color:${GOLD}!important}
@@ -2530,8 +2529,8 @@ function toggle(){
   _observer.disconnect();
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
-  document.documentElement.style.setProperty('background',dark?'#1b1a17':'#fde8d0','important');
-  document.body.style.backgroundColor=dark?'#1b1a17':'#fde8d0';
+  document.documentElement.style.setProperty('background',dark?'#1b1a17':'#ffbd92','important');
+  document.body.style.backgroundColor=dark?'#1b1a17':'#ffbd92';
   // Light mode: store bg temizle
   if(!dark){
     document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
@@ -2730,7 +2729,7 @@ function _buildNavbar(){
 
   // Anasayfa
   var homeItem=document.createElement('div');
-  homeItem.className='ml-sb-item active';
+  homeItem.className='ml-sb-item ml-sb-home';
   homeItem.style.fontWeight='600';
   homeItem.textContent='Anasayfa';
   homeItem.addEventListener('click',function(e){
@@ -2845,14 +2844,9 @@ function _buildNavbar(){
     var total=tbH+mtH;
     motto.style.top=tbH+'px';
     document.body.style.paddingTop=total+'px';
-    // Cover'ı barların arkasına uzat (gradient açılışta da görünsün)
-    var cover=document.querySelector('.cover');
-    if(cover){
-      cover.style.marginTop='-'+total+'px';
-    }
-    // Light mode: body bg sıcak peach (barların arkası beyaz olmasın)
+    // Light mode: body bg gradient'in peach tonuna eşitle (Liquid Glass efekti)
     if(!document.body.classList.contains('ml-dark')){
-      document.body.style.backgroundColor='#fde8d0';
+      document.body.style.backgroundColor='#ffbd92';
     }
     // Store elementinin beyaz bg'sini temizle
     document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
@@ -2888,6 +2882,8 @@ function _buildNavbar(){
         setTimeout(function(){store.style.removeProperty('transition');store.style.removeProperty('opacity');},400);
       }
       // Aktif kategori highlight
+      var home=document.querySelector('.ml-sb-home');
+      if(home) home.classList.remove('active');
       if(_catContainer){
         _catContainer.querySelectorAll('.ml-sb-item').forEach(function(item){
           item.classList.remove('active');
@@ -2896,6 +2892,10 @@ function _buildNavbar(){
             if(href.indexOf('-c'+page.categoryId)>-1) item.classList.add('active');
           }
         });
+      }
+      // Anasayfa (tüm ürünler) aktifse
+      if(page.type==='CATEGORY' && !page.categoryId && home){
+        home.classList.add('active');
       }
       // Store bg enforcement (sayfa değişiminde Ecwid sıfırlayabilir)
       document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
@@ -2917,8 +2917,8 @@ function init(){
       document.body.style.backgroundColor='#1b1a17';
       btn.innerHTML=moonOn;
     }else{
-      document.documentElement.style.setProperty('background','#fde8d0','important');
-      document.body.style.backgroundColor='#fde8d0';
+      document.documentElement.style.setProperty('background','#ffbd92','important');
+      document.body.style.backgroundColor='#ffbd92';
     }
   }catch(e){}
   // Ecwid-proof düzeltmeleri uygula + observer başlat
