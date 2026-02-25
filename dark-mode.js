@@ -3502,16 +3502,15 @@ function _buildNavbar(){
   // Ecwid sayfa değişiminde: aktif kategori highlight + fade transition
   if(typeof Ecwid!=='undefined' && Ecwid.OnPageLoaded){
     Ecwid.OnPageLoaded.add(function(page){
-      // Ürün sayfası: breadcrumb/ürün alanına scrollIntoView (CSS scroll-margin-top topbar offseti sağlar)
-      // 3 zamanlama: Ecwid kendi scroll'unu ne zaman yaparsa yapsın bizimki son söz
+      // Ürün sayfası: breadcrumb'a scroll (topbar yüksekliği offset, 300ms Ecwid DOM bekle)
       if(page.type==='PRODUCT'){
-        var _prodScroll=function(){
-          var el=document.querySelector('.ec-breadcrumbs')||document.querySelector('.product-details')||document.querySelector('.ec-store__content-wrapper');
-          if(el) el.scrollIntoView({behavior:'auto',block:'start'});
-        };
-        _prodScroll();
-        setTimeout(_prodScroll,150);
-        setTimeout(_prodScroll,400);
+        setTimeout(function(){
+          var el=document.querySelector('.ec-breadcrumbs')||document.querySelector('.product-details');
+          if(el){
+            var navH=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ml-nav-h'))||90;
+            window.scrollTo(0,el.offsetTop-navH);
+          }
+        },300);
       }
       // Fade-in micro animation (double RAF = browser opacity:0'ı boyar sonra 1'e geçer)
       var store=document.querySelector('.ec-store,.store');
