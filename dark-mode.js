@@ -148,15 +148,15 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
 
 /* Sidebar */
 .ml-sidebar{
-  position:fixed;top:0;left:0;width:280px;
+  position:fixed;top:0;left:-300px;width:280px;
   max-height:100vh;max-height:100dvh;
-  background:rgba(255,255,255,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:rgba(255,255,255,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-right:1px solid rgba(0,0,0,.06);
-  z-index:999992;transform:translateX(-100%);
+  z-index:999992;
   overflow-y:auto;overflow-x:hidden;
 }
-.ml-sidebar.open{transform:translateX(0)}
-body.ml-dark .ml-sidebar{background:rgba(22,21,15,.92);border-right:1px solid rgba(175,140,62,.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.ml-sidebar.open{left:0}
+body.ml-dark .ml-sidebar{background:rgba(22,21,15,.82);border-right:1px solid rgba(175,140,62,.1)}
 .ml-sidebar::-webkit-scrollbar{width:3px}
 .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
 body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)}
@@ -165,10 +165,14 @@ body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)
 .ml-sb-head{padding:14px 18px;border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:10px;cursor:pointer}
 .ml-sb-head:hover{background:rgba(0,0,0,.02)}
 .ml-sb-logo{width:28px;height:28px;object-fit:contain;border-radius:4px}
-.ml-sb-head .ml-sb-brand{font-size:12px;font-weight:700;letter-spacing:1.5px;color:#2c2a25}
+.ml-sb-head .ml-sb-brand{font-size:12px;font-weight:700;letter-spacing:1.5px;color:#2c2a25;flex:1}
+.ml-sb-close{font-size:22px;line-height:1;color:#999;font-weight:300;padding:2px 4px;opacity:.6}
+.ml-sb-close:hover{opacity:1;color:#af8c3e}
 body.ml-dark .ml-sb-head{border-color:rgba(175,140,62,.1)}
 body.ml-dark .ml-sb-head:hover{background:rgba(175,140,62,.04)}
 body.ml-dark .ml-sb-head .ml-sb-brand{color:${GOLD}}
+body.ml-dark .ml-sb-close{color:${TX2}}
+body.ml-dark .ml-sb-close:hover{color:${GOLD}}
 body.ml-dark .ml-sb-logo,
 body.ml-dark .ml-brand-logo{
   content:url('https://static.wixstatic.com/media/1ca398_eb2ce0b39e06419fa00da66903e58dc5~mv2.png')!important;
@@ -241,8 +245,11 @@ body.ml-dark .ml-sub-cat.ml-see-all{color:${GOLD}}
   .ml-topbar .ml-brand{font-size:17px;letter-spacing:2px}
   .ml-motto-en{font-size:11.5px;letter-spacing:3px}
   .ml-motto-tr{font-size:10px}
-  .ml-sidebar{width:300px}
-  .ml-sb-item{font-size:14px}
+  .ml-sidebar{width:340px;left:-360px}
+  .ml-sidebar.open{left:0}
+  .ml-sb-item{font-size:14px;padding:10px 22px}
+  .ml-sb-section{padding:10px 22px;font-size:10px}
+  .ml-sb-close{font-size:24px}
 }
 
 /* ══════════════════════════════════════
@@ -2587,19 +2594,22 @@ function _parseCats(){
   if(_catContainer.querySelector('.ml-sb-item')) return;
   var cats=[];
   var seen={};
-  // Parse from DOM: .cat-name elements in Ecwid nav
-  document.querySelectorAll('.cat-name').forEach(function(el){
-    var a=el.tagName==='A'?el:el.querySelector('a');
-    if(!a) a=el.closest('a');
-    var text=(el.textContent||'').trim();
-    var href=a?a.getAttribute('href'):'';
-    if(!text||seen[text]) return;
-    seen[text]=true;
-    cats.push({name:text,href:href||('#!'+text)});
-  });
-  // Fallback: a[href*="-c"] pattern
+  // Parse from NAV ONLY — not page content (.ec-store area has subcats)
+  var navArea=document.querySelector('.cover__menu')||document.querySelector('.top-menu')||document.querySelector('.main-nav');
+  if(navArea){
+    navArea.querySelectorAll('.cat-name, a[href*="-c"]').forEach(function(el){
+      var a=el.tagName==='A'?el:el.querySelector('a');
+      if(!a) a=el.closest('a');
+      var text=(el.textContent||'').trim();
+      var href=a?a.getAttribute('href'):'';
+      if(!text||seen[text]||!href||!/-c\d+/.test(href)) return;
+      seen[text]=true;
+      cats.push({name:text,href:href});
+    });
+  }
+  // Fallback: broad search but only inside nav/menu containers
   if(cats.length<2){
-    document.querySelectorAll('a[href*="-c"]').forEach(function(a){
+    document.querySelectorAll('.menu a[href*="-c"], nav a[href*="-c"], .top-menu a[href*="-c"]').forEach(function(a){
       var href=a.getAttribute('href')||'';
       var text=(a.textContent||'').trim();
       if(!text||!/-c\d+/.test(href)||seen[text]) return;
@@ -2607,15 +2617,18 @@ function _parseCats(){
       cats.push({name:text,href:href});
     });
   }
-  // Cache if we found multiple
-  if(cats.length>1){
+  // Cache ONLY if substantial set (prevents subcategory overwrite)
+  if(cats.length>=5){
     try{sessionStorage.setItem('ml-cats',JSON.stringify(cats));}catch(e){}
   }
   // Use cache if DOM had too few
-  if(cats.length<2){
+  if(cats.length<3){
     try{
       var cached=sessionStorage.getItem('ml-cats');
-      if(cached) cats=JSON.parse(cached);
+      if(cached){
+        var parsed=JSON.parse(cached);
+        if(parsed.length>=5) cats=parsed;
+      }
     }catch(e){}
   }
   if(cats.length===0) return;
@@ -2676,7 +2689,8 @@ function _buildNavbar(){
   var siteLogo=document.querySelector('.logo img');
   if(siteLogo) logoSrc=siteLogo.src||siteLogo.currentSrc||'';
   sbHead.innerHTML=(logoSrc?'<img class="ml-sb-logo" src="'+logoSrc+'" alt="Manhattan">':'')+
-    '<span class="ml-sb-brand">MANHATTAN</span>';
+    '<span class="ml-sb-brand">MANHATTAN</span>'+
+    '<span class="ml-sb-close" aria-label="Kapat">&times;</span>';
   sbHead.addEventListener('click',function(e){e.stopPropagation();_closeSidebar();});
 
   // Anasayfa
