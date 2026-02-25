@@ -127,6 +127,18 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
 .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.05),0 2px 12px rgba(0,0,0,.1)}
 body.ml-dark .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.15),0 2px 16px rgba(0,0,0,.35)}
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
+.ml-home-btn{
+  width:28px;height:28px;border-radius:8px;border:none;
+  background:rgba(175,140,62,.06);cursor:pointer;display:inline-flex;
+  align-items:center;justify-content:center;flex-shrink:0;color:#af8c3e;
+  padding:0;margin-left:2px;vertical-align:middle;
+  transition:background .2s ease,transform .15s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.ml-home-btn:active{background:rgba(175,140,62,.15);transform:scale(.9)}
+.ml-home-btn svg{width:14px;height:14px}
+body.ml-dark .ml-home-btn{color:${GOLD};background:rgba(175,140,62,.08)}
+body.ml-dark .ml-home-btn:active{background:rgba(175,140,62,.18)}
 /* Sidebar star (İndirim Seviyem) — greeting satırında */
 .ml-sb-star{
   width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(175,140,62,.3);
@@ -245,7 +257,7 @@ body.ml-dark .ml-brand-logo{
 }
 
 /* Nav bottom section */
-.ml-sb-nav-bottom{margin-top:auto;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
+.ml-sb-nav-bottom{padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
 body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.08)}
 .ml-sb-nav-link{font-size:14px!important;color:#8b7a4e!important;transition:color .2s ease,background .2s ease!important}
 .ml-sb-nav-link:hover{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
@@ -295,19 +307,30 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
   display:flex;align-items:center;gap:10px;
   line-height:1.4;
 }
-.ml-sb-tier{
-  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
-  padding:3px 10px;border-radius:12px;
-  background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
-  white-space:nowrap;position:relative;overflow:hidden;
+.ml-sb-tier-row{margin-top:10px}
+.ml-sb-tier-pill{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:22px;cursor:pointer;
+  background:linear-gradient(135deg,rgba(175,140,62,.1),rgba(212,176,94,.08));
+  border:1px solid rgba(175,140,62,.2);
+  color:#af8c3e;font-size:12px;font-weight:600;letter-spacing:.5px;
+  text-transform:uppercase;position:relative;overflow:hidden;
+  transition:background .2s ease,border-color .2s ease,transform .15s ease;
+  -webkit-tap-highlight-color:transparent;
 }
-.ml-sb-tier::after{
+.ml-sb-tier-pill:active{background:rgba(175,140,62,.18);transform:scale(.96)}
+.ml-sb-tier-pill svg{flex-shrink:0;stroke:#af8c3e;fill:rgba(175,140,62,.15)}
+.ml-sb-tier-pill::after{
   content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
   animation:mlTierShimmer 2.5s ease-in-out infinite;
 }
+body.ml-dark .ml-sb-tier-pill{
+  background:linear-gradient(135deg,rgba(175,140,62,.12),rgba(212,176,94,.08));
+  border-color:rgba(175,140,62,.25);color:${GOLD};
+}
+body.ml-dark .ml-sb-tier-pill svg{stroke:${GOLD};fill:rgba(175,140,62,.2)}
 @keyframes mlTierShimmer{0%,100%{left:-60%}50%{left:110%}}
-body.ml-dark .ml-sb-tier{background:linear-gradient(135deg,rgba(175,140,62,.9),rgba(212,176,94,.9))}
 body.ml-dark .ml-sb-user{border-color:rgba(175,140,62,.08)}
 body.ml-dark .ml-sb-greeting{color:${TX1}}
 /* Login form in sidebar */
@@ -379,7 +402,7 @@ body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.18)}
 }
 .ml-sb-ritem:active{transform:scale(.95)}
 .ml-sb-ritem img{width:72px;height:72px;object-fit:cover;border-radius:12px;border:1px solid rgba(0,0,0,.06);background:#f5f0e8}
-.ml-sb-ritem span{display:block;font-size:10px;color:#6b5f4f;margin-top:5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ml-sb-ritem span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:10px;color:#6b5f4f;margin-top:5px;line-height:1.3;overflow:hidden;word-break:break-word}
 body.ml-dark .ml-sb-recent-title{color:${GOLD};opacity:.6}
 body.ml-dark .ml-sb-ritem img{border-color:rgba(175,140,62,.12);background:${BG2}}
 body.ml-dark .ml-sb-ritem span{color:${TX3}}
@@ -390,9 +413,8 @@ body.ml-dark .ml-sb-login-input:focus{border-color:${GOLD};box-shadow:0 0 0 2px 
 
 /* Sidebar Footer — account icons row */
 .ml-sb-footer{
-  padding:14px 16px 16px;border-top:1px solid rgba(0,0,0,.06);
+  padding:14px 16px 14px;border-bottom:1px solid rgba(0,0,0,.06);
   display:grid;grid-template-columns:1fr 1fr;gap:8px;
-  flex-shrink:0;
 }
 body.ml-dark .ml-sb-footer{border-color:rgba(175,140,62,.08)}
 .ml-sb-ficon{
@@ -425,8 +447,15 @@ body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.14)}
 }
 body.ml-dark .ml-sb-scroll-hint{background:linear-gradient(to bottom,transparent,rgba(27,26,23,.95))}
 /* Çark (spin wheel) button — passive test */
-.ml-sb-qa-cark{opacity:.45;pointer-events:none;position:relative}
-.ml-sb-qa-cark::after{content:'Yakında';position:absolute;top:-6px;right:-4px;font-size:7px;font-weight:700;color:#af8c3e;letter-spacing:.3px}
+.ml-sb-qa-cark{opacity:.5;pointer-events:none;position:relative}
+.ml-sb-qa-cark::after{
+  content:'Yakında';position:absolute;top:-8px;right:-6px;
+  font-size:7px;font-weight:700;padding:1px 5px;border-radius:6px;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
+  letter-spacing:.3px;line-height:1.4;
+}
+.ml-sb-qa-cark svg{animation:mlCarkSpin 8s linear infinite}
+@keyframes mlCarkSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
 /* Desktop adjustments */
 @media(min-width:768px){
@@ -446,7 +475,7 @@ body.ml-dark .ml-sb-scroll-hint{background:linear-gradient(to bottom,transparent
   .ml-sb-greeting{font-size:15px}
   .ml-sb-login-input{font-size:14px;padding:10px 14px}
   .ml-sb-login-btn{font-size:13px;padding:10px 16px}
-  .ml-sb-footer{padding:16px 20px 18px;gap:10px}
+  .ml-sb-footer{padding:14px 20px 14px;gap:10px}
   .ml-sb-ficon{padding:14px 16px;border-radius:16px}
   .ml-sb-ficon svg{width:22px;height:22px}
   .ml-sb-ficon span{font-size:13px}
@@ -2888,6 +2917,17 @@ function _buildNavbar(){
 
   topbar.appendChild(_hamburger);
   topbar.appendChild(brand);
+  // Home button — smooth scroll to top
+  var homeBtn=document.createElement('button');
+  homeBtn.className='ml-home-btn';
+  homeBtn.setAttribute('aria-label','Başa dön');
+  homeBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+  homeBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+  topbar.appendChild(homeBtn);
   var spacer=document.createElement('div');spacer.style.flex='1';
   topbar.appendChild(spacer);
   topbar.appendChild(btn);
@@ -2989,18 +3029,22 @@ function _buildNavbar(){
   sbUser.className='ml-sb-user';
   sbUser.id='ml-sb-user';
   function _updateSbUser(name,tier){
-    var _starSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
     if(name){
+      // Dynamic time-based greeting
+      var _h=new Date().getHours();
+      var _greet=_h<6?'İyi geceler':_h<12?'Günaydın':_h<18?'İyi günler':'İyi akşamlar';
       sbUser.innerHTML='<div class="ml-sb-greeting">'+
-        '<span>Merhaba, <b>'+name+'</b></span>'+
-        (tier?'<span class="ml-sb-tier">'+tier+'</span>':'')+
-        '<button class="ml-sb-star" aria-label="İndirim Seviyem">'+_starSvg+'</button>'+
-        '</div>';
-      // Star click → widget aç
-      var star=sbUser.querySelector('.ml-sb-star');
-      if(star){
-        star.addEventListener('click',function(e){
+        '<span>'+_greet+', <b>'+name+'</b></span>'+
+        '</div>'+
+        (tier?'<div class="ml-sb-tier-row"><button class="ml-sb-tier-pill">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'+
+        '<span>'+tier+' Üye</span></button></div>':'');
+      // Tier pill click → widget aç (same as old star)
+      var tierPill=sbUser.querySelector('.ml-sb-tier-pill');
+      if(tierPill){
+        tierPill.addEventListener('click',function(e){
           e.stopPropagation();
+          try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
           _closeSidebar();
           setTimeout(function(){
             var wBtn=document.querySelector('.ml-trigger');
@@ -3040,7 +3084,7 @@ function _buildNavbar(){
       // Çark Çevir — passive/test mode
       var carkBtn=document.createElement('button');
       carkBtn.className='ml-sb-qa ml-sb-qa-cark';
-      carkBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20M12 2v20M2 12h20"/><path d="M12 2c-3 3.5-3 8.5 0 10s3 6.5 0 10"/></svg><span>Çark</span>';
+      carkBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/></svg><span>Çark</span>';
       qaDiv.appendChild(carkBtn);
     } else {
       sbUser.innerHTML='<div class="ml-sb-login-label">Giriş yapın</div>'+
@@ -3183,10 +3227,10 @@ function _buildNavbar(){
 
   _sidebar.appendChild(sbHead);
   _sidebar.appendChild(sbUser);
+  _sidebar.appendChild(sbFooter);
   _sidebar.appendChild(catSection);
   _sidebar.appendChild(_catContainer);
   _sidebar.appendChild(navSection);
-  _sidebar.appendChild(sbFooter);
 
   // ─ Scroll indicator (bottom fade when content overflows) ─
   var scrollHint=document.createElement('div');
@@ -3323,11 +3367,37 @@ function _buildNavbar(){
   // Retry: Ecwid çok geç yüklenebilir
   setTimeout(_setupProductTracking,3000);
   setTimeout(_setupProductTracking,6000);
-  // Sidebar açıldığında: son görüntülenen render + scroll hint check
+  // Sidebar açıldığında: son görüntülenen render + scroll hint + auto-refresh
   new MutationObserver(function(muts){
     if(_sidebar.classList.contains('open')){
       _renderRecent();
       setTimeout(_checkScroll,150);
+      // Auto-refresh: greeting time + cart count
+      try{
+        var gSpan=_sidebar.querySelector('.ml-sb-greeting span');
+        if(gSpan){
+          var _h2=new Date().getHours();
+          var _g2=_h2<6?'İyi geceler':_h2<12?'Günaydın':_h2<18?'İyi günler':'İyi akşamlar';
+          var bTag=gSpan.querySelector('b');
+          if(bTag) gSpan.innerHTML=_g2+', <b>'+bTag.textContent+'</b>';
+        }
+      }catch(e3){}
+      // Cart count refresh
+      try{
+        if(typeof Ecwid!=='undefined'&&Ecwid.Cart&&Ecwid.Cart.get){
+          Ecwid.Cart.get(function(cart){
+            var cnt=cart&&cart.items?cart.items.length:0;
+            var badge=_sidebar.querySelector('.ml-sb-qa-count');
+            if(badge){
+              badge.textContent=cnt;
+              badge.style.display=cnt>0?'inline-flex':'none';
+              badge.classList.remove('pulse');
+              void badge.offsetWidth;
+              badge.classList.add('pulse');
+            }
+          });
+        }
+      }catch(e4){}
     }
   }).observe(_sidebar,{attributes:true,attributeFilter:['class']});
 
