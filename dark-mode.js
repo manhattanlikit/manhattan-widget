@@ -101,8 +101,8 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
   display:flex;align-items:center;padding:6px 14px;
   background:rgba(255,255,255,.15);
   backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
-  border-bottom:1px solid rgba(255,255,255,.5);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 1px 3px rgba(0,0,0,.04);
+  border-bottom:1px solid rgba(255,255,255,.15);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 1px 3px rgba(0,0,0,.04);
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
 }
 .ml-topbar .ml-brand{
@@ -111,7 +111,7 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
   display:flex;align-items:center;gap:8px;cursor:pointer;
 }
 .ml-topbar .ml-brand:active{opacity:.7}
-.ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 2px 12px rgba(0,0,0,.1)}
+.ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 12px rgba(0,0,0,.08)}
 body.ml-dark .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 16px rgba(0,0,0,.3)}
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
 /* Sidebar star (İndirim Seviyem) */
@@ -131,8 +131,8 @@ body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
   padding:5px 14px;text-align:center;line-height:1.4;
   background:rgba(255,255,255,.1);
   backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);
-  border-bottom:1px solid rgba(255,255,255,.3);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+  border-bottom:1px solid rgba(255,255,255,.1);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15);
   position:fixed;top:46px;left:0;right:0;z-index:999989;
 }
 .ml-motto-en{font-size:10.5px;letter-spacing:2.5px;font-weight:500;text-transform:uppercase;color:#8b7a4e}
@@ -2826,12 +2826,17 @@ function _buildNavbar(){
   var navLinks=[
     {text:'Mağaza',action:function(){
       _closeSidebar();
-      // Ecwid API — en güvenilir yol
-      if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
-        Ecwid.openPage('category');
-      }else{
-        window.location.hash='#!/';
-      }
+      setTimeout(function(){
+        // Cover'daki "Şimdi alışveriş yap" butonunu bul ve tıkla
+        var coverBtn=document.querySelector('.cover button');
+        if(coverBtn){coverBtn.click();return;}
+        // Fallback: Ecwid API
+        if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
+          Ecwid.openPage('category');
+        }else{
+          window.location.hash='#!/';
+        }
+      },200);
     }},
     {text:'Hakkında',action:function(){
       // Ecwid scrollToTile — sidebar kapansın (scroll görünsün)
@@ -2973,43 +2978,50 @@ function _buildNavbar(){
     },500);
   }
   _updateSbUser(); // Default: login form
-  // Ecwid.Customer.get — doğrudan müşteri bilgisi çek
+  // Ecwid.Customer.get — doğrudan müşteri bilgisi çek (HEMEN + retry)
   // Gerçek yapı: c.name=undefined, c.billingPerson.name="Manhattan Likit", c.membership.name="Silver"
-  if(typeof Ecwid!=='undefined' && Ecwid.Customer){
-    var _sbCustRetry=0;
-    var _sbCustTimer=setInterval(function(){
-      _sbCustRetry++;
-      try{
-        Ecwid.Customer.get(function(c){
-          if(c && c.email){
-            clearInterval(_sbCustTimer);
-            var bp=c.billingPerson||{};
-            var rawName=c.name||bp.name||bp.firstName||'';
-            var firstName=rawName.split(' ')[0]||'';
-            var tier=(c.membership&&c.membership.name)?c.membership.name:'';
-            // _mlCache'den de kontrol (widget.js doldurmuş olabilir)
-            if(!firstName && window._mlCache && window._mlCache.name) firstName=window._mlCache.name;
-            if(!tier && window._mlCache && window._mlCache.tier) tier=window._mlCache.tier;
-            if(firstName) _updateSbUser(firstName,tier);
-          }
-        });
-      }catch(e){}
-      if(_sbCustRetry>10) clearInterval(_sbCustTimer);
-    },2000);
+  function _fetchCustomer(){
+    if(typeof Ecwid==='undefined'||!Ecwid.Customer) return;
+    try{
+      Ecwid.Customer.get(function(c){
+        if(c && c.email){
+          var bp=c.billingPerson||{};
+          var rawName=c.name||bp.name||bp.firstName||'';
+          var firstName=rawName.split(' ')[0]||'';
+          var tier=(c.membership&&c.membership.name)?c.membership.name:'';
+          if(!firstName && window._mlCache && window._mlCache.name) firstName=window._mlCache.name;
+          if(!tier && window._mlCache && window._mlCache.tier) tier=window._mlCache.tier;
+          if(firstName) _updateSbUser(firstName,tier);
+        }
+      });
+    }catch(e){}
   }
+  _fetchCustomer(); // Hemen dene
+  setTimeout(_fetchCustomer,1500); // Ecwid geç yüklenebilir
+  setTimeout(_fetchCustomer,4000); // Son deneme
 
   // ─ Footer (account icons) ─
   var sbFooter=document.createElement('div');
   sbFooter.className='ml-sb-footer';
+  // Ecwid SPA navigation helper — Ecwid'in kendi <a> elementini tıklar, sayfa yenilenmez
+  // Gerçek DOM: a[href="/account"] parent=ec-footer__cell, listeners=click
+  function _ecNav(path){
+    var link=document.querySelector('.ec-footer__cell a[href="'+path+'"], a[href="'+path+'"]');
+    if(link){link.click();return;}
+    // Fallback: Ecwid API
+    if(path==='/cart' && typeof Ecwid!=='undefined' && Ecwid.openPage){Ecwid.openPage('cart');return;}
+    // Son çare: hash (SPA-friendly)
+    window.location.hash='#!/~'+path;
+  }
   var _ficonData=[
     {label:'Profilim',icon:'<circle cx="12" cy="7.5" r="3.5"/><path d="M3.5 21c0-4.42 3.58-8 8.5-8s8.5 3.58 8.5 8"/>',
-     action:function(){_closeSidebar();window.location.href='/account';}},
+     action:function(){_closeSidebar();setTimeout(function(){_ecNav('/account');},200);}},
     {label:'Siparişlerim',icon:'<path d="M21 8V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2v-2"/><path d="M7 8h10M7 12h6"/>',
-     action:function(){_closeSidebar();window.location.href='/account';}},
+     action:function(){_closeSidebar();setTimeout(function(){_ecNav('/account');},200);}},
     {label:'Favorilerim',icon:'<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>',
-     action:function(){_closeSidebar();window.location.href='/account/favorites';}},
+     action:function(){_closeSidebar();setTimeout(function(){_ecNav('/account/favorites');},200);}},
     {label:'Sepetim',icon:'<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/>',
-     action:function(){_closeSidebar();window.location.href='/cart';}}
+     action:function(){_closeSidebar();setTimeout(function(){_ecNav('/cart');},200);}}
   ];
   _ficonData.forEach(function(fi){
     var el=document.createElement('div');
