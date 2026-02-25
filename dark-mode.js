@@ -88,6 +88,9 @@ body.ml-nav .cover__menu .pushmenu-btn,
 body.ml-nav .cover__menu .content{display:none!important}
 body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;min-height:0!important}
 body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
+body.ml-nav .store.dynamic-product-browser{background:transparent!important}
+body.ml-nav{background:linear-gradient(180deg,#fde8d0 0%,#fff 400px)!important}
+body.ml-nav.ml-dark{background:#1b1a17!important}
 
 /* Top Bar */
 .ml-topbar{
@@ -97,19 +100,14 @@ body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
 }
 .ml-topbar .ml-brand{
-  flex:1;text-align:center;font-size:14px;font-weight:700;
-  letter-spacing:1.5px;color:#2c2a25;pointer-events:none;
-  display:flex;align-items:center;justify-content:center;gap:8px;
+  position:absolute;left:50%;transform:translateX(calc(-50% - 16px));
+  font-size:14px;font-weight:700;letter-spacing:1.5px;color:#2c2a25;
+  display:flex;align-items:center;gap:8px;cursor:pointer;
 }
+.ml-topbar .ml-brand:active{opacity:.7}
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
-.ml-loyalty-btn{
-  width:36px;height:36px;border-radius:8px;border:1.5px solid rgba(175,140,62,.3);
-  background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;color:#af8c3e;padding:0;
-}
-.ml-loyalty-btn:active{background:rgba(175,140,62,.1)}
-body.ml-dark .ml-loyalty-btn{color:${GOLD};border-color:rgba(212,176,94,.3)}
-body.ml-dark .ml-loyalty-btn:active{background:rgba(175,140,62,.15)}
+/* Loyalty btn — ml-dm-btn class'ını inherit eder, sadece override */
+.ml-loyalty-btn svg{width:18px;height:18px}
 body.ml-dark .ml-topbar{background:rgba(22,21,15,.6);border-color:${BD2};backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
@@ -2520,6 +2518,15 @@ function toggle(){
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
   document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
+  document.body.style.backgroundColor=dark?'#1b1a17':'';
+  // Light mode: cover rengiyle eşitle (barların arkası)
+  if(!dark){
+    var cover=document.querySelector('.cover');
+    if(cover){
+      var coverBg=getComputedStyle(cover).backgroundColor;
+      if(coverBg&&coverBg!=='rgba(0, 0, 0, 0)') document.body.style.backgroundColor=coverBg;
+    }
+  }
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
   if(!dark){
@@ -2620,11 +2627,18 @@ function _parseCats(){
     item.textContent=cat.name;
     item.addEventListener('click',function(e){
       e.stopPropagation();
-      // Ecwid SPA routing — hash değiştir, sayfa yenilenmesin
+      // Ecwid API ile navigate (hash'ten daha güvenilir)
       var h=cat.href;
-      if(h.indexOf('#')===0) window.location.hash=h;
-      else if(h.indexOf('#')>0) window.location.hash=h.substring(h.indexOf('#'));
-      else window.location.hash='#!/'+encodeURIComponent(cat.name);
+      var catId=h.match(/-c(\d+)/);
+      if(catId && typeof Ecwid!=='undefined' && Ecwid.openPage){
+        Ecwid.openPage('category',{id:parseInt(catId[1])});
+      } else if(h.indexOf('#')===0){
+        window.location.hash=h;
+      } else if(h.indexOf('#')>0){
+        window.location.hash=h.substring(h.indexOf('#'));
+      } else {
+        window.location.hash='#!/'+encodeURIComponent(cat.name);
+      }
     });
     _catContainer.appendChild(item);
   });
@@ -2647,6 +2661,11 @@ function _buildNavbar(){
   var siteLogo2=document.querySelector('.logo img');
   var logoSrc2=siteLogo2?(siteLogo2.src||siteLogo2.currentSrc||''):'';
   brand.innerHTML=(logoSrc2?'<img class="ml-brand-logo" src="'+logoSrc2+'" alt="">':'')+'MANHATTAN';
+  brand.addEventListener('click',function(e){
+    e.stopPropagation();
+    if(typeof Ecwid!=='undefined'&&Ecwid.openPage) Ecwid.openPage('category');
+    else window.location.hash='#!/';
+  });
 
   // btn = existing toggle (already created above)
   btn.style.marginLeft='';
@@ -2655,7 +2674,7 @@ function _buildNavbar(){
 
   // İndirim Seviyem badge — premium star icon
   var loyaltyBtn=document.createElement('button');
-  loyaltyBtn.className='ml-loyalty-btn';
+  loyaltyBtn.className='ml-dm-btn ml-loyalty-btn';
   loyaltyBtn.setAttribute('aria-label','İndirim Seviyem');
   loyaltyBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
   loyaltyBtn.addEventListener('click',function(e){
@@ -2667,6 +2686,8 @@ function _buildNavbar(){
 
   topbar.appendChild(_hamburger);
   topbar.appendChild(brand);
+  var spacer=document.createElement('div');spacer.style.flex='1';
+  topbar.appendChild(spacer);
   topbar.appendChild(loyaltyBtn);
   topbar.appendChild(btn);
 
@@ -2698,7 +2719,7 @@ function _buildNavbar(){
   homeItem.textContent='Anasayfa';
   homeItem.addEventListener('click',function(e){
     e.stopPropagation();
-    window.location.hash='#!/';
+    if(typeof Ecwid!=='undefined'&&Ecwid.openPage) Ecwid.openPage('category');else window.location.hash='#!/';
   });
 
   // Category section
@@ -2713,9 +2734,58 @@ function _buildNavbar(){
   var navSection=document.createElement('div');
   navSection.className='ml-sb-nav-bottom';
   var navLinks=[
-    {text:'Mağaza',hash:'#!/'},
-    {text:'Hakkında',hash:'#!/page/hakkinda'},
-    {text:'Bize ulaşın',hash:'#!/page/bize-ulasin'}
+    {text:'Mağaza',action:function(){
+      _closeSidebar();
+      // Ecwid API — en güvenilir yol
+      if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
+        Ecwid.openPage('category');
+      }else{
+        window.location.hash='#!/';
+      }
+    }},
+    {text:'Hakkında',action:function(){
+      // Ecwid scrollToTile — sidebar kapansın (scroll görünsün)
+      _closeSidebar();
+      setTimeout(function(){
+        // Önce anasayfada mıyız kontrol et
+        var tile=document.querySelector('.tile-about');
+        if(tile){
+          if(typeof scrollToTile==='function') scrollToTile('.tile-about');
+          else tile.scrollIntoView({behavior:'smooth'});
+        }else{
+          // Anasayfaya git, sonra scroll
+          if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
+            Ecwid.openPage('category',{callback:function(){
+              setTimeout(function(){
+                if(typeof scrollToTile==='function') scrollToTile('.tile-about');
+              },800);
+            }});
+          }else{
+            window.location.hash='#!/';
+          }
+        }
+      },250);
+    }},
+    {text:'Bize ulaşın',action:function(){
+      _closeSidebar();
+      setTimeout(function(){
+        var tile=document.querySelector('.tile-contactInfo');
+        if(tile){
+          if(typeof scrollToTile==='function') scrollToTile('.tile-contactInfo');
+          else tile.scrollIntoView({behavior:'smooth'});
+        }else{
+          if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
+            Ecwid.openPage('category',{callback:function(){
+              setTimeout(function(){
+                if(typeof scrollToTile==='function') scrollToTile('.tile-contactInfo');
+              },800);
+            }});
+          }else{
+            window.location.hash='#!/';
+          }
+        }
+      },250);
+    }}
   ];
   navLinks.forEach(function(nl){
     var item=document.createElement('div');
@@ -2723,8 +2793,7 @@ function _buildNavbar(){
     item.textContent=nl.text;
     item.addEventListener('click',function(e){
       e.stopPropagation();
-      // Ecwid SPA routing — sidebar kapanmaz
-      window.location.hash=nl.hash;
+      nl.action();
     });
     navSection.appendChild(item);
   });
@@ -2759,6 +2828,16 @@ function _buildNavbar(){
     var mtH=motto.offsetHeight||40;
     motto.style.top=tbH+'px';
     document.body.style.paddingTop=(tbH+mtH)+'px';
+    // Body bg'yi cover elementinin üst rengine eşitle (barların arkası beyaz olmasın)
+    if(!document.body.classList.contains('ml-dark')){
+      var cover=document.querySelector('.cover');
+      if(cover){
+        var coverBg=getComputedStyle(cover).backgroundColor;
+        if(coverBg && coverBg!=='rgba(0, 0, 0, 0)' && coverBg!=='transparent'){
+          document.body.style.backgroundColor=coverBg;
+        }
+      }
+    }
   }
   _calcOffset(); // Hemen
   requestAnimationFrame(_calcOffset); // Paint sonrası
@@ -2778,6 +2857,7 @@ function init(){
     if(localStorage.getItem('ml-dark')==='1'){
       document.body.classList.add('ml-dark');
       document.documentElement.style.setProperty('background','#1b1a17','important');
+      document.body.style.backgroundColor='#1b1a17';
       btn.innerHTML=moonOn;
     }
   }catch(e){}
@@ -2814,6 +2894,12 @@ function fixAll(){
 }
 function _fixAllNow(){
   var dark=document.body.classList.contains('ml-dark');
+  // Store bg şeffaf yap — Ecwid inline style override
+  document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+    if(el.style.backgroundColor||getComputedStyle(el).backgroundColor==='rgb(255, 255, 255)'){
+      el.style.setProperty('background','transparent','important');
+    }
+  });
   fixStokYok();
   fixLabels(); // Türkçe çeviri + sepet img radius (dark guard içeride)
   if(dark){
