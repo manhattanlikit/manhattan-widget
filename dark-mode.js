@@ -129,11 +129,13 @@ body.ml-dark .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.1
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
 /* Sidebar star (İndirim Seviyem) — greeting satırında */
 .ml-sb-star{
-  width:26px;height:26px;border-radius:6px;border:1.5px solid rgba(175,140,62,.25);
-  background:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
-  flex-shrink:0;color:#af8c3e;padding:0;margin-left:4px;vertical-align:middle;
+  width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(175,140,62,.3);
+  background:rgba(175,140,62,.04);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:#af8c3e;padding:0;margin-left:6px;vertical-align:middle;
+  transition:background .2s ease,border-color .2s ease;
 }
-.ml-sb-star:active{background:rgba(175,140,62,.1);transform:scale(.92)}
+.ml-sb-star svg{width:16px;height:16px}
+.ml-sb-star:active{background:rgba(175,140,62,.15);transform:scale(.92);border-color:#af8c3e}
 body.ml-dark .ml-sb-star{color:${GOLD};border-color:rgba(212,176,94,.3)}
 body.ml-dark .ml-sb-star:active{background:rgba(175,140,62,.15)}
 body.ml-dark .ml-topbar{background:rgba(22,21,15,.2);border-color:rgba(255,255,255,.1);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.2),0 1px 6px rgba(0,0,0,.2)}
@@ -203,8 +205,8 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
 .ml-sidebar{
   position:fixed;top:0;bottom:0;left:0;
   width:84vw;max-width:320px;
-  background:rgba(255,255,255,.78);
-  backdrop-filter:blur(24px) saturate(130%);-webkit-backdrop-filter:blur(24px) saturate(130%);
+  background:rgba(255,252,245,.92);
+  backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%);
   border-right:1px solid rgba(255,255,255,.3);
   box-shadow:inset -1px 0 0 rgba(255,255,255,.2),4px 0 24px rgba(0,0,0,.08);
   z-index:999992;
@@ -230,7 +232,7 @@ body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)
 .ml-sb-head:active{background:rgba(0,0,0,.03)}
 .ml-sb-logo{width:32px;height:32px;object-fit:contain;border-radius:6px}
 .ml-sb-head .ml-sb-brand{font-size:14px;font-weight:700;letter-spacing:1.5px;color:#2c2a25;flex:1}
-.ml-sb-close{font-size:28px;line-height:1;color:#999;font-weight:300;padding:4px 6px;border-radius:8px}
+.ml-sb-close{font-size:28px;line-height:1;color:#af8c3e;font-weight:300;padding:4px 6px;border-radius:8px}
 .ml-sb-close:active{background:rgba(0,0,0,.06)}
 body.ml-dark .ml-sb-head{border-color:rgba(175,140,62,.1)}
 body.ml-dark .ml-sb-head:active{background:rgba(175,140,62,.06)}
@@ -245,7 +247,7 @@ body.ml-dark .ml-brand-logo{
 /* Nav bottom section */
 .ml-sb-nav-bottom{margin-top:auto;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
 body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.08)}
-.ml-sb-nav-link{font-size:14px!important;color:#666!important;transition:color .2s ease,background .2s ease!important}
+.ml-sb-nav-link{font-size:14px!important;color:#8b7a4e!important;transition:color .2s ease,background .2s ease!important}
 .ml-sb-nav-link:hover{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
 .ml-sb-nav-link:active{color:#af8c3e!important;background:rgba(175,140,62,.07)!important}
 body.ml-dark .ml-sb-nav-link{color:${TX2}!important}
@@ -255,7 +257,7 @@ body.ml-dark .ml-sb-nav-link:active{color:${GOLD}!important}
 /* Section Label */
 .ml-sb-section{
   padding:14px 20px 6px;font-size:10px;text-transform:uppercase;
-  letter-spacing:1.5px;margin-top:8px;color:#999;
+  letter-spacing:1.5px;margin-top:8px;color:#a09078;
 }
 body.ml-dark .ml-sb-section{color:${TX2}}
 
@@ -264,7 +266,7 @@ body.ml-dark .ml-sb-section{color:${TX2}}
   padding:12px 20px;font-size:15px;cursor:pointer;
   min-height:44px;box-sizing:border-box;
   display:flex;align-items:center;justify-content:space-between;
-  position:relative;overflow:hidden;color:#555;
+  position:relative;overflow:hidden;color:#5a4f3a;
   text-decoration:none;-webkit-tap-highlight-color:transparent;
   transition:color .2s ease,background .2s ease;
 }
@@ -294,17 +296,23 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
   line-height:1.4;
 }
 .ml-sb-tier{
-  font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
-  padding:2px 8px;border-radius:10px;
+  font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+  padding:3px 10px;border-radius:12px;
   background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
-  white-space:nowrap;
+  white-space:nowrap;position:relative;overflow:hidden;
 }
+.ml-sb-tier::after{
+  content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+  animation:mlTierShimmer 2.5s ease-in-out infinite;
+}
+@keyframes mlTierShimmer{0%,100%{left:-60%}50%{left:110%}}
 body.ml-dark .ml-sb-tier{background:linear-gradient(135deg,rgba(175,140,62,.9),rgba(212,176,94,.9))}
 body.ml-dark .ml-sb-user{border-color:rgba(175,140,62,.08)}
 body.ml-dark .ml-sb-greeting{color:${TX1}}
 /* Login form in sidebar */
 .ml-sb-login-label{
-  font-size:11px;color:#888;margin-bottom:8px;text-align:center;
+  font-size:11px;color:#a09078;margin-bottom:8px;text-align:center;
 }
 .ml-sb-login-row{
   display:flex;gap:6px;
@@ -350,10 +358,16 @@ body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.18)}
 /* Badge pulse animation */
 @keyframes ml-badge-pulse{
   0%{transform:scale(1)}
-  40%{transform:scale(1.25)}
+  40%{transform:scale(1.3)}
   100%{transform:scale(1)}
 }
 .ml-sb-qa-count.pulse{animation:ml-badge-pulse .4s ease-out}
+.ml-sb-qa-count{position:relative;overflow:hidden}
+.ml-sb-qa-count::after{
+  content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
+  animation:mlTierShimmer 2.5s ease-in-out infinite;
+}
 /* Son görüntülenen ürünler */
 .ml-sb-recent{padding:12px 20px 8px}
 .ml-sb-recent-title{font-size:9.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#a09080;margin-bottom:10px}
@@ -393,7 +407,7 @@ body.ml-dark .ml-sb-footer{border-color:rgba(175,140,62,.08)}
 .ml-sb-ficon svg{width:20px;height:20px;stroke:#af8c3e;stroke-width:1.4;fill:none;flex-shrink:0}
 .ml-sb-ficon span{
   font-size:12px;font-weight:500;letter-spacing:.1px;
-  color:#5a5040;white-space:nowrap;
+  color:#8b7a4e;white-space:nowrap;
 }
 body.ml-dark .ml-sb-ficon{background:rgba(175,140,62,.05);border-color:rgba(175,140,62,.08)}
 body.ml-dark .ml-sb-ficon svg{stroke:${GOLD}}
@@ -402,6 +416,17 @@ body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.14)}
 
 /* Sidebar flex layout for bottom nav */
 .ml-sidebar{display:flex;flex-direction:column;padding-bottom:0}
+/* Scroll indicator — bottom fade when scrollable */
+.ml-sb-scroll-hint{
+  position:sticky;bottom:0;left:0;right:0;height:28px;
+  background:linear-gradient(to bottom,transparent,rgba(255,252,245,.95));
+  pointer-events:none;flex-shrink:0;z-index:2;
+  transition:opacity .3s ease;
+}
+body.ml-dark .ml-sb-scroll-hint{background:linear-gradient(to bottom,transparent,rgba(27,26,23,.95))}
+/* Çark (spin wheel) button — passive test */
+.ml-sb-qa-cark{opacity:.45;pointer-events:none;position:relative}
+.ml-sb-qa-cark::after{content:'Yakında';position:absolute;top:-6px;right:-4px;font-size:7px;font-weight:700;color:#af8c3e;letter-spacing:.3px}
 
 /* Desktop adjustments */
 @media(min-width:768px){
@@ -414,7 +439,7 @@ body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.14)}
   .ml-sb-head .ml-sb-brand{font-size:15px}
   .ml-sb-logo{width:34px;height:34px}
   .ml-sb-close{font-size:28px}
-  .ml-sb-item{font-size:16px;padding:14px 24px}
+  .ml-sb-item{font-size:15px;padding:11px 24px}
   .ml-sb-section{padding:14px 24px 6px;font-size:10.5px}
   .ml-sb-nav-link{font-size:15px!important}
   .ml-sb-user{padding:18px 24px 16px}
@@ -2745,6 +2770,7 @@ function _toggleSidebar(){
   _sidebar.classList.toggle('open');
   _sbOverlay.classList.toggle('open');
   _hamburger.classList.toggle('open');
+  try{if(navigator.vibrate)navigator.vibrate(8);}catch(e){}
 }
 
 function _closeSidebar(){
@@ -3004,12 +3030,18 @@ function _buildNavbar(){
         }
         btn.addEventListener('click',function(e){
           e.stopPropagation();
+          try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
           _closeSidebar();
           setTimeout(function(){_ecNav(qa.path);},200);
         });
         qaDiv.appendChild(btn);
       });
       sbUser.appendChild(qaDiv);
+      // Çark Çevir — passive/test mode
+      var carkBtn=document.createElement('button');
+      carkBtn.className='ml-sb-qa ml-sb-qa-cark';
+      carkBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20M12 2v20M2 12h20"/><path d="M12 2c-3 3.5-3 8.5 0 10s3 6.5 0 10"/></svg><span>Çark</span>';
+      qaDiv.appendChild(carkBtn);
     } else {
       sbUser.innerHTML='<div class="ml-sb-login-label">Giriş yapın</div>'+
         '<div class="ml-sb-login-row">'+
@@ -3145,7 +3177,7 @@ function _buildNavbar(){
     var el=document.createElement('div');
     el.className='ml-sb-ficon';
     el.innerHTML='<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">'+fi.icon+'</svg><span>'+fi.label+'</span>';
-    el.addEventListener('click',function(e){e.stopPropagation();fi.action();});
+    el.addEventListener('click',function(e){e.stopPropagation();try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}fi.action();});
     sbFooter.appendChild(el);
   });
 
@@ -3155,6 +3187,19 @@ function _buildNavbar(){
   _sidebar.appendChild(_catContainer);
   _sidebar.appendChild(navSection);
   _sidebar.appendChild(sbFooter);
+
+  // ─ Scroll indicator (bottom fade when content overflows) ─
+  var scrollHint=document.createElement('div');
+  scrollHint.className='ml-sb-scroll-hint';
+  scrollHint.style.opacity='0';
+  _sidebar.appendChild(scrollHint);
+  function _checkScroll(){
+    var atBottom=(_sidebar.scrollHeight-_sidebar.scrollTop-_sidebar.clientHeight)<20;
+    scrollHint.style.opacity=atBottom?'0':'1';
+  }
+  _sidebar.addEventListener('scroll',_checkScroll,{passive:true});
+  // Check on sidebar open
+  // (merged observer — also used for renderRecent below)
 
   // ─ Overlay ─
   _sbOverlay=document.createElement('div');
@@ -3247,15 +3292,16 @@ function _buildNavbar(){
       });
     }catch(e){}
   }
-  // Ecwid ürün sayfası açıldığında track et
-  if(typeof Ecwid!=='undefined'){
-    try{
+  // Ecwid ürün sayfası açıldığında track et — OnAPILoaded wrapper for reliability
+  function _setupProductTracking(){
+    if(typeof Ecwid==='undefined') return;
+    function _addTracker(){
+      if(!Ecwid.OnPageLoaded) return;
       Ecwid.OnPageLoaded.add(function(page){
         if(page.type==='PRODUCT'&&page.productId){
-          // Ürün bilgilerini DOM'dan al
           setTimeout(function(){
-            var nameEl=document.querySelector('.product-details__product-title, h1.ec-header-h3');
-            var imgEl=document.querySelector('.product-details__gallery img, .details-gallery__photo img');
+            var nameEl=document.querySelector('.product-details__product-title, h1.ec-header-h3, .product-details__product-title--on-one-column');
+            var imgEl=document.querySelector('.product-details__gallery img, .details-gallery__photo img, .product-details-module__gallery img');
             if(nameEl){
               _trackRecentProduct({
                 id:page.productId,
@@ -3263,18 +3309,26 @@ function _buildNavbar(){
                 img:imgEl?(imgEl.src||imgEl.currentSrc||''):'',
               });
             }
-          },500);
+          },800);
         }
       });
-    }catch(e){}
+    }
+    if(Ecwid.OnAPILoaded){
+      Ecwid.OnAPILoaded.add(_addTracker);
+    } else {
+      _addTracker();
+    }
   }
-  // Sidebar açıldığında render et (MutationObserver ile class değişimini izle)
+  _setupProductTracking();
+  // Retry: Ecwid çok geç yüklenebilir
+  setTimeout(_setupProductTracking,3000);
+  setTimeout(_setupProductTracking,6000);
+  // Sidebar açıldığında: son görüntülenen render + scroll hint check
   new MutationObserver(function(muts){
-    muts.forEach(function(m){
-      if(m.attributeName==='class'&&_sidebar.classList.contains('open')){
-        _renderRecent();
-      }
-    });
+    if(_sidebar.classList.contains('open')){
+      _renderRecent();
+      setTimeout(_checkScroll,150);
+    }
   }).observe(_sidebar,{attributes:true,attributeFilter:['class']});
 
   // ─ Badge pulse: sepet sayısı değişince gold pulse ─
