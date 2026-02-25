@@ -88,7 +88,7 @@ body.ml-nav .cover__menu .pushmenu-btn,
 body.ml-nav .cover__menu .content{display:none!important}
 body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;min-height:0!important}
 body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
-body.ml-nav .float-icons{z-index:999995!important}
+body.ml-nav .float-icons{z-index:999985!important}
 body.ml-nav{padding-top:90px;background-color:#ffbd92}
 html{background-color:#ffbd92}
 body.ml-dark{background-color:#1b1a17!important}
@@ -99,11 +99,24 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
 /* Top Bar */
 .ml-topbar{
   display:flex;align-items:center;padding:6px 14px;
-  background:rgba(255,255,255,.15);
+  background:rgba(255,255,255,.12);
   backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
-  border-bottom:1px solid rgba(255,255,255,.15);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 1px 3px rgba(0,0,0,.04);
+  border-bottom:1px solid rgba(255,255,255,.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(0,0,0,.03),0 1px 3px rgba(0,0,0,.04);
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
+  isolation:isolate;
+}
+/* Liquid Glass Layer 1 — specular highlight gradient */
+.ml-topbar::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.05) 50%,rgba(255,255,255,.1) 100%);
+  pointer-events:none;z-index:-1;
+}
+/* Liquid Glass Layer 2 — SVG noise texture (frosted glass grain) */
+.ml-topbar::after{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.035;pointer-events:none;z-index:-1;mix-blend-mode:overlay;
 }
 .ml-topbar .ml-brand{
   position:absolute;left:50%;transform:translateX(-50%);
@@ -111,33 +124,49 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
   display:flex;align-items:center;gap:8px;cursor:pointer;
 }
 .ml-topbar .ml-brand:active{opacity:.7}
-.ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 2px 12px rgba(0,0,0,.08)}
-body.ml-dark .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 16px rgba(0,0,0,.3)}
+.ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.4),inset 0 -1px 0 rgba(0,0,0,.04),0 2px 12px rgba(0,0,0,.08)}
+body.ml-dark .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -1px 0 rgba(0,0,0,.1),0 2px 16px rgba(0,0,0,.3)}
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
-/* Sidebar star (İndirim Seviyem) */
+/* Sidebar star (İndirim Seviyem) — greeting satırında */
 .ml-sb-star{
-  width:30px;height:30px;border-radius:7px;border:1.5px solid rgba(175,140,62,.3);
-  background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;color:#af8c3e;padding:0;
+  width:26px;height:26px;border-radius:6px;border:1.5px solid rgba(175,140,62,.25);
+  background:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:#af8c3e;padding:0;margin-left:4px;vertical-align:middle;
 }
 .ml-sb-star:active{background:rgba(175,140,62,.1);transform:scale(.92)}
 body.ml-dark .ml-sb-star{color:${GOLD};border-color:rgba(212,176,94,.3)}
 body.ml-dark .ml-sb-star:active{background:rgba(175,140,62,.15)}
-body.ml-dark .ml-topbar{background:rgba(22,21,15,.25);border-color:rgba(255,255,255,.08);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 6px rgba(0,0,0,.15)}
+body.ml-dark .ml-topbar{background:rgba(22,21,15,.2);border-color:rgba(255,255,255,.08);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -1px 0 rgba(0,0,0,.15),0 1px 6px rgba(0,0,0,.15)}
+body.ml-dark .ml-topbar::before{background:linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(255,255,255,.01) 50%,rgba(255,255,255,.03) 100%)}
+body.ml-dark .ml-topbar::after{opacity:.04;mix-blend-mode:soft-light}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
 /* Motto Bar */
 .ml-motto{
   padding:5px 14px;text-align:center;line-height:1.4;
-  background:rgba(255,255,255,.1);
+  background:rgba(255,255,255,.08);
   backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);
-  border-bottom:1px solid rgba(255,255,255,.1);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.15);
+  border-bottom:1px solid rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.02);
   position:fixed;top:46px;left:0;right:0;z-index:999989;
+  isolation:isolate;
+}
+/* Motto Liquid Glass layers */
+.ml-motto::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.02) 100%);
+  pointer-events:none;z-index:-1;
+}
+.ml-motto::after{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:.03;pointer-events:none;z-index:-1;mix-blend-mode:overlay;
 }
 .ml-motto-en{font-size:10.5px;letter-spacing:2.5px;font-weight:500;text-transform:uppercase;color:#8b7a4e}
 .ml-motto-tr{font-size:9.5px;letter-spacing:.8px;font-weight:300;margin-top:1px;opacity:.4;color:#8b7a4e}
-body.ml-dark .ml-motto{background:rgba(22,21,15,.2);border-color:rgba(255,255,255,.05);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+body.ml-dark .ml-motto{background:rgba(22,21,15,.15);border-color:rgba(255,255,255,.05);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);box-shadow:inset 0 1px 0 rgba(255,255,255,.04),inset 0 -1px 0 rgba(0,0,0,.1)}
+body.ml-dark .ml-motto::before{background:linear-gradient(180deg,rgba(255,255,255,.04) 0%,rgba(255,255,255,.005) 100%)}
+body.ml-dark .ml-motto::after{opacity:.035;mix-blend-mode:soft-light}
 body.ml-dark .ml-motto-en{color:${GOLD}}
 body.ml-dark .ml-motto-tr{color:${GOLD}}
 
@@ -2782,23 +2811,8 @@ function _buildNavbar(){
   if(siteLogo) logoSrc=siteLogo.src||siteLogo.currentSrc||'';
   sbHead.innerHTML=(logoSrc?'<img class="ml-sb-logo" src="'+logoSrc+'" alt="Manhattan">':'')+
     '<span class="ml-sb-brand">MANHATTAN</span>'+
-    '<button class="ml-sb-star" aria-label="İndirim Seviyem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>'+
     '<span class="ml-sb-close" aria-label="Kapat">&times;</span>';
-  // ⭐ click handler
-  var starBtn=sbHead.querySelector('.ml-sb-star');
-  if(starBtn){
-    starBtn.addEventListener('click',function(e){
-      e.stopPropagation();
-      _closeSidebar();
-      setTimeout(function(){
-        var wBtn=document.querySelector('.ml-trigger');
-        if(wBtn) wBtn.click();
-        else if(typeof mlOpen==='function') mlOpen();
-      },200);
-    });
-  }
   sbHead.addEventListener('click',function(e){
-    if(e.target.closest('.ml-sb-star')) return; // star has own handler
     e.stopPropagation();_closeSidebar();
   });
 
@@ -2898,11 +2912,26 @@ function _buildNavbar(){
   sbUser.className='ml-sb-user';
   sbUser.id='ml-sb-user';
   function _updateSbUser(name,tier){
+    var _starSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
     if(name){
       sbUser.innerHTML='<div class="ml-sb-greeting">'+
         'Merhaba, <b>'+name+'</b>'+
         (tier?'<span class="ml-sb-tier">'+tier+'</span>':'')+
+        '<button class="ml-sb-star" aria-label="İndirim Seviyem">'+_starSvg+'</button>'+
         '</div>';
+      // Star click → widget aç
+      var star=sbUser.querySelector('.ml-sb-star');
+      if(star){
+        star.addEventListener('click',function(e){
+          e.stopPropagation();
+          _closeSidebar();
+          setTimeout(function(){
+            var wBtn=document.querySelector('.ml-trigger');
+            if(wBtn) wBtn.click();
+            else if(typeof mlOpen==='function') mlOpen();
+          },200);
+        });
+      }
     } else {
       sbUser.innerHTML='<div class="ml-sb-login-label">Giriş yapın</div>'+
         '<div class="ml-sb-login-row">'+
@@ -3015,13 +3044,13 @@ function _buildNavbar(){
   }
   var _ficonData=[
     {label:'Profilim',icon:'<circle cx="12" cy="7.5" r="3.5"/><path d="M3.5 21c0-4.42 3.58-8 8.5-8s8.5 3.58 8.5 8"/>',
-     action:function(){_closeSidebar();setTimeout(function(){_ecNav('/account');},200);}},
+     action:function(){_ecNav('/account');}},
     {label:'Siparişlerim',icon:'<path d="M21 8V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2v-2"/><path d="M7 8h10M7 12h6"/>',
-     action:function(){_closeSidebar();setTimeout(function(){_ecNav('/account');},200);}},
+     action:function(){_ecNav('/account');}},
     {label:'Favorilerim',icon:'<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>',
-     action:function(){_closeSidebar();setTimeout(function(){_ecNav('/account/favorites');},200);}},
+     action:function(){_ecNav('/account/favorites');}},
     {label:'Sepetim',icon:'<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/>',
-     action:function(){_closeSidebar();setTimeout(function(){_ecNav('/cart');},200);}}
+     action:function(){_ecNav('/cart');}}
   ];
   _ficonData.forEach(function(fi){
     var el=document.createElement('div');
