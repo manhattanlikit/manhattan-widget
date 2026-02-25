@@ -88,7 +88,7 @@ body.ml-nav .cover__menu .pushmenu-btn,
 body.ml-nav .cover__menu .content{display:none!important}
 body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;min-height:0!important}
 body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
-body.ml-nav .float-icons{z-index:999995!important}
+body.ml-nav .float-icons{z-index:999995!important;position:fixed!important;right:0!important;top:var(--ml-nav-h,107px)!important}
 body.ml-nav{padding-top:90px;background-color:#ffbd92}
 html{background-color:#ffbd92}
 body.ml-dark{background-color:#1b1a17!important}
@@ -3100,6 +3100,8 @@ function _buildNavbar(){
     var total=tbH+mtH;
     motto.style.top=tbH+'px';
     document.body.style.paddingTop=total+'px';
+    // CSS variable for float-icons top (CSS !important ile Ecwid override)
+    document.documentElement.style.setProperty('--ml-nav-h',(total+8)+'px');
     // Light mode: body bg gradient'in peach tonuna eşitle (Liquid Glass efekti)
     if(!document.body.classList.contains('ml-dark')){
       document.body.style.backgroundColor='#ffbd92';
@@ -3121,20 +3123,6 @@ function _buildNavbar(){
     else if(y<=10 && _lastScroll>10) topbar.classList.remove('ml-scrolled');
     _lastScroll=y;
   },{passive:true});
-
-  // Float-icons: Ecwid kendi scroll handler'ı top=0px yapıyor (viewport tepesi).
-  // MutationObserver ile yakala, minimum top = topbar+motto yüksekliği enforce et.
-  var _floatIcons=document.querySelector('.float-icons');
-  if(_floatIcons){
-    var _fiNavH=(topbar.offsetHeight||57)+(motto.offsetHeight||42)+8;
-    var _fiObs=new MutationObserver(function(){
-      var t=parseFloat(_floatIcons.style.top)||0;
-      if(t<_fiNavH && t>=0 && _floatIcons.style.top!==''){
-        _floatIcons.style.top=_fiNavH+'px';
-      }
-    });
-    _fiObs.observe(_floatIcons,{attributes:true,attributeFilter:['style']});
-  }
 
   // Gecikmeli retry (Ecwid geç yükleyebilir)
   setTimeout(_parseCats,2000);
