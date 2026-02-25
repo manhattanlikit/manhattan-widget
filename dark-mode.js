@@ -92,6 +92,7 @@ body.ml-nav{padding-top:90px;background-color:#fde8d0}
 html{background-color:#fde8d0}
 body.ml-dark{background-color:#1b1a17!important}
 body.ml-nav .store.dynamic-product-browser{background:transparent!important}
+body.ml-nav .cover{margin-top:-109px;padding-top:109px}
 body.ml-nav{background:linear-gradient(180deg,#fde8d0 0%,#fff 400px)!important}
 body.ml-nav.ml-dark{background:#1b1a17!important}
 
@@ -2841,8 +2842,15 @@ function _buildNavbar(){
   function _calcOffset(){
     var tbH=topbar.offsetHeight||46;
     var mtH=motto.offsetHeight||40;
+    var total=tbH+mtH;
     motto.style.top=tbH+'px';
-    document.body.style.paddingTop=(tbH+mtH)+'px';
+    document.body.style.paddingTop=total+'px';
+    // Cover'ı barların arkasına uzat (gradient açılışta da görünsün)
+    var cover=document.querySelector('.cover');
+    if(cover){
+      cover.style.marginTop='-'+total+'px';
+      cover.style.paddingTop=total+'px';
+    }
     // Light mode: body bg sıcak peach (barların arkası beyaz olmasın)
     if(!document.body.classList.contains('ml-dark')){
       document.body.style.backgroundColor='#fde8d0';
