@@ -479,7 +479,6 @@ body.ml-dark .body{
   background:${BG1}!important;
 }
 /* ── SİTE SECTION BLOKLARI ── */
-body.ml-dark .menu,
 body.ml-dark .container,
 body.ml-dark .whyus,
 body.ml-dark .contacts,
