@@ -962,12 +962,6 @@ body.ml-dark [class*="product-option"] [class*="title"]{
 body.ml-dark .ec-page-title{color:${TX1}!important}
 body.ml-dark .ec-breadcrumbs a{color:${TX3}!important}
 body.ml-dark .ec-breadcrumbs a:hover{color:${GOLD}!important}
-/* Ürün sayfası: scrollIntoView topbar offseti (fixed header için) */
-body.ml-nav .ec-breadcrumbs,
-body.ml-nav .product-details,
-body.ml-nav .ec-store__content-wrapper{
-  scroll-margin-top:var(--ml-nav-h,107px);
-}
 
 /* ── STATİK SAYFALAR (Şartlar, Gizlilik, İade, vb.) ── */
 body.ml-dark .ec-page-body,
@@ -3502,16 +3496,6 @@ function _buildNavbar(){
   // Ecwid sayfa değişiminde: aktif kategori highlight + fade transition
   if(typeof Ecwid!=='undefined' && Ecwid.OnPageLoaded){
     Ecwid.OnPageLoaded.add(function(page){
-      // Ürün sayfası: breadcrumb'a scroll (topbar yüksekliği offset, 300ms Ecwid DOM bekle)
-      if(page.type==='PRODUCT'){
-        setTimeout(function(){
-          var el=document.querySelector('.ec-breadcrumbs')||document.querySelector('.product-details');
-          if(el){
-            var navH=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--ml-nav-h'))||90;
-            window.scrollTo(0,el.offsetTop-navH);
-          }
-        },300);
-      }
       // Fade-in micro animation (double RAF = browser opacity:0'ı boyar sonra 1'e geçer)
       var store=document.querySelector('.ec-store,.store');
       if(store){
@@ -3548,6 +3532,24 @@ function _buildNavbar(){
 function init(){
   // Yeni navbar sistemi oluştur
   _buildNavbar();
+  // SPA scroll fix — Ecwid scrollTo topbar yüksekliğini bilmiyor, offset çıkar
+  (function(){
+    var _realScrollTo=window.scrollTo.bind(window);
+    function _navH(){
+      var tb=document.querySelector('.ml-topbar');
+      var mt=document.querySelector('.ml-motto');
+      return (tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0);
+    }
+    window.scrollTo=function(){
+      var a=arguments,opts=a[0],x,y,beh;
+      if(opts&&typeof opts==='object'){x=opts.left;y=opts.top;beh=opts.behavior;}
+      else{x=a[0];y=a[1];}
+      var h=_navH();
+      if(typeof y==='number'&&y>h&&h>0){_realScrollTo({top:y-h,left:x||0,behavior:beh||'auto'});return;}
+      _realScrollTo.apply(window,a);
+    };
+    window.scroll=window.scrollTo;
+  })();
   // Kayıtlı tercihi yükle
   try{
     var savedPref=localStorage.getItem('ml-dark');
