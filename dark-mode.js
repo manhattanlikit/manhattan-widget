@@ -93,7 +93,7 @@ body.ml-nav{padding-top:86px}
 /* Top Bar */
 .ml-topbar{
   display:flex;align-items:center;padding:10px 14px;
-  background:rgba(255,255,255,.78);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  background:rgba(255,255,255,.6);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
   border-bottom:1px solid rgba(0,0,0,.06);
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
 }
@@ -103,19 +103,19 @@ body.ml-nav{padding-top:86px}
   display:flex;align-items:center;justify-content:center;gap:8px;
 }
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
-body.ml-dark .ml-topbar{background:rgba(22,21,15,.78);border-color:${BD2};backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+body.ml-dark .ml-topbar{background:rgba(22,21,15,.6);border-color:${BD2};backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
 /* Motto Bar */
 .ml-motto{
   padding:8px 14px;text-align:center;line-height:1.4;
-  background:rgba(255,255,255,.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  background:rgba(255,255,255,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
   border-bottom:1px solid rgba(0,0,0,.04);
   position:fixed;top:46px;left:0;right:0;z-index:999989;
 }
 .ml-motto-en{font-size:10.5px;letter-spacing:2.5px;font-weight:500;text-transform:uppercase;color:#8b7a4e}
 .ml-motto-tr{font-size:9.5px;letter-spacing:.8px;font-weight:300;margin-top:1px;opacity:.4;color:#8b7a4e}
-body.ml-dark .ml-motto{background:rgba(19,18,14,.65);border-color:${BD2};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+body.ml-dark .ml-motto{background:rgba(19,18,14,.45);border-color:${BD2};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 body.ml-dark .ml-motto-en{color:${GOLD}}
 body.ml-dark .ml-motto-tr{color:${GOLD}}
 
@@ -187,6 +187,8 @@ body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.08)}
 .ml-sb-nav-link:active{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
 body.ml-dark .ml-sb-nav-link{color:${TX2}!important}
 body.ml-dark .ml-sb-nav-link:active{color:${GOLD}!important}
+.ml-sb-highlight{color:#af8c3e!important;font-weight:500!important}
+body.ml-dark .ml-sb-highlight{color:${GOLD}!important}
 
 /* Section Label */
 .ml-sb-section{
@@ -2614,8 +2616,12 @@ function _parseCats(){
     item.textContent=cat.name;
     item.addEventListener('click',function(e){
       e.stopPropagation();
+      // Ecwid SPA routing — hash değiştir, sayfa yenilenmesin
+      var h=cat.href;
+      if(h.indexOf('#')===0) window.location.hash=h;
+      else if(h.indexOf('#')>0) window.location.hash=h.substring(h.indexOf('#'));
+      else window.location.hash='#!/'+encodeURIComponent(cat.name);
       _closeSidebar();
-      window.location.href=cat.href;
     });
     _catContainer.appendChild(item);
   });
@@ -2675,8 +2681,9 @@ function _buildNavbar(){
   homeItem.style.fontWeight='600';
   homeItem.textContent='Anasayfa';
   homeItem.addEventListener('click',function(e){
-    e.stopPropagation();_closeSidebar();
-    window.location.href=window.location.pathname.split('#')[0]+'#!/';
+    e.stopPropagation();
+    window.location.hash='#!/';
+    _closeSidebar();
   });
 
   // Category section
@@ -2687,23 +2694,33 @@ function _buildNavbar(){
   _catContainer=document.createElement('div');
   _catContainer.id='ml-cat-list';
 
-  // Nav links: Mağaza, Hakkında, Bize ulaşın
+  // Nav links: Mağaza, Hakkında, Bize ulaşın, İndirim Seviyem
   var navSection=document.createElement('div');
   navSection.className='ml-sb-nav-bottom';
   var navLinks=[
-    {text:'Mağaza',sel:'a[href*="store"],a[href*="magaza"],.top-menu__item--store a',fallback:'#!/'},
-    {text:'Hakkında',sel:'a[href*="hakkinda"],a[href*="Hakkinda"],a[href*="about"],.top-menu__item--about a',fallback:'#!/page/hakkinda'},
-    {text:'Bize ulaşın',sel:'a[href*="bize-ulas"],a[href*="contact"],.top-menu__item--contacts a',fallback:'#!/page/bize-ulasin'}
+    {text:'Mağaza',hash:'#!/'},
+    {text:'Hakkında',hash:'#!/page/hakkinda'},
+    {text:'Bize ulaşın',hash:'#!/page/bize-ulasin'},
+    {text:'⭐ İndirim Seviyem',hash:'_widget_'}
   ];
   navLinks.forEach(function(nl){
     var item=document.createElement('div');
     item.className='ml-sb-item ml-sb-nav-link';
+    if(nl.hash==='_widget_') item.classList.add('ml-sb-highlight');
     item.textContent=nl.text;
     item.addEventListener('click',function(e){
-      e.stopPropagation();_closeSidebar();
-      var link=document.querySelector(nl.sel);
-      if(link&&link.href) window.location.href=link.href;
-      else window.location.hash=nl.fallback;
+      e.stopPropagation();
+      if(nl.hash==='_widget_'){
+        // İndirim Seviyem widget'ını aç
+        _closeSidebar();
+        var wBtn=document.querySelector('.ml-trigger');
+        if(wBtn) wBtn.click();
+        else if(typeof mlOpen==='function') mlOpen();
+        return;
+      }
+      // Ecwid SPA routing — hash değiştir, sayfa yenilenmesin
+      window.location.hash=nl.hash;
+      _closeSidebar();
     });
     navSection.appendChild(item);
   });
