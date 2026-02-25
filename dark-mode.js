@@ -195,21 +195,32 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
   position:fixed;top:0;left:0;right:0;bottom:0;
   background:rgba(0,0,0,0);z-index:999991;
   pointer-events:none;
+  transition:background .3s ease;
 }
-.ml-sb-overlay.open{background:rgba(0,0,0,.45);pointer-events:auto;touch-action:none;-webkit-tap-highlight-color:transparent}
+.ml-sb-overlay.open{background:rgba(0,0,0,.35);pointer-events:auto;-webkit-tap-highlight-color:transparent}
 
-/* Sidebar */
+/* Sidebar — Liquid Glass */
 .ml-sidebar{
-  position:fixed;top:0;bottom:0;left:-100vw;
+  position:fixed;top:0;bottom:0;left:0;
   width:84vw;max-width:320px;
-  background:rgba(255,255,255,.94);
-  border-right:1px solid rgba(0,0,0,.04);
+  background:rgba(255,255,255,.78);
+  backdrop-filter:blur(24px) saturate(130%);-webkit-backdrop-filter:blur(24px) saturate(130%);
+  border-right:1px solid rgba(255,255,255,.3);
+  box-shadow:inset -1px 0 0 rgba(255,255,255,.2),4px 0 24px rgba(0,0,0,.08);
   z-index:999992;
   overflow-y:auto;overflow-x:hidden;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  transform:translateX(-105%);
+  opacity:.92;
+  transition:transform .35s cubic-bezier(.32,.72,0,1),opacity .3s ease;
 }
-.ml-sidebar.open{left:0}
-body.ml-dark .ml-sidebar{background:rgba(27,26,23,.96);border-right:1px solid rgba(175,140,62,.1)}
+.ml-sidebar.open{transform:translateX(0);opacity:1}
+body.ml-dark .ml-sidebar{
+  background:rgba(27,26,23,.82);
+  backdrop-filter:blur(24px) saturate(120%);-webkit-backdrop-filter:blur(24px) saturate(120%);
+  border-right:1px solid rgba(175,140,62,.12);
+  box-shadow:inset -1px 0 0 rgba(255,255,255,.04),4px 0 24px rgba(0,0,0,.3);
+}
 .ml-sidebar::-webkit-scrollbar{width:3px}
 .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
 body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)}
@@ -234,9 +245,11 @@ body.ml-dark .ml-brand-logo{
 /* Nav bottom section */
 .ml-sb-nav-bottom{margin-top:auto;padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
 body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.08)}
-.ml-sb-nav-link{font-size:14px!important;color:#666!important}
-.ml-sb-nav-link:active{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
+.ml-sb-nav-link{font-size:14px!important;color:#666!important;transition:color .2s ease,background .2s ease!important}
+.ml-sb-nav-link:hover{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
+.ml-sb-nav-link:active{color:#af8c3e!important;background:rgba(175,140,62,.07)!important}
 body.ml-dark .ml-sb-nav-link{color:${TX2}!important}
+body.ml-dark .ml-sb-nav-link:hover{color:${GOLD}!important;background:rgba(175,140,62,.05)!important}
 body.ml-dark .ml-sb-nav-link:active{color:${GOLD}!important}
 
 /* Section Label */
@@ -253,12 +266,16 @@ body.ml-dark .ml-sb-section{color:${TX2}}
   display:flex;align-items:center;justify-content:space-between;
   position:relative;overflow:hidden;color:#555;
   text-decoration:none;-webkit-tap-highlight-color:transparent;
+  transition:color .2s ease,background .2s ease;
 }
 .ml-sb-item::before{
   content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;
   opacity:0;border-radius:0 2px 2px 0;background:#af8c3e;
+  transition:opacity .2s ease;
 }
-.ml-sb-item:active{color:#af8c3e;background:rgba(175,140,62,.05)}
+.ml-sb-item:hover{color:#af8c3e;background:rgba(175,140,62,.04)}
+.ml-sb-item:hover::before{opacity:.5}
+.ml-sb-item:active{color:#af8c3e;background:rgba(175,140,62,.07)}
 .ml-sb-item:active::before{opacity:1}
 .ml-sb-item.active{color:#af8c3e;font-weight:600}
 .ml-sb-item.active::before{opacity:1}
@@ -307,6 +324,28 @@ body.ml-dark .ml-sb-greeting{color:${TX1}}
 .ml-sb-login-btn:active{opacity:.8;transform:scale(.97)}
 .ml-sb-login-btn:disabled{opacity:.5;cursor:not-allowed}
 .ml-sb-login-msg{font-size:11px;margin-top:6px;min-height:16px;text-align:center}
+
+/* Quick Actions — greeting altında */
+.ml-sb-quick{
+  display:flex;gap:8px;margin-top:10px;
+}
+.ml-sb-qa{
+  display:flex;align-items:center;gap:5px;
+  padding:6px 12px;border-radius:20px;cursor:pointer;
+  background:rgba(175,140,62,.06);border:1px solid rgba(175,140,62,.12);
+  color:#8b7a4e;font-size:11px;font-weight:500;
+  transition:background .15s ease,border-color .15s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.ml-sb-qa:active{background:rgba(175,140,62,.14);border-color:rgba(175,140,62,.25)}
+.ml-sb-qa svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;flex-shrink:0}
+.ml-sb-qa-count{
+  font-size:9px;font-weight:700;min-width:16px;height:16px;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:8px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
+}
+body.ml-dark .ml-sb-qa{background:rgba(175,140,62,.08);border-color:rgba(175,140,62,.15);color:${GOLD}}
+body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.18)}
 body.ml-dark .ml-sb-login-label{color:${TX3}}
 body.ml-dark .ml-sb-login-input{background:rgba(255,255,255,.06);border-color:rgba(175,140,62,.15);color:${TX1}}
 body.ml-dark .ml-sb-login-input::placeholder{color:${TX3}}
@@ -314,27 +353,26 @@ body.ml-dark .ml-sb-login-input:focus{border-color:${GOLD};box-shadow:0 0 0 2px 
 
 /* Sidebar Footer — account icons row */
 .ml-sb-footer{
-  padding:12px 16px;border-top:1px solid rgba(0,0,0,.06);
-  display:flex;justify-content:space-around;align-items:center;
+  padding:10px 12px 12px;border-top:1px solid rgba(0,0,0,.06);
+  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;
   flex-shrink:0;
 }
 body.ml-dark .ml-sb-footer{border-color:rgba(175,140,62,.08)}
 .ml-sb-ficon{
-  display:flex;flex-direction:column;align-items:center;gap:3px;
-  cursor:pointer;padding:6px 8px;border-radius:8px;
-  -webkit-tap-highlight-color:transparent;min-width:52px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  cursor:pointer;padding:8px 4px;border-radius:12px;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .15s ease;
 }
-.ml-sb-ficon:active{background:rgba(175,140,62,.06)}
-.ml-sb-ficon svg{width:20px;height:20px;stroke:#af8c3e;stroke-width:1.2;fill:none}
+.ml-sb-ficon:active{background:rgba(175,140,62,.08);transform:scale(.96)}
+.ml-sb-ficon svg{width:22px;height:22px;stroke:#af8c3e;stroke-width:1.3;fill:none}
 .ml-sb-ficon span{
-  font-size:8px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
-  padding:2px 7px;border-radius:10px;
-  background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
-  white-space:nowrap;
+  font-size:10px;font-weight:500;letter-spacing:.2px;
+  color:#8b7a4e;white-space:nowrap;
 }
 body.ml-dark .ml-sb-ficon svg{stroke:${GOLD}}
-body.ml-dark .ml-sb-ficon span{background:linear-gradient(135deg,rgba(175,140,62,.9),rgba(212,176,94,.9))}
-body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.08)}
+body.ml-dark .ml-sb-ficon span{color:${GOLD};opacity:.75}
+body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.1)}
 
 /* Sidebar flex layout for bottom nav */
 .ml-sidebar{display:flex;flex-direction:column;padding-bottom:0}
@@ -345,8 +383,7 @@ body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.08)}
   .ml-topbar .ml-brand{font-size:17px;letter-spacing:2px}
   .ml-motto-en{font-size:11.5px;letter-spacing:3px}
   .ml-motto-tr{font-size:10px}
-  .ml-sidebar{width:360px;max-width:360px;left:-380px}
-  .ml-sidebar.open{left:0}
+  .ml-sidebar{width:360px;max-width:360px}
   .ml-sb-head{padding:18px 24px;min-height:60px}
   .ml-sb-head .ml-sb-brand{font-size:15px}
   .ml-sb-logo{width:34px;height:34px}
@@ -358,9 +395,9 @@ body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.08)}
   .ml-sb-greeting{font-size:15px}
   .ml-sb-login-input{font-size:14px;padding:10px 14px}
   .ml-sb-login-btn{font-size:13px;padding:10px 16px}
-  .ml-sb-footer{padding:14px 20px}
-  .ml-sb-ficon svg{width:22px;height:22px}
-  .ml-sb-ficon span{font-size:9px;padding:2px 8px}
+  .ml-sb-footer{padding:12px 16px 14px;gap:6px}
+  .ml-sb-ficon svg{width:24px;height:24px}
+  .ml-sb-ficon span{font-size:11px}
 }
 
 /* ══════════════════════════════════════
@@ -2526,6 +2563,12 @@ body.ml-dark .ml-trigger{
 body.ml-dark .ml-trigger:hover{
   border-color:${GOLDDIM}!important;
 }
+/* Widget trigger mobile size — override widget.js 44px to 60px */
+@media(max-width:1024px){
+  body.ml-nav .ml-trigger{
+    width:60px!important;height:60px!important;
+  }
+}
 body.ml-dark .ml-tier-share{
   background:${BG3}!important;
   color:${TX2}!important;
@@ -2675,24 +2718,12 @@ function _toggleSidebar(){
   _sidebar.classList.toggle('open');
   _sbOverlay.classList.toggle('open');
   _hamburger.classList.toggle('open');
-  if(!isOpen){
-    document.documentElement.style.overflow='hidden';
-    document.body.style.overflow='hidden';
-    document.body.style.touchAction='none';
-  }else{
-    document.documentElement.style.overflow='';
-    document.body.style.overflow='';
-    document.body.style.touchAction='';
-  }
 }
 
 function _closeSidebar(){
   _sidebar.classList.remove('open');
   _sbOverlay.classList.remove('open');
   _hamburger.classList.remove('open');
-  document.documentElement.style.overflow='';
-  document.body.style.overflow='';
-  document.body.style.touchAction='';
 }
 
 function _parseCats(){
@@ -2928,6 +2959,33 @@ function _buildNavbar(){
           },200);
         });
       }
+      // ─ Quick Actions (logged-in only) ─
+      var qaDiv=document.createElement('div');
+      qaDiv.className='ml-sb-quick';
+      var _qaItems=[
+        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>',label:'Sepet',path:'/cart',countSel:'.ec-minicart__counter'},
+        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',label:'Favoriler',path:'/account/favorites',countSel:null},
+        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5-3h6l2 3h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4z"/></svg>',label:'Siparişler',path:'/account/orders',countSel:null}
+      ];
+      _qaItems.forEach(function(qa){
+        var btn=document.createElement('button');
+        btn.className='ml-sb-qa';
+        btn.innerHTML=qa.icon+'<span>'+qa.label+'</span>';
+        // Try to get live count
+        if(qa.countSel){
+          var cEl=document.querySelector(qa.countSel);
+          if(cEl&&parseInt(cEl.textContent)>0){
+            btn.innerHTML+=('<span class="ml-sb-qa-count">'+cEl.textContent.trim()+'</span>');
+          }
+        }
+        btn.addEventListener('click',function(e){
+          e.stopPropagation();
+          _closeSidebar();
+          setTimeout(function(){_ecNav(qa.path);},200);
+        });
+        qaDiv.appendChild(btn);
+      });
+      sbUser.appendChild(qaDiv);
     } else {
       sbUser.innerHTML='<div class="ml-sb-login-label">Giriş yapın</div>'+
         '<div class="ml-sb-login-row">'+
