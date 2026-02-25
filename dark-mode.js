@@ -82,14 +82,12 @@ body.ml-dark .ml-dm-btn:hover{
    ══════════════════════════════════════ */
 
 /* Ecwid default nav → hidden when custom navbar active */
-body.ml-nav .menu .main-nav,
-body.ml-nav .menu .top-menu,
-body.ml-nav .menu .top-menu__item,
-body.ml-nav .menu .pushmenu-btn,
-body.ml-nav .menu .cat-name,
-body.ml-nav .menu [class*="top-menu__item--"],
-body.ml-nav .menu [class*="cat-name"]{display:none!important}
-body.ml-nav .menu{padding:0!important;min-height:0!important;border:none!important;height:0!important;overflow:hidden!important}
+body.ml-nav .cover__menu .main-nav,
+body.ml-nav .cover__menu .top-menu,
+body.ml-nav .cover__menu .pushmenu-btn,
+body.ml-nav .cover__menu .content{display:none!important}
+body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;min-height:0!important}
+body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
 
 /* Top Bar */
 .ml-topbar{
@@ -102,7 +100,7 @@ body.ml-nav .menu{padding:0!important;min-height:0!important;border:none!importa
   flex:1;text-align:center;font-size:14px;font-weight:700;
   letter-spacing:1.5px;color:#2c2a25;pointer-events:none;
 }
-body.ml-dark .ml-topbar{background:${BGnav};border-color:${BD2};backdrop-filter:none;-webkit-backdrop-filter:none}
+body.ml-dark .ml-topbar{background:rgba(22,21,15,.85);border-color:${BD2};backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
 /* Motto Bar */
@@ -114,7 +112,7 @@ body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 }
 .ml-motto-en{font-size:10.5px;letter-spacing:2.5px;font-weight:500;text-transform:uppercase;color:#8b7a4e}
 .ml-motto-tr{font-size:9.5px;letter-spacing:.8px;font-weight:300;margin-top:1px;opacity:.4;color:#8b7a4e}
-body.ml-dark .ml-motto{background:#13120e;border-color:${BD2};backdrop-filter:none;-webkit-backdrop-filter:none}
+body.ml-dark .ml-motto{background:rgba(19,18,14,.75);border-color:${BD2};backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 body.ml-dark .ml-motto-en{color:${GOLD}}
 body.ml-dark .ml-motto-tr{color:${GOLD}}
 
@@ -148,13 +146,15 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
 
 /* Sidebar */
 .ml-sidebar{
-  position:fixed;top:0;left:0;bottom:0;width:280px;
-  background:#fff;border-right:1px solid rgba(0,0,0,.08);
+  position:fixed;top:0;left:0;width:280px;
+  max-height:100vh;max-height:100dvh;
+  background:rgba(255,255,255,.88);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-right:1px solid rgba(0,0,0,.06);
   z-index:999992;transform:translateX(-100%);
-  overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;
+  overflow-y:auto;overflow-x:hidden;
 }
 .ml-sidebar.open{transform:translateX(0)}
-body.ml-dark .ml-sidebar{background:${BGnav};border-right:1px solid rgba(175,140,62,.1)}
+body.ml-dark .ml-sidebar{background:rgba(22,21,15,.92);border-right:1px solid rgba(175,140,62,.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .ml-sidebar::-webkit-scrollbar{width:3px}
 .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
 body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)}
@@ -215,14 +215,8 @@ body.ml-dark .ml-sub-cat:hover{color:${GOLD};background:rgba(175,140,62,.04)}
 .ml-sub-cat.ml-see-all{font-weight:500;color:#af8c3e}
 body.ml-dark .ml-sub-cat.ml-see-all{color:${GOLD}}
 
-/* Sidebar Bottom */
-.ml-sb-bottom{margin-top:auto;padding-top:8px}
-.ml-sb-divider{height:1px;margin:0 18px;background:rgba(0,0,0,.06)}
-body.ml-dark .ml-sb-divider{background:rgba(175,140,62,.08)}
-.ml-sb-bottom .ml-sb-item{color:#999;font-size:12px}
-body.ml-dark .ml-sb-bottom .ml-sb-item{color:${TX2}}
-.ml-sb-bottom .ml-sb-item:hover{color:#af8c3e}
-body.ml-dark .ml-sb-bottom .ml-sb-item:hover{color:${GOLD}}
+/* Sidebar padding bottom */
+.ml-sidebar{padding-bottom:16px}
 
 /* Desktop adjustments */
 @media(min-width:768px){
@@ -2566,11 +2560,10 @@ function _toggleCatExpand(el){
 
 function _parseCats(){
   if(!_catContainer) return;
-  // Already populated?
   if(_catContainer.querySelector('.ml-sb-item')) return;
   var cats=[];
   var seen={};
-  // Ecwid menu: .cat-name elements contain category links
+  // Parse from DOM: .cat-name elements in Ecwid nav
   document.querySelectorAll('.cat-name').forEach(function(el){
     var a=el.tagName==='A'?el:el.querySelector('a');
     if(!a) a=el.closest('a');
@@ -2580,8 +2573,8 @@ function _parseCats(){
     seen[text]=true;
     cats.push({name:text,href:href||('#!'+text)});
   });
-  // Fallback: any link with -cNNNN pattern
-  if(cats.length===0){
+  // Fallback: a[href*="-c"] pattern
+  if(cats.length<2){
     document.querySelectorAll('a[href*="-c"]').forEach(function(a){
       var href=a.getAttribute('href')||'';
       var text=(a.textContent||'').trim();
@@ -2589,6 +2582,17 @@ function _parseCats(){
       seen[text]=true;
       cats.push({name:text,href:href});
     });
+  }
+  // Cache if we found multiple
+  if(cats.length>1){
+    try{sessionStorage.setItem('ml-cats',JSON.stringify(cats));}catch(e){}
+  }
+  // Use cache if DOM had too few
+  if(cats.length<2){
+    try{
+      var cached=sessionStorage.getItem('ml-cats');
+      if(cached) cats=JSON.parse(cached);
+    }catch(e){}
   }
   if(cats.length===0) return;
   cats.forEach(function(cat){
@@ -2659,40 +2663,10 @@ function _buildNavbar(){
   _catContainer=document.createElement('div');
   _catContainer.id='ml-cat-list';
 
-  // Bottom: Hakkında + Bize ulaşın
-  var sbBottom=document.createElement('div');
-  sbBottom.className='ml-sb-bottom';
-  sbBottom.innerHTML='<div class="ml-sb-divider"></div>';
-
-  var aboutItem=document.createElement('div');
-  aboutItem.className='ml-sb-item';
-  aboutItem.textContent='Hakkında';
-  aboutItem.addEventListener('click',function(e){
-    e.stopPropagation();_closeSidebar();
-    // Find the Ecwid "Hakkında" link href
-    var link=document.querySelector('a[href*="hakkinda"],a[href*="Hakkinda"],a[href*="about"]');
-    if(link) window.location.href=link.href;
-    else window.location.hash='#!/page/hakkinda';
-  });
-
-  var contactItem=document.createElement('div');
-  contactItem.className='ml-sb-item';
-  contactItem.textContent='Bize ulaşın';
-  contactItem.addEventListener('click',function(e){
-    e.stopPropagation();_closeSidebar();
-    var link=document.querySelector('a[href*="bize-ulas"],a[href*="Bize"],a[href*="contact"]');
-    if(link) window.location.href=link.href;
-    else window.location.hash='#!/page/bize-ulasin';
-  });
-
-  sbBottom.appendChild(aboutItem);
-  sbBottom.appendChild(contactItem);
-
   _sidebar.appendChild(sbHead);
   _sidebar.appendChild(homeItem);
   _sidebar.appendChild(catSection);
   _sidebar.appendChild(_catContainer);
-  _sidebar.appendChild(sbBottom);
 
   // ─ Overlay ─
   _sbOverlay=document.createElement('div');
@@ -2700,23 +2674,19 @@ function _buildNavbar(){
   _sbOverlay.addEventListener('click',function(e){e.stopPropagation();_closeSidebar();});
 
   // ─ DOM'a ekle ─
-  // Topbar + Motto: sayfanın en üstüne (menu section öncesine)
-  var menuSection=document.querySelector('.menu,.tiles,.body');
-  if(menuSection&&menuSection.parentNode){
-    menuSection.parentNode.insertBefore(motto,menuSection);
-    menuSection.parentNode.insertBefore(topbar,motto);
-  }else{
-    document.body.insertBefore(motto,document.body.firstChild);
-    document.body.insertBefore(topbar,motto);
-  }
+  // Topbar + Motto: body'nin en başına
+  document.body.insertBefore(motto,document.body.firstChild);
+  document.body.insertBefore(topbar,document.body.firstChild);
   document.body.appendChild(_sidebar);
   document.body.appendChild(_sbOverlay);
+
+  // Kategorileri parse et ÖNCE — nav gizlenmeden
+  _parseCats();
 
   // Ecwid default nav'ı gizle
   document.body.classList.add('ml-nav');
 
-  // Kategorileri parse et (gecikmeli — Ecwid geç yükleyebilir)
-  _parseCats();
+  // Gecikmeli retry (Ecwid geç yükleyebilir)
   setTimeout(_parseCats,2000);
   setTimeout(_parseCats,5000);
 }
