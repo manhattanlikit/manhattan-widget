@@ -2784,8 +2784,7 @@ function _buildNavbar(){
   brand.innerHTML=(logoSrc2?'<img class="ml-brand-logo" src="'+logoSrc2+'" alt="">':'')+'MANHATTAN';
   brand.addEventListener('click',function(e){
     e.stopPropagation();
-    if(typeof Ecwid!=='undefined'&&Ecwid.openPage) Ecwid.openPage('category');
-    else window.location.hash='#!/';
+    _goStore();
   });
 
   // btn = existing toggle (already created above)
@@ -2820,6 +2819,7 @@ function _buildNavbar(){
     '<span class="ml-sb-close" aria-label="Kapat">&times;</span>';
   sbHead.addEventListener('click',function(e){
     e.stopPropagation();_closeSidebar();
+    setTimeout(_goStore,200);
   });
 
   // Anasayfa
@@ -2829,7 +2829,7 @@ function _buildNavbar(){
   homeItem.textContent='Anasayfa';
   homeItem.addEventListener('click',function(e){
     e.stopPropagation();
-    if(typeof Ecwid!=='undefined'&&Ecwid.openPage) Ecwid.openPage('category');else window.location.hash='#!/';
+    _goStore();
   });
 
   // Category section
@@ -2846,17 +2846,7 @@ function _buildNavbar(){
   var navLinks=[
     {text:'Mağaza',action:function(){
       _closeSidebar();
-      setTimeout(function(){
-        // Cover'daki "Şimdi alışveriş yap" butonunu bul ve tıkla
-        var coverBtn=document.querySelector('.cover button');
-        if(coverBtn){coverBtn.click();return;}
-        // Fallback: Ecwid API
-        if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
-          Ecwid.openPage('category');
-        }else{
-          window.location.hash='#!/';
-        }
-      },200);
+      setTimeout(_goStore,200);
     }},
     {text:'Hakkında',action:function(){
       // Ecwid scrollToTile — sidebar kapansın (scroll görünsün)
@@ -2876,7 +2866,7 @@ function _buildNavbar(){
               },800);
             }});
           }else{
-            window.location.hash='#!/';
+            _goStore();
           }
         }
       },250);
@@ -2896,7 +2886,7 @@ function _buildNavbar(){
               },800);
             }});
           }else{
-            window.location.hash='#!/';
+            _goStore();
           }
         }
       },250);
@@ -3038,6 +3028,17 @@ function _buildNavbar(){
   // ─ Footer (account icons) ─
   var sbFooter=document.createElement('div');
   sbFooter.className='ml-sb-footer';
+  // Mağaza anasayfasına git — "Şimdi alışveriş yap" ile birebir aynı davranış
+  // Cover button: .cover__cta > .content > BUTTON (onclick=YES, Ecwid native handler)
+  function _goStore(){
+    var coverBtn=document.querySelector('.cover button');
+    if(coverBtn){coverBtn.click();return;}
+    // Fallback: Ecwid API
+    if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
+      Ecwid.openPage('category');
+    }
+  }
+
   // Ecwid SPA navigation helper — Ecwid'in kendi <a> elementini tıklar, sayfa yenilenmez
   // Gerçek DOM: a[href="/account"] parent=ec-footer__cell, listeners=click
   function _ecNav(path){
@@ -3112,36 +3113,28 @@ function _buildNavbar(){
   requestAnimationFrame(_calcOffset); // Paint sonrası
   setTimeout(_calcOffset,500); // Gecikmeli retry
 
-  // Topbar scroll shadow + float-icons sticky
+  // Topbar scroll shadow
   var _lastScroll=0;
-  var _floatIcons=document.querySelector('.float-icons');
-  // Gerçek belge pozisyonu: getBCR.top + scrollY (offsetTop offset parent'a göre, yanlış)
-  var _fiDocTop=_floatIcons?(_floatIcons.getBoundingClientRect().top+window.scrollY):0;
-  var _fiOrigStyle=_floatIcons?_floatIcons.style.top:''; // Ecwid'in orijinal top değeri
-  var _fiOrigPos=_floatIcons?_floatIcons.style.position:'';
-  var _fiStuck=false;
   window.addEventListener('scroll',function(){
     var y=window.scrollY;
     if(y>10 && _lastScroll<=10) topbar.classList.add('ml-scrolled');
     else if(y<=10 && _lastScroll>10) topbar.classList.remove('ml-scrolled');
-    // Float-icons: topbar+motto altına yapışsın
-    if(_floatIcons && _fiDocTop>0){
-      var navH=(topbar.offsetHeight||57)+(motto.offsetHeight||42)+8;
-      var threshold=_fiDocTop-navH;
-      if(y>=threshold && !_fiStuck){
-        _floatIcons.style.position='fixed';
-        _floatIcons.style.top=navH+'px';
-        _floatIcons.style.right='0px';
-        _fiStuck=true;
-      } else if(y<threshold && _fiStuck){
-        _floatIcons.style.position=_fiOrigPos;
-        _floatIcons.style.top=_fiOrigStyle;
-        _floatIcons.style.right='';
-        _fiStuck=false;
-      }
-    }
     _lastScroll=y;
   },{passive:true});
+
+  // Float-icons: Ecwid kendi scroll handler'ı top=0px yapıyor (viewport tepesi).
+  // MutationObserver ile yakala, minimum top = topbar+motto yüksekliği enforce et.
+  var _floatIcons=document.querySelector('.float-icons');
+  if(_floatIcons){
+    var _fiNavH=(topbar.offsetHeight||57)+(motto.offsetHeight||42)+8;
+    var _fiObs=new MutationObserver(function(){
+      var t=parseFloat(_floatIcons.style.top)||0;
+      if(t<_fiNavH && t>=0 && _floatIcons.style.top!==''){
+        _floatIcons.style.top=_fiNavH+'px';
+      }
+    });
+    _fiObs.observe(_floatIcons,{attributes:true,attributeFilter:['style']});
+  }
 
   // Gecikmeli retry (Ecwid geç yükleyebilir)
   setTimeout(_parseCats,2000);
