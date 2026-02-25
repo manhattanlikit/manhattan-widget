@@ -127,18 +127,18 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
 .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.05),0 2px 12px rgba(0,0,0,.1)}
 body.ml-dark .ml-topbar.ml-scrolled{box-shadow:inset 0 1px 0 rgba(255,255,255,.1),inset 0 -1px 0 rgba(0,0,0,.15),0 2px 16px rgba(0,0,0,.35)}
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
-.ml-home-btn{
-  width:28px;height:28px;border-radius:8px;border:none;
+/* Sidebar header action buttons (Back + Home) */
+.ml-sb-action{
+  width:30px;height:30px;border-radius:8px;border:none;
   background:rgba(175,140,62,.06);cursor:pointer;display:inline-flex;
   align-items:center;justify-content:center;flex-shrink:0;color:#af8c3e;
-  padding:0;margin-left:2px;vertical-align:middle;
-  transition:background .2s ease,transform .15s ease;
+  padding:0;transition:background .2s ease,transform .15s ease;
   -webkit-tap-highlight-color:transparent;
 }
-.ml-home-btn:active{background:rgba(175,140,62,.15);transform:scale(.9)}
-.ml-home-btn svg{width:14px;height:14px}
-body.ml-dark .ml-home-btn{color:${GOLD};background:rgba(175,140,62,.08)}
-body.ml-dark .ml-home-btn:active{background:rgba(175,140,62,.18)}
+.ml-sb-action:active{background:rgba(175,140,62,.15);transform:scale(.93)}
+.ml-sb-action svg{width:15px;height:15px;stroke:currentColor;stroke-width:2;fill:none}
+body.ml-dark .ml-sb-action{color:${GOLD};background:rgba(175,140,62,.08)}
+body.ml-dark .ml-sb-action:active{background:rgba(175,140,62,.18)}
 /* Sidebar star (İndirim Seviyem) — greeting satırında */
 .ml-sb-star{
   width:32px;height:32px;border-radius:8px;border:1.5px solid rgba(175,140,62,.3);
@@ -211,7 +211,7 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
   pointer-events:none;
   transition:background .3s ease;
 }
-.ml-sb-overlay.open{background:rgba(0,0,0,.35);pointer-events:auto;-webkit-tap-highlight-color:transparent}
+.ml-sb-overlay.open{background:rgba(27,22,15,.4);pointer-events:auto;-webkit-tap-highlight-color:transparent}
 
 /* Sidebar — Liquid Glass */
 .ml-sidebar{
@@ -220,7 +220,7 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
   background:rgba(255,252,245,.92);
   backdrop-filter:blur(24px) saturate(140%);-webkit-backdrop-filter:blur(24px) saturate(140%);
   border-right:1px solid rgba(255,255,255,.3);
-  box-shadow:inset -1px 0 0 rgba(255,255,255,.2),4px 0 24px rgba(0,0,0,.08);
+  box-shadow:4px 0 24px rgba(0,0,0,.08);
   z-index:999992;
   overflow-y:auto;overflow-x:hidden;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
@@ -233,21 +233,20 @@ body.ml-dark .ml-sidebar{
   background:rgba(27,26,23,.82);
   backdrop-filter:blur(24px) saturate(120%);-webkit-backdrop-filter:blur(24px) saturate(120%);
   border-right:1px solid rgba(175,140,62,.12);
-  box-shadow:inset -1px 0 0 rgba(255,255,255,.04),4px 0 24px rgba(0,0,0,.3);
+  box-shadow:4px 0 24px rgba(0,0,0,.3);
 }
 .ml-sidebar::-webkit-scrollbar{width:3px}
 .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
 body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)}
 
 /* Sidebar Header */
-.ml-sb-head{padding:16px 20px;min-height:56px;box-sizing:border-box;border-bottom:1px solid rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;cursor:pointer}
-.ml-sb-head:active{background:rgba(0,0,0,.03)}
-.ml-sb-logo{width:32px;height:32px;object-fit:contain;border-radius:6px}
-.ml-sb-head .ml-sb-brand{font-size:14px;font-weight:700;letter-spacing:1.5px;color:#2c2a25;flex:1}
-.ml-sb-close{font-size:28px;line-height:1;color:#af8c3e;font-weight:300;padding:4px 6px;border-radius:8px}
+.ml-sb-head{padding:16px 20px;min-height:56px;box-sizing:border-box;display:flex;align-items:center;gap:10px}
+.ml-sb-head:active{background:transparent}
+.ml-sb-logo{width:32px;height:32px;object-fit:contain;border-radius:6px;cursor:pointer}
+.ml-sb-head .ml-sb-brand{font-size:14px;font-weight:700;letter-spacing:1.5px;color:#2c2a25;flex:1;cursor:pointer}
+.ml-sb-close{font-size:28px;line-height:1;color:#af8c3e;font-weight:300;padding:4px 6px;border-radius:8px;cursor:pointer}
 .ml-sb-close:active{background:rgba(0,0,0,.06)}
-body.ml-dark .ml-sb-head{border-color:rgba(175,140,62,.1)}
-body.ml-dark .ml-sb-head:active{background:rgba(175,140,62,.06)}
+body.ml-dark .ml-sb-head{background:transparent}
 body.ml-dark .ml-sb-head .ml-sb-brand{color:${GOLD}}
 body.ml-dark .ml-sb-close{color:${TX2}}
 body.ml-dark .ml-sb-close:active{background:rgba(175,140,62,.08)}
@@ -257,8 +256,8 @@ body.ml-dark .ml-brand-logo{
 }
 
 /* Nav bottom section */
-.ml-sb-nav-bottom{padding-top:10px;border-top:1px solid rgba(0,0,0,.06)}
-body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.08)}
+.ml-sb-nav-bottom{padding-top:10px}
+body.ml-dark .ml-sb-nav-bottom{}
 .ml-sb-nav-link{font-size:14px!important;color:#8b7a4e!important;transition:color .2s ease,background .2s ease!important}
 .ml-sb-nav-link:hover{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
 .ml-sb-nav-link:active{color:#af8c3e!important;background:rgba(175,140,62,.07)!important}
@@ -300,7 +299,7 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
 
 /* Sidebar User Section (greeting or login) */
 .ml-sb-user{
-  padding:18px 20px 16px;border-bottom:1px solid rgba(0,0,0,.05);
+  padding:18px 20px 16px;
 }
 .ml-sb-greeting{
   font-size:14.5px;color:#2c2a25;font-weight:500;
@@ -331,7 +330,7 @@ body.ml-dark .ml-sb-tier-pill{
 }
 body.ml-dark .ml-sb-tier-pill svg{stroke:${GOLD};fill:rgba(175,140,62,.2)}
 @keyframes mlTierShimmer{0%,100%{left:-60%}50%{left:110%}}
-body.ml-dark .ml-sb-user{border-color:rgba(175,140,62,.08)}
+body.ml-dark .ml-sb-user{}
 body.ml-dark .ml-sb-greeting{color:${TX1}}
 /* Login form in sidebar */
 .ml-sb-login-label{
@@ -364,7 +363,7 @@ body.ml-dark .ml-sb-greeting{color:${TX1}}
 .ml-sb-qa{
   display:flex;align-items:center;gap:7px;
   padding:9px 14px;border-radius:22px;cursor:pointer;
-  background:rgba(175,140,62,.05);border:1px solid rgba(175,140,62,.12);
+  background:rgba(175,140,62,.07);border:1px solid rgba(175,140,62,.15);
   color:#8b7a4e;font-size:12px;font-weight:500;
   transition:background .2s ease,border-color .2s ease,transform .15s ease;
   -webkit-tap-highlight-color:transparent;
@@ -376,7 +375,7 @@ body.ml-dark .ml-sb-greeting{color:${TX1}}
   display:inline-flex;align-items:center;justify-content:center;
   border-radius:9px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
 }
-body.ml-dark .ml-sb-qa{background:rgba(175,140,62,.08);border-color:rgba(175,140,62,.15);color:${GOLD}}
+body.ml-dark .ml-sb-qa{background:rgba(175,140,62,.1);border-color:rgba(175,140,62,.18);color:${GOLD}}
 body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.18)}
 /* Badge pulse animation */
 @keyframes ml-badge-pulse{
@@ -413,25 +412,26 @@ body.ml-dark .ml-sb-login-input:focus{border-color:${GOLD};box-shadow:0 0 0 2px 
 
 /* Sidebar Footer — account icons row */
 .ml-sb-footer{
-  padding:14px 16px 14px;border-bottom:1px solid rgba(0,0,0,.06);
+  padding:14px 16px 14px;background:rgba(175,140,62,.03);
+  margin:4px 12px;border-radius:14px;
   display:grid;grid-template-columns:1fr 1fr;gap:8px;
 }
-body.ml-dark .ml-sb-footer{border-color:rgba(175,140,62,.08)}
+body.ml-dark .ml-sb-footer{background:rgba(175,140,62,.05)}
 .ml-sb-ficon{
   display:flex;align-items:center;gap:10px;
   cursor:pointer;padding:12px 14px;border-radius:14px;
-  background:rgba(175,140,62,.03);
-  border:1px solid rgba(0,0,0,.04);
+  background:rgba(175,140,62,.06);
+  border:1px solid rgba(175,140,62,.08);
   -webkit-tap-highlight-color:transparent;
   transition:background .2s ease,transform .15s ease;
 }
-.ml-sb-ficon:active{background:rgba(175,140,62,.1);transform:scale(.97)}
+.ml-sb-ficon:active{background:rgba(175,140,62,.14);transform:scale(.97)}
 .ml-sb-ficon svg{width:20px;height:20px;stroke:#af8c3e;stroke-width:1.4;fill:none;flex-shrink:0}
 .ml-sb-ficon span{
   font-size:12px;font-weight:500;letter-spacing:.1px;
   color:#8b7a4e;white-space:nowrap;
 }
-body.ml-dark .ml-sb-ficon{background:rgba(175,140,62,.05);border-color:rgba(175,140,62,.08)}
+body.ml-dark .ml-sb-ficon{background:rgba(175,140,62,.07);border-color:rgba(175,140,62,.12)}
 body.ml-dark .ml-sb-ficon svg{stroke:${GOLD}}
 body.ml-dark .ml-sb-ficon span{color:${GOLD};opacity:.85}
 body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.14)}
@@ -2917,17 +2917,6 @@ function _buildNavbar(){
 
   topbar.appendChild(_hamburger);
   topbar.appendChild(brand);
-  // Home button — smooth scroll to top
-  var homeBtn=document.createElement('button');
-  homeBtn.className='ml-home-btn';
-  homeBtn.setAttribute('aria-label','Başa dön');
-  homeBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
-  homeBtn.addEventListener('click',function(e){
-    e.stopPropagation();
-    try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
-    window.scrollTo({top:0,behavior:'smooth'});
-  });
-  topbar.appendChild(homeBtn);
   var spacer=document.createElement('div');spacer.style.flex='1';
   topbar.appendChild(spacer);
   topbar.appendChild(btn);
@@ -2943,17 +2932,52 @@ function _buildNavbar(){
 
   var sbHead=document.createElement('div');
   sbHead.className='ml-sb-head';
-  sbHead.style.cursor='pointer';
   // Logo from site
   var logoSrc='';
   var siteLogo=document.querySelector('.logo img');
   if(siteLogo) logoSrc=siteLogo.src||siteLogo.currentSrc||'';
-  sbHead.innerHTML=(logoSrc?'<img class="ml-sb-logo" src="'+logoSrc+'" alt="Manhattan">':'')+
-    '<span class="ml-sb-brand">MANHATTAN</span>'+
-    '<span class="ml-sb-close" aria-label="Kapat">&times;</span>';
-  sbHead.addEventListener('click',function(e){
+  // Logo + Brand (click → store home)
+  var sbLogoWrap=document.createElement('div');
+  sbLogoWrap.style.cssText='display:flex;align-items:center;gap:10px;flex:1;cursor:pointer';
+  sbLogoWrap.innerHTML=(logoSrc?'<img class="ml-sb-logo" src="'+logoSrc+'" alt="Manhattan">':'')+
+    '<span class="ml-sb-brand">MANHATTAN</span>';
+  sbLogoWrap.addEventListener('click',function(e){
+    e.stopPropagation();_goStore();_closeSidebar();
+  });
+  sbHead.appendChild(sbLogoWrap);
+  // Back button
+  var backBtn=document.createElement('button');
+  backBtn.className='ml-sb-action';
+  backBtn.setAttribute('aria-label','Geri');
+  backBtn.innerHTML='<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
+  backBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
+    _closeSidebar();
+    setTimeout(function(){window.history.back();},300);
+  });
+  sbHead.appendChild(backBtn);
+  // Home button
+  var homeBtn=document.createElement('button');
+  homeBtn.className='ml-sb-action';
+  homeBtn.setAttribute('aria-label','Başa dön');
+  homeBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+  homeBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
+    _closeSidebar();
+    setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'});},200);
+  });
+  sbHead.appendChild(homeBtn);
+  // Close button
+  var closeBtn=document.createElement('span');
+  closeBtn.className='ml-sb-close';
+  closeBtn.setAttribute('aria-label','Kapat');
+  closeBtn.innerHTML='&times;';
+  closeBtn.addEventListener('click',function(e){
     e.stopPropagation();_closeSidebar();
   });
+  sbHead.appendChild(closeBtn);
 
   // Anasayfa moved inside categories (_parseCats)
 
@@ -3400,6 +3424,74 @@ function _buildNavbar(){
       }catch(e4){}
     }
   }).observe(_sidebar,{attributes:true,attributeFilter:['class']});
+
+  // ─ Keyboard: Esc → close sidebar ─
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&_sidebar&&_sidebar.classList.contains('open')){
+      e.preventDefault();_closeSidebar();
+    }
+  });
+
+  // ─ Price modifier hide: seçeneklerdeki (+₺30) gibi ek tutar yazılarını gizle ─
+  (function _hidePriceModifiers(){
+    var MODIFIER_RE=/\s*\(\s*[+\-][₺$€£]\s*[\d,.]+\s*\)/g;
+    var MODIFIER_RE2=/\s*[+\-]\s*₺\s*[\d,.]+/g;
+    // CSS: hide known Ecwid price modifier elements
+    var modCSS=document.createElement('style');
+    modCSS.textContent=
+      '.product-details__product-option .form-control__inline-label .details-product-option__modifier,'+
+      '.product-details__product-option .details-product-option__modifier,'+
+      '[class*="product-option"] [class*="modifier"],'+
+      '[class*="product-option"] [class*="surcharge"],'+
+      '.form-control__radio-wrap .details-product-option__modifier{'+
+        'display:none!important;visibility:hidden!important;font-size:0!important'+
+      '}';
+    document.head.appendChild(modCSS);
+    // JS: clean modifier text from select options and button labels
+    function _cleanModifiers(root){
+      if(!root) root=document;
+      // Clean select option text
+      var opts=root.querySelectorAll('[class*="product-option"] option, .details-product-option select option');
+      for(var i=0;i<opts.length;i++){
+        var t=opts[i].textContent;
+        if(MODIFIER_RE.test(t)||MODIFIER_RE2.test(t)){
+          opts[i].textContent=t.replace(MODIFIER_RE,'').replace(MODIFIER_RE2,'').trim();
+        }
+      }
+      // Clean button/radio/size label text
+      var labels=root.querySelectorAll('[class*="product-option"] label, [class*="product-option"] .form-control__inline-label, [class*="product-option"] [class*="title"]');
+      for(var j=0;j<labels.length;j++){
+        // Only clean text nodes, preserve child elements
+        var nodes=labels[j].childNodes;
+        for(var k=0;k<nodes.length;k++){
+          if(nodes[k].nodeType===3){
+            var nt=nodes[k].textContent;
+            if(MODIFIER_RE.test(nt)||MODIFIER_RE2.test(nt)){
+              nodes[k].textContent=nt.replace(MODIFIER_RE,'').replace(MODIFIER_RE2,'').trim();
+            }
+          }
+        }
+      }
+    }
+    // Run on page load + observe for SPA navigation
+    if(typeof Ecwid!=='undefined'&&Ecwid.OnPageLoaded){
+      Ecwid.OnPageLoaded.add(function(){setTimeout(_cleanModifiers,500);setTimeout(_cleanModifiers,1500);});
+    }
+    // MutationObserver for dynamic option rendering
+    var modObs=new MutationObserver(function(muts){
+      for(var m=0;m<muts.length;m++){
+        if(muts[m].addedNodes.length>0){
+          _cleanModifiers();return;
+        }
+      }
+    });
+    var ecStore=document.querySelector('.ecwid-productBrowser')||document.querySelector('[class*="ec-store"]');
+    if(ecStore) modObs.observe(ecStore,{childList:true,subtree:true});
+    else setTimeout(function(){
+      ecStore=document.querySelector('.ecwid-productBrowser')||document.querySelector('[class*="ec-store"]');
+      if(ecStore) modObs.observe(ecStore,{childList:true,subtree:true});
+    },3000);
+  })();
 
   // ─ Badge pulse: sepet sayısı değişince gold pulse ─
   (function(){
