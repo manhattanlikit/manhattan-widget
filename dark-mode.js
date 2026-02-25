@@ -2912,7 +2912,7 @@ function _buildNavbar(){
   sbLogoWrap.innerHTML=(logoSrc?'<img class="ml-sb-logo" src="'+logoSrc+'" alt="Manhattan">':'')+
     '<span class="ml-sb-brand">MANHATTAN</span>';
   sbLogoWrap.addEventListener('click',function(e){
-    e.stopPropagation();_goStore();_closeSidebar();
+    e.stopPropagation();_closeSidebar();
   });
   sbHead.appendChild(sbLogoWrap);
   // Home button
@@ -3524,6 +3524,21 @@ function _buildNavbar(){
       document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
         el.style.setProperty('background','transparent','important');
       });
+      // CATEGORY: hero altına otomatik scroll (cover 800px+ kaplayabiliyor)
+      if(page.type==='CATEGORY' && window.scrollY<10){
+        setTimeout(function(){
+          var content=document.querySelector('.ec-store__content-wrapper,.grid-category,.grid-product,.store.dynamic-product-browser');
+          if(content){
+            var tb=document.querySelector('.ml-topbar');
+            var mt=document.querySelector('.ml-motto');
+            var navH=(tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0)+10;
+            var rect=content.getBoundingClientRect();
+            if(rect.top>navH+50){
+              window.scrollBy({top:rect.top-navH,behavior:'auto'});
+            }
+          }
+        },150);
+      }
     });
   }
 }
