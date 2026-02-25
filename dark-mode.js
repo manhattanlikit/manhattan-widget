@@ -88,6 +88,9 @@ body.ml-nav .cover__menu .pushmenu-btn,
 body.ml-nav .cover__menu .content{display:none!important}
 body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;min-height:0!important}
 body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
+body.ml-nav{padding-top:90px;background-color:#fde8d0}
+html{background-color:#fde8d0}
+body.ml-dark{background-color:#1b1a17!important}
 body.ml-nav .store.dynamic-product-browser{background:transparent!important}
 body.ml-nav{background:linear-gradient(180deg,#fde8d0 0%,#fff 400px)!important}
 body.ml-nav.ml-dark{background:#1b1a17!important}
@@ -100,14 +103,23 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
 }
 .ml-topbar .ml-brand{
-  position:absolute;left:50%;transform:translateX(calc(-50% - 16px));
+  position:absolute;left:50%;transform:translateX(-50%);
   font-size:14px;font-weight:700;letter-spacing:1.5px;color:#2c2a25;
   display:flex;align-items:center;gap:8px;cursor:pointer;
 }
 .ml-topbar .ml-brand:active{opacity:.7}
+.ml-topbar.ml-scrolled{box-shadow:0 1px 8px rgba(0,0,0,.08)}
+body.ml-dark .ml-topbar.ml-scrolled{box-shadow:0 1px 12px rgba(0,0,0,.25)}
 .ml-brand-logo{width:24px;height:24px;object-fit:contain}
-/* Loyalty btn — ml-dm-btn class'ını inherit eder, sadece override */
-.ml-loyalty-btn svg{width:18px;height:18px}
+/* Sidebar star (İndirim Seviyem) */
+.ml-sb-star{
+  width:30px;height:30px;border-radius:7px;border:1.5px solid rgba(175,140,62,.3);
+  background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:#af8c3e;padding:0;
+}
+.ml-sb-star:active{background:rgba(175,140,62,.1);transform:scale(.92)}
+body.ml-dark .ml-sb-star{color:${GOLD};border-color:rgba(212,176,94,.3)}
+body.ml-dark .ml-sb-star:active{background:rgba(175,140,62,.15)}
 body.ml-dark .ml-topbar{background:rgba(22,21,15,.6);border-color:${BD2};backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
@@ -2517,15 +2529,13 @@ function toggle(){
   _observer.disconnect();
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
-  document.documentElement.style.setProperty('background',dark?'#1b1a17':'','important');
-  document.body.style.backgroundColor=dark?'#1b1a17':'';
-  // Light mode: cover rengiyle eşitle (barların arkası)
+  document.documentElement.style.setProperty('background',dark?'#1b1a17':'#fde8d0','important');
+  document.body.style.backgroundColor=dark?'#1b1a17':'#fde8d0';
+  // Light mode: store bg temizle
   if(!dark){
-    var cover=document.querySelector('.cover');
-    if(cover){
-      var coverBg=getComputedStyle(cover).backgroundColor;
-      if(coverBg&&coverBg!=='rgba(0, 0, 0, 0)') document.body.style.backgroundColor=coverBg;
-    }
+    document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+      el.style.setProperty('background','transparent','important');
+    });
   }
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
@@ -2625,6 +2635,7 @@ function _parseCats(){
     var item=document.createElement('div');
     item.className='ml-sb-item';
     item.textContent=cat.name;
+    item._catHref=cat.href;
     item.addEventListener('click',function(e){
       e.stopPropagation();
       // Ecwid API ile navigate (hash'ten daha güvenilir)
@@ -2672,23 +2683,10 @@ function _buildNavbar(){
   btn.style.display='';
   btn.style.verticalAlign='';
 
-  // İndirim Seviyem badge — premium star icon
-  var loyaltyBtn=document.createElement('button');
-  loyaltyBtn.className='ml-dm-btn ml-loyalty-btn';
-  loyaltyBtn.setAttribute('aria-label','İndirim Seviyem');
-  loyaltyBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-  loyaltyBtn.addEventListener('click',function(e){
-    e.stopPropagation();
-    var wBtn=document.querySelector('.ml-trigger');
-    if(wBtn) wBtn.click();
-    else if(typeof mlOpen==='function') mlOpen();
-  });
-
   topbar.appendChild(_hamburger);
   topbar.appendChild(brand);
   var spacer=document.createElement('div');spacer.style.flex='1';
   topbar.appendChild(spacer);
-  topbar.appendChild(loyaltyBtn);
   topbar.appendChild(btn);
 
   // ─ Motto Bar ─
@@ -2709,8 +2707,25 @@ function _buildNavbar(){
   if(siteLogo) logoSrc=siteLogo.src||siteLogo.currentSrc||'';
   sbHead.innerHTML=(logoSrc?'<img class="ml-sb-logo" src="'+logoSrc+'" alt="Manhattan">':'')+
     '<span class="ml-sb-brand">MANHATTAN</span>'+
+    '<button class="ml-sb-star" aria-label="İndirim Seviyem"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>'+
     '<span class="ml-sb-close" aria-label="Kapat">&times;</span>';
-  sbHead.addEventListener('click',function(e){e.stopPropagation();_closeSidebar();});
+  // ⭐ click handler
+  var starBtn=sbHead.querySelector('.ml-sb-star');
+  if(starBtn){
+    starBtn.addEventListener('click',function(e){
+      e.stopPropagation();
+      _closeSidebar();
+      setTimeout(function(){
+        var wBtn=document.querySelector('.ml-trigger');
+        if(wBtn) wBtn.click();
+        else if(typeof mlOpen==='function') mlOpen();
+      },200);
+    });
+  }
+  sbHead.addEventListener('click',function(e){
+    if(e.target.closest('.ml-sb-star')) return; // star has own handler
+    e.stopPropagation();_closeSidebar();
+  });
 
   // Anasayfa
   var homeItem=document.createElement('div');
@@ -2828,24 +2843,59 @@ function _buildNavbar(){
     var mtH=motto.offsetHeight||40;
     motto.style.top=tbH+'px';
     document.body.style.paddingTop=(tbH+mtH)+'px';
-    // Body bg'yi cover elementinin üst rengine eşitle (barların arkası beyaz olmasın)
+    // Light mode: body bg sıcak peach (barların arkası beyaz olmasın)
     if(!document.body.classList.contains('ml-dark')){
-      var cover=document.querySelector('.cover');
-      if(cover){
-        var coverBg=getComputedStyle(cover).backgroundColor;
-        if(coverBg && coverBg!=='rgba(0, 0, 0, 0)' && coverBg!=='transparent'){
-          document.body.style.backgroundColor=coverBg;
-        }
-      }
+      document.body.style.backgroundColor='#fde8d0';
     }
+    // Store elementinin beyaz bg'sini temizle
+    document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+      el.style.setProperty('background','transparent','important');
+    });
   }
   _calcOffset(); // Hemen
   requestAnimationFrame(_calcOffset); // Paint sonrası
   setTimeout(_calcOffset,500); // Gecikmeli retry
 
+  // Topbar scroll shadow
+  var _lastScroll=0;
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY;
+    if(y>10 && _lastScroll<=10) topbar.classList.add('ml-scrolled');
+    else if(y<=10 && _lastScroll>10) topbar.classList.remove('ml-scrolled');
+    _lastScroll=y;
+  },{passive:true});
+
   // Gecikmeli retry (Ecwid geç yükleyebilir)
   setTimeout(_parseCats,2000);
   setTimeout(_parseCats,5000);
+
+  // Ecwid sayfa değişiminde: aktif kategori highlight + fade transition
+  if(typeof Ecwid!=='undefined' && Ecwid.OnPageLoaded){
+    Ecwid.OnPageLoaded.add(function(page){
+      // Fade-in micro animation
+      var store=document.querySelector('.ec-store,.store');
+      if(store){
+        store.style.opacity='0';
+        store.style.transition='opacity .2s ease';
+        requestAnimationFrame(function(){store.style.opacity='1';});
+        setTimeout(function(){store.style.removeProperty('transition');},300);
+      }
+      // Aktif kategori highlight
+      if(_catContainer){
+        _catContainer.querySelectorAll('.ml-sb-item').forEach(function(item){
+          item.classList.remove('active');
+          if(page.type==='CATEGORY' && page.categoryId){
+            var href=item._catHref||'';
+            if(href.indexOf('-c'+page.categoryId)>-1) item.classList.add('active');
+          }
+        });
+      }
+      // Store bg enforcement (sayfa değişiminde Ecwid sıfırlayabilir)
+      document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+        el.style.setProperty('background','transparent','important');
+      });
+    });
+  }
 }
 
 // ─── SAYFA HAZIR OLUNCA EKLE ───
@@ -2859,6 +2909,9 @@ function init(){
       document.documentElement.style.setProperty('background','#1b1a17','important');
       document.body.style.backgroundColor='#1b1a17';
       btn.innerHTML=moonOn;
+    }else{
+      document.documentElement.style.setProperty('background','#fde8d0','important');
+      document.body.style.backgroundColor='#fde8d0';
     }
   }catch(e){}
   // Ecwid-proof düzeltmeleri uygula + observer başlat
@@ -2918,6 +2971,14 @@ function cleanAll(){
   cleanStokYok();
   // Sweep overlay'ları kaldır
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
+  // Ürün açıklamaları — dark mode inline renk kalıntılarını temizle
+  document.querySelectorAll('.product-details__description, .product-details__description *').forEach(function(el){
+    el.style.removeProperty('color');
+    el.style.removeProperty('background');
+    el.style.removeProperty('background-color');
+  });
+  // .D class kaldır (SALT ürünler)
+  document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
   // Select temizle
   document.querySelectorAll('.form-control--empty .form-control__placeholder').forEach(function(el){
     el.style.removeProperty('opacity');
@@ -3050,6 +3111,10 @@ function cleanStokYok(){
     l.querySelectorAll('.ec-label,[class*="label--"],.label__text').forEach(function(el){
       el.style.removeProperty('background');el.style.removeProperty('background-color');el.style.removeProperty('color');
     });
+  });
+  // Store bg cleanup (dark mode'da transparent yapılmış olabilir)
+  document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+    el.style.removeProperty('background');
   });
 }
 
