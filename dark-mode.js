@@ -411,31 +411,6 @@ body.ml-dark .ml-sb-login-input::placeholder{color:${TX3}}
 body.ml-dark .ml-sb-login-input:focus{border-color:${GOLD};box-shadow:0 0 0 2px rgba(175,140,62,.12)}
 
 /* Sidebar Footer — account icons row */
-.ml-sb-footer{
-  padding:14px 16px 14px;background:rgba(175,140,62,.03);
-  margin:4px 12px;border-radius:14px;
-  display:grid;grid-template-columns:1fr 1fr;gap:8px;
-}
-body.ml-dark .ml-sb-footer{background:rgba(175,140,62,.05)}
-.ml-sb-ficon{
-  display:flex;align-items:center;gap:10px;
-  cursor:pointer;padding:12px 14px;border-radius:14px;
-  background:rgba(175,140,62,.06);
-  border:1px solid rgba(175,140,62,.08);
-  -webkit-tap-highlight-color:transparent;
-  transition:background .2s ease,transform .15s ease;
-}
-.ml-sb-ficon:active{background:rgba(175,140,62,.14);transform:scale(.97)}
-.ml-sb-ficon svg{width:20px;height:20px;stroke:#af8c3e;stroke-width:1.4;fill:none;flex-shrink:0}
-.ml-sb-ficon span{
-  font-size:12px;font-weight:500;letter-spacing:.1px;
-  color:#8b7a4e;white-space:nowrap;
-}
-body.ml-dark .ml-sb-ficon{background:rgba(175,140,62,.07);border-color:rgba(175,140,62,.12)}
-body.ml-dark .ml-sb-ficon svg{stroke:${GOLD}}
-body.ml-dark .ml-sb-ficon span{color:${GOLD};opacity:.85}
-body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.14)}
-
 /* Sidebar flex layout for bottom nav */
 .ml-sidebar{display:flex;flex-direction:column;padding-bottom:0}
 /* Scroll indicator — bottom fade when scrollable */
@@ -475,10 +450,6 @@ body.ml-dark .ml-sb-scroll-hint{background:linear-gradient(to bottom,transparent
   .ml-sb-greeting{font-size:15px}
   .ml-sb-login-input{font-size:14px;padding:10px 14px}
   .ml-sb-login-btn{font-size:13px;padding:10px 16px}
-  .ml-sb-footer{padding:14px 20px 14px;gap:10px}
-  .ml-sb-ficon{padding:14px 16px;border-radius:16px}
-  .ml-sb-ficon svg{width:22px;height:22px}
-  .ml-sb-ficon span{font-size:13px}
 }
 
 /* ══════════════════════════════════════
@@ -3069,9 +3040,9 @@ function _buildNavbar(){
       var qaDiv=document.createElement('div');
       qaDiv.className='ml-sb-quick';
       var _qaItems=[
+        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="7.5" r="3.5"/><path d="M3.5 21c0-4.42 3.58-8 8.5-8s8.5 3.58 8.5 8"/></svg>',label:'Hesabım',path:'/account',countSel:null},
         {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>',label:'Sepet',path:'/cart',countSel:'.ec-minicart__counter'},
-        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',label:'Favoriler',path:'/account/favorites',countSel:null},
-        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M16 16v1a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h2m5-3h6l2 3h4a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4z"/></svg>',label:'Siparişler',path:'/account/orders',countSel:null}
+        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',label:'Favoriler',path:'/account/favorites',countSel:null}
       ];
       _qaItems.forEach(function(qa){
         var btn=document.createElement('button');
@@ -3093,11 +3064,6 @@ function _buildNavbar(){
         qaDiv.appendChild(btn);
       });
       sbUser.appendChild(qaDiv);
-      // Çark Çevir — passive/test mode
-      var carkBtn=document.createElement('button');
-      carkBtn.className='ml-sb-qa ml-sb-qa-cark';
-      carkBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/></svg><span>Çark</span>';
-      qaDiv.appendChild(carkBtn);
     } else {
       sbUser.innerHTML='<div class="ml-sb-login-label">Giriş yapın</div>'+
         '<div class="ml-sb-login-row">'+
@@ -3175,16 +3141,20 @@ function _buildNavbar(){
   _updateSbUser(); // Default: login form
   // Ecwid.Customer.get — doğrudan müşteri bilgisi çek (HEMEN + retry)
   // Gerçek yapı: c.name=undefined, c.billingPerson.name="Manhattan Likit", c.membership.name="Silver"
+  // İsim önceliği: _mlCache (loyalty) → bp.firstName → c.name → bp.name (son çare, iş adı olabilir)
   function _fetchCustomer(){
     if(typeof Ecwid==='undefined'||!Ecwid.Customer) return;
     try{
       Ecwid.Customer.get(function(c){
         if(c && c.email){
           var bp=c.billingPerson||{};
-          var rawName=c.name||bp.name||bp.firstName||'';
-          var firstName=rawName.split(' ')[0]||'';
           var tier=(c.membership&&c.membership.name)?c.membership.name:'';
-          if(!firstName && window._mlCache && window._mlCache.name) firstName=window._mlCache.name;
+          // İsim: widget cache > Ecwid firstName > Ecwid name > billing name
+          var firstName='';
+          if(window._mlCache && window._mlCache.name) firstName=window._mlCache.name.split(' ')[0];
+          if(!firstName && bp.firstName) firstName=bp.firstName.split(' ')[0];
+          if(!firstName && c.name) firstName=c.name.split(' ')[0];
+          if(!firstName && bp.name) firstName=bp.name.split(' ')[0];
           if(!tier && window._mlCache && window._mlCache.tier) tier=window._mlCache.tier;
           if(firstName) _updateSbUser(firstName,tier);
         }
@@ -3195,9 +3165,7 @@ function _buildNavbar(){
   setTimeout(_fetchCustomer,1500); // Ecwid geç yüklenebilir
   setTimeout(_fetchCustomer,4000); // Son deneme
 
-  // ─ Footer (account icons) ─
-  var sbFooter=document.createElement('div');
-  sbFooter.className='ml-sb-footer';
+  // ─ Navigation Helpers ─
   // Mağaza anasayfasına git — "Şimdi alışveriş yap" ile birebir aynı davranış
   // Cover button: .cover__cta > .content > BUTTON (onclick=YES, Ecwid native handler)
   function _goStore(){
@@ -3219,27 +3187,9 @@ function _buildNavbar(){
     // Son çare: hash (SPA-friendly)
     window.location.hash='#!/~'+path;
   }
-  var _ficonData=[
-    {label:'Profilim',icon:'<circle cx="12" cy="7.5" r="3.5"/><path d="M3.5 21c0-4.42 3.58-8 8.5-8s8.5 3.58 8.5 8"/>',
-     action:function(){_ecNav('/account');}},
-    {label:'Siparişlerim',icon:'<path d="M21 8V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h14a2 2 0 002-2v-2"/><path d="M7 8h10M7 12h6"/>',
-     action:function(){_ecNav('/account');}},
-    {label:'Favorilerim',icon:'<path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>',
-     action:function(){_ecNav('/account/favorites');}},
-    {label:'Sepetim',icon:'<path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 01-8 0"/>',
-     action:function(){_ecNav('/cart');}}
-  ];
-  _ficonData.forEach(function(fi){
-    var el=document.createElement('div');
-    el.className='ml-sb-ficon';
-    el.innerHTML='<svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">'+fi.icon+'</svg><span>'+fi.label+'</span>';
-    el.addEventListener('click',function(e){e.stopPropagation();try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}fi.action();});
-    sbFooter.appendChild(el);
-  });
 
   _sidebar.appendChild(sbHead);
   _sidebar.appendChild(sbUser);
-  _sidebar.appendChild(sbFooter);
   _sidebar.appendChild(catSection);
   _sidebar.appendChild(_catContainer);
   _sidebar.appendChild(navSection);
