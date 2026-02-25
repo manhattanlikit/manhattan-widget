@@ -99,8 +99,8 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
 /* Top Bar */
 .ml-topbar{
   display:flex;align-items:center;padding:6px 14px;
-  background:rgba(255,255,255,.12);
-  backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(20px) saturate(120%);-webkit-backdrop-filter:blur(20px) saturate(120%);
   border-bottom:1px solid rgba(255,255,255,.2);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(0,0,0,.03),0 1px 3px rgba(0,0,0,.04);
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
@@ -109,7 +109,7 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
 /* Liquid Glass Layer 1 — specular highlight gradient */
 .ml-topbar::before{
   content:'';position:absolute;top:0;left:0;right:0;bottom:0;
-  background:linear-gradient(180deg,rgba(255,255,255,.28) 0%,rgba(255,255,255,.05) 50%,rgba(255,255,255,.1) 100%);
+  background:linear-gradient(180deg,rgba(255,255,255,.3) 0%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.2) 100%);
   pointer-events:none;z-index:-1;
 }
 /* Liquid Glass Layer 2 — SVG noise texture (frosted glass grain) */
@@ -144,8 +144,8 @@ body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 /* Motto Bar */
 .ml-motto{
   padding:5px 14px;text-align:center;line-height:1.4;
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(16px) saturate(180%);-webkit-backdrop-filter:blur(16px) saturate(180%);
+  background:rgba(255,255,255,.14);
+  backdrop-filter:blur(16px) saturate(120%);-webkit-backdrop-filter:blur(16px) saturate(120%);
   border-bottom:1px solid rgba(255,255,255,.12);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.15),inset 0 -1px 0 rgba(0,0,0,.02);
   position:fixed;top:46px;left:0;right:0;z-index:999989;
@@ -154,7 +154,7 @@ body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 /* Motto Liquid Glass layers */
 .ml-motto::before{
   content:'';position:absolute;top:0;left:0;right:0;bottom:0;
-  background:linear-gradient(180deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.02) 100%);
+  background:linear-gradient(180deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,.1) 100%);
   pointer-events:none;z-index:-1;
 }
 .ml-motto::after{
@@ -276,11 +276,13 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
   display:flex;align-items:center;gap:8px;
 }
 .ml-sb-tier{
-  font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
+  font-size:9px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
   padding:2px 8px;border-radius:10px;
-  background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
+  background:transparent;color:#af8c3e;
+  border:1px solid rgba(175,140,62,.4);
   white-space:nowrap;
 }
+body.ml-dark .ml-sb-tier{color:${GOLD};border-color:rgba(212,176,94,.35)}
 body.ml-dark .ml-sb-user{border-color:rgba(175,140,62,.08)}
 body.ml-dark .ml-sb-greeting{color:${TX1}}
 /* Login form in sidebar */
@@ -2915,7 +2917,7 @@ function _buildNavbar(){
     var _starSvg='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
     if(name){
       sbUser.innerHTML='<div class="ml-sb-greeting">'+
-        'Merhaba, <b>'+name+'</b>'+
+        '<span>Merhaba, <b>'+name+'</b></span>'+
         (tier?'<span class="ml-sb-tier">'+tier+'</span>':'')+
         '<button class="ml-sb-star" aria-label="İndirim Seviyem">'+_starSvg+'</button>'+
         '</div>';
@@ -3106,12 +3108,28 @@ function _buildNavbar(){
   requestAnimationFrame(_calcOffset); // Paint sonrası
   setTimeout(_calcOffset,500); // Gecikmeli retry
 
-  // Topbar scroll shadow
+  // Topbar scroll shadow + float-icons sticky
   var _lastScroll=0;
+  var _floatIcons=document.querySelector('.float-icons');
+  var _fiOrigTop=_floatIcons?_floatIcons.offsetTop:0;
+  var _fiStuck=false;
   window.addEventListener('scroll',function(){
     var y=window.scrollY;
     if(y>10 && _lastScroll<=10) topbar.classList.add('ml-scrolled');
     else if(y<=10 && _lastScroll>10) topbar.classList.remove('ml-scrolled');
+    // Float-icons: topbar+motto altına yapışsın
+    if(_floatIcons && _fiOrigTop>0){
+      var navH=(topbar.offsetHeight||57)+(motto.offsetHeight||42)+8;
+      if(y+navH>_fiOrigTop && !_fiStuck){
+        _floatIcons.style.position='fixed';
+        _floatIcons.style.top=navH+'px';
+        _fiStuck=true;
+      } else if(y+navH<=_fiOrigTop && _fiStuck){
+        _floatIcons.style.position='';
+        _floatIcons.style.top='';
+        _fiStuck=false;
+      }
+    }
     _lastScroll=y;
   },{passive:true});
 
