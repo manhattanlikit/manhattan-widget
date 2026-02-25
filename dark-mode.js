@@ -88,6 +88,7 @@ body.ml-nav .cover__menu .pushmenu-btn,
 body.ml-nav .cover__menu .content{display:none!important}
 body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!important;margin:0!important;min-height:0!important}
 body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
+body.ml-nav .float-icons{z-index:999995!important}
 body.ml-nav{padding-top:90px;background-color:#ffbd92}
 html{background-color:#ffbd92}
 body.ml-dark{background-color:#1b1a17!important}
@@ -97,9 +98,9 @@ body.ml-nav.ml-dark{background:#1b1a17!important}
 
 /* Top Bar */
 .ml-topbar{
-  display:flex;align-items:center;padding:10px 14px;
-  background:rgba(253,248,238,.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(0,0,0,.06);
+  display:flex;align-items:center;padding:6px 14px;
+  background:rgba(255,255,255,.3);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border-bottom:1px solid rgba(255,255,255,.4);
   gap:10px;position:fixed;top:0;left:0;right:0;z-index:999990;
 }
 .ml-topbar .ml-brand{
@@ -120,19 +121,19 @@ body.ml-dark .ml-topbar.ml-scrolled{box-shadow:0 1px 12px rgba(0,0,0,.25)}
 .ml-sb-star:active{background:rgba(175,140,62,.1);transform:scale(.92)}
 body.ml-dark .ml-sb-star{color:${GOLD};border-color:rgba(212,176,94,.3)}
 body.ml-dark .ml-sb-star:active{background:rgba(175,140,62,.15)}
-body.ml-dark .ml-topbar{background:rgba(22,21,15,.6);border-color:${BD2};backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+body.ml-dark .ml-topbar{background:rgba(22,21,15,.35);border-color:rgba(255,255,255,.06);backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3)}
 body.ml-dark .ml-topbar .ml-brand{color:${GOLD}}
 
 /* Motto Bar */
 .ml-motto{
-  padding:8px 14px;text-align:center;line-height:1.4;
-  background:rgba(253,248,238,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  border-bottom:1px solid rgba(0,0,0,.04);
+  padding:5px 14px;text-align:center;line-height:1.4;
+  background:rgba(255,255,255,.2);backdrop-filter:blur(24px) saturate(1.4);-webkit-backdrop-filter:blur(24px) saturate(1.4);
+  border-bottom:1px solid rgba(255,255,255,.3);
   position:fixed;top:46px;left:0;right:0;z-index:999989;
 }
 .ml-motto-en{font-size:10.5px;letter-spacing:2.5px;font-weight:500;text-transform:uppercase;color:#8b7a4e}
 .ml-motto-tr{font-size:9.5px;letter-spacing:.8px;font-weight:300;margin-top:1px;opacity:.4;color:#8b7a4e}
-body.ml-dark .ml-motto{background:rgba(19,18,14,.45);border-color:${BD2};backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+body.ml-dark .ml-motto{background:rgba(22,21,15,.25);border-color:rgba(255,255,255,.04);backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3)}
 body.ml-dark .ml-motto-en{color:${GOLD}}
 body.ml-dark .ml-motto-tr{color:${GOLD}}
 
@@ -168,14 +169,14 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
 .ml-sidebar{
   position:fixed;top:0;bottom:0;left:-100vw;
   width:84vw;max-width:320px;
-  background:rgba(255,255,255,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  border-right:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.45);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  border-right:1px solid rgba(255,255,255,.3);
   z-index:999992;
   overflow-y:auto;overflow-x:hidden;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
 }
 .ml-sidebar.open{left:0}
-body.ml-dark .ml-sidebar{background:rgba(22,21,15,.88);border-right:1px solid rgba(175,140,62,.1)}
+body.ml-dark .ml-sidebar{background:rgba(22,21,15,.55);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);border-right:1px solid rgba(175,140,62,.1)}
 .ml-sidebar::-webkit-scrollbar{width:3px}
 .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
 body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)}
@@ -238,7 +239,7 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
 
 /* Desktop adjustments */
 @media(min-width:768px){
-  .ml-topbar{padding:10px 24px}
+  .ml-topbar{padding:8px 24px}
   .ml-topbar .ml-brand{font-size:17px;letter-spacing:2px}
   .ml-motto-en{font-size:11.5px;letter-spacing:3px}
   .ml-motto-tr{font-size:10px}
@@ -248,9 +249,9 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
   .ml-sb-head .ml-sb-brand{font-size:15px}
   .ml-sb-logo{width:34px;height:34px}
   .ml-sb-close{font-size:28px}
-  .ml-sb-item{font-size:15px;padding:13px 24px}
+  .ml-sb-item{font-size:16px;padding:14px 24px}
   .ml-sb-section{padding:14px 24px 6px;font-size:10.5px}
-  .ml-sb-nav-link{font-size:14px!important}
+  .ml-sb-nav-link{font-size:15px!important}
 }
 
 /* ══════════════════════════════════════
