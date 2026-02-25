@@ -2772,6 +2772,16 @@ function _parseCats(){
     }catch(e){}
   }
   if(cats.length===0) return;
+  // Anasayfa — always first item in categories
+  var homeItem=document.createElement('div');
+  homeItem.className='ml-sb-item ml-sb-home';
+  homeItem.style.fontWeight='600';
+  homeItem.textContent='Anasayfa';
+  homeItem.addEventListener('click',function(e){
+    e.stopPropagation();
+    _goStore();
+  });
+  _catContainer.appendChild(homeItem);
   cats.forEach(function(cat){
     var item=document.createElement('div');
     item.className='ml-sb-item';
@@ -2850,18 +2860,9 @@ function _buildNavbar(){
     '<span class="ml-sb-close" aria-label="Kapat">&times;</span>';
   sbHead.addEventListener('click',function(e){
     e.stopPropagation();_closeSidebar();
-    setTimeout(_goStore,200);
   });
 
-  // Anasayfa
-  var homeItem=document.createElement('div');
-  homeItem.className='ml-sb-item ml-sb-home';
-  homeItem.style.fontWeight='600';
-  homeItem.textContent='Anasayfa';
-  homeItem.addEventListener('click',function(e){
-    e.stopPropagation();
-    _goStore();
-  });
+  // Anasayfa moved inside categories (_parseCats)
 
   // Category section
   var catSection=document.createElement('div');
@@ -2871,14 +2872,10 @@ function _buildNavbar(){
   _catContainer=document.createElement('div');
   _catContainer.id='ml-cat-list';
 
-  // Nav links: Mağaza, Hakkında, Bize ulaşın, İndirim Seviyem
+  // Nav links: Hakkında, Bize ulaşın
   var navSection=document.createElement('div');
   navSection.className='ml-sb-nav-bottom';
   var navLinks=[
-    {text:'Mağaza',action:function(){
-      _closeSidebar();
-      setTimeout(_goStore,200);
-    }},
     {text:'Hakkında',action:function(){
       // Ecwid scrollToTile — sidebar kapansın (scroll görünsün)
       _closeSidebar();
@@ -3127,7 +3124,6 @@ function _buildNavbar(){
 
   _sidebar.appendChild(sbHead);
   _sidebar.appendChild(sbUser);
-  _sidebar.appendChild(homeItem);
   _sidebar.appendChild(catSection);
   _sidebar.appendChild(_catContainer);
   _sidebar.appendChild(navSection);
@@ -3136,7 +3132,15 @@ function _buildNavbar(){
   // ─ Overlay ─
   _sbOverlay=document.createElement('div');
   _sbOverlay.className='ml-sb-overlay';
-  _sbOverlay.addEventListener('click',function(e){e.stopPropagation();_closeSidebar();});
+  _sbOverlay.addEventListener('click',function(e){
+    var cx=e.clientX,cy=e.clientY;
+    _closeSidebar();
+    // Pass click through to element underneath (dark mode toggle etc.)
+    requestAnimationFrame(function(){
+      var el=document.elementFromPoint(cx,cy);
+      if(el&&el!==_sbOverlay) el.click();
+    });
+  });
 
   // ─ DOM'a ekle ─
   // Topbar + Motto: body'nin en başına
@@ -3155,8 +3159,9 @@ function _buildNavbar(){
   function _calcOffset(){
     var tbH=topbar.offsetHeight||46;
     var mtH=motto.offsetHeight||40;
-    var total=tbH+mtH;
-    motto.style.top=tbH+'px';
+    var GAP=3; // "İki parça" glass gap
+    motto.style.top=(tbH+GAP)+'px';
+    var total=tbH+GAP+mtH;
     document.body.style.paddingTop=total+'px';
     // CSS variable for float-icons top (CSS !important ile Ecwid override)
     document.documentElement.style.setProperty('--ml-nav-h',(total+8)+'px');
