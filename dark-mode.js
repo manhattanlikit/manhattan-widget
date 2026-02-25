@@ -210,9 +210,9 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
   z-index:999992;
   overflow-y:auto;overflow-x:hidden;
   overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
-  transform:translateX(-105%);
-  opacity:.92;
-  transition:transform .35s cubic-bezier(.32,.72,0,1),opacity .3s ease;
+  transform:translateX(-100%);
+  opacity:0;
+  transition:transform .44s cubic-bezier(.22,1,.36,1),opacity .28s ease-out;
 }
 .ml-sidebar.open{transform:translateX(0);opacity:1}
 body.ml-dark .ml-sidebar{
@@ -286,11 +286,12 @@ body.ml-dark .ml-sb-item.active{color:${GOLD}}
 
 /* Sidebar User Section (greeting or login) */
 .ml-sb-user{
-  padding:12px 20px;border-bottom:1px solid rgba(0,0,0,.05);
+  padding:18px 20px 16px;border-bottom:1px solid rgba(0,0,0,.05);
 }
 .ml-sb-greeting{
-  font-size:14px;color:#2c2a25;font-weight:500;
-  display:flex;align-items:center;gap:8px;
+  font-size:14.5px;color:#2c2a25;font-weight:500;
+  display:flex;align-items:center;gap:10px;
+  line-height:1.4;
 }
 .ml-sb-tier{
   font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;
@@ -327,25 +328,47 @@ body.ml-dark .ml-sb-greeting{color:${TX1}}
 
 /* Quick Actions — greeting altında */
 .ml-sb-quick{
-  display:flex;gap:8px;margin-top:10px;
+  display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;
 }
 .ml-sb-qa{
-  display:flex;align-items:center;gap:5px;
-  padding:6px 12px;border-radius:20px;cursor:pointer;
-  background:rgba(175,140,62,.06);border:1px solid rgba(175,140,62,.12);
-  color:#8b7a4e;font-size:11px;font-weight:500;
-  transition:background .15s ease,border-color .15s ease;
+  display:flex;align-items:center;gap:7px;
+  padding:9px 14px;border-radius:22px;cursor:pointer;
+  background:rgba(175,140,62,.05);border:1px solid rgba(175,140,62,.12);
+  color:#8b7a4e;font-size:12px;font-weight:500;
+  transition:background .2s ease,border-color .2s ease,transform .15s ease;
   -webkit-tap-highlight-color:transparent;
 }
-.ml-sb-qa:active{background:rgba(175,140,62,.14);border-color:rgba(175,140,62,.25)}
-.ml-sb-qa svg{width:14px;height:14px;stroke:currentColor;stroke-width:1.5;fill:none;flex-shrink:0}
+.ml-sb-qa:active{background:rgba(175,140,62,.14);border-color:rgba(175,140,62,.25);transform:scale(.96)}
+.ml-sb-qa svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.5;fill:none;flex-shrink:0}
 .ml-sb-qa-count{
-  font-size:9px;font-weight:700;min-width:16px;height:16px;
+  font-size:9px;font-weight:700;min-width:18px;height:18px;
   display:inline-flex;align-items:center;justify-content:center;
-  border-radius:8px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
+  border-radius:9px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
 }
 body.ml-dark .ml-sb-qa{background:rgba(175,140,62,.08);border-color:rgba(175,140,62,.15);color:${GOLD}}
 body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.18)}
+/* Badge pulse animation */
+@keyframes ml-badge-pulse{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.25)}
+  100%{transform:scale(1)}
+}
+.ml-sb-qa-count.pulse{animation:ml-badge-pulse .4s ease-out}
+/* Son görüntülenen ürünler */
+.ml-sb-recent{padding:12px 20px 8px}
+.ml-sb-recent-title{font-size:9.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#a09080;margin-bottom:10px}
+.ml-sb-recent-list{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
+.ml-sb-recent-list::-webkit-scrollbar{display:none}
+.ml-sb-ritem{
+  flex-shrink:0;width:72px;cursor:pointer;text-align:center;
+  -webkit-tap-highlight-color:transparent;transition:transform .15s ease;
+}
+.ml-sb-ritem:active{transform:scale(.95)}
+.ml-sb-ritem img{width:72px;height:72px;object-fit:cover;border-radius:12px;border:1px solid rgba(0,0,0,.06);background:#f5f0e8}
+.ml-sb-ritem span{display:block;font-size:10px;color:#6b5f4f;margin-top:5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+body.ml-dark .ml-sb-recent-title{color:${GOLD};opacity:.6}
+body.ml-dark .ml-sb-ritem img{border-color:rgba(175,140,62,.12);background:${BG2}}
+body.ml-dark .ml-sb-ritem span{color:${TX3}}
 body.ml-dark .ml-sb-login-label{color:${TX3}}
 body.ml-dark .ml-sb-login-input{background:rgba(255,255,255,.06);border-color:rgba(175,140,62,.15);color:${TX1}}
 body.ml-dark .ml-sb-login-input::placeholder{color:${TX3}}
@@ -353,26 +376,29 @@ body.ml-dark .ml-sb-login-input:focus{border-color:${GOLD};box-shadow:0 0 0 2px 
 
 /* Sidebar Footer — account icons row */
 .ml-sb-footer{
-  padding:10px 12px 12px;border-top:1px solid rgba(0,0,0,.06);
-  display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:4px;
+  padding:14px 16px 16px;border-top:1px solid rgba(0,0,0,.06);
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
   flex-shrink:0;
 }
 body.ml-dark .ml-sb-footer{border-color:rgba(175,140,62,.08)}
 .ml-sb-ficon{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  cursor:pointer;padding:8px 4px;border-radius:12px;
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;padding:12px 14px;border-radius:14px;
+  background:rgba(175,140,62,.03);
+  border:1px solid rgba(0,0,0,.04);
   -webkit-tap-highlight-color:transparent;
-  transition:background .15s ease;
+  transition:background .2s ease,transform .15s ease;
 }
-.ml-sb-ficon:active{background:rgba(175,140,62,.08);transform:scale(.96)}
-.ml-sb-ficon svg{width:22px;height:22px;stroke:#af8c3e;stroke-width:1.3;fill:none}
+.ml-sb-ficon:active{background:rgba(175,140,62,.1);transform:scale(.97)}
+.ml-sb-ficon svg{width:20px;height:20px;stroke:#af8c3e;stroke-width:1.4;fill:none;flex-shrink:0}
 .ml-sb-ficon span{
-  font-size:10px;font-weight:500;letter-spacing:.2px;
-  color:#8b7a4e;white-space:nowrap;
+  font-size:12px;font-weight:500;letter-spacing:.1px;
+  color:#5a5040;white-space:nowrap;
 }
+body.ml-dark .ml-sb-ficon{background:rgba(175,140,62,.05);border-color:rgba(175,140,62,.08)}
 body.ml-dark .ml-sb-ficon svg{stroke:${GOLD}}
-body.ml-dark .ml-sb-ficon span{color:${GOLD};opacity:.75}
-body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.1)}
+body.ml-dark .ml-sb-ficon span{color:${GOLD};opacity:.85}
+body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.14)}
 
 /* Sidebar flex layout for bottom nav */
 .ml-sidebar{display:flex;flex-direction:column;padding-bottom:0}
@@ -391,13 +417,14 @@ body.ml-dark .ml-sb-ficon:active{background:rgba(175,140,62,.1)}
   .ml-sb-item{font-size:16px;padding:14px 24px}
   .ml-sb-section{padding:14px 24px 6px;font-size:10.5px}
   .ml-sb-nav-link{font-size:15px!important}
-  .ml-sb-user{padding:14px 24px}
+  .ml-sb-user{padding:18px 24px 16px}
   .ml-sb-greeting{font-size:15px}
   .ml-sb-login-input{font-size:14px;padding:10px 14px}
   .ml-sb-login-btn{font-size:13px;padding:10px 16px}
-  .ml-sb-footer{padding:12px 16px 14px;gap:6px}
-  .ml-sb-ficon svg{width:24px;height:24px}
-  .ml-sb-ficon span{font-size:11px}
+  .ml-sb-footer{padding:16px 20px 18px;gap:10px}
+  .ml-sb-ficon{padding:14px 16px;border-radius:16px}
+  .ml-sb-ficon svg{width:22px;height:22px}
+  .ml-sb-ficon span{font-size:13px}
 }
 
 /* ══════════════════════════════════════
@@ -3149,6 +3176,128 @@ function _buildNavbar(){
   document.body.appendChild(_sidebar);
   document.body.appendChild(_sbOverlay);
 
+  // ─ Swipe-to-close (sola kaydır → sidebar kapanır) ─
+  (function(){
+    var startX=0,startY=0,swiping=false;
+    _sidebar.addEventListener('touchstart',function(e){
+      var t=e.touches[0];
+      startX=t.clientX;startY=t.clientY;swiping=true;
+    },{passive:true});
+    _sidebar.addEventListener('touchmove',function(e){
+      if(!swiping) return;
+      var dx=e.touches[0].clientX-startX;
+      var dy=Math.abs(e.touches[0].clientY-startY);
+      // Yatay hareket dikey harekkten büyükse swipe
+      if(dx<-20 && dy<Math.abs(dx)){
+        _sidebar.style.transform='translateX('+dx+'px)';
+        _sidebar.style.transition='none';
+      }
+    },{passive:true});
+    function _endSwipe(e){
+      if(!swiping) return;
+      swiping=false;
+      var dx=(e.changedTouches?e.changedTouches[0].clientX:0)-startX;
+      _sidebar.style.transition='';
+      _sidebar.style.transform='';
+      if(dx<-60) _closeSidebar();
+    }
+    _sidebar.addEventListener('touchend',_endSwipe,{passive:true});
+    _sidebar.addEventListener('touchcancel',_endSwipe,{passive:true});
+  })();
+
+  // ─ Son görüntülenen ürünler ─
+  var _recentSection=document.createElement('div');
+  _recentSection.className='ml-sb-recent';
+  _recentSection.style.display='none';
+  _recentSection.innerHTML='<div class="ml-sb-recent-title">Son Görüntülenen</div><div class="ml-sb-recent-list" id="ml-recent-list"></div>';
+  // Kategoriler ile nav-bottom arasına ekle
+  _catContainer.parentNode.insertBefore(_recentSection,navSection);
+
+  function _trackRecentProduct(p){
+    try{
+      var key='ml-recent-v1';
+      var list=JSON.parse(sessionStorage.getItem(key)||'[]');
+      // Duplicate kaldır
+      list=list.filter(function(x){return x.id!==p.id;});
+      list.unshift(p);
+      if(list.length>8) list=list.slice(0,8);
+      sessionStorage.setItem(key,JSON.stringify(list));
+    }catch(e){}
+  }
+  function _renderRecent(){
+    try{
+      var list=JSON.parse(sessionStorage.getItem('ml-recent-v1')||'[]');
+      if(list.length===0){_recentSection.style.display='none';return;}
+      _recentSection.style.display='';
+      var container=document.getElementById('ml-recent-list');
+      if(!container) return;
+      container.innerHTML='';
+      list.slice(0,6).forEach(function(p){
+        var el=document.createElement('div');
+        el.className='ml-sb-ritem';
+        el.innerHTML='<img src="'+p.img+'" alt="'+p.name+'" loading="lazy"><span>'+p.name+'</span>';
+        el.addEventListener('click',function(e){
+          e.stopPropagation();
+          _closeSidebar();
+          if(typeof Ecwid!=='undefined'&&Ecwid.openPage){
+            Ecwid.openPage('product',{id:p.id});
+          }
+        });
+        container.appendChild(el);
+      });
+    }catch(e){}
+  }
+  // Ecwid ürün sayfası açıldığında track et
+  if(typeof Ecwid!=='undefined'){
+    try{
+      Ecwid.OnPageLoaded.add(function(page){
+        if(page.type==='PRODUCT'&&page.productId){
+          // Ürün bilgilerini DOM'dan al
+          setTimeout(function(){
+            var nameEl=document.querySelector('.product-details__product-title, h1.ec-header-h3');
+            var imgEl=document.querySelector('.product-details__gallery img, .details-gallery__photo img');
+            if(nameEl){
+              _trackRecentProduct({
+                id:page.productId,
+                name:(nameEl.textContent||'').trim().substring(0,30),
+                img:imgEl?(imgEl.src||imgEl.currentSrc||''):'',
+              });
+            }
+          },500);
+        }
+      });
+    }catch(e){}
+  }
+  // Sidebar açıldığında render et (MutationObserver ile class değişimini izle)
+  new MutationObserver(function(muts){
+    muts.forEach(function(m){
+      if(m.attributeName==='class'&&_sidebar.classList.contains('open')){
+        _renderRecent();
+      }
+    });
+  }).observe(_sidebar,{attributes:true,attributeFilter:['class']});
+
+  // ─ Badge pulse: sepet sayısı değişince gold pulse ─
+  (function(){
+    var cartEl=document.querySelector('.ec-minicart__counter');
+    if(!cartEl) return;
+    var lastCount=cartEl.textContent.trim();
+    new MutationObserver(function(){
+      var c=cartEl.textContent.trim();
+      if(c!==lastCount&&parseInt(c)>0){
+        lastCount=c;
+        // Sidebar içindeki badge'i güncelle + pulse
+        var badge=_sidebar.querySelector('.ml-sb-qa-count');
+        if(badge){
+          badge.textContent=c;
+          badge.classList.remove('pulse');
+          void badge.offsetWidth; // reflow
+          badge.classList.add('pulse');
+        }
+      }
+    }).observe(cartEl,{childList:true,characterData:true,subtree:true});
+  })();
+
   // Kategorileri parse et ÖNCE — nav gizlenmeden
   _parseCats();
 
@@ -3159,7 +3308,7 @@ function _buildNavbar(){
   function _calcOffset(){
     var tbH=topbar.offsetHeight||46;
     var mtH=motto.offsetHeight||40;
-    var GAP=3; // "İki parça" glass gap
+    var GAP=0; // Topbar+motto birleşik (tek cam)
     motto.style.top=(tbH+GAP)+'px';
     var total=tbH+GAP+mtH;
     document.body.style.paddingTop=total+'px';
@@ -3232,11 +3381,19 @@ function init(){
   _buildNavbar();
   // Kayıtlı tercihi yükle
   try{
-    if(localStorage.getItem('ml-dark')==='1'){
+    var savedPref=localStorage.getItem('ml-dark');
+    if(savedPref==='1'){
       document.body.classList.add('ml-dark');
       document.documentElement.style.setProperty('background','#1b1a17','important');
       document.body.style.backgroundColor='#1b1a17';
       btn.innerHTML=moonOn;
+    }else if(savedPref===null && window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches){
+      // İlk ziyaret + sistem dark → otomatik aç
+      document.body.classList.add('ml-dark');
+      document.documentElement.style.setProperty('background','#1b1a17','important');
+      document.body.style.backgroundColor='#1b1a17';
+      btn.innerHTML=moonOn;
+      try{localStorage.setItem('ml-dark','1');}catch(e2){}
     }else{
       document.documentElement.style.setProperty('background','#ffbd92','important');
       document.body.style.backgroundColor='#ffbd92';
