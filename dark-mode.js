@@ -2801,26 +2801,26 @@ function toggle(){
   _observer.disconnect();
   document.body.classList.toggle('ml-dark');
   var dark=document.body.classList.contains('ml-dark');
+  // Body bg: dark=#1b1a17, light=#ffbd92 (Liquid Glass peach)
   document.documentElement.style.setProperty('background',dark?'#1b1a17':'#ffbd92','important');
   document.body.style.backgroundColor=dark?'#1b1a17':'#ffbd92';
-  // Light mode: store bg temizle
-  if(!dark){
-    document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
-      el.style.setProperty('background','transparent','important');
-    });
-  }
   btn.innerHTML=dark?moonOn:moonOff;
   try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
-  if(!dark){
-    document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
-  }
   _lastFixTime=0;
   clearTimeout(_fixTimer);
   if(_fixRAF) cancelAnimationFrame(_fixRAF);
+  // Light mode'a geçişte store bg hemen temizle (beyaz kalma sorunu)
+  if(!dark){
+    document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+      el.style.removeProperty('background');
+    });
+  }
   _fixAllNow();
   _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-  // Ecwid geç render için 2. pas
-  setTimeout(fixAll,1000);
+  // Multi-pass: Ecwid geç render + SPA elementleri
+  setTimeout(fixAll,300);
+  setTimeout(fixAll,800);
+  setTimeout(fixAll,2000);
 }
 
 btn.addEventListener('click',function(e){
@@ -3820,7 +3820,7 @@ function _fixAllNow(){
 // ─── TEMİZLİK (light mode'a dönünce) ───
 function cleanAll(){
   cleanStokYok();
-  // Store bg — dark mode'un transparent override'ını kaldır
+  // Store bg — dark mode'un transparent override'ını kaldır → Ecwid orijinal beyaz döner
   document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
     el.style.removeProperty('background');
   });
@@ -3828,6 +3828,17 @@ function cleanAll(){
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
   // .D class kaldır (SALT ürünler)
   document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
+  // Ürün açıklamaları — SADECE dark mode'un JS ile set ettiği renkleri kaldır
+  document.querySelectorAll('.product-details__product-description, .product-details__product-description *, .product-details__sidebar, .product-details').forEach(function(el){
+    var c=el.style.color;
+    if(c&&(c.indexOf('#e8e0d0')>-1||c.indexOf('#c8c0b0')>-1||c.indexOf('#8a8070')>-1||c.indexOf('rgb(232')>-1||c.indexOf('rgb(200')>-1||c.indexOf('rgb(138')>-1)){
+      el.style.removeProperty('color');
+    }
+    var bg=el.style.background||el.style.backgroundColor;
+    if(bg&&(bg.indexOf('#1b1a17')>-1||bg.indexOf('#242320')>-1||bg.indexOf('#2d2b27')>-1||bg.indexOf('rgb(27')>-1||bg.indexOf('rgb(36')>-1||bg.indexOf('rgb(45')>-1)){
+      el.style.removeProperty('background');el.style.removeProperty('background-color');
+    }
+  });
   // Select temizle
   document.querySelectorAll('.form-control--empty .form-control__placeholder').forEach(function(el){
     el.style.removeProperty('opacity');
