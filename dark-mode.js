@@ -3148,19 +3148,24 @@ function _buildNavbar(){
   // ─ Navigation Helpers ─
   // Mağaza anasayfasına git — "Şimdi alışveriş yap" ile birebir aynı davranış
   // Cover button: .cover__cta > .content > BUTTON (onclick=YES, Ecwid native handler)
-  // navH-aware scroll — scrollToTile yerine (navbar offset dahil)
+  // navH-aware scroll — scrollToTile yerine (proxy zaten navH çıkarır)
   function _scrollToSection(selector){
     var el=document.querySelector(selector);
     if(!el) return false;
-    var tb=document.querySelector('.ml-topbar');
-    var mt=document.querySelector('.ml-motto');
-    var navH=(tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0)+10;
-    var top=el.getBoundingClientRect().top+window.scrollY-navH;
+    var top=el.getBoundingClientRect().top+window.scrollY;
     window.scrollTo({top:top,left:0,behavior:'smooth'});
     return true;
   }
 
   function _goStore(){
+    // Zaten anasayfadaysa → içeriğe scroll
+    var content=document.querySelector('.ec-store__content-wrapper,.grid-category,.grid-product');
+    if(content){
+      var top=content.getBoundingClientRect().top+window.scrollY;
+      window.scrollTo({top:top,left:0,behavior:'smooth'});
+      return;
+    }
+    // Başka sayfadaysa → navigasyon
     if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
       Ecwid.openPage('category');return;
     }
