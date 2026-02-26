@@ -239,99 +239,117 @@ body.ml-dark .ml-sidebar{
 .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);border-radius:3px}
 body.ml-dark .ml-sidebar::-webkit-scrollbar-thumb{background:rgba(175,140,62,.2)}
 
-/* Sidebar Header */
-.ml-sb-head{padding:16px 20px;min-height:56px;box-sizing:border-box;display:flex;align-items:center;gap:10px}
+/* Sidebar Header — D-style centered */
+.ml-sb-head{padding:18px 20px 14px;box-sizing:border-box;text-align:center;position:relative;border-bottom:1px solid rgba(0,0,0,.04)}
 .ml-sb-head:active{background:transparent}
-.ml-sb-logo{width:32px;height:32px;object-fit:contain;border-radius:6px;cursor:pointer}
-.ml-sb-head .ml-sb-brand{font-size:14px;font-weight:700;letter-spacing:1.5px;color:#2c2a25;flex:1;cursor:pointer}
-.ml-sb-close{font-size:28px;line-height:1;color:#af8c3e;font-weight:300;padding:4px 6px;border-radius:8px;cursor:pointer}
-.ml-sb-close:active{background:rgba(0,0,0,.06)}
-body.ml-dark .ml-sb-head{background:transparent}
+.ml-sb-logo{display:none}
+.ml-sb-head .ml-sb-brand{font-size:13px;font-weight:700;letter-spacing:3.5px;color:#2c2a25;display:block}
+.ml-sb-motto{font-size:8.5px;letter-spacing:1.8px;color:#a09078;font-weight:400;margin-top:2px}
+.ml-sb-close{position:absolute;top:14px;right:14px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.04);border:none;color:#a09078;font-size:16px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ml-sb-close:active{background:rgba(0,0,0,.08)}
+body.ml-dark .ml-sb-head{background:transparent;border-color:rgba(175,140,62,.06)}
 body.ml-dark .ml-sb-head .ml-sb-brand{color:${GOLD}}
-body.ml-dark .ml-sb-close{color:${TX2}}
+body.ml-dark .ml-sb-motto{color:${TX3}}
+body.ml-dark .ml-sb-close{background:rgba(255,255,255,.06);color:${TX2}}
 body.ml-dark .ml-sb-close:active{background:rgba(175,140,62,.08)}
 body.ml-dark .ml-sb-logo,
 body.ml-dark .ml-brand-logo{
   content:url('https://static.wixstatic.com/media/1ca398_eb2ce0b39e06419fa00da66903e58dc5~mv2.png')!important;
 }
 
-/* Nav bottom section */
-.ml-sb-nav-bottom{padding-top:10px}
-body.ml-dark .ml-sb-nav-bottom{}
-.ml-sb-nav-link{font-size:14px!important;color:#8b7a4e!important;transition:color .2s ease,background .2s ease!important}
-.ml-sb-nav-link:hover{color:#af8c3e!important;background:rgba(175,140,62,.04)!important}
-.ml-sb-nav-link:active{color:#af8c3e!important;background:rgba(175,140,62,.07)!important}
-body.ml-dark .ml-sb-nav-link{color:${TX2}!important}
-body.ml-dark .ml-sb-nav-link:hover{color:${GOLD}!important;background:rgba(175,140,62,.05)!important}
+/* Nav bottom — D-style minimal footer */
+.ml-sb-nav-bottom{
+  margin-top:auto;padding:12px 20px 16px;
+  border-top:1px solid rgba(0,0,0,.04);
+  display:flex;gap:18px;
+}
+body.ml-dark .ml-sb-nav-bottom{border-color:rgba(175,140,62,.06)}
+.ml-sb-nav-link{font-size:12px!important;color:#a09078!important;letter-spacing:.4px;cursor:pointer;transition:color .15s ease!important;padding:0!important;min-height:auto!important;border:none!important;background:none!important}
+.ml-sb-nav-link:hover{color:#af8c3e!important;background:none!important}
+.ml-sb-nav-link:active{color:#af8c3e!important;background:none!important}
+body.ml-dark .ml-sb-nav-link{color:${TX3}!important}
+body.ml-dark .ml-sb-nav-link:hover{color:${GOLD}!important;background:none!important}
 body.ml-dark .ml-sb-nav-link:active{color:${GOLD}!important}
 
-/* Section Label */
+/* Section Label — iOS group header */
 .ml-sb-section{
-  padding:14px 20px 6px;font-size:10px;text-transform:uppercase;
-  letter-spacing:1.5px;margin-top:8px;color:#a09078;
+  padding:16px 20px 6px;font-size:10px;text-transform:uppercase;
+  letter-spacing:1.5px;margin-top:4px;color:#a09078;
 }
-body.ml-dark .ml-sb-section{color:${TX2}}
+body.ml-dark .ml-sb-section{color:${TX3}}
 
-/* Nav Item — 44px min touch target */
+/* Category list — iOS grouped container */
+#ml-cat-list{
+  margin:0 14px;border-radius:14px;overflow:hidden;
+  background:rgba(0,0,0,.025);border:1px solid rgba(0,0,0,.04);
+}
+body.ml-dark #ml-cat-list{background:rgba(175,140,62,.04);border-color:rgba(175,140,62,.06)}
+
+/* Nav Item — 42px compact touch target */
 .ml-sb-item{
-  padding:12px 20px;font-size:15px;cursor:pointer;
-  min-height:44px;box-sizing:border-box;
-  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;font-size:14px;cursor:pointer;
+  min-height:42px;box-sizing:border-box;
+  display:flex;align-items:center;
   position:relative;overflow:hidden;color:#5a4f3a;
-  text-decoration:none;-webkit-tap-highlight-color:transparent;
-  transition:color .2s ease,background .2s ease;
+  border-bottom:1px solid rgba(0,0,0,.03);
+  transition:background .15s ease;-webkit-tap-highlight-color:transparent;
 }
-.ml-sb-item::before{
-  content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;
-  opacity:0;border-radius:0 2px 2px 0;background:#af8c3e;
-  transition:opacity .2s ease;
-}
-.ml-sb-item:hover{color:#af8c3e;background:rgba(175,140,62,.04)}
-.ml-sb-item:hover::before{opacity:.5}
-.ml-sb-item:active{color:#af8c3e;background:rgba(175,140,62,.07)}
-.ml-sb-item:active::before{opacity:1}
+.ml-sb-item:last-child{border-bottom:none}
+.ml-sb-item:active{color:#af8c3e;background:rgba(175,140,62,.04)}
 .ml-sb-item.active{color:#af8c3e;font-weight:600}
-.ml-sb-item.active::before{opacity:1}
+.ml-sb-item .ml-sb-item-label{flex:1}
+.ml-sb-item .ml-sb-item-chev{color:#ccc;font-size:13px;flex-shrink:0;margin-left:auto}
 body.ml-dark .ml-sb-item{color:#c8c0b0}
-body.ml-dark .ml-sb-item::before{background:${GOLD}}
 body.ml-dark .ml-sb-item:active{color:${GOLD};background:rgba(175,140,62,.06)}
 body.ml-dark .ml-sb-item.active{color:${GOLD}}
+body.ml-dark .ml-sb-item .ml-sb-item-chev{color:${TX3}}
 
-/* Sidebar User Section (greeting or login) */
+/* Sidebar User Section — iOS profile card */
 .ml-sb-user{
-  padding:18px 20px 16px;
+  padding:12px 14px 0;
 }
-.ml-sb-greeting{
-  font-size:14.5px;color:#2c2a25;font-weight:500;
-  display:flex;align-items:center;gap:10px;
-  line-height:1.4;
+.ml-sb-profile{
+  padding:12px 14px;background:rgba(0,0,0,.025);border-radius:14px;
+  display:flex;align-items:center;gap:11px;cursor:pointer;
+  border:1px solid rgba(0,0,0,.04);
+  transition:background .15s ease;-webkit-tap-highlight-color:transparent;
 }
-.ml-sb-tier-row{margin-top:10px}
-.ml-sb-tier-pill{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:9px 16px;border-radius:22px;cursor:pointer;
-  background:linear-gradient(135deg,rgba(175,140,62,.1),rgba(212,176,94,.08));
-  border:1px solid rgba(175,140,62,.2);
-  color:#af8c3e;font-size:12px;font-weight:600;letter-spacing:.5px;
-  text-transform:uppercase;position:relative;overflow:hidden;
-  transition:background .2s ease,border-color .2s ease,transform .15s ease;
-  -webkit-tap-highlight-color:transparent;
+.ml-sb-profile:active{background:rgba(175,140,62,.06)}
+.ml-sb-avatar{
+  width:38px;height:38px;border-radius:11px;flex-shrink:0;
+  background:linear-gradient(135deg,rgba(175,140,62,.15),rgba(212,176,94,.08));
+  border:1.5px solid rgba(175,140,62,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:600;color:#af8c3e;
 }
-.ml-sb-tier-pill:active{background:rgba(175,140,62,.18);transform:scale(.96)}
-.ml-sb-tier-pill svg{flex-shrink:0;stroke:#af8c3e;fill:rgba(175,140,62,.15)}
-.ml-sb-tier-pill::after{
-  content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
-  animation:mlTierShimmer 2.5s ease-in-out infinite;
+.ml-sb-profile-info{flex:1;min-width:0}
+.ml-sb-profile-name{font-size:14px;font-weight:600;color:#2c2a25;line-height:1.3}
+.ml-sb-tier-badge{
+  display:inline-flex;align-items:center;gap:4px;margin-top:2px;
+  font-size:10px;font-weight:600;color:#af8c3e;letter-spacing:.3px;
+  cursor:pointer;position:relative;
 }
-body.ml-dark .ml-sb-tier-pill{
-  background:linear-gradient(135deg,rgba(175,140,62,.12),rgba(212,176,94,.08));
-  border-color:rgba(175,140,62,.25);color:${GOLD};
+.ml-sb-tier-badge svg{width:10px;height:10px;flex-shrink:0}
+.ml-sb-tier-dot{
+  width:5px;height:5px;border-radius:50%;background:#af8c3e;
+  animation:mlBadgeGlow 2s ease-in-out infinite;
 }
-body.ml-dark .ml-sb-tier-pill svg{stroke:${GOLD};fill:rgba(175,140,62,.2)}
-@keyframes mlTierShimmer{0%,100%{left:-60%}50%{left:110%}}
-body.ml-dark .ml-sb-user{}
-body.ml-dark .ml-sb-greeting{color:${TX1}}
+@keyframes mlBadgeGlow{
+  0%,100%{opacity:.4;box-shadow:0 0 2px rgba(175,140,62,.2)}
+  50%{opacity:1;box-shadow:0 0 6px rgba(212,176,94,.6)}
+}
+.ml-sb-profile-chevron{color:#ccc;font-size:14px;flex-shrink:0}
+body.ml-dark .ml-sb-profile{background:rgba(175,140,62,.04);border-color:rgba(175,140,62,.06)}
+body.ml-dark .ml-sb-profile:active{background:rgba(175,140,62,.1)}
+body.ml-dark .ml-sb-avatar{background:linear-gradient(135deg,rgba(175,140,62,.15),rgba(212,176,94,.06));border-color:rgba(175,140,62,.2);color:${GOLD}}
+body.ml-dark .ml-sb-profile-name{color:${TX1}}
+body.ml-dark .ml-sb-tier-badge{color:${GOLD}}
+body.ml-dark .ml-sb-tier-dot{background:${GOLD};animation:mlBadgeGlowDk 2s ease-in-out infinite}
+@keyframes mlBadgeGlowDk{
+  0%,100%{opacity:.4;box-shadow:0 0 2px rgba(212,176,94,.2)}
+  50%{opacity:1;box-shadow:0 0 8px rgba(212,176,94,.5)}
+}
+body.ml-dark .ml-sb-profile-chevron{color:${TX3}}
 /* Login form in sidebar */
 .ml-sb-login-label{
   font-size:11px;color:#a09078;margin-bottom:8px;text-align:center;
@@ -356,27 +374,33 @@ body.ml-dark .ml-sb-greeting{color:${TX1}}
 .ml-sb-login-btn:disabled{opacity:.5;cursor:not-allowed}
 .ml-sb-login-msg{font-size:11px;margin-top:6px;min-height:16px;text-align:center}
 
-/* Quick Actions — greeting altında */
+/* Quick Actions — iOS grouped list */
 .ml-sb-quick{
-  display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;
+  margin:12px 14px 0;border-radius:14px;overflow:hidden;
+  background:rgba(0,0,0,.025);border:1px solid rgba(0,0,0,.04);
 }
 .ml-sb-qa{
-  display:flex;align-items:center;gap:7px;
-  padding:9px 14px;border-radius:22px;cursor:pointer;
-  background:rgba(175,140,62,.07);border:1px solid rgba(175,140,62,.15);
-  color:#8b7a4e;font-size:12px;font-weight:500;
-  transition:background .2s ease,border-color .2s ease,transform .15s ease;
-  -webkit-tap-highlight-color:transparent;
+  display:flex;align-items:center;gap:11px;
+  padding:11px 14px;cursor:pointer;
+  border:none;border-bottom:1px solid rgba(0,0,0,.03);
+  background:transparent;color:#5a4f3a;font-size:14px;font-weight:400;
+  font-family:inherit;width:100%;text-align:left;
+  transition:background .15s ease;-webkit-tap-highlight-color:transparent;
 }
-.ml-sb-qa:active{background:rgba(175,140,62,.14);border-color:rgba(175,140,62,.25);transform:scale(.96)}
-.ml-sb-qa svg{width:15px;height:15px;stroke:currentColor;stroke-width:1.5;fill:none;flex-shrink:0}
+.ml-sb-qa:last-child{border-bottom:none}
+.ml-sb-qa:active{background:rgba(175,140,62,.06)}
+.ml-sb-qa svg{width:16px;height:16px;stroke:currentColor;stroke-width:1.5;fill:none;flex-shrink:0}
+.ml-sb-qa-label{flex:1}
 .ml-sb-qa-count{
   font-size:9px;font-weight:700;min-width:18px;height:18px;
   display:inline-flex;align-items:center;justify-content:center;
   border-radius:9px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
 }
-body.ml-dark .ml-sb-qa{background:rgba(175,140,62,.1);border-color:rgba(175,140,62,.18);color:${GOLD}}
-body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.18)}
+.ml-sb-chevron{color:#ccc;font-size:13px;flex-shrink:0}
+body.ml-dark .ml-sb-quick{background:rgba(175,140,62,.04);border-color:rgba(175,140,62,.06)}
+body.ml-dark .ml-sb-qa{color:${TX1};border-color:rgba(255,255,255,.03)}
+body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.08)}
+body.ml-dark .ml-sb-chevron{color:${TX3}}
 /* Badge pulse animation */
 @keyframes ml-badge-pulse{
   0%{transform:scale(1)}
@@ -390,6 +414,29 @@ body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.18)}
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
   animation:mlTierShimmer 2.5s ease-in-out infinite;
 }
+@keyframes mlTierShimmer{0%,100%{left:-60%}50%{left:110%}}
+/* QA icon squares — iOS colored */
+.ml-sb-qa-icon{
+  width:28px;height:28px;border-radius:7px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.ml-sb-qa-icon svg{width:15px;height:15px;stroke-width:1.6}
+.ml-sb-qa-icon.gold{background:rgba(175,140,62,.1)}
+.ml-sb-qa-icon.gold svg{stroke:#af8c3e}
+.ml-sb-qa-icon.coral{background:rgba(255,134,116,.08)}
+.ml-sb-qa-icon.coral svg{stroke:#e87565}
+.ml-sb-qa-icon.teal{background:rgba(0,140,149,.08)}
+.ml-sb-qa-icon.teal svg{stroke:#3aafb6}
+.ml-sb-qa-icon.slate{background:rgba(100,100,110,.08)}
+.ml-sb-qa-icon.slate svg{stroke:#7a7a85}
+body.ml-dark .ml-sb-qa-icon.gold{background:rgba(175,140,62,.12)}
+body.ml-dark .ml-sb-qa-icon.gold svg{stroke:${GOLD}}
+body.ml-dark .ml-sb-qa-icon.coral{background:rgba(255,134,116,.1)}
+body.ml-dark .ml-sb-qa-icon.coral svg{stroke:#ff8674}
+body.ml-dark .ml-sb-qa-icon.teal{background:rgba(0,140,149,.1)}
+body.ml-dark .ml-sb-qa-icon.teal svg{stroke:#5dc8cd}
+body.ml-dark .ml-sb-qa-icon.slate{background:rgba(200,200,210,.08)}
+body.ml-dark .ml-sb-qa-icon.slate svg{stroke:${TX2}}
 /* Son görüntülenen ürünler */
 .ml-sb-recent{padding:12px 20px 8px}
 .ml-sb-recent-title{font-size:9.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#a09080;margin-bottom:10px}
@@ -421,15 +468,9 @@ body.ml-dark .ml-sb-login-input:focus{border-color:${GOLD};box-shadow:0 0 0 2px 
   transition:opacity .3s ease;
 }
 body.ml-dark .ml-sb-scroll-hint{background:linear-gradient(to bottom,transparent,rgba(27,26,23,.95))}
-/* Çark (spin wheel) button — passive test */
-.ml-sb-qa-cark{opacity:.5;pointer-events:none;position:relative}
-.ml-sb-qa-cark::after{
-  content:'Yakında';position:absolute;top:-8px;right:-6px;
-  font-size:7px;font-weight:700;padding:1px 5px;border-radius:6px;
-  background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
-  letter-spacing:.3px;line-height:1.4;
-}
-.ml-sb-qa-cark svg{animation:mlCarkSpin 8s linear infinite}
+/* Çark (spin wheel) — iOS list item */
+.ml-sb-qa-cark{position:relative}
+.ml-sb-qa-cark .ml-sb-qa-icon svg{animation:mlCarkSpin 8s linear infinite}
 @keyframes mlCarkSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
 /* Desktop adjustments */
@@ -439,15 +480,16 @@ body.ml-dark .ml-sb-scroll-hint{background:linear-gradient(to bottom,transparent
   .ml-motto-en{font-size:11.5px;letter-spacing:3px}
   .ml-motto-tr{font-size:10px}
   .ml-sidebar{width:360px;max-width:360px}
-  .ml-sb-head{padding:18px 24px;min-height:60px}
-  .ml-sb-head .ml-sb-brand{font-size:15px}
-  .ml-sb-logo{width:34px;height:34px}
-  .ml-sb-close{font-size:28px}
-  .ml-sb-item{font-size:15px;padding:11px 24px}
-  .ml-sb-section{padding:14px 24px 6px;font-size:10.5px}
-  .ml-sb-nav-link{font-size:15px!important}
-  .ml-sb-user{padding:18px 24px 16px}
-  .ml-sb-greeting{font-size:15px}
+  .ml-sb-head{padding:20px 24px 16px}
+  .ml-sb-head .ml-sb-brand{font-size:14px;letter-spacing:4px}
+  .ml-sb-user{padding:14px 16px 0}
+  .ml-sb-quick{margin:12px 16px 0}
+  .ml-sb-section{padding:16px 22px 6px}
+  #ml-cat-list{margin:0 16px}
+  .ml-sb-item{padding:11px 14px;font-size:14px}
+  .ml-sb-nav-bottom{padding:14px 24px 18px}
+  .ml-sb-nav-link{font-size:13px!important}
+  .ml-sb-close{top:16px;right:16px}
   .ml-sb-login-input{font-size:14px;padding:10px 14px}
   .ml-sb-login-btn{font-size:13px;padding:10px 16px}
 }
@@ -2828,7 +2870,7 @@ function _parseCats(){
   var homeItem=document.createElement('div');
   homeItem.className='ml-sb-item ml-sb-home';
   homeItem.style.fontWeight='600';
-  homeItem.textContent='Anasayfa';
+  homeItem.innerHTML='<span class="ml-sb-item-label">Anasayfa</span><span class="ml-sb-item-chev">›</span>';
   homeItem.addEventListener('click',function(e){
     e.stopPropagation();
     _goStore();
@@ -2837,7 +2879,7 @@ function _parseCats(){
   cats.forEach(function(cat){
     var item=document.createElement('div');
     item.className='ml-sb-item';
-    item.textContent=cat.name;
+    item.innerHTML='<span class="ml-sb-item-label">'+cat.name+'</span><span class="ml-sb-item-chev">›</span>';
     item._catHref=cat.href;
     item.addEventListener('click',function(e){
       e.stopPropagation();
@@ -2902,36 +2944,13 @@ function _buildNavbar(){
 
   var sbHead=document.createElement('div');
   sbHead.className='ml-sb-head';
-  // Logo from site
-  var logoSrc='';
-  var siteLogo=document.querySelector('.logo img');
-  if(siteLogo) logoSrc=siteLogo.src||siteLogo.currentSrc||'';
-  // Logo + Brand (click → store home)
-  var sbLogoWrap=document.createElement('div');
-  sbLogoWrap.style.cssText='display:flex;align-items:center;gap:10px;flex:1;cursor:pointer';
-  sbLogoWrap.innerHTML=(logoSrc?'<img class="ml-sb-logo" src="'+logoSrc+'" alt="Manhattan">':'')+
-    '<span class="ml-sb-brand">MANHATTAN</span>';
-  sbLogoWrap.addEventListener('click',function(e){
-    e.stopPropagation();_closeSidebar();
-  });
-  sbHead.appendChild(sbLogoWrap);
-  // Home button
-  var homeBtn=document.createElement('button');
-  homeBtn.className='ml-sb-action';
-  homeBtn.setAttribute('aria-label','Başa dön');
-  homeBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
-  homeBtn.addEventListener('click',function(e){
-    e.stopPropagation();
-    try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
-    _closeSidebar();
-    setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'});},200);
-  });
-  sbHead.appendChild(homeBtn);
-  // Close button
+  // D-style centered brand + motto
+  sbHead.innerHTML='<div class="ml-sb-brand">MANHATTAN</div><div class="ml-sb-motto">DESERVE YOUR DREAM</div>';
+  // Close button (absolute positioned via CSS)
   var closeBtn=document.createElement('span');
   closeBtn.className='ml-sb-close';
   closeBtn.setAttribute('aria-label','Kapat');
-  closeBtn.innerHTML='&times;';
+  closeBtn.innerHTML='&#10005;';
   closeBtn.addEventListener('click',function(e){
     e.stopPropagation();_closeSidebar();
   });
@@ -2977,8 +2996,8 @@ function _buildNavbar(){
     }}
   ];
   navLinks.forEach(function(nl){
-    var item=document.createElement('div');
-    item.className='ml-sb-item ml-sb-nav-link';
+    var item=document.createElement('span');
+    item.className='ml-sb-nav-link';
     item.textContent=nl.text;
     item.addEventListener('click',function(e){
       e.stopPropagation();
@@ -2993,19 +3012,20 @@ function _buildNavbar(){
   sbUser.id='ml-sb-user';
   function _updateSbUser(name,tier){
     if(name){
-      // Dynamic time-based greeting
-      var _h=new Date().getHours();
-      var _greet=_h<6?'İyi geceler':_h<12?'Günaydın':_h<18?'İyi günler':'İyi akşamlar';
-      sbUser.innerHTML='<div class="ml-sb-greeting">'+
-        '<span>'+_greet+', <b>'+name+'</b></span>'+
+      var _initial=name.charAt(0).toUpperCase();
+      // iOS profile card
+      sbUser.innerHTML='<div class="ml-sb-profile">'+
+        '<div class="ml-sb-avatar">'+_initial+'</div>'+
+        '<div class="ml-sb-profile-info">'+
+          '<div class="ml-sb-profile-name">'+name+'</div>'+
+          (tier?'<div class="ml-sb-tier-badge"><span class="ml-sb-tier-dot"></span><span>'+tier+' Üye</span></div>':'')+
         '</div>'+
-        (tier?'<div class="ml-sb-tier-row"><button class="ml-sb-tier-pill">'+
-        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'+
-        '<span>'+tier+' Üye</span></button></div>':'');
-      // Tier pill click → widget aç (same as old star)
-      var tierPill=sbUser.querySelector('.ml-sb-tier-pill');
-      if(tierPill){
-        tierPill.addEventListener('click',function(e){
+        '<span class="ml-sb-profile-chevron">›</span>'+
+      '</div>';
+      // Profile card click → widget aç
+      var profCard=sbUser.querySelector('.ml-sb-profile');
+      if(profCard){
+        profCard.addEventListener('click',function(e){
           e.stopPropagation();
           try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
           _closeSidebar();
@@ -3016,30 +3036,40 @@ function _buildNavbar(){
           },200);
         });
       }
-      // ─ Quick Actions (logged-in only) ─
+      // ─ Quick Actions — iOS grouped list ─
       var qaDiv=document.createElement('div');
       qaDiv.className='ml-sb-quick';
       var _qaItems=[
-        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="7.5" r="3.5"/><path d="M3.5 21c0-4.42 3.58-8 8.5-8s8.5 3.58 8.5 8"/></svg>',label:'Hesabım',path:'/account',countSel:null},
-        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>',label:'Sepet',path:'/cart',countSel:'.ec-minicart__counter'},
-        {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',label:'Favoriler',path:'/account/favorites',countSel:null}
+        {iconCls:'gold',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',label:'Çark Çevir',isCark:true,path:null,countSel:null},
+        {iconCls:'slate',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',label:'Hesabım',isCark:false,path:'/account',countSel:null},
+        {iconCls:'coral',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',label:'Sepetim',isCark:false,path:'/cart',countSel:'.ec-minicart__counter'},
+        {iconCls:'teal',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',label:'Favorilerim',isCark:false,path:'/account/favorites',countSel:null}
       ];
       _qaItems.forEach(function(qa){
         var btn=document.createElement('button');
-        btn.className='ml-sb-qa';
-        btn.innerHTML=qa.icon+'<span>'+qa.label+'</span>';
-        // Try to get live count
+        btn.className='ml-sb-qa'+(qa.isCark?' ml-sb-qa-cark':'');
+        btn.innerHTML='<span class="ml-sb-qa-icon '+qa.iconCls+'">'+qa.icon+'</span>'+
+          '<span class="ml-sb-qa-label">'+qa.label+'</span>';
         if(qa.countSel){
           var cEl=document.querySelector(qa.countSel);
           if(cEl&&parseInt(cEl.textContent)>0){
             btn.innerHTML+=('<span class="ml-sb-qa-count">'+cEl.textContent.trim()+'</span>');
           }
         }
+        btn.innerHTML+='<span class="ml-sb-chevron">›</span>';
         btn.addEventListener('click',function(e){
           e.stopPropagation();
           try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
           _closeSidebar();
-          setTimeout(function(){_ecNav(qa.path);},200);
+          if(qa.isCark){
+            setTimeout(function(){
+              var wBtn=document.querySelector('.ml-trigger');
+              if(wBtn) wBtn.click();
+              else if(typeof mlOpen==='function') mlOpen();
+            },200);
+          } else {
+            setTimeout(function(){_ecNav(qa.path);},200);
+          }
         });
         qaDiv.appendChild(btn);
       });
@@ -3330,17 +3360,7 @@ function _buildNavbar(){
     if(_sidebar.classList.contains('open')){
       _renderRecent();
       setTimeout(_checkScroll,150);
-      // Auto-refresh: greeting time + cart count
-      try{
-        var gSpan=_sidebar.querySelector('.ml-sb-greeting span');
-        if(gSpan){
-          var _h2=new Date().getHours();
-          var _g2=_h2<6?'İyi geceler':_h2<12?'Günaydın':_h2<18?'İyi günler':'İyi akşamlar';
-          var bTag=gSpan.querySelector('b');
-          if(bTag) gSpan.innerHTML=_g2+', <b>'+bTag.textContent+'</b>';
-        }
-      }catch(e3){}
-      // Cart count refresh
+      // Auto-refresh: cart count
       try{
         if(typeof Ecwid!=='undefined'&&Ecwid.Cart&&Ecwid.Cart.get){
           Ecwid.Cart.get(function(cart){
