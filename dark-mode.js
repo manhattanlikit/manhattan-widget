@@ -3683,6 +3683,9 @@ function _buildNavbar(){
   // Ecwid sayfa değişiminde: aktif kategori highlight + fade transition
   if(typeof Ecwid!=='undefined' && Ecwid.OnPageLoaded){
     Ecwid.OnPageLoaded.add(function(page){
+      // SPA scroll proxy flag — sadece sayfa geçişlerinde aktif
+      window._mlPageTransition=true;
+      setTimeout(function(){window._mlPageTransition=false;},3000);
       // Fade-in micro animation (double RAF = browser opacity:0'ı boyar sonra 1'e geçer)
       var store=document.querySelector('.ec-store,.store');
       if(store){
@@ -3717,8 +3720,40 @@ function _buildNavbar(){
             var mt=document.querySelector('.ml-motto');
             var navH=(tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0);
             window.scrollBy({top:-navH,behavior:'auto'});
+            window._mlPageTransition=false;
           }
-          if(_settled>50)clearInterval(_catTimer);
+          if(_settled>50){clearInterval(_catTimer);window._mlPageTransition=false;}
+        },100);
+      }
+      // PRODUCT: Ürün sayfasında başlık topbar altında kalmasın
+      if(page.type==='PRODUCT'){
+        var _pLastY=-1,_pSettled=0,_pTimer=setInterval(function(){
+          var y=window.scrollY;
+          if(y===_pLastY){_pSettled++;}else{_pSettled=0;}
+          _pLastY=y;
+          if(_pSettled>=3){
+            clearInterval(_pTimer);
+            var tb=document.querySelector('.ml-topbar');
+            var mt=document.querySelector('.ml-motto');
+            var navH=(tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0);
+            // Ürün başlığını bul ve topbar altında kalıp kalmadığını kontrol et
+            var titleEl=document.querySelector('.product-details__product-title, h1.ec-header-h3, .product-details__product-title--on-one-column');
+            if(titleEl){
+              var titleTop=titleEl.getBoundingClientRect().top;
+              if(titleTop<navH+10){
+                window._mlScrollBypass=true;
+                window.scrollBy({top:titleTop-navH-16,behavior:'auto'});
+                window._mlScrollBypass=false;
+              }
+            }else if(y>10){
+              // Başlık bulunamazsa genel offset düzelt
+              window._mlScrollBypass=true;
+              window.scrollBy({top:-navH,behavior:'auto'});
+              window._mlScrollBypass=false;
+            }
+            window._mlPageTransition=false;
+          }
+          if(_pSettled>50){clearInterval(_pTimer);window._mlPageTransition=false;}
         },100);
       }
     });
@@ -3730,6 +3765,7 @@ function init(){
   // Yeni navbar sistemi oluştur
   _buildNavbar();
   // SPA scroll fix — Ecwid scrollTo topbar yüksekliğini bilmiyor, offset çıkar
+  // SADECE SPA sayfa geçişlerinde aktif — cart/checkout adım geçişlerinde KAPALI
   (function(){
     var _realScrollTo=window.scrollTo.bind(window);
     function _navH(){
@@ -3737,11 +3773,14 @@ function init(){
       var mt=document.querySelector('.ml-motto');
       return (tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0);
     }
+    window._mlPageTransition=false;
     window.scrollTo=function(){
       var a=arguments,opts=a[0],x,y,beh;
       if(opts&&typeof opts==='object'){x=opts.left;y=opts.top;beh=opts.behavior;}
       else{x=a[0];y=a[1];}
       if(window._mlScrollBypass){_realScrollTo.apply(window,a);return;}
+      // Cart/checkout sayfalarında proxy KAPALI — Ecwid kendi scroll'u doğru
+      if(!window._mlPageTransition){_realScrollTo.apply(window,a);return;}
       var h=_navH();
       if(typeof y==='number'&&y>h&&h>0){_realScrollTo({top:y-h,left:x||0,behavior:beh||'auto'});return;}
       _realScrollTo.apply(window,a);
@@ -3832,154 +3871,19 @@ function cleanAll(){
       el.removeAttribute('style');
     }
     el.removeAttribute('data-ml-dk');
-    // Hover flag'lerini de temizle
     delete el._mlHoverActive;
   });
   cleanStokYok();
-  // Store bg — dark mode'un transparent override'ını kaldır → Ecwid orijinal beyaz döner
+  // Store bg — dark mode'un transparent override'ını kaldır
   document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
     el.style.removeProperty('background');
   });
-  // Sweep overlay'ları kaldır (marker'sız DOM inject)
+  // Sweep overlay'ları kaldır (DOM inject, marker'sız)
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
   // ml-rg-fix class temizle (radiogroup pseudo çizgi fix)
   document.querySelectorAll('.ml-rg-fix').forEach(function(el){el.classList.remove('ml-rg-fix');});
   // .D class kaldır (SALT ürünler)
   document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
-  // Ürün açıklamaları — SADECE dark mode'un JS ile set ettiği renkleri kaldır
-  document.querySelectorAll('.product-details__product-description, .product-details__product-description *, .product-details__sidebar, .product-details').forEach(function(el){
-    var c=el.style.color;
-    if(c&&(c.indexOf('#e8e0d0')>-1||c.indexOf('#c8c0b0')>-1||c.indexOf('#8a8070')>-1||c.indexOf('rgb(232')>-1||c.indexOf('rgb(200')>-1||c.indexOf('rgb(138')>-1)){
-      el.style.removeProperty('color');
-    }
-    var bg=el.style.background||el.style.backgroundColor;
-    if(bg&&(bg.indexOf('#1b1a17')>-1||bg.indexOf('#242320')>-1||bg.indexOf('#2d2b27')>-1||bg.indexOf('rgb(27')>-1||bg.indexOf('rgb(36')>-1||bg.indexOf('rgb(45')>-1)){
-      el.style.removeProperty('background');el.style.removeProperty('background-color');
-    }
-  });
-  // Select temizle
-  document.querySelectorAll('.form-control--empty .form-control__placeholder').forEach(function(el){
-    el.style.removeProperty('opacity');
-    el.style.removeProperty('visibility');
-  });
-  // Opsiyon butonları — tüm inline style temizle
-  document.querySelectorAll('.form-control--checkbox-button .form-control__inline-label').forEach(function(el){
-    ['background','color','border-color','border','font-weight','border-radius','transition','opacity','transform','box-shadow','cursor','position','overflow'].forEach(function(p){el.style.removeProperty(p);});
-    var il=el.querySelector('label');
-    if(il){il.style.removeProperty('color');il.style.removeProperty('background');il.style.removeProperty('border');}
-  });
-  // Sepete Ekle wrapper + TÜM primary wrapper temizle
-  // Tüm primary wrapper temizle
-  document.querySelectorAll('.form-control--primary').forEach(function(el){
-    ['position','overflow','border-radius','background','border'].forEach(function(p){el.style.removeProperty(p);});
-  });
-  // Cover butonlar — sadece _injectSweep'in koyduğu position+overflow temizle
-  // Ecwid orijinal stillerine DOKUNMA (beyaz buton sorunu)
-  document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
-    el.style.removeProperty('position');
-    el.style.removeProperty('overflow');
-  });
-  // Primary/secondary buton text + bg temizle
-  document.querySelectorAll('.form-control__button-text,.form-control__button-svg,.form-control__button-svg svg').forEach(function(el){
-    el.style.removeProperty('color');el.style.removeProperty('fill');
-  });
-  document.querySelectorAll('.form-control--primary .form-control__button').forEach(function(el){
-    ['background','color','border','border-radius'].forEach(function(p){el.style.removeProperty(p);});
-  });
-  // Badge temizle
-  document.querySelectorAll('.product-details__label-container,.product-details .ec-label').forEach(function(el){
-    ['display','width','max-width','padding','border-radius','white-space','box-sizing','line-height','overflow','margin'].forEach(function(p){el.style.removeProperty(p);});
-  });
-  // Sepet ürün görseli temizle
-  document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
-    el.style.removeProperty('border-radius');
-  });
-  // Cart picture wrapper temizle
-  document.querySelectorAll('.ec-cart-item__picture').forEach(function(el){
-    ['background-color','border-radius','overflow'].forEach(function(p){el.style.removeProperty(p);});
-  });
-  // Checkout duyuru kutuları temizle
-  document.querySelectorAll('.ec-cart-step [style*="background"], .ec-cart [style*="background-color"]').forEach(function(el){
-    el.style.removeProperty('background-color');
-    el.style.removeProperty('color');
-    el.querySelectorAll('*').forEach(function(c){c.style.removeProperty('color');});
-  });
-  // Beyaz border JS temizle
-  document.querySelectorAll('.ec-cart__products,.ec-cart-step,.ec-cart-step__next,.ec-radiogroup__items,.ec-radiogroup__item,.ec-radiogroup label,.ec-minicart,.store .border,.dynamic-product-browser > .border').forEach(function(el){
-    el.style.removeProperty('border-color');
-    el.style.removeProperty('border-bottom-color');
-  });
-  // Floating ikon temizle
-  document.querySelectorAll('.float-icons,.float-icons__wrap,.float-icons__icon,.float-icons__icon > div,.float-icons__wrap .ec-minicart,.float-icons__wrap .ec-minicart__body,.float-icons__wrap .ec-minicart__icon').forEach(function(el){
-    el.style.removeProperty('background');el.style.removeProperty('background-color');
-    el.style.removeProperty('border');el.style.removeProperty('box-shadow');
-  });
-  document.querySelectorAll('.float-icons__wrap svg').forEach(function(s){s.style.removeProperty('color');s.style.removeProperty('fill');});
-  // Related/recently viewed ürün kartları — inline stil temizle
-  document.querySelectorAll('[class*="recently"] .grid-product__wrap, .ec-related-products .grid-product__wrap, [class*="related"] .grid-product__wrap, .product-details__related-products .grid-product__wrap').forEach(function(w){
-    ['background','border','border-radius','overflow','box-shadow','transform'].forEach(function(p){w.style.removeProperty(p);});
-    var inner=w.querySelector('.grid-product__wrap-inner,[class*="wrap-inner"]');
-    if(inner){inner.style.removeProperty('background');inner.style.removeProperty('border');}
-    w.querySelectorAll('.grid-product__image,.grid-product__picture,.grid-product__picture-wrapper,[class*="image-wrap"]').forEach(function(img){
-      img.style.removeProperty('background');img.style.removeProperty('border');
-    });
-    // Title/price inline renk temizle
-    w.querySelectorAll('.grid-product__title,.grid-product__title-inner,.grid-product__subtitle,.grid-product__sku,.grid-product__description').forEach(function(t){
-      t.style.removeProperty('color');
-    });
-    w.querySelectorAll('.grid-product__price .ec-price-item,.grid-product__price-value,.grid-product__old-price,.grid-product__price-old').forEach(function(t){
-      t.style.removeProperty('color');
-    });
-  });
-  // Related/recently section container temizle
-  document.querySelectorAll('[class*="recently"], .ec-related-products, [class*="related-products"], .product-details__related-products').forEach(function(sec){
-    sec.style.removeProperty('background');sec.style.removeProperty('border');sec.style.removeProperty('border-bottom');
-    var kids=sec.children;
-    for(var i=0;i<kids.length;i++){
-      if(kids[i].tagName==='DIV'){
-        kids[i].style.removeProperty('background');kids[i].style.removeProperty('border');kids[i].style.removeProperty('border-bottom');
-      }
-    }
-  });
-  // Son Görüntülenenler (.recently-viewed) inline stil temizle
-  document.querySelectorAll('.recently-viewed-title').forEach(function(el){
-    el.style.removeProperty('color');
-  });
-  // Hakkında bölümü inline stil temizle
-  document.querySelectorAll('.tile-about,.owner,.whyus,.contacts').forEach(function(sec){
-    sec.style.removeProperty('color');
-    sec.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,div,li,a,u').forEach(function(el){
-      el.style.removeProperty('color');
-    });
-  });
-  document.querySelectorAll('.recently-viewed[class*="recently-viewed--"]').forEach(function(card){
-    ['background','border','border-radius','overflow','box-shadow','transform','margin','padding'].forEach(function(p){card.style.removeProperty(p);});
-    var name=card.querySelector('.recently-viewed__name');
-    if(name){['color','text-align','font-size','padding','line-height'].forEach(function(p){name.style.removeProperty(p);});}
-    card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item,.recently-viewed__price .ec-price-item--old').forEach(function(p){
-      ['color','text-align','font-size','font-weight','padding'].forEach(function(pp){p.style.removeProperty(pp);});
-    });
-    var thumb=card.querySelector('.recently-viewed__thumb');
-    if(thumb){
-      ['background','border','border-radius','overflow','height','display','align-items','justify-content'].forEach(function(p){thumb.style.removeProperty(p);});
-      var img=thumb.querySelector('img');
-      if(img){['border-radius','width','height','object-fit'].forEach(function(p){img.style.removeProperty(p);});}
-    }
-    card.querySelectorAll('.recently-viewed__price,.recently-viewed__price .ec-price-item').forEach(function(p){
-      p.style.removeProperty('text-align');
-    });
-  });
-  // Statik sayfa inline stil temizle
-  document.querySelectorAll('.ec-page-body, [class*="ec-page"], [class*="page-body"], [class*="store-page"]').forEach(function(pg){
-    pg.style.removeProperty('background-color');pg.style.removeProperty('color');
-    pg.querySelectorAll('div').forEach(function(d){
-      d.style.removeProperty('background-color');d.style.removeProperty('color');
-    });
-  });
-  // ml-wrapper temizle
-  document.querySelectorAll('[class*="ml-"][class*="-wrapper"]').forEach(function(w){
-    w.style.removeProperty('background');w.style.removeProperty('color');
-  });
 }
 
 // ═══ MARKER SİSTEMİ ═══
