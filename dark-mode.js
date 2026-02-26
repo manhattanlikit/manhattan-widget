@@ -2915,7 +2915,7 @@ function _parseCats(){
   };
   function _getCatIcon(name){
     var n=name.toLowerCase();
-    if(n.indexOf('iced')>-1||n.indexOf('buzlu')>-1) return {svg:_catIcons.iced,cls:'iced',svg2:_catIcons.salt,cls2:'salt'};
+    if(n.indexOf('iced')>-1||n.indexOf('buzlu')>-1) return {svg:_catIcons.iced,cls:'iced'};
     if(n.indexOf('salt')>-1) return {svg:_catIcons.salt,cls:'salt'};
     if(n.indexOf('likit')>-1) return {svg:_catIcons.freebase,cls:'freebase'};
     if(n.indexOf('pod')>-1||n.indexOf('kit')>-1) return {svg:_catIcons.pod,cls:'pod'};
@@ -3007,7 +3007,12 @@ function _buildNavbar(){
     e.stopPropagation();
     try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
     _closeSidebar();
-    setTimeout(function(){_goStore();},200);
+    setTimeout(function(){
+      if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
+        Ecwid.openPage('category');
+      }
+      setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'});},300);
+    },200);
   });
   sbHead.appendChild(homeBtn);
   // D-style centered brand + motto
