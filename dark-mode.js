@@ -304,32 +304,29 @@ body.ml-dark .ml-sb-item:active{color:${GOLD};background:rgba(175,140,62,.06)}
 body.ml-dark .ml-sb-item.active{color:${GOLD}}
 body.ml-dark .ml-sb-item .ml-sb-item-chev{color:${TX3}}
 
-/* Category icons — minimalist colored squares */
+/* Category icons — letter squares + accessory SVGs */
 .ml-sb-cat-icon{
   width:24px;height:24px;border-radius:6px;flex-shrink:0;margin-right:10px;
   display:inline-flex;align-items:center;justify-content:center;
 }
-.ml-sb-cat-icon svg{width:13px;height:13px;stroke-width:1.5;fill:none}
+.ml-sb-cat-icon svg{width:13px;height:13px;stroke-width:1.4;fill:none}
+.ml-ci-letter{font-size:11px;font-weight:700;letter-spacing:0}
 .ml-ci-freebase{background:rgba(0,128,128,.1)}
-.ml-ci-freebase svg{stroke:#008080}
+.ml-ci-freebase .ml-ci-letter{color:#008080}
 .ml-ci-salt{background:rgba(220,53,69,.08)}
-.ml-ci-salt svg{stroke:#dc3545}
+.ml-ci-salt .ml-ci-letter{color:#dc3545}
 .ml-ci-iced{background:rgba(100,181,246,.1)}
-.ml-ci-iced svg{stroke:#64b5f6}
-.ml-ci-pod{background:rgba(140,120,90,.08)}
-.ml-ci-pod svg{stroke:#8c785a}
-.ml-ci-coil{background:rgba(140,120,90,.08)}
-.ml-ci-coil svg{stroke:#8c785a}
-.ml-ci-atomizer{background:rgba(140,120,90,.08)}
-.ml-ci-atomizer svg{stroke:#8c785a}
+.ml-ci-iced .ml-ci-letter{color:#64b5f6}
+.ml-ci-acc{background:rgba(140,120,90,.08)}
+.ml-ci-acc svg{stroke:#8c785a}
 body.ml-dark .ml-ci-freebase{background:rgba(0,128,128,.12)}
-body.ml-dark .ml-ci-freebase svg{stroke:#3aafb6}
+body.ml-dark .ml-ci-freebase .ml-ci-letter{color:#3aafb6}
 body.ml-dark .ml-ci-salt{background:rgba(220,53,69,.1)}
-body.ml-dark .ml-ci-salt svg{stroke:#e8616c}
+body.ml-dark .ml-ci-salt .ml-ci-letter{color:#e8616c}
 body.ml-dark .ml-ci-iced{background:rgba(100,181,246,.1)}
-body.ml-dark .ml-ci-iced svg{stroke:#7ec4f8}
-body.ml-dark .ml-ci-pod,body.ml-dark .ml-ci-coil,body.ml-dark .ml-ci-atomizer{background:rgba(175,140,62,.08)}
-body.ml-dark .ml-ci-pod svg,body.ml-dark .ml-ci-coil svg,body.ml-dark .ml-ci-atomizer svg{stroke:${GOLD}}
+body.ml-dark .ml-ci-iced .ml-ci-letter{color:#7ec4f8}
+body.ml-dark .ml-ci-acc{background:rgba(175,140,62,.08)}
+body.ml-dark .ml-ci-acc svg{stroke:${GOLD}}
 
 /* Sidebar User Section — iOS profile card */
 .ml-sb-user{
@@ -2939,23 +2936,24 @@ function _parseCats(){
     }catch(e){}
   }
   if(cats.length===0) return;
-  // Category icon SVGs — minimalist premium, matching brand pills
+  // Category icon SVGs — letter squares for liquids, premium SVG for accessories
   var _catIcons={
-    'freebase':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 6 4 10 4 14C4 18.4 7.6 22 12 22C16.4 22 20 18.4 20 14C20 10 16 6 12 2Z"/></svg>',
-    'salt':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>',
-    'iced':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/><circle cx="12" cy="12" r="3"/></svg>',
-    'pod':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="5"/><line x1="7" y1="9" x2="17" y2="9"/><circle cx="12" cy="15" r="1.5"/></svg>',
-    'coil':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="20" rx="3"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="16" y2="15"/><circle cx="12" cy="19" r="1"/></svg>',
-    'atomizer':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="8" height="14" rx="2"/><path d="M10 8V5a2 2 0 0 1 4 0v3"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="11" y1="2" x2="13" y2="2"/></svg>'
+    'pod':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="5"/><line x1="7" y1="8" x2="17" y2="8"/><circle cx="12" cy="14" r="2"/></svg>',
+    'coil':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><path d="M10 12h4M10 15h4"/><circle cx="12" cy="18" r=".8" fill="currentColor"/></svg>',
+    'atomizer':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="8" width="10" height="14" rx="2"/><path d="M10 8V5h4v3"/><line x1="7" y1="12" x2="17" y2="12"/><path d="M11 2h2"/><path d="M10 15h4"/></svg>'
   };
   function _getCatIcon(name){
     var n=name.toLowerCase();
-    if(n.indexOf('iced')>-1||n.indexOf('buzlu')>-1) return {svg:_catIcons.iced,cls:'iced'};
-    if(n.indexOf('salt')>-1) return {svg:_catIcons.salt,cls:'salt'};
-    if(n.indexOf('likit')>-1) return {svg:_catIcons.freebase,cls:'freebase'};
-    if(n.indexOf('pod')>-1||n.indexOf('kit')>-1) return {svg:_catIcons.pod,cls:'pod'};
-    if(n.indexOf('coil')>-1||n.indexOf('kartu')>-1) return {svg:_catIcons.coil,cls:'coil'};
-    if(n.indexOf('atomizer')>-1) return {svg:_catIcons.atomizer,cls:'atomizer'};
+    // Letter-based squares for liquid categories
+    if(n.indexOf('manhattan')>-1&&n.indexOf('salt')>-1) return {type:'letter',letter:'S',cls:'salt'};
+    if(n.indexOf('manhattan')>-1) return {type:'letter',letter:'M',cls:'freebase'};
+    if(n.indexOf('amsterdam')>-1&&n.indexOf('salt')>-1) return {type:'letter',letter:'S',cls:'salt'};
+    if(n.indexOf('amsterdam')>-1) return {type:'letter',letter:'A',cls:'freebase'};
+    if(n.indexOf('iced')>-1||n.indexOf('buzlu')>-1) return {type:'letter',letter:'I',cls:'iced'};
+    // SVG icons for accessories
+    if(n.indexOf('pod')>-1||n.indexOf('kit')>-1) return {type:'svg',svg:_catIcons.pod,cls:'acc'};
+    if(n.indexOf('coil')>-1||n.indexOf('kartu')>-1) return {type:'svg',svg:_catIcons.coil,cls:'acc'};
+    if(n.indexOf('atomizer')>-1) return {type:'svg',svg:_catIcons.atomizer,cls:'acc'};
     return null;
   }
   function _renderCatItems(list){
@@ -2965,7 +2963,11 @@ function _parseCats(){
       var iconInfo=_getCatIcon(cat.name);
       var iconHtml='';
       if(iconInfo){
-        iconHtml='<span class="ml-sb-cat-icon ml-ci-'+iconInfo.cls+'">'+iconInfo.svg+'</span>';
+        if(iconInfo.type==='letter'){
+          iconHtml='<span class="ml-sb-cat-icon ml-ci-'+iconInfo.cls+'"><span class="ml-ci-letter">'+iconInfo.letter+'</span></span>';
+        } else {
+          iconHtml='<span class="ml-sb-cat-icon ml-ci-'+iconInfo.cls+'">'+iconInfo.svg+'</span>';
+        }
       }
       item.innerHTML=iconHtml+'<span class="ml-sb-item-label">'+cat.name+'</span><span class="ml-sb-item-chev">›</span>';
       item._catHref=cat.href;
@@ -4001,11 +4003,6 @@ function fixSweep(){
   // CSS body.ml-dark .cover__button kuralları yeterli — sadece sweep inject
   document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
     _injectSweep(el);
-    // Intercept: same as topbar MANHATTAN click
-    el.addEventListener('click',function(e){
-      e.preventDefault();e.stopPropagation();
-      _goStore();
-    },true);
   });
 
   // ═══ 3) OPSİYON BUTONLARI (Boyut, Sertlik) ═══
