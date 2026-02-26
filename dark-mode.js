@@ -485,6 +485,7 @@ body.ml-dark .ml-sb-login-input:focus{border-color:${GOLD};box-shadow:0 0 0 2px 
 /* Sidebar Footer — account icons row */
 /* Sidebar flex layout for bottom nav */
 .ml-sidebar{display:flex;flex-direction:column;padding-bottom:0}
+.ml-sidebar>*{flex-shrink:0}
 /* Scroll indicator — bottom fade when scrollable */
 .ml-sb-scroll-hint{
   position:sticky;bottom:0;left:0;right:0;height:28px;
@@ -2902,6 +2903,27 @@ function _parseCats(){
       cats.push({name:text,href:href});
     });
   }
+  // Fallback 3: Ecwid API — guaranteed complete category list
+  if(cats.length<8 && typeof Ecwid!=='undefined' && Ecwid.getCategories){
+    try{
+      Ecwid.getCategories(function(apiCats){
+        if(!apiCats||!apiCats.length) return;
+        var added=false;
+        apiCats.forEach(function(ac){
+          if(!ac.name||!ac.id||ac.parentId||seen[ac.name]) return;
+          seen[ac.name]=true;
+          cats.push({name:ac.name,href:'#!/~/-c'+ac.id});
+          added=true;
+        });
+        if(added&&cats.length>=5){
+          try{sessionStorage.setItem(CACHE_KEY,JSON.stringify(cats));}catch(e){}
+          // Re-render
+          _catContainer.innerHTML='';
+          _renderCatItems(cats);
+        }
+      });
+    }catch(e){}
+  }
   // Cache ONLY if substantial set (prevents subcategory overwrite)
   if(cats.length>=5){
     try{sessionStorage.setItem(CACHE_KEY,JSON.stringify(cats));}catch(e){}
@@ -2936,34 +2958,35 @@ function _parseCats(){
     if(n.indexOf('atomizer')>-1) return {svg:_catIcons.atomizer,cls:'atomizer'};
     return null;
   }
-  cats.forEach(function(cat){
-    var item=document.createElement('div');
-    item.className='ml-sb-item';
-    var iconInfo=_getCatIcon(cat.name);
-    var iconHtml='';
-    if(iconInfo){
-      iconHtml='<span class="ml-sb-cat-icon ml-ci-'+iconInfo.cls+'">'+iconInfo.svg+'</span>';
-      if(iconInfo.svg2) iconHtml+='<span class="ml-sb-cat-icon ml-ci-'+iconInfo.cls2+'" style="margin-left:-6px;margin-right:6px">'+iconInfo.svg2+'</span>';
-    }
-    item.innerHTML=iconHtml+'<span class="ml-sb-item-label">'+cat.name+'</span><span class="ml-sb-item-chev">›</span>';
-    item._catHref=cat.href;
-    item.addEventListener('click',function(e){
-      e.stopPropagation();
-      // Ecwid API ile navigate (hash'ten daha güvenilir)
-      var h=cat.href;
-      var catId=h.match(/-c(\d+)/);
-      if(catId && typeof Ecwid!=='undefined' && Ecwid.openPage){
-        Ecwid.openPage('category',{id:parseInt(catId[1])});
-      } else if(h.indexOf('#')===0){
-        window.location.hash=h;
-      } else if(h.indexOf('#')>0){
-        window.location.hash=h.substring(h.indexOf('#'));
-      } else {
-        window.location.hash='#!/'+encodeURIComponent(cat.name);
+  function _renderCatItems(list){
+    list.forEach(function(cat){
+      var item=document.createElement('div');
+      item.className='ml-sb-item';
+      var iconInfo=_getCatIcon(cat.name);
+      var iconHtml='';
+      if(iconInfo){
+        iconHtml='<span class="ml-sb-cat-icon ml-ci-'+iconInfo.cls+'">'+iconInfo.svg+'</span>';
       }
+      item.innerHTML=iconHtml+'<span class="ml-sb-item-label">'+cat.name+'</span><span class="ml-sb-item-chev">›</span>';
+      item._catHref=cat.href;
+      item.addEventListener('click',function(e){
+        e.stopPropagation();
+        var h=cat.href;
+        var catId=h.match(/-c(\d+)/);
+        if(catId && typeof Ecwid!=='undefined' && Ecwid.openPage){
+          Ecwid.openPage('category',{id:parseInt(catId[1])});
+        } else if(h.indexOf('#')===0){
+          window.location.hash=h;
+        } else if(h.indexOf('#')>0){
+          window.location.hash=h.substring(h.indexOf('#'));
+        } else {
+          window.location.hash='#!/'+encodeURIComponent(cat.name);
+        }
+      });
+      _catContainer.appendChild(item);
     });
-    _catContainer.appendChild(item);
-  });
+  }
+  _renderCatItems(cats);
 }
 
 function _buildNavbar(){
@@ -3978,6 +4001,11 @@ function fixSweep(){
   // CSS body.ml-dark .cover__button kuralları yeterli — sadece sweep inject
   document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
     _injectSweep(el);
+    // Intercept: same as topbar MANHATTAN click
+    el.addEventListener('click',function(e){
+      e.preventDefault();e.stopPropagation();
+      _goStore();
+    },true);
   });
 
   // ═══ 3) OPSİYON BUTONLARI (Boyut, Sertlik) ═══
