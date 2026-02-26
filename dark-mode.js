@@ -211,7 +211,7 @@ body.ml-dark .ml-hamburger:hover{background:rgba(175,140,62,.1)}
   pointer-events:none;
   transition:background .3s ease;
 }
-.ml-sb-overlay.open{background:rgba(27,22,15,.4);pointer-events:auto;-webkit-tap-highlight-color:transparent}
+.ml-sb-overlay.open{background:rgba(27,22,15,.4);pointer-events:auto;-webkit-tap-highlight-color:transparent;touch-action:none}
 
 /* Sidebar — Liquid Glass */
 .ml-sidebar{
@@ -304,6 +304,33 @@ body.ml-dark .ml-sb-item:active{color:${GOLD};background:rgba(175,140,62,.06)}
 body.ml-dark .ml-sb-item.active{color:${GOLD}}
 body.ml-dark .ml-sb-item .ml-sb-item-chev{color:${TX3}}
 
+/* Category icons — minimalist colored squares */
+.ml-sb-cat-icon{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;margin-right:10px;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.ml-sb-cat-icon svg{width:13px;height:13px;stroke-width:1.5;fill:none}
+.ml-ci-freebase{background:rgba(0,128,128,.1)}
+.ml-ci-freebase svg{stroke:#008080}
+.ml-ci-salt{background:rgba(220,53,69,.08)}
+.ml-ci-salt svg{stroke:#dc3545}
+.ml-ci-iced{background:rgba(100,181,246,.1)}
+.ml-ci-iced svg{stroke:#64b5f6}
+.ml-ci-pod{background:rgba(140,120,90,.08)}
+.ml-ci-pod svg{stroke:#8c785a}
+.ml-ci-coil{background:rgba(140,120,90,.08)}
+.ml-ci-coil svg{stroke:#8c785a}
+.ml-ci-atomizer{background:rgba(140,120,90,.08)}
+.ml-ci-atomizer svg{stroke:#8c785a}
+body.ml-dark .ml-ci-freebase{background:rgba(0,128,128,.12)}
+body.ml-dark .ml-ci-freebase svg{stroke:#3aafb6}
+body.ml-dark .ml-ci-salt{background:rgba(220,53,69,.1)}
+body.ml-dark .ml-ci-salt svg{stroke:#e8616c}
+body.ml-dark .ml-ci-iced{background:rgba(100,181,246,.1)}
+body.ml-dark .ml-ci-iced svg{stroke:#7ec4f8}
+body.ml-dark .ml-ci-pod,body.ml-dark .ml-ci-coil,body.ml-dark .ml-ci-atomizer{background:rgba(175,140,62,.08)}
+body.ml-dark .ml-ci-pod svg,body.ml-dark .ml-ci-coil svg,body.ml-dark .ml-ci-atomizer svg{stroke:${GOLD}}
+
 /* Sidebar User Section — iOS profile card */
 .ml-sb-user{
   padding:12px 14px 0;
@@ -325,30 +352,27 @@ body.ml-dark .ml-sb-item .ml-sb-item-chev{color:${TX3}}
 .ml-sb-profile-info{flex:1;min-width:0}
 .ml-sb-profile-name{font-size:14px;font-weight:600;color:#2c2a25;line-height:1.3}
 .ml-sb-tier-badge{
-  display:inline-flex;align-items:center;gap:4px;margin-top:2px;
-  font-size:10px;font-weight:600;color:#af8c3e;letter-spacing:.3px;
-  cursor:pointer;position:relative;
+  display:inline-flex;align-items:center;gap:3px;margin-top:3px;
+  font-size:9px;font-weight:700;color:#fff;letter-spacing:.4px;
+  padding:2px 8px 2px 6px;border-radius:10px;
+  background:linear-gradient(135deg,#af8c3e,#d4b05e);
+  cursor:pointer;position:relative;overflow:hidden;
+  text-transform:uppercase;
 }
+.ml-sb-tier-badge::after{
+  content:'';position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  animation:mlBadgeShimmer 2.5s ease-in-out infinite;
+}
+@keyframes mlBadgeShimmer{0%,100%{left:-60%}50%{left:110%}}
 .ml-sb-tier-badge svg{width:10px;height:10px;flex-shrink:0}
-.ml-sb-tier-dot{
-  width:5px;height:5px;border-radius:50%;background:#af8c3e;
-  animation:mlBadgeGlow 2s ease-in-out infinite;
-}
-@keyframes mlBadgeGlow{
-  0%,100%{opacity:.4;box-shadow:0 0 2px rgba(175,140,62,.2)}
-  50%{opacity:1;box-shadow:0 0 6px rgba(212,176,94,.6)}
-}
+.ml-sb-tier-dot{display:none}
 .ml-sb-profile-chevron{color:#ccc;font-size:14px;flex-shrink:0}
 body.ml-dark .ml-sb-profile{background:rgba(175,140,62,.04);border-color:rgba(175,140,62,.06)}
 body.ml-dark .ml-sb-profile:active{background:rgba(175,140,62,.1)}
 body.ml-dark .ml-sb-avatar{background:linear-gradient(135deg,rgba(175,140,62,.15),rgba(212,176,94,.06));border-color:rgba(175,140,62,.2);color:${GOLD}}
 body.ml-dark .ml-sb-profile-name{color:${TX1}}
-body.ml-dark .ml-sb-tier-badge{color:${GOLD}}
-body.ml-dark .ml-sb-tier-dot{background:${GOLD};animation:mlBadgeGlowDk 2s ease-in-out infinite}
-@keyframes mlBadgeGlowDk{
-  0%,100%{opacity:.4;box-shadow:0 0 2px rgba(212,176,94,.2)}
-  50%{opacity:1;box-shadow:0 0 8px rgba(212,176,94,.5)}
-}
+body.ml-dark .ml-sb-tier-badge{background:linear-gradient(135deg,rgba(175,140,62,.9),rgba(212,176,94,.85));color:#1b1a17}
 body.ml-dark .ml-sb-profile-chevron{color:${TX3}}
 /* Login form in sidebar */
 .ml-sb-login-label{
@@ -439,6 +463,7 @@ body.ml-dark .ml-sb-qa-icon.slate{background:rgba(200,200,210,.08)}
 body.ml-dark .ml-sb-qa-icon.slate svg{stroke:${TX2}}
 /* Son görüntülenen ürünler */
 .ml-sb-recent{padding:12px 20px 8px}
+@media(max-width:767px){.ml-sb-recent{display:none!important}}
 .ml-sb-recent-title{font-size:9.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#a09080;margin-bottom:10px}
 .ml-sb-recent-list{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
 .ml-sb-recent-list::-webkit-scrollbar{display:none}
@@ -2806,18 +2831,31 @@ btn.addEventListener('click',function(e){
 // ─── NAVBAR / SIDEBAR SYSTEM ───
 var _sidebar,_sbOverlay,_hamburger,_catContainer;
 
+var _savedScrollY=0;
 function _toggleSidebar(){
   var isOpen=_sidebar.classList.contains('open');
   _sidebar.classList.toggle('open');
   _sbOverlay.classList.toggle('open');
   _hamburger.classList.toggle('open');
+  if(isOpen){
+    // Unlock
+    document.body.style.position='';document.body.style.top='';document.body.style.width='';document.body.style.overflow='';
+    window._mlScrollBypass=true;window.scrollTo(0,_savedScrollY);window._mlScrollBypass=false;
+  } else {
+    // Lock
+    _savedScrollY=window.scrollY;
+    document.body.style.position='fixed';document.body.style.top=(-_savedScrollY)+'px';document.body.style.width='100%';document.body.style.overflow='hidden';
+  }
   try{if(navigator.vibrate)navigator.vibrate(8);}catch(e){}
 }
 
 function _closeSidebar(){
+  if(!_sidebar.classList.contains('open')) return;
   _sidebar.classList.remove('open');
   _sbOverlay.classList.remove('open');
   _hamburger.classList.remove('open');
+  document.body.style.position='';document.body.style.top='';document.body.style.width='';document.body.style.overflow='';
+  window._mlScrollBypass=true;window.scrollTo(0,_savedScrollY);window._mlScrollBypass=false;
 }
 
 function _parseCats(){
@@ -2866,20 +2904,35 @@ function _parseCats(){
     }catch(e){}
   }
   if(cats.length===0) return;
-  // Anasayfa — always first item in categories
-  var homeItem=document.createElement('div');
-  homeItem.className='ml-sb-item ml-sb-home';
-  homeItem.style.fontWeight='600';
-  homeItem.innerHTML='<span class="ml-sb-item-label">Anasayfa</span><span class="ml-sb-item-chev">›</span>';
-  homeItem.addEventListener('click',function(e){
-    e.stopPropagation();
-    _goStore();
-  });
-  _catContainer.appendChild(homeItem);
+  // Category icon SVGs — minimalist premium, matching brand pills
+  var _catIcons={
+    'freebase':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8 6 4 10 4 14C4 18.4 7.6 22 12 22C16.4 22 20 18.4 20 14C20 10 16 6 12 2Z"/></svg>',
+    'salt':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>',
+    'iced':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/><line x1="19.07" y1="4.93" x2="4.93" y2="19.07"/><circle cx="12" cy="12" r="3"/></svg>',
+    'pod':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="5"/><line x1="7" y1="9" x2="17" y2="9"/><circle cx="12" cy="15" r="1.5"/></svg>',
+    'coil':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="20" rx="3"/><line x1="8" y1="7" x2="16" y2="7"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="16" y2="15"/><circle cx="12" cy="19" r="1"/></svg>',
+    'atomizer':'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="8" height="14" rx="2"/><path d="M10 8V5a2 2 0 0 1 4 0v3"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="11" y1="2" x2="13" y2="2"/></svg>'
+  };
+  function _getCatIcon(name){
+    var n=name.toLowerCase();
+    if(n.indexOf('iced')>-1||n.indexOf('buzlu')>-1) return {svg:_catIcons.iced,cls:'iced',svg2:_catIcons.salt,cls2:'salt'};
+    if(n.indexOf('salt')>-1) return {svg:_catIcons.salt,cls:'salt'};
+    if(n.indexOf('likit')>-1) return {svg:_catIcons.freebase,cls:'freebase'};
+    if(n.indexOf('pod')>-1||n.indexOf('kit')>-1) return {svg:_catIcons.pod,cls:'pod'};
+    if(n.indexOf('coil')>-1||n.indexOf('kartu')>-1) return {svg:_catIcons.coil,cls:'coil'};
+    if(n.indexOf('atomizer')>-1) return {svg:_catIcons.atomizer,cls:'atomizer'};
+    return null;
+  }
   cats.forEach(function(cat){
     var item=document.createElement('div');
     item.className='ml-sb-item';
-    item.innerHTML='<span class="ml-sb-item-label">'+cat.name+'</span><span class="ml-sb-item-chev">›</span>';
+    var iconInfo=_getCatIcon(cat.name);
+    var iconHtml='';
+    if(iconInfo){
+      iconHtml='<span class="ml-sb-cat-icon ml-ci-'+iconInfo.cls+'">'+iconInfo.svg+'</span>';
+      if(iconInfo.svg2) iconHtml+='<span class="ml-sb-cat-icon ml-ci-'+iconInfo.cls2+'" style="margin-left:-6px;margin-right:6px">'+iconInfo.svg2+'</span>';
+    }
+    item.innerHTML=iconHtml+'<span class="ml-sb-item-label">'+cat.name+'</span><span class="ml-sb-item-chev">›</span>';
     item._catHref=cat.href;
     item.addEventListener('click',function(e){
       e.stopPropagation();
@@ -2944,8 +2997,23 @@ function _buildNavbar(){
 
   var sbHead=document.createElement('div');
   sbHead.className='ml-sb-head';
+  // Home button (absolute left)
+  var homeBtn=document.createElement('button');
+  homeBtn.className='ml-sb-action';
+  homeBtn.setAttribute('aria-label','Başa dön');
+  homeBtn.style.cssText='position:absolute;top:14px;left:14px';
+  homeBtn.innerHTML='<svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>';
+  homeBtn.addEventListener('click',function(e){
+    e.stopPropagation();
+    try{if(navigator.vibrate)navigator.vibrate(6);}catch(e2){}
+    _closeSidebar();
+    setTimeout(function(){_goStore();},200);
+  });
+  sbHead.appendChild(homeBtn);
   // D-style centered brand + motto
-  sbHead.innerHTML='<div class="ml-sb-brand">MANHATTAN</div><div class="ml-sb-motto">DESERVE YOUR DREAM</div>';
+  var brandEl=document.createElement('div');brandEl.className='ml-sb-brand';brandEl.textContent='MANHATTAN';
+  var mottoEl=document.createElement('div');mottoEl.className='ml-sb-motto';mottoEl.textContent='DESERVE YOUR DREAM';
+  sbHead.appendChild(brandEl);sbHead.appendChild(mottoEl);
   // Close button (absolute positioned via CSS)
   var closeBtn=document.createElement('span');
   closeBtn.className='ml-sb-close';
@@ -3018,7 +3086,7 @@ function _buildNavbar(){
         '<div class="ml-sb-avatar">'+_initial+'</div>'+
         '<div class="ml-sb-profile-info">'+
           '<div class="ml-sb-profile-name">'+name+'</div>'+
-          (tier?'<div class="ml-sb-tier-badge"><span class="ml-sb-tier-dot"></span><span>'+tier+' Üye</span></div>':'')+
+          (tier?'<div class="ml-sb-tier-badge"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="10" height="10"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>'+tier+' Üye</span></div>':'')+
         '</div>'+
         '<span class="ml-sb-profile-chevron">›</span>'+
       '</div>';
@@ -3063,9 +3131,10 @@ function _buildNavbar(){
           _closeSidebar();
           if(qa.isCark){
             setTimeout(function(){
-              var wBtn=document.querySelector('.ml-trigger');
-              if(wBtn) wBtn.click();
-              else if(typeof mlOpen==='function') mlOpen();
+              var swBtn=document.querySelector('.sw-trigger,#sw-trigger');
+              if(swBtn){swBtn.click();}
+              else if(typeof openOverlay==='function') openOverlay();
+              else if(typeof window.openOverlay==='function') window.openOverlay();
             },200);
           } else {
             setTimeout(function(){_ecNav(qa.path);},200);
@@ -3236,6 +3305,8 @@ function _buildNavbar(){
   // ─ Overlay ─
   _sbOverlay=document.createElement('div');
   _sbOverlay.className='ml-sb-overlay';
+  // Block background scroll on touch (iOS)
+  _sbOverlay.addEventListener('touchmove',function(e){e.preventDefault();},{passive:false});
   _sbOverlay.addEventListener('click',function(e){
     var cx=e.clientX,cy=e.clientY;
     _closeSidebar();
@@ -3522,8 +3593,6 @@ function _buildNavbar(){
         setTimeout(function(){store.style.removeProperty('transition');store.style.removeProperty('opacity');},400);
       }
       // Aktif kategori highlight
-      var home=document.querySelector('.ml-sb-home');
-      if(home) home.classList.remove('active');
       if(_catContainer){
         _catContainer.querySelectorAll('.ml-sb-item').forEach(function(item){
           item.classList.remove('active');
@@ -3532,10 +3601,6 @@ function _buildNavbar(){
             if(href.indexOf('-c'+page.categoryId)>-1) item.classList.add('active');
           }
         });
-      }
-      // Anasayfa (tüm ürünler) aktifse
-      if(page.type==='CATEGORY' && !page.categoryId && home){
-        home.classList.add('active');
       }
       // Store bg enforcement (sayfa değişiminde Ecwid sıfırlayabilir)
       document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
@@ -3577,6 +3642,7 @@ function init(){
       var a=arguments,opts=a[0],x,y,beh;
       if(opts&&typeof opts==='object'){x=opts.left;y=opts.top;beh=opts.behavior;}
       else{x=a[0];y=a[1];}
+      if(window._mlScrollBypass){_realScrollTo.apply(window,a);return;}
       var h=_navH();
       if(typeof y==='number'&&y>h&&h>0){_realScrollTo({top:y-h,left:x||0,behavior:beh||'auto'});return;}
       _realScrollTo.apply(window,a);
