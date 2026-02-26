@@ -3524,20 +3524,21 @@ function _buildNavbar(){
       document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
         el.style.setProperty('background','transparent','important');
       });
-      // CATEGORY: hero altına otomatik scroll (cover 800px+ kaplayabiliyor)
-      if(page.type==='CATEGORY' && window.scrollY<10){
-        setTimeout(function(){
-          var content=document.querySelector('.ec-store__content-wrapper,.grid-category,.grid-product,.store.dynamic-product-browser');
-          if(content){
+      // CATEGORY: Ecwid smooth scroll animasyonu bitmesini bekle, sonra navH offset düzelt
+      if(page.type==='CATEGORY'){
+        var _lastY=-1,_settled=0,_catTimer=setInterval(function(){
+          var y=window.scrollY;
+          if(y===_lastY){_settled++;}else{_settled=0;}
+          _lastY=y;
+          if(_settled>=3&&y>10){
+            clearInterval(_catTimer);
             var tb=document.querySelector('.ml-topbar');
             var mt=document.querySelector('.ml-motto');
-            var navH=(tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0)+10;
-            var rect=content.getBoundingClientRect();
-            if(rect.top>navH+50){
-              window.scrollBy({top:rect.top-navH,behavior:'auto'});
-            }
+            var navH=(tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0);
+            window.scrollBy({top:-navH,behavior:'auto'});
           }
-        },150);
+          if(_settled>50)clearInterval(_catTimer);
+        },100);
       }
     });
   }
