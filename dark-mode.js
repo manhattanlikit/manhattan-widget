@@ -3476,17 +3476,29 @@ function _buildNavbar(){
       if(!Ecwid.OnPageLoaded) return;
       Ecwid.OnPageLoaded.add(function(page){
         if(page.type==='PRODUCT'&&page.productId){
-          setTimeout(function(){
-            var nameEl=document.querySelector('.product-details__product-title, h1.ec-header-h3, .product-details__product-title--on-one-column');
-            var imgEl=document.querySelector('.product-details__gallery img, .details-gallery__photo img, .product-details-module__gallery img');
-            if(nameEl){
-              _trackRecentProduct({
-                id:page.productId,
-                name:(nameEl.textContent||'').trim().substring(0,30),
-                img:imgEl?(imgEl.src||imgEl.currentSrc||''):'',
-              });
-            }
-          },800);
+          // Ecwid Cart API ile ürün bilgisi al (DOM'dan daha güvenilir, mobilde img yüklenmiyor)
+          if(typeof Ecwid.Cart!=='undefined'&&Ecwid.Cart.get){
+            setTimeout(function(){
+              var nameEl=document.querySelector('.product-details__product-title, h1.ec-header-h3, .product-details__product-title--on-one-column');
+              var pName=nameEl?(nameEl.textContent||'').trim().substring(0,30):'';
+              // Önce DOM'dan img dene
+              var imgEl=document.querySelector('.product-details__gallery img[src], .details-gallery__photo img[src], .product-details-module__gallery img[src]');
+              var imgUrl=imgEl?(imgEl.currentSrc||imgEl.src||''):'';
+              // Fallback: og:image meta tag (her zaman dolu)
+              if(!imgUrl||imgUrl.indexOf('data:')===0){
+                var ogImg=document.querySelector('meta[property="og:image"]');
+                if(ogImg) imgUrl=ogImg.getAttribute('content')||'';
+              }
+              // Fallback 2: herhangi bir product-details img
+              if(!imgUrl||imgUrl.indexOf('data:')===0){
+                var anyImg=document.querySelector('.product-details img[src*="images-"]');
+                if(anyImg) imgUrl=anyImg.currentSrc||anyImg.src||'';
+              }
+              if(pName&&imgUrl){
+                _trackRecentProduct({id:page.productId,name:pName,img:imgUrl});
+              }
+            },1200);
+          }
         }
       });
     }
@@ -3814,12 +3826,6 @@ function cleanAll(){
   });
   // Sweep overlay'ları kaldır
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
-  // Ürün açıklamaları — dark mode inline renk kalıntılarını temizle
-  document.querySelectorAll('.product-details__description, .product-details__description *').forEach(function(el){
-    el.style.removeProperty('color');
-    el.style.removeProperty('background');
-    el.style.removeProperty('background-color');
-  });
   // .D class kaldır (SALT ürünler)
   document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
   // Select temizle
