@@ -90,6 +90,7 @@ body.ml-nav .cover__menu{height:0!important;overflow:hidden!important;padding:0!
 body.ml-nav .menu{padding:0!important;min-height:0!important;height:0!important;overflow:hidden!important}
 body.ml-nav .float-icons{z-index:999995!important;position:fixed!important;right:0!important;top:var(--ml-nav-h,107px)!important}
 body.ml-nav{padding-top:90px;background-color:#ffbd92}
+html{scroll-padding-top:var(--ml-nav-h,107px)}
 html{background-color:#ffbd92}
 body.ml-dark{background-color:#1b1a17!important}
 body.ml-nav .store.dynamic-product-browser{background:transparent!important}
@@ -3683,9 +3684,6 @@ function _buildNavbar(){
   // Ecwid sayfa değişiminde: aktif kategori highlight + fade transition
   if(typeof Ecwid!=='undefined' && Ecwid.OnPageLoaded){
     Ecwid.OnPageLoaded.add(function(page){
-      // SPA scroll proxy flag — sadece sayfa geçişlerinde aktif
-      window._mlPageTransition=true;
-      setTimeout(function(){window._mlPageTransition=false;},3000);
       // Fade-in micro animation (double RAF = browser opacity:0'ı boyar sonra 1'e geçer)
       var store=document.querySelector('.ec-store,.store');
       if(store){
@@ -3719,10 +3717,16 @@ function _buildNavbar(){
             var tb=document.querySelector('.ml-topbar');
             var mt=document.querySelector('.ml-motto');
             var navH=(tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0);
-            window.scrollBy({top:-navH,behavior:'auto'});
-            window._mlPageTransition=false;
+            // Sadece content topbar arkasındaysa düzelt (proxy zaten çıkarmış olabilir)
+            var firstContent=document.querySelector('.ec-store__content-wrapper,.grid,.ec-pager,.breadcrumbs');
+            if(firstContent){
+              var rect=firstContent.getBoundingClientRect();
+              if(rect.top<navH-5){
+                window.scrollBy({top:rect.top-navH-8,behavior:'auto'});
+              }
+            }
           }
-          if(_settled>50){clearInterval(_catTimer);window._mlPageTransition=false;}
+          if(_settled>50)clearInterval(_catTimer);
         },100);
       }
       // PRODUCT: Ürün sayfasında başlık topbar altında kalmasın
@@ -3745,15 +3749,9 @@ function _buildNavbar(){
                 window.scrollBy({top:titleTop-navH-16,behavior:'auto'});
                 window._mlScrollBypass=false;
               }
-            }else if(y>10){
-              // Başlık bulunamazsa genel offset düzelt
-              window._mlScrollBypass=true;
-              window.scrollBy({top:-navH,behavior:'auto'});
-              window._mlScrollBypass=false;
             }
-            window._mlPageTransition=false;
           }
-          if(_pSettled>50){clearInterval(_pTimer);window._mlPageTransition=false;}
+          if(_pSettled>50)clearInterval(_pTimer);
         },100);
       }
     });
@@ -3765,7 +3763,7 @@ function init(){
   // Yeni navbar sistemi oluştur
   _buildNavbar();
   // SPA scroll fix — Ecwid scrollTo topbar yüksekliğini bilmiyor, offset çıkar
-  // SADECE SPA sayfa geçişlerinde aktif — cart/checkout adım geçişlerinde KAPALI
+  // scrollTo(0,0) geçer, diğer tüm scroll'larda navH çıkarılır
   (function(){
     var _realScrollTo=window.scrollTo.bind(window);
     function _navH(){
@@ -3773,15 +3771,13 @@ function init(){
       var mt=document.querySelector('.ml-motto');
       return (tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0);
     }
-    window._mlPageTransition=false;
     window.scrollTo=function(){
       var a=arguments,opts=a[0],x,y,beh;
       if(opts&&typeof opts==='object'){x=opts.left;y=opts.top;beh=opts.behavior;}
       else{x=a[0];y=a[1];}
       if(window._mlScrollBypass){_realScrollTo.apply(window,a);return;}
-      // Cart/checkout sayfalarında proxy KAPALI — Ecwid kendi scroll'u doğru
-      if(!window._mlPageTransition){_realScrollTo.apply(window,a);return;}
       var h=_navH();
+      // y=0 veya y<=navH → en tepeye git, çıkarma (içerik zaten paddingTop ile aşağıda)
       if(typeof y==='number'&&y>h&&h>0){_realScrollTo({top:y-h,left:x||0,behavior:beh||'auto'});return;}
       _realScrollTo.apply(window,a);
     };
