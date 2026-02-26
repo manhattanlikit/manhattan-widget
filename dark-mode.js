@@ -2862,8 +2862,8 @@ function _parseCats(){
   if(!_catContainer) return;
   if(_catContainer.querySelector('.ml-sb-item')) return;
   // Eski cache temizle (v3 öncesi)
-  try{sessionStorage.removeItem('ml-cats');}catch(e){}
-  var CACHE_KEY='ml-cats-v3';
+  try{sessionStorage.removeItem('ml-cats');sessionStorage.removeItem('ml-cats-v3');}catch(e){}
+  var CACHE_KEY='ml-cats-v4';
   var cats=[];
   var seen={};
   // Parse from NAV ONLY — not page content (.ec-store area has subcats)
@@ -2889,12 +2889,25 @@ function _parseCats(){
       cats.push({name:text,href:href});
     });
   }
+  // Fallback 2: full page scan for any category links (catches hidden/overflow cats)
+  if(cats.length<8){
+    document.querySelectorAll('a[href*="-c"]').forEach(function(a){
+      var href=a.getAttribute('href')||'';
+      var text=(a.textContent||'').trim();
+      if(!text||!/-c\d+/.test(href)||seen[text]) return;
+      // Skip product links and subcategories
+      if(text.length>40||/\d+\s*(ml|mg|adet)/i.test(text)) return;
+      if(a.closest('.ec-store__content-wrapper,.grid-product,.product-details')) return;
+      seen[text]=true;
+      cats.push({name:text,href:href});
+    });
+  }
   // Cache ONLY if substantial set (prevents subcategory overwrite)
   if(cats.length>=5){
     try{sessionStorage.setItem(CACHE_KEY,JSON.stringify(cats));}catch(e){}
   }
   // Use cache if DOM had too few
-  if(cats.length<3){
+  if(cats.length<6){
     try{
       var cached=sessionStorage.getItem(CACHE_KEY);
       if(cached){
