@@ -2816,7 +2816,10 @@ function toggle(){
     });
   }
   _fixAllNow();
-  _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+  // Observer'ı cleanAll bitiminden sonra bağla (style remove tetikleme döngüsü önleme)
+  setTimeout(function(){
+    _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
+  }, dark?50:500);
   // Multi-pass: Ecwid geç render + SPA elementleri
   setTimeout(fixAll,300);
   setTimeout(fixAll,800);
@@ -3803,6 +3806,7 @@ function _fixAllNow(){
   if(dark){
     // Store bg şeffaf yap — Ecwid inline style override (SADECE dark mode)
     document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
+      _m(el);
       if(el.style.backgroundColor||getComputedStyle(el).backgroundColor==='rgb(255, 255, 255)'){
         el.style.setProperty('background','transparent','important');
       }
@@ -3819,13 +3823,27 @@ function _fixAllNow(){
 
 // ─── TEMİZLİK (light mode'a dönünce) ───
 function cleanAll(){
+  // ═══ NÜKLEER RESTORE: data-ml-dk marker'lı TÜM elementleri orijinal style'a döndür ═══
+  document.querySelectorAll('[data-ml-dk]').forEach(function(el){
+    var orig=el.getAttribute('data-ml-dk');
+    if(orig){
+      el.setAttribute('style',orig);
+    }else{
+      el.removeAttribute('style');
+    }
+    el.removeAttribute('data-ml-dk');
+    // Hover flag'lerini de temizle
+    delete el._mlHoverActive;
+  });
   cleanStokYok();
   // Store bg — dark mode'un transparent override'ını kaldır → Ecwid orijinal beyaz döner
   document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
     el.style.removeProperty('background');
   });
-  // Sweep overlay'ları kaldır
+  // Sweep overlay'ları kaldır (marker'sız DOM inject)
   document.querySelectorAll('.ml-sweep').forEach(function(el){el.remove();});
+  // ml-rg-fix class temizle (radiogroup pseudo çizgi fix)
+  document.querySelectorAll('.ml-rg-fix').forEach(function(el){el.classList.remove('ml-rg-fix');});
   // .D class kaldır (SALT ürünler)
   document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
   // Ürün açıklamaları — SADECE dark mode'un JS ile set ettiği renkleri kaldır
@@ -3964,6 +3982,14 @@ function cleanAll(){
   });
 }
 
+// ═══ MARKER SİSTEMİ ═══
+// Dark mode bir element'e inline style koymadan önce orijinal style'ını kaydeder.
+// cleanAll() marker'lı tüm elementleri orijinal haline döndürür.
+function _m(el){
+  if(!el||el.hasAttribute('data-ml-dk')) return;
+  el.setAttribute('data-ml-dk',el.getAttribute('style')||'');
+}
+
 // ─── STOKTA YOK — INLINE STYLE TEMİZLİĞİ ───
 function cleanStokYok(){
   document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]').forEach(function(l){
@@ -3982,10 +4008,12 @@ function cleanStokYok(){
 function fixStokYok(){
   if(!document.body.classList.contains('ml-dark')){cleanStokYok();return;}
   document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]').forEach(function(l){
+    _m(l);
     l.style.setProperty('background','#8b3a3a','important');
     l.style.setProperty('background-color','#8b3a3a','important');
     l.style.setProperty('color','#fff','important');
     l.querySelectorAll('.ec-label,[class*="label--"],.label__text').forEach(function(el){
+      _m(el);
       el.style.setProperty('background','#8b3a3a','important');
       el.style.setProperty('background-color','#8b3a3a','important');
       el.style.setProperty('color','#fff','important');
@@ -4000,6 +4028,7 @@ function fixSelects(){
   if(!document.body.classList.contains('ml-dark')) return;
   // Ecwid placeholder'ı gizliyorsa zorla göster
   document.querySelectorAll('.form-control--empty .form-control__placeholder').forEach(function(el){
+    _m(el);
     el.style.setProperty('opacity','1','important');
     el.style.setProperty('visibility','visible','important');
   });
@@ -4016,6 +4045,7 @@ var _sweepCSS='position:absolute;top:0;left:-100%;width:60%;height:100%;backgrou
 
 function _injectSweep(el){
   if(!el||el.querySelector('.ml-sweep')) return;
+  _m(el);
   el.style.setProperty('position','relative','important');
   el.style.setProperty('overflow','hidden','important');
   var sw=document.createElement('div');
@@ -4049,17 +4079,19 @@ function fixSweep(){
 
   // ═══ 1) TÜM PRIMARY BUTONLAR (Sepete Ekle, Devam Et, Checkout, vb.) ═══
   document.querySelectorAll('.form-control--primary').forEach(function(wrapper){
+    _m(wrapper);
     wrapper.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
     wrapper.style.setProperty('border-radius','10px','important');
     wrapper.style.setProperty('border','none','important');
     _injectSweep(wrapper);
     var btn=wrapper.querySelector('.form-control__button');
-    if(btn) _bindHover(btn,wrapper);
+    if(btn){_m(btn);_bindHover(btn,wrapper);}
   });
 
   // ═══ 2) COVER BUTONLAR (Anasayfa CTA — "Alışverişe Devam Et") ═══
   // CSS body.ml-dark .cover__button kuralları yeterli — sadece sweep inject
   document.querySelectorAll('.cover__button,.cover-button').forEach(function(el){
+    _m(el);
     _injectSweep(el);
   });
 
@@ -4068,9 +4100,11 @@ function fixSweep(){
     var inp=cb.querySelector('.form-control__radio');
     var lbl=cb.querySelector('.form-control__inline-label');
     if(!inp||!lbl) return;
+    _m(lbl);
     // Hover aktifken DOKUNMA — observer fixAll tetiklese bile hover state korunsun
     if(lbl._mlHoverActive) return;
     var innerLbl=lbl.querySelector('label');
+    if(innerLbl) _m(innerLbl);
 
     // Ortak — BORDER YOK, box-shadow ile çerçeve (tırtık önleme: layout shift yok)
     lbl.style.setProperty('border','none','important');
@@ -4152,6 +4186,8 @@ function fixSweep(){
 // Sadece text rengi — bg inline koymak hover'ı bozar
 function fixButtonText(){
   if(!document.body.classList.contains('ml-dark')) return;
+  // Marker: tüm hedef elementleri işaretle
+  document.querySelectorAll('.form-control--primary .form-control__button,.form-control--primary .form-control__button-text,.form-control--primary .form-control__button-svg,.form-control--primary .form-control__button-svg svg,.form-control--secondary .form-control__button-text').forEach(_m);
   // Primary buton — gold gradient bg + #fff text (Ecwid CSS'i eziyor, inline zorla)
   document.querySelectorAll('.form-control--primary .form-control__button').forEach(function(el){
     el.style.setProperty('background','linear-gradient(135deg,#af8c3e,#d4b05e)','important');
@@ -4192,6 +4228,8 @@ function fixLabels(){
   });
   // Sepet ürün görseli — border-radius + inline bg override
   if(document.body.classList.contains('ml-dark')){
+    // Marker: fixLabels'ın dark modda dokunacağı tüm elementleri işaretle
+    document.querySelectorAll('.ec-cart-item img,[class*="cart-item"] img,.ec-cart-item__picture,.ec-cart__products,.ec-cart-step,.ec-cart-step__next,.ec-radiogroup__items,.ec-radiogroup__item,.ec-radiogroup label,.ec-radiogroup input,.ec-filter input,.ec-filter label,.ec-minicart,.store .border,.dynamic-product-browser > .border,.ec-range__slider,.ec-range__runner,.ec-range__track-inner,.ec-range__track-line,.ec-cart-next__header,[class*="ec-cart-next"],.form-control__radio-view,.form-control__radio').forEach(_m);
     document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
       el.style.setProperty('border-radius','12px','important');
     });
@@ -4208,6 +4246,7 @@ function fixLabels(){
       var bg=cs.backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
       if(m && +m[1]>180 && +m[2]>180 && +m[3]>180){
+        _m(el);
         // Açık renkli bg → koyu gold tint
         el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
         el.style.setProperty('color','#ece8df','important');
@@ -4223,6 +4262,7 @@ function fixLabels(){
           var cc=ccs.color;
           var cm=cc.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
           if(cm && +cm[1]<100 && +cm[2]<100 && +cm[3]<100){
+            _m(c);
             c.style.setProperty('color','#ece8df','important');
           }
         });
@@ -4231,10 +4271,12 @@ function fixLabels(){
     // ── CHECKOUT DOĞRUDAN STYLE İLE RENKLENEN TÜM ELEMENTLER ──
     document.querySelectorAll('.ec-cart [style*="background-color"]').forEach(function(el){
       if(el.offsetHeight<15) return;
+      _m(el);
       var cs=getComputedStyle(el);
       var bg=cs.backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
       if(m && +m[1]>200 && +m[2]>200 && +m[3]>200){
+        _m(el);
         el.style.setProperty('background-color','rgba(175,140,62,.08)','important');
         el.style.setProperty('color','#ece8df','important');
       }
@@ -4303,6 +4345,7 @@ function fixLabels(){
       var bg=getComputedStyle(el).backgroundColor;
       var m=bg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)/);
       if(m && +m[1]>200 && +m[2]>200 && +m[3]>100){
+        _m(el);
         // Kabul kutusu = sarımsı → dikkat çekici gold tint
         if(+m[3]<245){
           el.style.setProperty('background-color','rgba(175,140,62,.15)','important');
@@ -4356,6 +4399,7 @@ function fixLabels(){
       var cn=typeof el.className==='string'?el.className:'';
       // Renkli ikon container'ları koru (yeşil ✓, kırmızı ✗, step num, trust)
       if(cn.indexOf('ml-icon-')>-1||cn.indexOf('ml-step-num')>-1||cn.indexOf('ml-check')>-1||cn.indexOf('ml-trust-icon')>-1) return;
+      _m(el);
       var cs=getComputedStyle(el);
 
       // ── ARKA PLAN TEMİZLİĞİ ──
@@ -4725,6 +4769,8 @@ function fixLabels(){
 
 function fixBadgeRect(){
   if(!document.body.classList.contains('ml-dark')) return;
+  // Marker
+  document.querySelectorAll('.product-details__label-container,.product-details .ec-label,.details-product-purchase__place .ec-label').forEach(_m);
   // Container — inline-flex ile sarmalı
   document.querySelectorAll('.product-details__label-container').forEach(function(el){
     el.style.setProperty('display','inline-flex','important');
@@ -4751,6 +4797,8 @@ function fixBadgeRect(){
 // ─── FLOATING İKONLAR (Sepet + Arama daireleri) ───
 function fixFloatingIcons(){
   if(!document.body.classList.contains('ml-dark')) return;
+  // Marker
+  document.querySelectorAll('.float-icons,.float-icons__wrap,.float-icons__icon,.float-icons__icon > div,.float-icons__wrap .ec-minicart__body,.float-icons__wrap .ec-minicart__icon,.float-icons__wrap .ec-minicart,.float-icons__wrap svg').forEach(_m);
   // Kare wrapper'ları temizle
   document.querySelectorAll('.float-icons,.float-icons__wrap,.float-icons__icon,.float-icons__icon > div,.float-icons__wrap .ec-minicart__body,.float-icons__wrap .ec-minicart__icon').forEach(function(el){
     el.style.setProperty('background','transparent','important');
