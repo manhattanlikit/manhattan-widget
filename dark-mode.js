@@ -2952,45 +2952,26 @@ function _buildNavbar(){
   navSection.className='ml-sb-nav-bottom';
   var navLinks=[
     {text:'Hakkında',action:function(){
-      // Ecwid scrollToTile — sidebar kapansın (scroll görünsün)
       _closeSidebar();
       setTimeout(function(){
-        // Önce anasayfada mıyız kontrol et
-        var tile=document.querySelector('.tile-about');
-        if(tile){
-          if(typeof scrollToTile==='function') scrollToTile('.tile-about');
-          else tile.scrollIntoView({behavior:'smooth'});
-        }else{
-          // Anasayfaya git, sonra scroll
+        if(!_scrollToSection('.tile-about')){
           if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
             Ecwid.openPage('category',{callback:function(){
-              setTimeout(function(){
-                if(typeof scrollToTile==='function') scrollToTile('.tile-about');
-              },800);
+              setTimeout(function(){_scrollToSection('.tile-about');},800);
             }});
-          }else{
-            _goStore();
-          }
+          }else{_goStore();}
         }
       },250);
     }},
     {text:'Bize ulaşın',action:function(){
       _closeSidebar();
       setTimeout(function(){
-        var tile=document.querySelector('.tile-contactInfo');
-        if(tile){
-          if(typeof scrollToTile==='function') scrollToTile('.tile-contactInfo');
-          else tile.scrollIntoView({behavior:'smooth'});
-        }else{
+        if(!_scrollToSection('.tile-contactInfo')){
           if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
             Ecwid.openPage('category',{callback:function(){
-              setTimeout(function(){
-                if(typeof scrollToTile==='function') scrollToTile('.tile-contactInfo');
-              },800);
+              setTimeout(function(){_scrollToSection('.tile-contactInfo');},800);
             }});
-          }else{
-            _goStore();
-          }
+          }else{_goStore();}
         }
       },250);
     }}
@@ -3167,13 +3148,24 @@ function _buildNavbar(){
   // ─ Navigation Helpers ─
   // Mağaza anasayfasına git — "Şimdi alışveriş yap" ile birebir aynı davranış
   // Cover button: .cover__cta > .content > BUTTON (onclick=YES, Ecwid native handler)
+  // navH-aware scroll — scrollToTile yerine (navbar offset dahil)
+  function _scrollToSection(selector){
+    var el=document.querySelector(selector);
+    if(!el) return false;
+    var tb=document.querySelector('.ml-topbar');
+    var mt=document.querySelector('.ml-motto');
+    var navH=(tb?tb.offsetHeight:0)+(mt?mt.offsetHeight:0)+10;
+    var top=el.getBoundingClientRect().top+window.scrollY-navH;
+    window.scrollTo({top:top,left:0,behavior:'smooth'});
+    return true;
+  }
+
   function _goStore(){
-    var coverBtn=document.querySelector('.cover button');
-    if(coverBtn){coverBtn.click();return;}
-    // Fallback: Ecwid API
     if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
-      Ecwid.openPage('category');
+      Ecwid.openPage('category');return;
     }
+    var coverBtn=document.querySelector('.cover button');
+    if(coverBtn){coverBtn.click();}
   }
 
   // Ecwid SPA navigation helper — Ecwid'in kendi <a> elementini tıklar, sayfa yenilenmez
