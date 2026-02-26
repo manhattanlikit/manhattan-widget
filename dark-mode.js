@@ -283,7 +283,7 @@ body.ml-dark .ml-sb-section{color:${TX3}}
   margin:0 14px;border-radius:14px;overflow:hidden;
   background:rgba(0,0,0,.025);border:1px solid rgba(0,0,0,.04);
 }
-body.ml-dark #ml-cat-list{background:rgba(175,140,62,.04);border-color:rgba(175,140,62,.06)}
+body.ml-dark #ml-cat-list{background:rgba(255,255,255,.04);border-color:rgba(175,140,62,.12)}
 
 /* Nav Item — 42px compact touch target */
 .ml-sb-item{
@@ -317,6 +317,8 @@ body.ml-dark .ml-sb-item .ml-sb-item-chev{color:${TX3}}
 .ml-ci-salt .ml-ci-letter{color:#dc3545}
 .ml-ci-iced{background:rgba(100,181,246,.1)}
 .ml-ci-iced .ml-ci-letter{color:#64b5f6}
+.ml-ci-iced-svg{background:rgba(100,181,246,.1)}
+.ml-ci-iced-svg svg{stroke:#64b5f6}
 .ml-ci-acc{background:rgba(140,120,90,.08)}
 .ml-ci-acc svg{stroke:#8c785a}
 body.ml-dark .ml-ci-freebase{background:rgba(0,128,128,.12)}
@@ -325,6 +327,8 @@ body.ml-dark .ml-ci-salt{background:rgba(220,53,69,.1)}
 body.ml-dark .ml-ci-salt .ml-ci-letter{color:#e8616c}
 body.ml-dark .ml-ci-iced{background:rgba(100,181,246,.1)}
 body.ml-dark .ml-ci-iced .ml-ci-letter{color:#7ec4f8}
+body.ml-dark .ml-ci-iced-svg{background:rgba(100,181,246,.1)}
+body.ml-dark .ml-ci-iced-svg svg{stroke:#7ec4f8}
 body.ml-dark .ml-ci-acc{background:rgba(175,140,62,.08)}
 body.ml-dark .ml-ci-acc svg{stroke:${GOLD}}
 
@@ -347,7 +351,7 @@ body.ml-dark .ml-ci-acc svg{stroke:${GOLD}}
   font-size:14px;font-weight:600;color:#af8c3e;
 }
 .ml-sb-profile-info{flex:1;min-width:0}
-.ml-sb-profile-name{font-size:14px;font-weight:600;color:#2c2a25;line-height:1.3}
+.ml-sb-profile-name{font-size:13px;font-weight:600;color:#2c2a25;line-height:1.3}
 .ml-sb-tier-badge{
   display:inline-flex;align-items:center;gap:3px;margin-top:3px;
   font-size:9px;font-weight:700;color:#fff;letter-spacing:.4px;
@@ -365,7 +369,7 @@ body.ml-dark .ml-ci-acc svg{stroke:${GOLD}}
 .ml-sb-tier-badge svg{width:10px;height:10px;flex-shrink:0}
 .ml-sb-tier-dot{display:none}
 .ml-sb-profile-chevron{color:#ccc;font-size:14px;flex-shrink:0}
-body.ml-dark .ml-sb-profile{background:rgba(175,140,62,.04);border-color:rgba(175,140,62,.06)}
+body.ml-dark .ml-sb-profile{background:rgba(255,255,255,.04);border-color:rgba(175,140,62,.12)}
 body.ml-dark .ml-sb-profile:active{background:rgba(175,140,62,.1)}
 body.ml-dark .ml-sb-avatar{background:linear-gradient(135deg,rgba(175,140,62,.15),rgba(212,176,94,.06));border-color:rgba(175,140,62,.2);color:${GOLD}}
 body.ml-dark .ml-sb-profile-name{color:${TX1}}
@@ -418,7 +422,7 @@ body.ml-dark .ml-sb-profile-chevron{color:${TX3}}
   border-radius:9px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
 }
 .ml-sb-chevron{color:#ccc;font-size:13px;flex-shrink:0}
-body.ml-dark .ml-sb-quick{background:rgba(175,140,62,.04);border-color:rgba(175,140,62,.06)}
+body.ml-dark .ml-sb-quick{background:rgba(255,255,255,.04);border-color:rgba(175,140,62,.12)}
 body.ml-dark .ml-sb-qa{color:${TX1};border-color:rgba(255,255,255,.03)}
 body.ml-dark .ml-sb-qa:active{background:rgba(175,140,62,.08)}
 body.ml-dark .ml-sb-chevron{color:${TX3}}
@@ -456,11 +460,10 @@ body.ml-dark .ml-sb-qa-icon.coral{background:rgba(255,134,116,.1)}
 body.ml-dark .ml-sb-qa-icon.coral svg{stroke:#ff8674}
 body.ml-dark .ml-sb-qa-icon.teal{background:rgba(0,140,149,.1)}
 body.ml-dark .ml-sb-qa-icon.teal svg{stroke:#5dc8cd}
-body.ml-dark .ml-sb-qa-icon.slate{background:rgba(200,200,210,.08)}
-body.ml-dark .ml-sb-qa-icon.slate svg{stroke:${TX2}}
+body.ml-dark .ml-sb-qa-icon.slate{background:rgba(200,200,210,.1)}
+body.ml-dark .ml-sb-qa-icon.slate svg{stroke:${TX1}}
 /* Son görüntülenen ürünler */
 .ml-sb-recent{padding:12px 20px 8px}
-@media(max-width:767px){.ml-sb-recent{display:none!important}}
 .ml-sb-recent-title{font-size:9.5px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:#a09080;margin-bottom:10px}
 .ml-sb-recent-list{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px}
 .ml-sb-recent-list::-webkit-scrollbar{display:none}
@@ -2940,7 +2943,8 @@ function _parseCats(){
   var _catIcons={
     'pod':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="5"/><line x1="7" y1="8" x2="17" y2="8"/><circle cx="12" cy="14" r="2"/></svg>',
     'coil':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><path d="M10 12h4M10 15h4"/><circle cx="12" cy="18" r=".8" fill="currentColor"/></svg>',
-    'atomizer':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="8" width="10" height="14" rx="2"/><path d="M10 8V5h4v3"/><line x1="7" y1="12" x2="17" y2="12"/><path d="M11 2h2"/><path d="M10 15h4"/></svg>'
+    'atomizer':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="8" width="10" height="14" rx="2"/><path d="M10 8V5h4v3"/><line x1="7" y1="12" x2="17" y2="12"/><path d="M11 2h2"/><path d="M10 15h4"/></svg>',
+    'iced':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 7l-5 5-5-5"/><path d="M17 17l-5-5-5 5"/><path d="M2 12h20"/></svg>'
   };
   function _getCatIcon(name){
     var n=name.toLowerCase();
@@ -2949,7 +2953,7 @@ function _parseCats(){
     if(n.indexOf('manhattan')>-1) return {type:'letter',letter:'M',cls:'freebase'};
     if(n.indexOf('amsterdam')>-1&&n.indexOf('salt')>-1) return {type:'letter',letter:'S',cls:'salt'};
     if(n.indexOf('amsterdam')>-1) return {type:'letter',letter:'A',cls:'freebase'};
-    if(n.indexOf('iced')>-1||n.indexOf('buzlu')>-1) return {type:'letter',letter:'I',cls:'iced'};
+    if(n.indexOf('iced')>-1||n.indexOf('buzlu')>-1) return {type:'svg',svg:_catIcons.iced,cls:'iced-svg'};
     // SVG icons for accessories
     if(n.indexOf('pod')>-1||n.indexOf('kit')>-1) return {type:'svg',svg:_catIcons.pod,cls:'acc'};
     if(n.indexOf('coil')>-1||n.indexOf('kartu')>-1) return {type:'svg',svg:_catIcons.coil,cls:'acc'};
@@ -2973,17 +2977,20 @@ function _parseCats(){
       item._catHref=cat.href;
       item.addEventListener('click',function(e){
         e.stopPropagation();
-        var h=cat.href;
-        var catId=h.match(/-c(\d+)/);
-        if(catId && typeof Ecwid!=='undefined' && Ecwid.openPage){
-          Ecwid.openPage('category',{id:parseInt(catId[1])});
-        } else if(h.indexOf('#')===0){
-          window.location.hash=h;
-        } else if(h.indexOf('#')>0){
-          window.location.hash=h.substring(h.indexOf('#'));
-        } else {
-          window.location.hash='#!/'+encodeURIComponent(cat.name);
-        }
+        _closeSidebar();
+        setTimeout(function(){
+          var h=cat.href;
+          var catId=h.match(/-c(\d+)/);
+          if(catId && typeof Ecwid!=='undefined' && Ecwid.openPage){
+            Ecwid.openPage('category',{id:parseInt(catId[1])});
+          } else if(h.indexOf('#')===0){
+            window.location.hash=h;
+          } else if(h.indexOf('#')>0){
+            window.location.hash=h.substring(h.indexOf('#'));
+          } else {
+            window.location.hash='#!/'+encodeURIComponent(cat.name);
+          }
+        },200);
       });
       _catContainer.appendChild(item);
     });
@@ -3010,7 +3017,10 @@ function _buildNavbar(){
   brand.innerHTML=(logoSrc2?'<img class="ml-brand-logo" src="'+logoSrc2+'" alt="">':'')+'MANHATTAN';
   brand.addEventListener('click',function(e){
     e.stopPropagation();
-    _goStore();
+    if(typeof Ecwid!=='undefined'&&typeof Ecwid.openPage==='function'){
+      Ecwid.openPage('category');
+    }
+    setTimeout(function(){window.scrollTo({top:0,behavior:'smooth'});},300);
   });
 
   // btn = existing toggle (already created above)
@@ -3124,11 +3134,14 @@ function _buildNavbar(){
   function _updateSbUser(name,tier){
     if(name){
       var _initial=name.charAt(0).toUpperCase();
+      // Time-based greeting (TR)
+      var _h=new Date().getHours();
+      var _greet=_h<6?'İyi geceler':_h<12?'Günaydın':_h<18?'İyi günler':'İyi akşamlar';
       // iOS profile card
       sbUser.innerHTML='<div class="ml-sb-profile">'+
         '<div class="ml-sb-avatar">'+_initial+'</div>'+
         '<div class="ml-sb-profile-info">'+
-          '<div class="ml-sb-profile-name">'+name+'</div>'+
+          '<div class="ml-sb-profile-name">'+_greet+', '+name+'</div>'+
           (tier?'<div class="ml-sb-tier-badge"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" width="10" height="10"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>'+tier+' Üye</span></div>':'')+
         '</div>'+
         '<span class="ml-sb-profile-chevron">›</span>'+
@@ -3151,10 +3164,10 @@ function _buildNavbar(){
       var qaDiv=document.createElement('div');
       qaDiv.className='ml-sb-quick';
       var _qaItems=[
-        {iconCls:'gold',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',label:'Çark Çevir',isCark:true,path:null,countSel:null},
         {iconCls:'slate',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',label:'Hesabım',isCark:false,path:'/account',countSel:null},
         {iconCls:'coral',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',label:'Sepetim',isCark:false,path:'/cart',countSel:'.ec-minicart__counter'},
-        {iconCls:'teal',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',label:'Favorilerim',isCark:false,path:'/account/favorites',countSel:null}
+        {iconCls:'teal',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',label:'Favorilerim',isCark:false,path:'/account/favorites',countSel:null},
+        {iconCls:'gold',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',label:'Çark Çevir',isCark:true,path:null,countSel:null}
       ];
       _qaItems.forEach(function(qa){
         var btn=document.createElement('button');
@@ -3396,6 +3409,24 @@ function _buildNavbar(){
     _sidebar.addEventListener('touchcancel',_endSwipe,{passive:true});
   })();
 
+  // ─ Sol kenardan swipe → sidebar aç ─
+  (function(){
+    var edgeX=0,edgeY=0,edgeActive=false;
+    document.addEventListener('touchstart',function(e){
+      if(_sidebar.classList.contains('open')) return;
+      var t=e.touches[0];
+      if(t.clientX<25){edgeX=t.clientX;edgeY=t.clientY;edgeActive=true;}
+      else{edgeActive=false;}
+    },{passive:true});
+    document.addEventListener('touchmove',function(e){
+      if(!edgeActive) return;
+      var dx=e.touches[0].clientX-edgeX;
+      var dy=Math.abs(e.touches[0].clientY-edgeY);
+      if(dx>60&&dy<dx){edgeActive=false;_toggleSidebar();}
+    },{passive:true});
+    document.addEventListener('touchend',function(){edgeActive=false;},{passive:true});
+  })();
+
   // ─ Son görüntülenen ürünler ─
   var _recentSection=document.createElement('div');
   _recentSection.className='ml-sb-recent';
@@ -3426,7 +3457,7 @@ function _buildNavbar(){
       list.slice(0,6).forEach(function(p){
         var el=document.createElement('div');
         el.className='ml-sb-ritem';
-        el.innerHTML='<img src="'+p.img+'" alt="'+p.name+'" loading="lazy"><span>'+p.name+'</span>';
+        el.innerHTML='<img src="'+p.img+'" alt="'+p.name+'" loading="eager" decoding="async"><span>'+p.name+'</span>';
         el.addEventListener('click',function(e){
           e.stopPropagation();
           _closeSidebar();
@@ -3474,7 +3505,17 @@ function _buildNavbar(){
     if(_sidebar.classList.contains('open')){
       _renderRecent();
       setTimeout(_checkScroll,150);
-      // Auto-refresh: cart count
+      // Auto-refresh: greeting + cart count
+      try{
+        var pName=_sidebar.querySelector('.ml-sb-profile-name');
+        if(pName){
+          var _h2=new Date().getHours();
+          var _g2=_h2<6?'İyi geceler':_h2<12?'Günaydın':_h2<18?'İyi günler':'İyi akşamlar';
+          var txt=pName.textContent;
+          var comma=txt.indexOf(',');
+          if(comma>-1) pName.textContent=_g2+txt.substring(comma);
+        }
+      }catch(e3){}
       try{
         if(typeof Ecwid!=='undefined'&&Ecwid.Cart&&Ecwid.Cart.get){
           Ecwid.Cart.get(function(cart){
