@@ -2800,13 +2800,6 @@ body.ml-dark [class*="notification"]:not(.ml-overlay *){
   color:${TX1}!important;
   border-color:${BD}!important;
 }
-/* Notification içindeki kalp ikonu da kırmızı */
-body.ml-dark [class*="notification"] svg,
-body.ml-dark [class*="notification"] svg path{
-  fill:#e94560!important;
-  stroke:#e94560!important;
-  color:#e94560!important;
-}
 
 /* ── ARAMA SONUÇLARI ── */
 body.ml-dark [class*="search-result"],
@@ -2855,23 +2848,19 @@ body.ml-dark [class*="favorites"]{
   background:${BG1}!important;
   color:${TX1}!important;
 }
-/* Favoriye ekle — kalp ikonu dark modda kırmızı */
+/* Favoriye ekle — kalp ikonu dark modda kırmızı (sadece ürün like butonları) */
 body.ml-dark [class*="product-like"] svg,
-body.ml-dark [class*="product-like"] path,
-body.ml-dark .product-details [class*="like"] svg,
-body.ml-dark .product-details [class*="like"] path,
-body.ml-dark [class*="favourite"] svg,
-body.ml-dark [class*="favourite"] path,
-body.ml-dark [class*="favorite"] svg,
-body.ml-dark [class*="favorite"] path{
+body.ml-dark [class*="product-like"] svg path,
+body.ml-dark .product-details [class*="like-btn"] svg,
+body.ml-dark .product-details [class*="like-btn"] svg path{
   color:#e94560!important;
   stroke:#e94560!important;
   fill:#e94560!important;
 }
 body.ml-dark [class*="product-like"].ec-product-added-to-favorites svg,
-body.ml-dark [class*="product-like"].ec-product-added-to-favorites path,
+body.ml-dark [class*="product-like"].ec-product-added-to-favorites svg path,
 body.ml-dark [class*="product-like"][class*="active"] svg,
-body.ml-dark [class*="product-like"][class*="active"] path{
+body.ml-dark [class*="product-like"][class*="active"] svg path{
   fill:#e94560!important;
   stroke:#e94560!important;
 }
@@ -4026,7 +4015,7 @@ function cleanAll(){
     desc.querySelectorAll('p[style],span[style],h1[style],h2[style],h3[style],h4[style],h5[style]').forEach(function(t){
       if(!t.hasAttribute('data-ml-dk')){
         var s=t.getAttribute('style')||'';
-        if(s.indexOf('rgb(255,89')>-1||s.indexOf('rgb(80,222')>-1||s.indexOf('#ffffff')>-1||
+        if(s.indexOf('rgb(255,89')>-1||s.indexOf('rgb(80,222')>-1||s.indexOf('rgb(255,255,60')>-1||s.indexOf('#ffffff')>-1||
            s.indexOf('#ece8df')>-1||s.indexOf('#af8c3e')>-1||s.indexOf('#b5b0a4')>-1||
            s.indexOf('#d4b05e')>-1){
           t.style.removeProperty('color');
@@ -4786,19 +4775,21 @@ function fixLabels(){
         }
       });
       // ── #b8860b → Manhattan DimGold (#af8c3e) dönüşümü ──
-      // #b8860b koyu arka planda soluk/yeşilimsi görünür, tasarım gold'u daha sıcak
+      // _darkScopes #b8860b'yi rgb(255,255,60) yapıyor → style'da artık #b8860b YOK
+      // Bu yüzden data-ml-dk (orijinal style) üzerinden tespit ediyoruz
       desc.querySelectorAll('p[style],span[style],h1[style],h2[style],h3[style],h4[style],h5[style],a[style],div[style]').forEach(function(el){
+        var orig=el.getAttribute('data-ml-dk')||'';
         var s=el.getAttribute('style')||'';
-        if(s.indexOf('#b8860b')<0&&s.indexOf('#B8860B')<0&&s.indexOf('rgba(184,134,11')<0&&s.indexOf('rgba(184, 134, 11')<0) return;
+        var src=orig||s; // orijinal varsa onu kullan
+        if(src.indexOf('#b8860b')<0&&src.indexOf('#B8860B')<0&&src.indexOf('rgba(184,134,11')<0&&src.indexOf('rgba(184, 134, 11')<0) return;
         // --- color: #b8860b → #af8c3e ---
-        if((s.indexOf('color')>-1)&&(s.indexOf('#b8860b')>-1||s.indexOf('#B8860B')>-1)){
-          // background: #b8860b ile karışmasın — sadece color prop kontrol
-          var cm=s.match(/(?:^|;)\s*color\s*:\s*#[bB]8860[bB]/);
+        if(src.indexOf('#b8860b')>-1||src.indexOf('#B8860B')>-1){
+          var cm=src.match(/(?:^|;)\s*color\s*:\s*#[bB]8860[bB]/);
           if(cm) el.style.setProperty('color','#af8c3e','important');
         }
         // --- color: rgba(184,134,11,X) → rgba(175,140,62,X+boost) ---
-        if(s.indexOf('color')>-1&&s.indexOf('rgba(184')>-1){
-          var cm2=s.match(/(?:^|;)\s*color\s*:\s*rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
+        if(src.indexOf('rgba(184')>-1){
+          var cm2=src.match(/color\s*:\s*rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
           if(cm2){
             var op=parseFloat(cm2[1]);
             var newOp=Math.min(1,op<0.5?op+0.15:op);
@@ -4806,53 +4797,50 @@ function fixLabels(){
           }
         }
         // --- background: #b8860b (ince dekoratif çizgiler) ---
-        if(s.indexOf('background')>-1&&(s.indexOf('#b8860b')>-1||s.indexOf('#B8860B')>-1)){
-          // Gradient mi düz renk mi?
-          if(s.indexOf('linear-gradient')>-1&&s.indexOf('#b8860b')>-1){
-            // linear-gradient(to bottom, transparent, #b8860b) gibi
-            var newBg=s.match(/background:\s*(linear-gradient\([^)]+\))/);
+        if(src.indexOf('background')>-1&&(src.indexOf('#b8860b')>-1||src.indexOf('#B8860B')>-1)){
+          if(src.indexOf('linear-gradient')>-1&&src.indexOf('#b8860b')>-1){
+            var newBg=src.match(/background:\s*(linear-gradient\([^)]+\))/);
             if(newBg){
               var warmGrad=newBg[1].replace(/#b8860b/gi,'#af8c3e');
               el.style.setProperty('background',warmGrad,'important');
             }
-          } else if(s.indexOf('background:')>-1||s.indexOf('background-color:')>-1){
-            // Düz background: #b8860b
-            var hasBgHex=s.match(/background(?:-color)?\s*:\s*#[bB]8860[bB]/);
+          } else if(src.indexOf('background:')>-1||src.indexOf('background-color:')>-1){
+            var hasBgHex=src.match(/background(?:-color)?\s*:\s*#[bB]8860[bB]/);
             if(hasBgHex) el.style.setProperty('background','#af8c3e','important');
           }
         }
         // --- background: linear-gradient(...rgba(184,134,11,X)...) ---
-        if(s.indexOf('background')>-1&&s.indexOf('linear-gradient')>-1&&s.indexOf('rgba(184')>-1){
-          var origBg=s.match(/background:\s*(linear-gradient\([^)]+\))/);
+        if(src.indexOf('background')>-1&&src.indexOf('linear-gradient')>-1&&src.indexOf('rgba(184')>-1){
+          var origBg=src.match(/background:\s*(linear-gradient\([^)]+\))/);
           if(origBg){
             var warmBg=origBg[1].replace(/rgba\(184,\s*134,\s*11/g,'rgba(175,140,62');
             el.style.setProperty('background',warmBg,'important');
           }
         }
         // --- background: rgba(184,134,11,X) (düz) — number badges ---
-        if(s.indexOf('background')>-1&&s.indexOf('rgba(184')>-1&&s.indexOf('linear-gradient')<0){
-          var bgm=s.match(/background(?:-color)?\s*:\s*rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
+        if(src.indexOf('background')>-1&&src.indexOf('rgba(184')>-1&&src.indexOf('linear-gradient')<0){
+          var bgm=src.match(/background(?:-color)?\s*:\s*rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
           if(bgm){
             el.style.setProperty('background','rgba(175,140,62,'+bgm[1]+')','important');
           }
         }
         // --- border / border-bottom / border-color: rgba(184,134,11,X) ---
-        if(s.indexOf('border')>-1&&s.indexOf('rgba(184')>-1){
-          var bm=s.match(/rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
+        if(src.indexOf('border')>-1&&src.indexOf('rgba(184')>-1){
+          var bm=src.match(/rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
           if(bm){
-            if(s.indexOf('border-bottom')>-1) el.style.setProperty('border-bottom-color','rgba(175,140,62,'+bm[1]+')','important');
-            else if(s.indexOf('border:')>-1) el.style.setProperty('border-color','rgba(175,140,62,'+bm[1]+')','important');
+            if(src.indexOf('border-bottom')>-1) el.style.setProperty('border-bottom-color','rgba(175,140,62,'+bm[1]+')','important');
+            else if(src.indexOf('border:')>-1) el.style.setProperty('border-color','rgba(175,140,62,'+bm[1]+')','important');
           }
         }
         // --- width:1px + background: rgba(184,...) — dikey ayırıcı çizgiler ---
-        if(s.indexOf('width: 1px')>-1&&s.indexOf('rgba(184')>-1){
-          var dm=s.match(/rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
+        if(src.indexOf('width: 1px')>-1&&src.indexOf('rgba(184')>-1){
+          var dm=src.match(/rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
           if(dm) el.style.setProperty('background','rgba(175,140,62,'+dm[1]+')','important');
         }
       });
       // ── Alıntı işaretleri (" ") — büyük serif tırnak ──
       desc.querySelectorAll('span[style*="font-size: 64px"],span[style*="font-size:64px"],span[style*="font-size: 48px"],span[style*="font-size:48px"]').forEach(function(q){
-        var qs=q.getAttribute('style')||'';
+        var qs=q.getAttribute('data-ml-dk')||q.getAttribute('style')||'';
         if(qs.indexOf('#b8860b')>-1||qs.indexOf('rgba(184')>-1){
           q.style.setProperty('color','#af8c3e','important');
           q.style.setProperty('opacity','0.5','important');
@@ -4875,7 +4863,7 @@ function fixLabels(){
       });
       // ── mn-trio-icon arka plan sıcaklık ──
       desc.querySelectorAll('.mn-trio-icon,[class*="mn-trio-icon"]').forEach(function(ic){
-        var s=ic.getAttribute('style')||'';
+        var s=ic.getAttribute('data-ml-dk')||ic.getAttribute('style')||'';
         if(s.indexOf('rgba(184')>-1){
           ic.style.setProperty('background','linear-gradient(145deg,rgba(175,140,62,.14) 0%,rgba(175,140,62,.05) 100%)','important');
           ic.style.setProperty('border-color','rgba(175,140,62,.2)','important');
