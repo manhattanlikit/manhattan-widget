@@ -3858,7 +3858,7 @@ function _fixAllNow(){
 
 // ─── TEMİZLİK (light mode'a dönünce) ───
 function cleanAll(){
-  // ═══ NÜKLEER RESTORE: data-ml-dk marker'lı TÜM elementleri orijinal style'a döndür ═══
+  // ═══ KATMAN 1: NÜKLEER RESTORE — marker'lı elementleri orijinale döndür ═══
   document.querySelectorAll('[data-ml-dk]').forEach(function(el){
     var orig=el.getAttribute('data-ml-dk');
     if(orig){
@@ -3870,6 +3870,29 @@ function cleanAll(){
     delete el._mlHoverActive;
   });
   cleanStokYok();
+
+  // ═══ KATMAN 2: KAPSAMLI TARAMA — marker'sız elementlerdeki dark mode kalıntıları ═══
+  // Dark mode hex imzaları (JS inline style'larda kullanılan değerler)
+  var _dkSig=/1b1a17|23221e|2c2b26|2d2b27|8b3a3a|ece8df|e8e0d0|c8c0b0|b5b0a4|af8c3e|d4b05e|175,\s*140,\s*62/i;
+  // Temizlenecek CSS property listesi
+  var _dkProps=['color','background','background-color','border-color','border-bottom-color',
+    'border-left-color','border','box-shadow','outline','outline-offset','accent-color'];
+
+  // Ecwid store + cart + checkout + sayfa gövdesi + hakkında — tüm inline style'lı elementler
+  // NOT: [style] selector parent'ın kendisini de yakalar (boşluksuz .class[style])
+  document.querySelectorAll('[style]').forEach(function(el){
+    var css=el.style.cssText;
+    if(!css||!_dkSig.test(css)) return;
+    // Sidebar/topbar/navbar elementlerine DOKUNMA
+    var cn=typeof el.className==='string'?el.className:'';
+    if(cn.indexOf('ml-sb')>-1||cn.indexOf('ml-topbar')>-1||cn.indexOf('ml-motto')>-1||cn.indexOf('ml-brand')>-1||cn.indexOf('ml-nav')>-1) return;
+    // Dark mode imzası bulunan elementlerden renk property'lerini sil
+    _dkProps.forEach(function(p){el.style.removeProperty(p);});
+    // Style tamamen boşaldıysa attribute'u kaldır
+    if(!el.style.cssText.trim()) el.removeAttribute('style');
+  });
+
+  // ═══ KATMAN 3: SPESIFIK TEMİZLİK — DOM injection + class kalıntıları ═══
   // Store bg — dark mode'un transparent override'ını kaldır
   document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
     el.style.removeProperty('background');
@@ -3880,6 +3903,14 @@ function cleanAll(){
   document.querySelectorAll('.ml-rg-fix').forEach(function(el){el.classList.remove('ml-rg-fix');});
   // .D class kaldır (SALT ürünler)
   document.querySelectorAll('.product-details__description .D').forEach(function(d){d.classList.remove('D');});
+
+  // ═══ KATMAN 4: GENIŞ NET — imzasız ama dark mode'dan kalan transparent bg'ler ═══
+  document.querySelectorAll('.float-icons [style], .float-icons__wrap [style]').forEach(function(el){
+    ['background','background-color','border','box-shadow','color','fill'].forEach(function(p){el.style.removeProperty(p);});
+  });
+  document.querySelectorAll('.float-icons__wrap svg[style]').forEach(function(s){
+    s.style.removeProperty('color');s.style.removeProperty('fill');
+  });
 }
 
 // ═══ MARKER SİSTEMİ ═══
