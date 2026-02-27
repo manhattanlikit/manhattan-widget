@@ -110,6 +110,9 @@ var css=`
 .sw-flash{animation:sw-fl .6s ease}
 @keyframes sw-fl{0%{box-shadow:0 0 0 0 rgba(212,176,94,.6)}50%{box-shadow:0 0 60px 20px rgba(212,176,94,.3)}100%{box-shadow:0 0 0 0 rgba(212,176,94,0)}}
 
+.sw-test-badge{position:fixed;top:16px;left:16px;z-index:1000002;padding:6px 14px;border-radius:8px;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);color:#fbbf24;font:700 11px 'Plus Jakarta Sans',sans-serif;letter-spacing:1px;display:none}
+.sw-test-badge.show{display:block}
+
 @media(max-width:640px){
   .sw-wheel-container{width:88vw;height:88vw}
   .sw-btn{padding:13px 40px;font-size:15px}
@@ -174,6 +177,10 @@ function build(){
   // Confetti canvas
   var cc=document.createElement('canvas');cc.className='sw-confetti';cc.id='sw-confetti';
   document.body.appendChild(cc);
+
+  // Test mode badge
+  var tb=document.createElement('div');tb.className='sw-test-badge';tb.id='sw-test-badge';tb.textContent='TEST MODU';
+  document.body.appendChild(tb);
 
   // Backdrop kapatma
   ov.addEventListener('click',function(e){
@@ -454,15 +461,13 @@ function initDrag(){
 // ====== SERBEST DÖNÜŞ (spin tetiklemedi) ======
 function startFreeSpin(vel){
   if(Math.abs(vel)<0.01)return;
-  var v=vel*16; // frame-based velocity
+  var v=Math.abs(vel)*16; // Forward-only, frame-based velocity
   function frame(){
     v*=0.96; // Sürtünme
     _rotation+=v;
     drawWheel(_rotation);
-    var segNow=Math.floor(((_rotation%360+360)%360)/SA)%N;
-    // Tick ses
-    if(Math.abs(v)>0.3)tick();
-    if(Math.abs(v)>0.15){
+    if(v>0.3)tick();
+    if(v>0.15){
       _freeSpinId=requestAnimationFrame(frame);
     }else{
       _freeSpinId=null;
@@ -479,16 +484,15 @@ async function startMomentumThenSpin(vel){
   btn.disabled=true;btn.textContent='Çevriliyor...';msg('');
   document.getElementById('sw-x').style.display='none';
 
-  // Hemen momentum ile dönmeye başla
-  var momentumVel=vel*16;
+  // Forward-only: hız her zaman pozitif
+  var momentumVel=Math.abs(vel)*16;
   var momentumActive=true;
   function momentumFrame(){
     if(!momentumActive)return;
     _rotation+=momentumVel;
-    momentumVel*=0.995; // Yavaş azalma — API cevabı gelene kadar dönmeye devam
-    if(Math.abs(momentumVel)<0.5) momentumVel=momentumVel>0?2:-2; // Minimum hız koru
+    momentumVel*=0.995;
+    if(momentumVel<0.5) momentumVel=2; // Minimum hız koru
     drawWheel(_rotation);
-    var segNow=Math.floor(((_rotation%360+360)%360)/SA)%N;
     tick();
     if(momentumActive) requestAnimationFrame(momentumFrame);
   }
@@ -503,18 +507,20 @@ async function startMomentumThenSpin(vel){
     clearTimeout(tout);
     var data=await resp.json();
 
-    // Momentum durdur
+    // Handoff: mevcut hızı yakala, momentum durdur
+    var handoffDegPerMs=momentumVel/16;
     momentumActive=false;
+
+    // Test mode senkron
+    if(data.testMode!==undefined) _applyTestMode(data.testMode);
 
     if(!data.ok){
       handleSpinError(data,btn);
       return;
     }
 
-    // Doğal animasyonla hedefe git
-    await animateToTarget(data.segment,data.angleOffset||0);
-
-    // Sonuç göster
+    // Hızı devret — duraksamasız geçiş
+    await animateToTarget(data.segment,data.angleOffset||0,handoffDegPerMs);
     await showResult(data);
 
   }catch(err){
@@ -523,8 +529,7 @@ async function startMomentumThenSpin(vel){
     else msg('Bağlantı hatası','err');
   }
 
-  btn.disabled=_spunSession;btn.textContent=_spunSession?'ÇEVRİLDİ':'ÇEVİR!';
-  document.getElementById('sw-x').style.display='';
+  syncUI();
   _spinning=false;
 }
 
@@ -562,14 +567,19 @@ async function swSpin(){
     clearTimeout(tout);
     var data=await resp.json();
 
+    // Handoff: ramp hızını yakala, durdur
+    var handoffDegPerMs=rampSpeed/16;
     rampActive=false;
+
+    // Test mode senkron
+    if(data.testMode!==undefined) _applyTestMode(data.testMode);
 
     if(!data.ok){
       handleSpinError(data,btn);
       return;
     }
 
-    await animateToTarget(data.segment,data.angleOffset||0);
+    await animateToTarget(data.segment,data.angleOffset||0,handoffDegPerMs);
     await showResult(data);
 
   }catch(err){
@@ -578,27 +588,48 @@ async function swSpin(){
     else msg('Bağlantı hatası','err');
   }
 
-  btn.disabled=_spunSession;btn.textContent=_spunSession?'ÇEVRİLDİ':'ÇEVİR!';
-  document.getElementById('sw-x').style.display='';
+  syncUI();
   _spinning=false;
 }
 
-// ====== DOĞAL HEDEF ANİMASYON ======
-function animateToTarget(segment,angleOffset){
+// ====== DOĞAL HEDEF ANİMASYON (handoff-aware) ======
+function animateToTarget(segment,angleOffset,handoffVel){
   return new Promise(function(resolve){
     var cv=document.getElementById('sw-cv');if(!cv)return resolve();
 
+    // handoffVel: deg/ms at handoff. Always forward.
+    handoffVel=Math.abs(handoffVel||0);
+
     // Hedef açıyı hesapla
     var target=360-segment*SA-SA/2+(angleOffset||0);
-    // Mevcut dönüş hızına göre ek turlar
-    var extraSpins=(4+Math.floor(Math.random()*3))*360;
     var startRot=_rotation;
     var currentAngle=(startRot%360+360)%360;
-    var end=startRot+extraSpins+((target-currentAngle+360)%360);
-    if(end-startRot<1440)end+=720; // Minimum 4 tur
+    var end=startRot+((target-currentAngle+360)%360);
 
-    // Süre: 5-8 saniye arası (rastgele, doğal)
-    var duration=5000+Math.random()*3000;
+    // Forward-only: en az 4 tur ekle
+    while(end-startRot<1440)end+=360;
+
+    var totalDist=end-startRot;
+
+    // Süre: hızlı handoff → daha uzun coast; buton → 5-7sn
+    var duration;
+    if(handoffVel>0.01){
+      duration=Math.max(4000,Math.min(9000,totalDist/(handoffVel*60)));
+    }else{
+      duration=5000+Math.random()*2000;
+    }
+
+    // Normalized handoff velocity: v0 = handoffVel * duration / totalDist
+    var v0=handoffVel>0?(handoffVel*duration/totalDist):0;
+
+    // Monotonluk garantisi: v0 ≤ 3 (cubic Hermite sınırı)
+    // Gerekirse mesafe artır
+    while(v0>2.8&&totalDist<36000){
+      end+=360;totalDist=end-startRot;
+      v0=handoffVel*duration/totalDist;
+    }
+    v0=Math.min(v0,2.8);
+
     var startTime=null;
     var lastSeg=-1;
 
@@ -606,24 +637,24 @@ function animateToTarget(segment,angleOffset){
       if(!startTime)startTime=ts;
       var t=Math.min((ts-startTime)/duration,1);
 
-      // Doğal yavaşlama eğrisi: hızlı başla, yavaş dur
-      // Çoklu aşama: ilk %20 sabit hız, sonra üstel azalma
+      // Cubic Hermite: h(0)=0, h(1)=1, h'(0)=v0, h'(1)=0
+      // h(t) = v0*t + (3-2*v0)*t² + (v0-2)*t³
       var ease;
-      if(t<0.15){
-        ease=t/0.15*0.15; // Sabit hız bölgesi
+      if(v0>0.1){
+        ease=v0*t+(3-2*v0)*t*t+(v0-2)*t*t*t;
       }else{
-        var t2=(t-0.15)/0.85;
-        ease=0.15+0.85*(1-Math.pow(1-t2,3.8)); // Ağır ease-out
+        // Buton spin — standart ease-out
+        ease=1-Math.pow(1-t,3.8);
       }
 
-      // Son %5'te hafif titreme (doğal duruş)
+      // Son %8: hafif titreme (doğal duruş)
       var wobble=0;
       if(t>0.92){
         var wt=(t-0.92)/0.08;
-        wobble=Math.sin(wt*Math.PI*3)*1.5*(1-wt);
+        wobble=Math.sin(wt*Math.PI*3)*1.2*(1-wt);
       }
 
-      _rotation=startRot+(end-startRot)*ease+wobble;
+      _rotation=startRot+totalDist*ease+wobble;
       drawWheel(_rotation);
 
       // Tick ses
@@ -661,8 +692,8 @@ async function showResult(data){
   if(!_TEST_MODE)_spunSession=true;
   if(data.cooldownHours) setCooldown(data.cooldownHours*3600000);
 
-  // Sidebar cooldown güncelle
-  if(window._mlUpdateSpinCooldown) window._mlUpdateSpinCooldown();
+  // Tüm UI state senkron
+  syncUI();
 
   if(isNearMiss&&data.type!=='none'){
     setTimeout(function(){
@@ -680,10 +711,8 @@ function handleSpinError(data,btn){
   }else{
     msg(data.error||'Bir hata oluştu','err');
   }
-  btn.disabled=_spunSession;btn.textContent=_spunSession?'ÇEVRİLDİ':'ÇEVİR!';
-  document.getElementById('sw-x').style.display='';
+  syncUI();
   _spinning=false;
-  if(window._mlUpdateSpinCooldown) window._mlUpdateSpinCooldown();
 }
 
 function delay(ms){return new Promise(function(r){setTimeout(r,ms)})}
@@ -767,9 +796,12 @@ function showReady(){
   var gate=document.getElementById('sw-gate');
   var btn=document.getElementById('sw-btn');
   gate.style.display='none';btn.style.display='';
-  btn.disabled=_spunSession;
-  btn.textContent=_spunSession?'ÇEVRİLDİ':'ÇEVİR!';
-  msg(_spunSession?getCountdownText():'Fırlat veya ÇEVİR butonuna bas!');
+  var blocked=_spunSession&&!_TEST_MODE;
+  btn.disabled=blocked;
+  btn.textContent=blocked?'ÇEVRİLDİ':_TEST_MODE?'TEST ÇEVİR':'ÇEVİR!';
+  if(blocked){msg(getCountdownText())}
+  else if(_TEST_MODE){msg('Test modu aktif — sınırsız çevirme')}
+  else{msg('Fırlat veya ÇEVİR butonuna bas!')}
 }
 
 function showGate(){
@@ -782,6 +814,9 @@ function openOverlay(){
   var ov=document.getElementById('sw-ov');
   ov.classList.add('open');
   document.getElementById('sw-prize').classList.remove('show');
+
+  // Test mode config fetch (non-blocking)
+  _fetchTestMode();
 
   if(isLoggedIn()){showReady();return}
 
@@ -874,17 +909,61 @@ function setCooldown(remainMs){
   if(remainMs>0) _cooldownEnd=Date.now()+remainMs;
 }
 function getCountdownText(){
-  if(!_cooldownEnd) return'Tekrar çevirebilirsiniz!';
+  if(!_cooldownEnd) return'';
   var ms=_cooldownEnd-Date.now();
-  if(ms<=0){_cooldownEnd=null;return'Tekrar çevirebilirsiniz!';}
+  if(ms<=0){_cooldownEnd=null;return'';}
   var hrs=Math.floor(ms/3600000);
   var mins=Math.floor((ms%3600000)/60000);
   if(hrs>0) return'Sonraki hak: '+hrs+'s '+mins+'dk';
   return'Sonraki hak: '+mins+'dk';
 }
-// Sidebar erişimi
 function getCooldownEnd(){return _cooldownEnd}
 function isSpunSession(){return _spunSession}
+
+// ====== TEST MODE ======
+function _applyTestMode(on){
+  _TEST_MODE=!!on;
+  var badge=document.getElementById('sw-test-badge');
+  if(badge){
+    if(_TEST_MODE) badge.classList.add('show');
+    else badge.classList.remove('show');
+  }
+  if(_TEST_MODE) _spunSession=false; // test modda blok yok
+}
+
+function _fetchTestMode(){
+  try{
+    fetch(GAS_URL+'?action=spin-check').then(function(r){return r.json()}).then(function(d){
+      if(d&&d.ok) _applyTestMode(d.testMode);
+      syncUI();
+    }).catch(function(){});
+  }catch(e){}
+}
+
+// ====== UI STATE SENKRON (tek kaynak) ======
+function syncUI(){
+  var btn=document.getElementById('sw-btn');
+  var x=document.getElementById('sw-x');
+  if(btn){
+    var blocked=_spunSession&&!_TEST_MODE;
+    btn.disabled=blocked||_spinning;
+    if(_spinning){btn.textContent='Çevriliyor...'}
+    else if(blocked){btn.textContent='ÇEVRİLDİ'}
+    else if(_TEST_MODE){btn.textContent='TEST ÇEVİR'}
+    else{btn.textContent='ÇEVİR!'}
+  }
+  if(x) x.style.display=_spinning?'none':'';
+
+  // Overlay mesaj
+  if(!_spinning){
+    var blocked2=_spunSession&&!_TEST_MODE;
+    if(blocked2){msg(getCountdownText()||'Çevrildi')}
+    else if(_TEST_MODE){msg('Test modu aktif — sınırsız çevirme')}
+  }
+
+  // Sidebar countdown güncelle
+  if(window._mlUpdateSpinCooldown) window._mlUpdateSpinCooldown();
+}
 
 // ====== SES TOGGLE ======
 function swToggleSound(){
@@ -905,9 +984,21 @@ window.openOverlay=openOverlay;window.swClosePrize=swClosePrize;
 window._swGetCooldownEnd=getCooldownEnd;
 window._swIsSpunSession=isSpunSession;
 window._swGetCountdownText=getCountdownText;
+window._swSyncUI=syncUI;
 
 // ====== INIT ======
-function init(){build();drawWheel(0);initDrag()}
+function init(){build();drawWheel(0);initDrag();
+  // Sidebar countdown: 30sn aralıkla canlı güncelleme
+  setInterval(function(){
+    if(window._mlUpdateSpinCooldown) window._mlUpdateSpinCooldown();
+    // Cooldown bitince otomatik sıfırla
+    if(_cooldownEnd&&Date.now()>=_cooldownEnd){
+      _cooldownEnd=null;
+      if(!_TEST_MODE){}else{_spunSession=false}
+      syncUI();
+    }
+  },30000);
+}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
 else init();
 
