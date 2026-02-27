@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Çark Yönetimi — Manhattan Likit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1a1e;--bg2:#2a2a2e;--bg3:#333338;--tx:#e5e5e7;--tx2:#a1a1a6;--tx3:#6e6e73;--gold:#c9a24e;--goldL:#d4b060;--goldLL:#3d3422;--green:#34c759;--red:#ff453a;--blue:#0a84ff;--border:rgba(255,255,255,.1)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);min-height:100vh}
+.container{max-width:1100px;margin:0 auto;padding:20px}
+
+/* ─── PIN Screen ─── */
+#pin-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+#pin-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:48px 40px;width:380px;max-width:100%;text-align:center}
+#pin-box h1{font-size:15px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:8px}
+#pin-box h2{font-size:26px;font-weight:800;margin-bottom:28px;color:var(--tx)}
+#pin-input{width:100%;padding:14px;font-size:32px;text-align:center;letter-spacing:14px;border:2px solid var(--border);border-radius:12px;background:var(--bg);color:var(--tx);font-family:inherit;outline:none;margin-bottom:12px}
+#pin-input:focus{border-color:var(--gold)}
+#pin-err{color:var(--red);font-size:15px;min-height:22px;margin-bottom:4px}
+
+/* ─── Header ─── */
+.header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.header h1{font-size:22px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--goldL)}
+.header h1 span{font-size:15px;color:var(--tx3);font-weight:400;letter-spacing:0;margin-left:8px;text-transform:none}
+
+/* ─── Buttons ─── */
+.btn{padding:14px 28px;border:none;border-radius:10px;font-family:inherit;font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:8px}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--goldL));color:#fff}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,162,78,.3)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--tx2)}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* ─── Segment Cards ─── */
+.seg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.seg-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px 16px;text-align:center;transition:all .2s;position:relative}
+.seg-card.off{opacity:.4}
+.seg-card.off .seg-pct{color:var(--tx3)}
+.seg-label{font-size:20px;font-weight:800;margin-bottom:2px}
+.seg-sub{font-size:13px;color:var(--tx2);margin-bottom:12px;min-height:18px}
+.seg-type-badge{display:inline-block;padding:3px 8px;border-radius:4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.seg-type-percent{background:rgba(212,176,94,.12);color:var(--gold)}
+.seg-type-shipping{background:rgba(94,196,160,.12);color:#5ec4a0}
+.seg-type-grand{background:rgba(255,69,58,.12);color:var(--red)}
+.seg-type-none{background:rgba(255,255,255,.06);color:var(--tx3)}
+.seg-weight-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px}
+.seg-weight-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.seg-weight-btn:hover{border-color:var(--gold);color:var(--gold)}
+.seg-weight-val{font-size:28px;font-weight:800;color:var(--tx);min-width:44px;text-align:center}
+.seg-weight-input{width:56px;font-size:24px;font-weight:800;color:var(--tx);text-align:center;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 2px;outline:none;font-family:inherit;-moz-appearance:textfield}
+.seg-weight-input::-webkit-outer-spin-button,.seg-weight-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.seg-weight-input:focus{border-color:var(--gold)}
+.seg-pct{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:10px}
+.seg-toggle{display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:14px;font-weight:600;color:var(--tx2)}
+.seg-toggle-dot{width:10px;height:10px;border-radius:50%;transition:all .2s}
+.seg-toggle-dot.on{background:var(--green)}
+.seg-toggle-dot.off{background:var(--red)}
+
+/* ─── Donut Chart ─── */
+.chart-row{display:flex;align-items:center;gap:24px;margin-bottom:28px;padding:20px;background:var(--bg2);border:1px solid var(--border);border-radius:14px}
+.chart-svg{width:180px;height:180px;flex-shrink:0}
+.chart-legend{flex:1;display:flex;flex-wrap:wrap;gap:8px 16px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--tx2)}
+.legend-dot{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+
+/* ─── Settings Panel ─── */
+.settings{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:24px}
+.setting-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px}
+.setting-label{font-size:14px;color:var(--tx2);margin-bottom:8px;font-weight:600}
+.setting-val{font-size:28px;font-weight:800;color:var(--goldL);margin-bottom:4px}
+.setting-desc{font-size:12px;color:var(--tx3)}
+.setting-ctrl{display:flex;align-items:center;gap:8px;margin-top:10px}
+.setting-ctrl select,.setting-ctrl input{padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-family:inherit;font-size:16px;font-weight:600;outline:none}
+.setting-ctrl select:focus,.setting-ctrl input:focus{border-color:var(--gold)}
+.setting-ctrl select{-webkit-appearance:none;appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a1a1a6' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.slider-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.slider-row input[type=range]{flex:1;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--bg3);outline:none}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--gold);cursor:pointer;border:2px solid var(--bg)}
+.slider-pct{font-size:18px;font-weight:800;color:var(--goldL);min-width:52px;text-align:right}
+
+/* ─── Stats ─── */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center}
+.stat-val{font-size:38px;font-weight:800;color:var(--goldL)}
+.stat-label{font-size:14px;color:var(--tx3);margin-top:4px}
+.recent-list{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;max-height:320px;overflow-y:auto}
+.recent-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:14px}
+.recent-item:last-child{border-bottom:none}
+.recent-email{color:var(--tx2)}
+.recent-prize{font-weight:700;color:var(--gold)}
+.recent-date{color:var(--tx3);font-size:12px}
+
+/* ─── Action Bar ─── */
+.action-bar{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.save-indicator{display:none;color:var(--gold);font-size:15px;font-weight:700;align-self:center;margin-left:8px}
+.save-indicator.show{display:inline-flex;align-items:center;gap:4px}
+
+/* ─── Section Title ─── */
+.section-title{font-size:18px;font-weight:700;color:var(--goldL);margin-bottom:14px;display:flex;align-items:center;gap:8px;letter-spacing:.5px}
+
+/* ─── Status ─── */
+.status-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:15px;color:var(--tx2);display:flex;align-items:center;gap:8px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ─── Toast ─── */
+.toast{position:fixed;top:20px;right:20px;padding:14px 24px;border-radius:10px;font-size:16px;font-weight:700;z-index:9999;transform:translateY(-20px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ok{background:var(--green);color:#fff}
+.toast-err{background:var(--red);color:#fff}
+
+/* ─── Responsive ─── */
+@media(max-width:768px){
+  .seg-grid{grid-template-columns:repeat(2,1fr)}
+  .settings{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr}
+  .chart-row{flex-direction:column;align-items:center}
+  .btn{font-size:16px;padding:12px 20px;width:100%;justify-content:center}
+  .action-bar{flex-direction:column}
+}
+@media(max-width:420px){
+  .seg-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- PIN Screen -->
+<div id="pin-screen">
+  <div id="pin-box">
+    <h1>Manhattan Likit</h1>
+    <h2>Çark Yönetimi</h2>
+    <input type="password" id="pin-input" maxlength="4" pattern="\d{4}" inputmode="numeric" autofocus placeholder="● ● ● ●" onkeydown="if(event.key==='Enter')verifyPin()">
+    <div id="pin-err"></div>
+    <button class="btn btn-gold" onclick="verifyPin()" style="width:100%;justify-content:center;font-size:18px;padding:16px;margin-top:4px">Giriş</button>
+  </div>
+</div>
+
+<!-- Main App -->
+<div id="app" style="display:none">
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header">
+      <h1>Çark Yönetimi <span>Ödül ayarları & istatistikler</span></h1>
+      <button class="btn btn-outline" onclick="loadStats()" style="font-size:14px;padding:10px 16px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-11.36L1 10"/></svg>
+        Yenile
+      </button>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="status-bar">
+      <div class="status-dot"></div>
+      Yükleniyor...
+    </div>
+
+    <!-- Segment Cards -->
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/></svg>
+      Dilim Ödülleri
+    </div>
+    <div class="seg-grid" id="seg-grid"></div>
+
+    <!-- Chart -->
+    <div class="chart-row" id="chart-row">
+      <svg class="chart-svg" id="donut-chart" viewBox="0 0 200 200"></svg>
+      <div class="chart-legend" id="chart-legend"></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Genel Ayarlar
+    </div>
+    <div class="settings">
+      <div class="setting-card">
+        <div class="setting-label">Cooldown (Bekleme Süresi)</div>
+        <div class="setting-val" id="cd-val">24s</div>
+        <div class="setting-desc">Tekrar çevirme arası</div>
+        <div class="setting-ctrl">
+          <select id="cd-select" onchange="onCdChange(this)">
+            <option value="6">6 saat</option>
+            <option value="12">12 saat</option>
+            <option value="24" selected>24 saat</option>
+            <option value="48">48 saat</option>
+            <option value="72">3 gün</option>
+            <option value="168">7 gün</option>
+          </select>
+        </div>
+      </div>
+      <div class="setting-card">
+        <div class="setting-label">Kupon Geçerlilik</div>
+        <div class="setting-val" id="cpn-val">7g</div>
+        <div class="setting-desc">Kupon sona erme süresi</div>
+        <div class="setting-ctrl">
+          <select id="cpn-select" onchange="onCpnChange(this)">
+            <option value="1">1 gün</option>
+            <option value="3">3 gün</option>
+            <option value="7" selected>7 gün</option>
+            <option value="14">14 gün</option>
+            <option value="30">30 gün</option>
+          </select>
+        </div>
+      </div>
+      <div class="setting-card">
+        <div class="setting-label">Near-Miss Şansı</div>
+        <div class="setting-val" id="nm-val">%40</div>
+        <div class="setting-desc">"Az kalsın kazanıyordun" efekti</div>
+        <div class="slider-row">
+          <input type="range" id="nm-slider" min="0" max="80" value="40" oninput="onNmChange(this)">
+          <span class="slider-pct" id="nm-pct">%40</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <button class="btn btn-gold" id="save-btn" onclick="saveConfig()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Kaydet
+      </button>
+      <button class="btn btn-outline" onclick="loadConfig()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-11.36L1 10"/></svg>
+        Sıfırla
+      </button>
+      <span class="save-indicator" id="save-ind">● Kaydedilmemiş değişiklik</span>
+    </div>
+
+    <!-- Stats -->
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      İstatistikler
+    </div>
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="stat-val" id="s-total">—</div><div class="stat-label">Toplam Çevirme</div></div>
+      <div class="stat-card"><div class="stat-val" id="s-7d">—</div><div class="stat-label">Son 7 Gün</div></div>
+      <div class="stat-card"><div class="stat-val" id="s-30d">—</div><div class="stat-label">Son 30 Gün</div></div>
+    </div>
+
+    <!-- Recent Spins -->
+    <div class="section-title" style="margin-top:8px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Son Çevirmeler
+    </div>
+    <div class="recent-list" id="recent-list">
+      <div style="color:var(--tx3);text-align:center;padding:20px">Yükleniyor...</div>
+    </div>
+
+    <div style="text-align:center;padding:28px 0;font-size:13px;color:var(--tx3)">Manhattan Likit — Çark Yönetim Paneli</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GAS_URL='https://script.google.com/macros/s/AKfycbxJKzibWzYOmapPvghMPxbt9u5vjGQyxCXZae4FKfUEsjCMIWEqkyI2CM_CovOGrzTbXQ/exec';
+let PIN='';
+let CFG=null;
+let _dirty=false;
+let _loading=false;
+
+// B10: Kaydedilmemiş uyarı
+window.addEventListener('beforeunload',function(e){
+  if(_dirty){e.preventDefault();e.returnValue='';}
+});
+
+const SEG_COLORS=['#d4b05e','#ff453a','#7eb8da','#5ec4a0','#e8c36a','#888','#ffc857','#b08ed4'];
+
+// ─── PIN ───
+async function verifyPin(){
+  var p=document.getElementById('pin-input').value.trim();
+  if(p.length!==4){document.getElementById('pin-err').textContent='4 haneli PIN girin';return}
+  try{
+    var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'kargoVerifyPin',pin:p})});
+    var d=await r.json();
+    if(d.success){
+      PIN=p;
+      document.getElementById('pin-screen').style.display='none';
+      document.getElementById('app').style.display='block';
+      loadConfig();
+      loadStats();
+    }else{
+      document.getElementById('pin-err').textContent='Yanlış PIN';
+      document.getElementById('pin-input').value='';
+      document.getElementById('pin-input').focus();
+    }
+  }catch(e){document.getElementById('pin-err').textContent='Bağlantı hatası';}
+}
+
+async function gasPost(body){
+  body.pin=PIN;
+  var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(body)});
+  return await r.json();
+}
+
+// ─── CONFIG LOAD ───
+async function loadConfig(){
+  try{
+    setStatus('Ayarlar yükleniyor...');
+    var d=await gasPost({action:'spinGetConfig'});
+    if(!d.ok){toast('Hata: '+(d.error||'Bilinmeyen'),'err');return}
+    CFG=d.config;
+    _loading=true;
+    renderSegments();
+    renderSettings();
+    renderChart();
+    _loading=false;
+    _dirty=false;
+    markClean();
+    setStatus('Ayarlar yüklendi');
+  }catch(e){toast('Bağlantı hatası','err')}
+}
+
+// ─── CONFIG SAVE ───
+async function saveConfig(){
+  if(!CFG)return;
+  var btn=document.getElementById('save-btn');
+  btn.disabled=true;btn.textContent='Kaydediliyor...';
+  try{
+    readFromUI();
+    var d=await gasPost({action:'spinSaveConfig',config:CFG});
+    if(d.ok){
+      toast('Ayarlar kaydedildi','ok');
+      _dirty=false;markClean();
+    }else{
+      toast('Hata: '+(d.error||'Bilinmeyen'),'err');
+    }
+  }catch(e){toast('Kayıt hatası','err')}
+  btn.disabled=false;btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Kaydet';
+}
+
+function readFromUI(){
+  CFG.cooldownHours=parseInt(document.getElementById('cd-select').value);
+  CFG.couponValidityDays=parseInt(document.getElementById('cpn-select').value);
+  CFG.nearMissChance=parseInt(document.getElementById('nm-slider').value)/100;
+  // Segments already updated via +/- and toggle
+}
+
+// ─── RENDER SEGMENTS ───
+function renderSegments(){
+  var grid=document.getElementById('seg-grid');
+  grid.innerHTML='';
+  CFG.segments.forEach(function(seg,i){
+    var isOff=seg.active===false;
+    var typeClass={'percent':'percent','shipping':'shipping','grand':'grand','none':'none'}[seg.type]||'none';
+    var card=document.createElement('div');
+    card.className='seg-card'+(isOff?' off':'');
+    card.id='seg-'+i;
+    card.innerHTML=
+      '<div class="seg-type-badge seg-type-'+typeClass+'">'+seg.type.toUpperCase()+'</div>'+
+      '<div class="seg-label" style="color:'+SEG_COLORS[i%8]+'">'+seg.label+'</div>'+
+      '<div class="seg-sub">'+(seg.discount>0?'İndirim: %'+seg.discount:seg.type==='shipping'?'Kargo bedava':seg.type==='grand'?'Büyük ödül':'Ödül yok')+'</div>'+
+      '<div class="seg-weight-row">'+
+        '<button class="seg-weight-btn" onclick="adjWeight('+i+',-5)">−5</button>'+
+        '<input type="number" class="seg-weight-input" id="sw-'+i+'" value="'+seg.weight+'" min="0" max="100" onchange="setWeight('+i+',this.value)" onclick="this.select()">'+
+        '<button class="seg-weight-btn" onclick="adjWeight('+i+',+5)">+5</button>'+
+      '</div>'+
+      '<div class="seg-pct" id="sp-'+i+'">'+calcPct(i)+'</div>'+
+      '<div class="seg-toggle" onclick="toggleSeg('+i+')">'+
+        '<span class="seg-toggle-dot '+(isOff?'off':'on')+'"></span>'+
+        (isOff?'KAPALI':'AKTİF')+
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function calcPct(idx){
+  var total=0;
+  CFG.segments.forEach(function(s){if(s.active!==false)total+=s.weight});
+  if(total===0)return'%0.0';
+  var seg=CFG.segments[idx];
+  if(seg.active===false)return'%0.0';
+  return'%'+(seg.weight/total*100).toFixed(1);
+}
+
+function updateAllPcts(){
+  CFG.segments.forEach(function(_,i){
+    var el=document.getElementById('sp-'+i);
+    if(el) el.textContent=calcPct(i);
+  });
+  renderChart();
+}
+
+function adjWeight(i,delta){
+  var seg=CFG.segments[i];
+  var nw=Math.max(0,Math.min(100,seg.weight+delta));
+  seg.weight=nw;
+  document.getElementById('sw-'+i).value=nw;
+  updateAllPcts();
+  markDirty();
+}
+
+function setWeight(i,val){
+  var nw=Math.max(0,Math.min(100,parseInt(val)||0));
+  CFG.segments[i].weight=nw;
+  document.getElementById('sw-'+i).value=nw;
+  updateAllPcts();
+  markDirty();
+}
+
+function toggleSeg(i){
+  var seg=CFG.segments[i];
+  seg.active=seg.active===false?true:false;
+  renderSegments();
+  updateAllPcts();
+  markDirty();
+}
+
+// ─── DONUT CHART ───
+function renderChart(){
+  var svg=document.getElementById('donut-chart');
+  var legend=document.getElementById('chart-legend');
+  svg.innerHTML='';legend.innerHTML='';
+  
+  var total=0;
+  CFG.segments.forEach(function(s){if(s.active!==false)total+=s.weight});
+  if(total===0){svg.innerHTML='<text x="100" y="105" text-anchor="middle" fill="#6e6e73" font-size="14">Aktif dilim yok</text>';return}
+  
+  var cx=100,cy=100,r=80,ir=50;
+  var angle=-90;
+  
+  CFG.segments.forEach(function(seg,i){
+    if(seg.active===false||seg.weight===0)return;
+    var pct=seg.weight/total;
+    
+    // %100 edge case — tam daire SVG arc ile çizilemez
+    if(pct>=0.9999){
+      var circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx',cx);circle.setAttribute('cy',cy);circle.setAttribute('r',(r+ir)/2);
+      circle.setAttribute('fill','none');circle.setAttribute('stroke',SEG_COLORS[i%8]);
+      circle.setAttribute('stroke-width',r-ir);circle.setAttribute('opacity','0.85');
+      svg.appendChild(circle);
+      angle+=360;
+      legend.innerHTML+='<div class="legend-item"><span class="legend-dot" style="background:'+SEG_COLORS[i%8]+'"></span>'+seg.label+' <b>100%</b></div>';
+      return;
+    }
+    
+    var a1=angle*Math.PI/180;
+    var a2=(angle+pct*360)*Math.PI/180;
+    var large=pct>0.5?1:0;
+    
+    var x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+    var x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+    var ix1=cx+ir*Math.cos(a2),iy1=cy+ir*Math.sin(a2);
+    var ix2=cx+ir*Math.cos(a1),iy2=cy+ir*Math.sin(a1);
+    
+    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    path.setAttribute('d','M '+x1+' '+y1+' A '+r+' '+r+' 0 '+large+' 1 '+x2+' '+y2+' L '+ix1+' '+iy1+' A '+ir+' '+ir+' 0 '+large+' 0 '+ix2+' '+iy2+' Z');
+    path.setAttribute('fill',SEG_COLORS[i%8]);
+    path.setAttribute('opacity','0.85');
+    path.setAttribute('stroke',getComputedStyle(document.body).getPropertyValue('--bg').trim());
+    path.setAttribute('stroke-width','2');
+    svg.appendChild(path);
+    
+    angle+=pct*360;
+    
+    legend.innerHTML+='<div class="legend-item"><span class="legend-dot" style="background:'+SEG_COLORS[i%8]+'"></span>'+seg.label+' <b>'+(pct*100).toFixed(1)+'%</b></div>';
+  });
+  
+  // Center text
+  var ct=document.createElementNS('http://www.w3.org/2000/svg','text');
+  ct.setAttribute('x','100');ct.setAttribute('y','105');
+  ct.setAttribute('text-anchor','middle');ct.setAttribute('fill','#e5e5e7');
+  ct.setAttribute('font-size','14');ct.setAttribute('font-weight','700');
+  ct.textContent=total+' toplam';
+  svg.appendChild(ct);
+}
+
+// ─── SETTINGS ───
+function renderSettings(){
+  document.getElementById('cd-select').value=CFG.cooldownHours||24;
+  onCdChange(document.getElementById('cd-select'));
+  document.getElementById('cpn-select').value=CFG.couponValidityDays||7;
+  onCpnChange(document.getElementById('cpn-select'));
+  var nm=Math.round((CFG.nearMissChance||0.4)*100);
+  document.getElementById('nm-slider').value=nm;
+  onNmChange(document.getElementById('nm-slider'));
+}
+
+function onCdChange(sel){
+  var h=parseInt(sel.value);
+  document.getElementById('cd-val').textContent=h>=24?(h/24)+'g':h+'s';
+  markDirty();
+}
+function onCpnChange(sel){
+  document.getElementById('cpn-val').textContent=sel.value+'g';
+  markDirty();
+}
+function onNmChange(sl){
+  document.getElementById('nm-val').textContent='%'+sl.value;
+  document.getElementById('nm-pct').textContent='%'+sl.value;
+  markDirty();
+}
+
+// ─── STATS ───
+async function loadStats(){
+  try{
+    var d=await gasPost({action:'spinGetStats'});
+    if(!d.ok)return;
+    var s=d.stats;
+    document.getElementById('s-total').textContent=s.total;
+    document.getElementById('s-7d').textContent=s.last7;
+    document.getElementById('s-30d').textContent=s.last30||0;
+    
+    var list=document.getElementById('recent-list');
+    if(!s.recent||s.recent.length===0){
+      list.innerHTML='<div style="color:var(--tx3);text-align:center;padding:20px">Henüz çevirme yok</div>';
+      return;
+    }
+    list.innerHTML='';
+    s.recent.forEach(function(r){
+      var item=document.createElement('div');
+      item.className='recent-item';
+      item.innerHTML='<span class="recent-email">'+r.email+'</span><span class="recent-prize">'+r.prize+'</span><span class="recent-date">'+r.date+'</span>';
+      list.appendChild(item);
+    });
+  }catch(e){}
+}
+
+// ─── UI HELPERS ───
+function markDirty(){
+  if(_loading)return;
+  if(!_dirty){_dirty=true;document.getElementById('save-ind').classList.add('show')}
+}
+function markClean(){
+  document.getElementById('save-ind').classList.remove('show');
+}
+function setStatus(msg){
+  document.getElementById('status-bar').innerHTML='<div class="status-dot"></div>'+msg;
+}
+function toast(msg,type){
+  var t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast toast-'+(type||'ok')+' show';
+  setTimeout(function(){t.classList.remove('show')},3000);
+}
+</script>
+</body>
+</html>
