@@ -835,18 +835,12 @@ document.addEventListener('keydown',function(e){if(e.key==='Escape')window.mlClo
 // ─── Spin Cooldown Timer (sidebar'da) ───
 window._mlUpdateSpinCooldown=function(){
   var el=document.getElementById('ml-spin-cd');if(!el)return;
-  if(typeof _swGetCooldownEnd!=='function')return;
-  var cdEnd=_swGetCooldownEnd();
-  if(!cdEnd||Date.now()>=cdEnd){el.textContent='';return}
-  function upd(){
-    var ms=cdEnd-Date.now();
-    if(ms<=0){el.textContent='Çevirebilirsiniz!';return}
-    var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);
-    el.textContent=h>0?'Sonraki hak: '+h+'s '+m+'dk':'Sonraki hak: '+m+'dk';
-    setTimeout(upd,30000);
+  if(typeof _swGetCountdownText==='function'){
+    var txt=_swGetCountdownText();
+    el.textContent=txt||'';
   }
-  upd();
 };
+setInterval(function(){if(window._mlUpdateSpinCooldown)window._mlUpdateSpinCooldown()},30000);
 setTimeout(function(){if(window._mlUpdateSpinCooldown)window._mlUpdateSpinCooldown()},3000);
 }
 // Wix uyumu: body hazır olana kadar bekle
