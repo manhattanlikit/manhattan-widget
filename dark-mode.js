@@ -2799,29 +2799,34 @@ btn.innerHTML=moonOff;
 // ─── TOGGLE FONKSİYONU ───
 
 function toggle(){
+  var wasDark=document.body.classList.contains('ml-dark');
+  if(wasDark){
+    // ═══ DARK → LIGHT: Smooth reload (132 inline style + wildcard = temizlik imkansız) ═══
+    try{localStorage.setItem('ml-dark','0');}catch(e){}
+    // Fade-out → reload → sayfa light olarak yüklenir (tertemiz Ecwid)
+    var fade=document.createElement('div');
+    fade.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:#ffbd92;opacity:0;z-index:9999999;transition:opacity .3s ease;pointer-events:none;';
+    document.body.appendChild(fade);
+    requestAnimationFrame(function(){requestAnimationFrame(function(){
+      fade.style.opacity='1';
+    });});
+    setTimeout(function(){location.reload();},350);
+    return;
+  }
+  // ═══ LIGHT → DARK: Anında geçiş (temizlik gereksiz) ═══
   _observer.disconnect();
-  document.body.classList.toggle('ml-dark');
-  var dark=document.body.classList.contains('ml-dark');
-  // Body bg: dark=#1b1a17, light=#ffbd92 (Liquid Glass peach)
-  document.documentElement.style.setProperty('background',dark?'#1b1a17':'#ffbd92','important');
-  document.body.style.backgroundColor=dark?'#1b1a17':'#ffbd92';
-  btn.innerHTML=dark?moonOn:moonOff;
-  try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
+  document.body.classList.add('ml-dark');
+  document.documentElement.style.setProperty('background','#1b1a17','important');
+  document.body.style.backgroundColor='#1b1a17';
+  btn.innerHTML=moonOn;
+  try{localStorage.setItem('ml-dark','1');}catch(e){}
   _lastFixTime=0;
   clearTimeout(_fixTimer);
   if(_fixRAF) cancelAnimationFrame(_fixRAF);
-  // Light mode'a geçişte store bg hemen temizle (beyaz kalma sorunu)
-  if(!dark){
-    document.querySelectorAll('.store.dynamic-product-browser').forEach(function(el){
-      el.style.removeProperty('background');
-    });
-  }
   _fixAllNow();
-  // Observer'ı cleanAll bitiminden sonra bağla (style remove tetikleme döngüsü önleme)
   setTimeout(function(){
     _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-  }, dark?50:500);
-  // Multi-pass: Ecwid geç render + SPA elementleri
+  },50);
   setTimeout(fixAll,300);
   setTimeout(fixAll,800);
   setTimeout(fixAll,2000);
