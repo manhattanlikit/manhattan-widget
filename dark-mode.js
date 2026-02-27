@@ -1023,20 +1023,7 @@ body.ml-dark .product-details__description div[style*="border-bottom: 1px solid"
   border-bottom-color:${BD}!important;
 }
 /* Protect accent banners (COREX orange vb.) — gradient başlangıcı #ff ile başlayanlar */
-body.ml-dark .product-details__product-description div[style*="linear-gradient"][style*="#ff6b"],
-body.ml-dark .product-details__product-description div[style*="linear-gradient"][style*="#f7931"],
-body.ml-dark .product-details__description div[style*="linear-gradient"][style*="#ff6b"],
-body.ml-dark .product-details__description div[style*="linear-gradient"][style*="#f7931"]{
-  background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%)!important;
-  outline:none!important;
-}
-/* Accent banner text — BEYAZ kalmalı */
-body.ml-dark .product-details__product-description div[style*="#ff6b"] *,
-body.ml-dark .product-details__product-description div[style*="#f7931"] *,
-body.ml-dark .product-details__description div[style*="#ff6b"] *,
-body.ml-dark .product-details__description div[style*="#f7931"] *{
-  color:inherit!important;
-}
+/* Accent banner text — JS post-processing ile yönetilir (tüm renkler) */
 /* Premium badge section — warm gradient */
 body.ml-dark .product-details__product-description div[style*="#fdfcfb"],
 body.ml-dark .product-details__product-description div[style*="#f5f0eb"],
@@ -4430,23 +4417,24 @@ function fixLabels(){
       // ── GRADIENT TEMİZLİĞİ (backgroundImage üzerinden) ──
       var bgImg=cs.backgroundImage||'';
       if(bgImg.indexOf('linear-gradient')>-1||bgImg.indexOf('radial-gradient')>-1){
-        // Accent banner koruması — parlak gradient'ler (COREX turuncu vb.) DOKUNMA
-        var _isAccent=false;
-        var _accRgb=bgImg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g);
-        if(_accRgb){
-          _isAccent=_accRgb.some(function(rgb){
-            var am=rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-            if(!am) return false;
-            var ar=+am[1],ag=+am[2],ab=+am[3];
-            // Kırmızı/turuncu/sarı parlak renkler (R>180 ve G veya B<150)
-            return (ar>180&&(ag<150||ab<150));
+        // ═══ UNİVERSAL ACCENT DETECTION — renk saturasyonu ile ═══
+        // Vivid (accent): max(R,G,B)-min(R,G,B) > 60 → DOKUNMA
+        // Pastel: tüm kanallar yüksek + birbirine yakın → koyu yap
+        var _isVivid=false;
+        var _grRgb=bgImg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g);
+        if(_grRgb){
+          _isVivid=_grRgb.some(function(rgb){
+            var gm=rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+            if(!gm) return false;
+            var cr=+gm[1],cg=+gm[2],cb=+gm[3];
+            var mx=Math.max(cr,cg,cb),mn=Math.min(cr,cg,cb);
+            // Saturasyon > 60 VE en az bir kanal < 220 = vivid accent
+            return (mx-mn>60)&&(mn<220);
           });
         }
-        if(!_isAccent){
-          // Gradient içindeki tüm rgb değerlerini çek
-          var rgbMatches=_accRgb;
-          if(rgbMatches){
-            var allLight=rgbMatches.every(function(rgb){
+        if(!_isVivid){
+          if(_grRgb){
+            var allLight=_grRgb.every(function(rgb){
               var rm=rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
               return rm&&+rm[1]>180&&+rm[2]>180&&+rm[3]>180;
             });
@@ -4471,19 +4459,30 @@ function fixLabels(){
             el.style.setProperty('background','transparent','important');
           }
         }
-        // Açık renkli gradient (inline hex check)
+        // Açık renkli gradient (inline hex check) — vivid accent koruması ile
         if(inBg.indexOf('linear-gradient')>-1){
           var hexes=inBg.match(/#[0-9a-fA-F]{3,8}/g);
           if(hexes){
-            var lightGrad=hexes.every(function(hex){
+            // Vivid kontrol: herhangi bir renk saturasyonu > 60 ise accent
+            var hasVivid=hexes.some(function(hex){
               var h=hex.replace('#','');
               if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
               if(h.length<6) return false;
               var ri=parseInt(h.substr(0,2),16),gi=parseInt(h.substr(2,2),16),bi=parseInt(h.substr(4,2),16);
-              return ri>180&&gi>180&&bi>180;
+              var mx=Math.max(ri,gi,bi),mn=Math.min(ri,gi,bi);
+              return (mx-mn>60)&&(mn<220);
             });
-            if(lightGrad){
-              el.style.setProperty('background','#23221e','important');
+            if(!hasVivid){
+              var lightGrad=hexes.every(function(hex){
+                var h=hex.replace('#','');
+                if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+                if(h.length<6) return false;
+                var ri=parseInt(h.substr(0,2),16),gi=parseInt(h.substr(2,2),16),bi=parseInt(h.substr(4,2),16);
+                return ri>180&&gi>180&&bi>180;
+              });
+              if(lightGrad){
+                el.style.setProperty('background','#23221e','important');
+              }
             }
           }
         }
@@ -4545,12 +4544,23 @@ function fixLabels(){
           }
         });
       }
-      // ── Accent banner koruması (COREX turuncu vb.) ──
-      // Pattern: bright gradient (#ff ile başlayan renkler)
+      // ── Accent banner koruması — UNİVERSAL vivid gradient tespiti ──
       desc.querySelectorAll('div[style]').forEach(function(el){
         var s=el.getAttribute('data-ml-dk')||'';
         if(!s) s=el.getAttribute('style')||'';
-        if(s.indexOf('linear-gradient')>-1&&(s.indexOf('#ff6b')>-1||s.indexOf('#f7931')>-1||s.indexOf('#e945')>-1)){
+        if(s.indexOf('linear-gradient')<0) return;
+        // Hex renkleri çıkar ve vivid kontrol
+        var hxs=s.match(/#[0-9a-fA-F]{3,8}/g);
+        if(!hxs) return;
+        var isVivid=hxs.some(function(hex){
+          var h=hex.replace('#','');
+          if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+          if(h.length<6) return false;
+          var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+          var mx=Math.max(r,g,b),mn=Math.min(r,g,b);
+          return (mx-mn>60)&&(mn<220);
+        });
+        if(isVivid){
           // Orijinal gradient'i restore et
           var gm=s.match(/linear-gradient\([^)]+\)/);
           if(gm) el.style.setProperty('background',gm[0],'important');
@@ -4569,11 +4579,22 @@ function fixLabels(){
       // ── Rounded card outline ──
       desc.querySelectorAll('div[style*="border-radius"]').forEach(function(card){
         var cs=card.style;
-        // Accent banner'lara outline ekleme
-        var bg=cs.background||cs.backgroundColor||'';
-        if(bg.indexOf('gradient')>-1&&(bg.indexOf('#ff6b')>-1||bg.indexOf('#f7931')>-1)) return;
-        // Grid container'lara ekleme (display:grid → wrapper, kart değil)
+        // Accent banner'lara outline ekleme — vivid gradient tespiti
         var origSt=card.getAttribute('data-ml-dk')||card.getAttribute('style')||'';
+        if(origSt.indexOf('linear-gradient')>-1){
+          var chx=origSt.match(/#[0-9a-fA-F]{3,8}/g);
+          if(chx){
+            var cardVivid=chx.some(function(hex){
+              var h=hex.replace('#','');
+              if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+              if(h.length<6) return false;
+              var r=parseInt(h.substr(0,2),16),g=parseInt(h.substr(2,2),16),b=parseInt(h.substr(4,2),16);
+              return (Math.max(r,g,b)-Math.min(r,g,b)>60)&&(Math.min(r,g,b)<220);
+            });
+            if(cardVivid) return;
+          }
+        }
+        // Grid container'lara ekleme (display:grid → wrapper, kart değil)
         if(origSt.indexOf('display: grid')>-1||origSt.indexOf('display:grid')>-1) return;
         // Kart outline ekle
         cs.setProperty('outline','1px solid rgba(175,140,62,.15)','important');
@@ -4590,6 +4611,41 @@ function fixLabels(){
         if(origSt.indexOf('#f5f5f7')>-1){
           item.style.setProperty('background','#23221e','important');
           item.style.setProperty('outline','1px solid rgba(175,140,62,.1)','important');
+        }
+      });
+      // ── Koyu renkli text aydınlatma (uyarı/ipucu kartları) ──
+      // Pattern: #991b1b (koyu kırmızı), #166534 (koyu yeşil) vb.
+      // dark bg üzerinde okunması zor → açık versiyona çevir
+      desc.querySelectorAll('p[style*="color"],span[style*="color"]').forEach(function(t){
+        var ts=t.getAttribute('data-ml-dk')||t.getAttribute('style')||'';
+        var tm=ts.match(/color:\s*#([0-9a-fA-F]{6})/);
+        if(!tm) return;
+        var h=tm[1];
+        var tr=parseInt(h.substr(0,2),16),tg=parseInt(h.substr(2,2),16),tb=parseInt(h.substr(4,2),16);
+        var avg=(tr+tg+tb)/3;
+        var mx=Math.max(tr,tg,tb),mn=Math.min(tr,tg,tb);
+        // Koyu + doygun = renkli text (avg<120, saturasyon>40)
+        if(avg<120&&(mx-mn>40)){
+          // Aydınlat: her kanalı 1.8x ile çarp, max 255
+          var lr=Math.min(255,Math.round(tr*1.8+40));
+          var lg=Math.min(255,Math.round(tg*1.8+40));
+          var lb=Math.min(255,Math.round(tb*1.8+40));
+          t.style.setProperty('color','rgb('+lr+','+lg+','+lb+')','important');
+        }
+      });
+      // SVG stroke'ları da aydınlat
+      desc.querySelectorAll('svg[style*="flex-shrink"],svg[stroke]').forEach(function(svg){
+        var sk=svg.getAttribute('stroke')||'';
+        if(!sk||sk.indexOf('#')!==0||sk.length<7) return;
+        var h=sk.replace('#','');
+        var sr=parseInt(h.substr(0,2),16),sg=parseInt(h.substr(2,2),16),sb=parseInt(h.substr(4,2),16);
+        var avg=(sr+sg+sb)/3;
+        var mx=Math.max(sr,sg,sb),mn=Math.min(sr,sg,sb);
+        if(avg<120&&(mx-mn>40)){
+          var lr=Math.min(255,Math.round(sr*1.6+50));
+          var lg=Math.min(255,Math.round(sg*1.6+50));
+          var lb=Math.min(255,Math.round(sb*1.6+50));
+          svg.setAttribute('stroke','rgb('+lr+','+lg+','+lb+')');
         }
       });
     });
