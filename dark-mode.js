@@ -3873,10 +3873,10 @@ function cleanAll(){
 
   // ═══ KATMAN 2: KAPSAMLI TARAMA — marker'sız elementlerdeki dark mode kalıntıları ═══
   // Dark mode hex imzaları (JS inline style'larda kullanılan değerler)
-  var _dkSig=/1b1a17|23221e|2c2b26|2d2b27|8b3a3a|ece8df|e8e0d0|c8c0b0|b5b0a4|af8c3e|d4b05e|175,\s*140,\s*62/i;
+  var _dkSig=/1b1a17|23221e|2c2b26|2d2b27|8b3a3a|ece8df|e8e0d0|c8c0b0|b5b0a4|af8c3e|d4b05e|rgba?\(27,\s*26|rgba?\(35,\s*34|rgba?\(44,\s*43|rgba?\(45,\s*43|rgba?\(139,\s*58|rgba?\(236,\s*232|rgba?\(232,\s*224|rgba?\(200,\s*192|rgba?\(181,\s*176|rgba?\(175,\s*140|rgba?\(212,\s*176/i;
   // Temizlenecek CSS property listesi
   var _dkProps=['color','background','background-color','border-color','border-bottom-color',
-    'border-left-color','border','box-shadow','outline','outline-offset','accent-color'];
+    'border-left-color','border','box-shadow','outline','outline-offset','accent-color','fill'];
 
   // Ecwid store + cart + checkout + sayfa gövdesi + hakkında — tüm inline style'lı elementler
   // NOT: [style] selector parent'ın kendisini de yakalar (boşluksuz .class[style])
