@@ -20,7 +20,7 @@ var N=8,SA=360/N,SAR=Math.PI*2/N;
 
 // ====== DURUM ======
 var _spinning=false,_spunSession=false,_rotation=0,_audioCtx=null,_muted=false;
-var _TEST_MODE=true; // TEST: sınırsız çevirme — canlıya alırken false yap
+var _TEST_MODE=false; // false=canlı (cooldown aktif), true=test (sınırsız çevirme)
 
 // ====== SVG İKONLAR (emoji yasak) ======
 var ICO={
@@ -308,7 +308,7 @@ function winSound(){
 }
 
 // ====== DRAG / SWIPE ======
-var _dragStart=null,_dragVel=0,_lastDragTime=0,_lastDragAngle=0;
+var _dragStart=null,_dragVel=0,_lastDragTime=0,_lastDragAngle=0,_dragVels=[];
 
 function initDrag(){
   var box=document.getElementById('sw-box');if(!box)return;
@@ -321,21 +321,30 @@ function initDrag(){
     return Math.atan2(pt.clientY-ccy,pt.clientX-ccx)*180/Math.PI;
   }
 
+  function normDelta(d){
+    while(d>180)d-=360;
+    while(d<-180)d+=360;
+    return d;
+  }
+
   function onStart(e){
     if(_spinning)return;
+    if(_spunSession&&!_TEST_MODE)return;
     if(!_TEST_MODE&&!isLoggedIn())return;
     e.preventDefault();
-    _dragStart=getAngle(e);_dragVel=0;_lastDragTime=Date.now();_lastDragAngle=_dragStart;
+    _dragStart=getAngle(e);_dragVel=0;_dragVels=[];_lastDragTime=Date.now();_lastDragAngle=_dragStart;
   }
 
   function onMove(e){
     if(_dragStart===null||_spinning)return;
     e.preventDefault();
     var now=Date.now(),a=getAngle(e);
-    var delta=a-_dragStart;
+    var delta=normDelta(a-_dragStart);
     _rotation+=delta;
     drawWheel(_rotation);
-    _dragVel=(a-_lastDragAngle)/(now-_lastDragTime+1)*16;
+    var dt=now-_lastDragTime+1;
+    var v=normDelta(a-_lastDragAngle)/dt*16;
+    _dragVels.push(v);if(_dragVels.length>5)_dragVels.shift();
     _lastDragAngle=a;_lastDragTime=now;
     _dragStart=a;
   }
@@ -343,7 +352,10 @@ function initDrag(){
   function onEnd(){
     if(_dragStart===null)return;
     _dragStart=null;
-    if(Math.abs(_dragVel)>1.5)swSpin();
+    // Ortalama hız (son 5 frame)
+    var avg=0;
+    if(_dragVels.length>0){for(var i=0;i<_dragVels.length;i++)avg+=_dragVels[i];avg/=_dragVels.length;}
+    if(Math.abs(avg)>0.8)swSpin();
   }
 
   cv.addEventListener('mousedown',onStart);
@@ -513,13 +525,17 @@ async function swSpin(){
   try{
     var email=getEmail();
     var url=GAS_URL+'?action=spin&email='+encodeURIComponent(email)+(_TEST_MODE?'&test=1':'');
-    var resp=await fetch(url);
+    var ctrl=new AbortController();
+    var tout=setTimeout(function(){ctrl.abort()},30000);
+    var resp=await fetch(url,{signal:ctrl.signal});
+    clearTimeout(tout);
     var data=await resp.json();
 
     if(!data.ok){
       if(data.error==='already_spun'){
         if(!_TEST_MODE)_spunSession=true;
-        msg(data.message||'Bugün zaten çevirdiniz!');
+        if(data.remainMs) setCooldown(data.remainMs);
+        msg(data.message||getCountdownText());
         if(data.couponCode)showPrize({prize:data.prize,couponCode:data.couponCode,type:'repeat'});
         else{msg(getCountdownText())}
       }else{
@@ -533,12 +549,12 @@ async function swSpin(){
     // Çarkı çevir (7sn)
     await animateTo(data.segment,data.angleOffset||0,7000);
 
-    var isNearMiss=(data.segment===0||data.segment===2);
+    var isNearMiss=!!data.isNearMiss;
 
     if(data.type==='none'){
       // Kaybetti — toast + kart, ekstra efekt yok
       await new Promise(function(r){setTimeout(r,400)});
-      showToast('Tekrar Dene!','Yarın tekrar şansını dene!',2500);
+      showToast('Tekrar Dene!','Biraz sonra tekrar şansını dene!',2500);
       showPrize(data);
     }else{
       // Kazandı — 1) confetti + ses
@@ -553,15 +569,17 @@ async function swSpin(){
     }
 
     if(!_TEST_MODE)_spunSession=true;
+    if(data.cooldownHours) setCooldown(data.cooldownHours*3600000);
 
     if(isNearMiss&&data.type!=='none'){
       setTimeout(function(){
-        showToast(ICO.fire+'Çok yaklaştınız!','Büyük ödüle az kaldı... Yarın tekrar deneyin!',3000);
+        showToast(ICO.fire+'Çok yaklaştınız!','Büyük ödüle az kaldı... Tekrar deneyin!',3000);
       },2500);
     }
 
   }catch(err){
-    msg('Bağlantı hatası, tekrar deneyin','err');
+    if(err&&err.name==='AbortError') msg('Sunucu yanıt vermiyor, tekrar deneyin','err');
+    else msg('Bağlantı hatası, tekrar deneyin','err');
   }
 
   btn.disabled=_spunSession;btn.textContent=_spunSession?'ÇEVRİLDİ':'ÇEVİR!';
@@ -582,10 +600,10 @@ function showPrize(data){
 
   if(data.type==='none'){
     ico.innerHTML=ICO.retry;t.textContent='Tekrar Dene!';
-    s.textContent='Bu sefer olmadı ama yarın tekrar deneyebilirsin!';
+    s.textContent='Bu sefer olmadı ama tekrar deneyebilirsin!';
     pc.style.display='none';pex.textContent='';
   }else if(data.type==='repeat'){
-    ico.innerHTML=ICO.ticket;t.textContent='Bu Haftaki Ödülünüz';
+    ico.innerHTML=ICO.ticket;t.textContent='Mevcut Ödülünüz';
     s.textContent=data.prize||'';
     if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}
     else{pc.style.display='none'}
@@ -593,17 +611,22 @@ function showPrize(data){
   }else if(data.type==='shipping'){
     ico.innerHTML=ICO.ship;t.textContent='Ücretsiz Kargo!';
     s.textContent='Bir sonraki siparişinizde kargo bizden!';
-    pc.style.display='inline-block';pct.textContent=data.couponCode;
+    if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}else{pc.style.display='none'}
     pex.textContent=data.expiry?'Son kullanma: '+data.expiry:'';
   }else if(data.type==='percent'){
     ico.innerHTML=data.discount>=10?ICO.trophy:ICO.win;
     t.textContent='%'+data.discount+' İndirim Kazandınız!';
-    s.textContent='Tebrikler! Kupon kodunuz hazır.';
-    pc.style.display='inline-block';pct.textContent=data.couponCode;
+    s.textContent=data.couponCode?'Tebrikler! Kupon kodunuz hazır.':'Ödülünüz kaydedildi.';
+    if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}else{pc.style.display='none'}
     pex.textContent=data.expiry?'Son kullanma: '+data.expiry:'';
   }
 
   pcd.textContent=getCountdownText();
+  pex.style.color='';
+  if(data.couponError){
+    pex.textContent='Kupon oluşturulamadı — destek@manhattanlikit.com yazın';
+    pex.style.color='#f87171';
+  }
   el.classList.add('show');
 }
 
@@ -617,15 +640,18 @@ function swCopy(){
 }
 
 // ====== GERİ SAYIM ======
+var _cooldownEnd=null;
+function setCooldown(remainMs){
+  if(remainMs>0) _cooldownEnd=Date.now()+remainMs;
+}
 function getCountdownText(){
-  var now=new Date();
-  // 24 saat sonra (canlıda kullanılacak)
-  var next=new Date(now.getTime()+24*60*60*1000);
-  next.setMinutes(0,0,0);
-  var ms=next-now;if(ms<=0)return'Tekrar çevirebilirsiniz!';
+  if(!_cooldownEnd) return'Tekrar çevirebilirsiniz!';
+  var ms=_cooldownEnd-Date.now();
+  if(ms<=0){_cooldownEnd=null;return'Tekrar çevirebilirsiniz!';}
   var hrs=Math.floor(ms/3600000);
   var mins=Math.floor((ms%3600000)/60000);
-  return'Sonraki hak: '+hrs+' saat '+mins+' dk';
+  if(hrs>0) return'Sonraki hak: '+hrs+' saat '+mins+' dk';
+  return'Sonraki hak: '+mins+' dk';
 }
 
 // ====== SES TOGGLE ======
