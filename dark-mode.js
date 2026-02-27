@@ -987,6 +987,81 @@ body.ml-dark .product-details__product-description th{
   border-color:${BD}!important;
 }
 
+/* ═══ ÜRÜN AÇIKLAMA KARTLARI — dark mode çerçeve + arka plan ═══ */
+/* Rounded cards (feature cards, kutu içeriği, uyumluluk kartları) */
+body.ml-dark .product-details__product-description div[style*="border-radius: 20px"],
+body.ml-dark .product-details__product-description div[style*="border-radius: 24px"],
+body.ml-dark .product-details__product-description div[style*="border-radius: 12px"],
+body.ml-dark .product-details__description div[style*="border-radius: 20px"],
+body.ml-dark .product-details__description div[style*="border-radius: 24px"],
+body.ml-dark .product-details__description div[style*="border-radius: 12px"]{
+  outline:1px solid ${BD}!important;
+  outline-offset:-1px!important;
+}
+/* Spec table wrapper — overflow hidden */
+body.ml-dark .product-details__product-description div[style*="overflow: hidden"],
+body.ml-dark .product-details__description div[style*="overflow: hidden"]{
+  background-color:${BG2}!important;
+}
+/* Spec table — alternating white rows → BG2 */
+body.ml-dark .product-details__product-description div[style*="background: #ffffff"],
+body.ml-dark .product-details__product-description div[style*="background:#ffffff"],
+body.ml-dark .product-details__description div[style*="background: #ffffff"],
+body.ml-dark .product-details__description div[style*="background:#ffffff"]{
+  background:${BG2}!important;
+}
+/* Spec table — alternating gray rows → BG1 */
+body.ml-dark .product-details__product-description div[style*="background: #f5f5f7"],
+body.ml-dark .product-details__product-description div[style*="background:#f5f5f7"],
+body.ml-dark .product-details__description div[style*="background: #f5f5f7"],
+body.ml-dark .product-details__description div[style*="background:#f5f5f7"]{
+  background:${BG1}!important;
+}
+/* Spec table — border between rows */
+body.ml-dark .product-details__product-description div[style*="border-bottom: 1px solid"],
+body.ml-dark .product-details__description div[style*="border-bottom: 1px solid"]{
+  border-bottom-color:${BD}!important;
+}
+/* Protect accent banners (COREX orange vb.) — gradient başlangıcı #ff ile başlayanlar */
+body.ml-dark .product-details__product-description div[style*="linear-gradient"][style*="#ff6b"],
+body.ml-dark .product-details__product-description div[style*="linear-gradient"][style*="#f7931"],
+body.ml-dark .product-details__description div[style*="linear-gradient"][style*="#ff6b"],
+body.ml-dark .product-details__description div[style*="linear-gradient"][style*="#f7931"]{
+  background:linear-gradient(135deg,#ff6b35 0%,#f7931e 100%)!important;
+  outline:none!important;
+}
+/* Accent banner text — BEYAZ kalmalı */
+body.ml-dark .product-details__product-description div[style*="#ff6b"] *,
+body.ml-dark .product-details__product-description div[style*="#f7931"] *,
+body.ml-dark .product-details__description div[style*="#ff6b"] *,
+body.ml-dark .product-details__description div[style*="#f7931"] *{
+  color:inherit!important;
+}
+/* Premium badge section — warm gradient */
+body.ml-dark .product-details__product-description div[style*="#fdfcfb"],
+body.ml-dark .product-details__product-description div[style*="#f5f0eb"],
+body.ml-dark .product-details__description div[style*="#fdfcfb"],
+body.ml-dark .product-details__description div[style*="#f5f0eb"]{
+  background:${BG2}!important;
+  border-color:${BD}!important;
+}
+/* Premium badge icon boxes */
+body.ml-dark .product-details__product-description div[style*="box-shadow: 0 2px 8px"],
+body.ml-dark .product-details__description div[style*="box-shadow: 0 2px 8px"]{
+  background:${BG1}!important;
+  box-shadow:0 2px 8px rgba(0,0,0,.3)!important;
+}
+/* Grid containers (display:grid) — no outline */
+body.ml-dark .product-details__product-description div[style*="display: grid"],
+body.ml-dark .product-details__description div[style*="display: grid"]{
+  outline:none!important;
+}
+/* Faydalı Rehberler bağlantı kartı */
+body.ml-dark .product-details__product-description a,
+body.ml-dark .product-details__description a{
+  color:${GOLD}!important;
+}
+
 /* Ürün detay görseli */
 body.ml-dark .product-details__gallery,
 body.ml-dark .product-details-module__gallery,
@@ -4355,15 +4430,29 @@ function fixLabels(){
       // ── GRADIENT TEMİZLİĞİ (backgroundImage üzerinden) ──
       var bgImg=cs.backgroundImage||'';
       if(bgImg.indexOf('linear-gradient')>-1||bgImg.indexOf('radial-gradient')>-1){
-        // Gradient içindeki tüm rgb değerlerini çek
-        var rgbMatches=bgImg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g);
-        if(rgbMatches){
-          var allLight=rgbMatches.every(function(rgb){
-            var rm=rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-            return rm&&+rm[1]>180&&+rm[2]>180&&+rm[3]>180;
+        // Accent banner koruması — parlak gradient'ler (COREX turuncu vb.) DOKUNMA
+        var _isAccent=false;
+        var _accRgb=bgImg.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/g);
+        if(_accRgb){
+          _isAccent=_accRgb.some(function(rgb){
+            var am=rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+            if(!am) return false;
+            var ar=+am[1],ag=+am[2],ab=+am[3];
+            // Kırmızı/turuncu/sarı parlak renkler (R>180 ve G veya B<150)
+            return (ar>180&&(ag<150||ab<150));
           });
-          if(allLight){
-            el.style.setProperty('background','#23221e','important');
+        }
+        if(!_isAccent){
+          // Gradient içindeki tüm rgb değerlerini çek
+          var rgbMatches=_accRgb;
+          if(rgbMatches){
+            var allLight=rgbMatches.every(function(rgb){
+              var rm=rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+              return rm&&+rm[1]>180&&+rm[2]>180&&+rm[3]>180;
+            });
+            if(allLight){
+              el.style.setProperty('background','#23221e','important');
+            }
           }
         }
       }
@@ -4437,6 +4526,68 @@ function fixLabels(){
           if(bm && +bm[1]>200 && +bm[2]>200 && +bm[3]>200){
             el.style.setProperty(prop.replace(/([A-Z])/g,function(m){return '-'+m.toLowerCase()}),'rgba(175,140,62,.12)','important');
           }
+        }
+      });
+    });
+
+    // ═══ ÜRÜN AÇIKLAMA KARTLARI — POST-PROCESSING (CSS override) ═══
+    // _darkScopes tüm açık bg'leri koyu yaptı. Şimdi spesifik desenleri düzeltiyoruz.
+    document.querySelectorAll('.product-details__product-description,.product-details__description').forEach(function(desc){
+      // ── Spec table satır alternasyonu ──
+      // Pattern: display:flex + border-bottom = tablo satırı
+      var tableRows=desc.querySelectorAll('div[style*="border-bottom"]');
+      if(tableRows.length>2){
+        tableRows.forEach(function(row,i){
+          var origStyle=row.getAttribute('data-ml-dk')||row.getAttribute('style')||'';
+          if(origStyle.indexOf('justify-content')>-1||origStyle.indexOf('flex')>-1){
+            row.style.setProperty('background-color',i%2===0?'#1b1a17':'#23221e','important');
+            row.style.setProperty('border-bottom-color','rgba(175,140,62,.12)','important');
+          }
+        });
+      }
+      // ── Accent banner koruması (COREX turuncu vb.) ──
+      // Pattern: bright gradient (#ff ile başlayan renkler)
+      desc.querySelectorAll('div[style]').forEach(function(el){
+        var s=el.getAttribute('data-ml-dk')||'';
+        if(!s) s=el.getAttribute('style')||'';
+        if(s.indexOf('linear-gradient')>-1&&(s.indexOf('#ff6b')>-1||s.indexOf('#f7931')>-1||s.indexOf('#e945')>-1)){
+          // Orijinal gradient'i restore et
+          var gm=s.match(/linear-gradient\([^)]+\)/);
+          if(gm) el.style.setProperty('background',gm[0],'important');
+          // İçindeki text'leri beyaz yap
+          el.querySelectorAll('h1,h2,h3,h4,h5,p,span').forEach(function(t){
+            var tOrig=t.getAttribute('data-ml-dk')||t.getAttribute('style')||'';
+            if(tOrig.indexOf('color: #ffffff')>-1||tOrig.indexOf('color:#ffffff')>-1||tOrig.indexOf('rgba(255')>-1||tOrig.indexOf('color: #fff')>-1){
+              t.style.setProperty('color','#ffffff','important');
+            }
+          });
+          el.style.removeProperty('outline');
+        }
+      });
+      // ── Rounded card outline ──
+      desc.querySelectorAll('div[style*="border-radius"]').forEach(function(card){
+        var cs=card.style;
+        // Accent banner'lara outline ekleme
+        var bg=cs.background||cs.backgroundColor||'';
+        if(bg.indexOf('gradient')>-1&&(bg.indexOf('#ff6b')>-1||bg.indexOf('#f7931')>-1)) return;
+        // Grid container'lara ekleme (display:grid → wrapper, kart değil)
+        var origSt=card.getAttribute('data-ml-dk')||card.getAttribute('style')||'';
+        if(origSt.indexOf('display: grid')>-1||origSt.indexOf('display:grid')>-1) return;
+        // Kart outline ekle
+        cs.setProperty('outline','1px solid rgba(175,140,62,.15)','important');
+        cs.setProperty('outline-offset','-1px','important');
+      });
+      // ── Premium badge icon boxes ──
+      desc.querySelectorAll('div[style*="box-shadow: 0 2px 8px"]').forEach(function(box){
+        box.style.setProperty('background','#1b1a17','important');
+        box.style.setProperty('box-shadow','0 2px 8px rgba(0,0,0,.3)','important');
+      });
+      // ── Kutu içeriği items — #f5f5f7 bg pattern ──
+      desc.querySelectorAll('div[style*="gap: 12px"]').forEach(function(item){
+        var origSt=item.getAttribute('data-ml-dk')||item.getAttribute('style')||'';
+        if(origSt.indexOf('#f5f5f7')>-1){
+          item.style.setProperty('background','#23221e','important');
+          item.style.setProperty('outline','1px solid rgba(175,140,62,.1)','important');
         }
       });
     });
