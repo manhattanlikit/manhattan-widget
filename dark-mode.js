@@ -1276,6 +1276,21 @@ body.ml-dark .product-details__description .D h2,
 body.ml-dark .product-details__description .D h3{
   color:${GOLD}!important;
 }
+/* .D class embedded CSS'i #b8860b'yi tutuyor → sıcak gold ile ez */
+body.ml-dark .product-details__description .D p[style*="color: #b8860b"],
+body.ml-dark .product-details__product-description .D p[style*="color: #b8860b"],
+body.ml-dark .product-details__description .D p[style*="#b8860b"],
+body.ml-dark .product-details__product-description .D p[style*="#b8860b"]{
+  color:${GOLD}!important;
+}
+body.ml-dark .product-details__description .D p[style*="rgba(184,134,11"],
+body.ml-dark .product-details__product-description .D p[style*="rgba(184,134,11"]{
+  color:rgba(212,176,94,.7)!important;
+}
+body.ml-dark .product-details__description .D span[style*="#b8860b"],
+body.ml-dark .product-details__product-description .D span[style*="#b8860b"]{
+  color:${GOLD}!important;
+}
 body.ml-dark .product-details__description .mn-link{
   color:${TX3}!important;
   border-color:rgba(175,140,62,.25)!important;
@@ -2833,6 +2848,31 @@ body.ml-dark [class*="favorites"]{
   background:${BG1}!important;
   color:${TX1}!important;
 }
+/* Favoriye ekle — kalp ikonu dark modda kırmızı */
+body.ml-dark [class*="product-like"] svg,
+body.ml-dark [class*="product-like"] path,
+body.ml-dark .product-details [class*="like"] svg,
+body.ml-dark [class*="favourite"] svg,
+body.ml-dark [class*="favorite"] svg{
+  color:#e94560!important;
+  stroke:#e94560!important;
+}
+body.ml-dark [class*="product-like"].ec-product-added-to-favorites svg,
+body.ml-dark [class*="product-like"][class*="active"] svg{
+  fill:#e94560!important;
+  stroke:#e94560!important;
+}
+/* Ürün açıklama #b8860b → sıcak gold (#d4b05e) */
+body.ml-dark .product-details__product-description [style*="color: #b8860b"],
+body.ml-dark .product-details__product-description [style*="color:#b8860b"],
+body.ml-dark .product-details__description [style*="color: #b8860b"],
+body.ml-dark .product-details__description [style*="color:#b8860b"]{
+  color:${GOLD}!important;
+}
+body.ml-dark .product-details__product-description [style*="color: rgba(184,134,11"],
+body.ml-dark .product-details__description [style*="color: rgba(184,134,11"]{
+  color:rgba(212,176,94,.7)!important;
+}
 
 /* ── LOADER / SPİNNER ── */
 body.ml-dark .ec-loader,
@@ -3936,6 +3976,13 @@ function cleanAll(){
     svg.removeAttribute('data-ml-stroke');
     svg.style.removeProperty('color');
   });
+  // SVG fill restore
+  document.querySelectorAll('[data-ml-fill]').forEach(function(sv){
+    var orig=sv.getAttribute('data-ml-fill');
+    if(orig) sv.setAttribute('fill',orig);
+    else sv.removeAttribute('fill');
+    sv.removeAttribute('data-ml-fill');
+  });
   cleanStokYok();
 
   // ═══ KATMAN 1.5: ÜRÜN AÇIKLAMA POST-PROCESSING TEMİZLİĞİ ═══
@@ -4723,6 +4770,102 @@ function fixLabels(){
           var lb=Math.min(255,Math.round(sb*1.6+50));
           if(!svg.hasAttribute('data-ml-stroke')) svg.setAttribute('data-ml-stroke',sk);
           svg.setAttribute('stroke','rgb('+lr+','+lg+','+lb+')');
+        }
+      });
+      // ── #b8860b → Manhattan Gold (#d4b05e) dönüşümü ──
+      // #b8860b koyu arka planda soluk/yeşilimsi görünür, tasarım gold'u daha sıcak
+      desc.querySelectorAll('p[style],span[style],h1[style],h2[style],h3[style],h4[style],h5[style],a[style],div[style]').forEach(function(el){
+        var s=el.getAttribute('style')||'';
+        if(s.indexOf('#b8860b')<0&&s.indexOf('#B8860B')<0&&s.indexOf('rgba(184,134,11')<0&&s.indexOf('rgba(184, 134, 11')<0) return;
+        // --- color: #b8860b → #d4b05e ---
+        if((s.indexOf('color')>-1)&&(s.indexOf('#b8860b')>-1||s.indexOf('#B8860B')>-1)){
+          // background: #b8860b ile karışmasın — sadece color prop kontrol
+          var cm=s.match(/(?:^|;)\s*color\s*:\s*#[bB]8860[bB]/);
+          if(cm) el.style.setProperty('color','#d4b05e','important');
+        }
+        // --- color: rgba(184,134,11,X) → rgba(212,176,94,X+boost) ---
+        if(s.indexOf('color')>-1&&s.indexOf('rgba(184')>-1){
+          var cm2=s.match(/(?:^|;)\s*color\s*:\s*rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
+          if(cm2){
+            var op=parseFloat(cm2[1]);
+            var newOp=Math.min(1,op<0.5?op+0.15:op);
+            el.style.setProperty('color','rgba(212,176,94,'+newOp+')','important');
+          }
+        }
+        // --- background: #b8860b (ince dekoratif çizgiler) ---
+        if(s.indexOf('background')>-1&&(s.indexOf('#b8860b')>-1||s.indexOf('#B8860B')>-1)){
+          // Gradient mi düz renk mi?
+          if(s.indexOf('linear-gradient')>-1&&s.indexOf('#b8860b')>-1){
+            // linear-gradient(to bottom, transparent, #b8860b) gibi
+            var newBg=s.match(/background:\s*(linear-gradient\([^)]+\))/);
+            if(newBg){
+              var warmGrad=newBg[1].replace(/#b8860b/gi,'#d4b05e');
+              el.style.setProperty('background',warmGrad,'important');
+            }
+          } else if(s.indexOf('background:')>-1||s.indexOf('background-color:')>-1){
+            // Düz background: #b8860b
+            var hasBgHex=s.match(/background(?:-color)?\s*:\s*#[bB]8860[bB]/);
+            if(hasBgHex) el.style.setProperty('background','#d4b05e','important');
+          }
+        }
+        // --- background: linear-gradient(...rgba(184,134,11,X)...) ---
+        if(s.indexOf('background')>-1&&s.indexOf('linear-gradient')>-1&&s.indexOf('rgba(184')>-1){
+          var origBg=s.match(/background:\s*(linear-gradient\([^)]+\))/);
+          if(origBg){
+            var warmBg=origBg[1].replace(/rgba\(184,\s*134,\s*11/g,'rgba(212,176,94');
+            el.style.setProperty('background',warmBg,'important');
+          }
+        }
+        // --- background: rgba(184,134,11,X) (düz) — number badges ---
+        if(s.indexOf('background')>-1&&s.indexOf('rgba(184')>-1&&s.indexOf('linear-gradient')<0){
+          var bgm=s.match(/background(?:-color)?\s*:\s*rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
+          if(bgm){
+            el.style.setProperty('background','rgba(212,176,94,'+bgm[1]+')','important');
+          }
+        }
+        // --- border / border-bottom / border-color: rgba(184,134,11,X) ---
+        if(s.indexOf('border')>-1&&s.indexOf('rgba(184')>-1){
+          var bm=s.match(/rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
+          if(bm){
+            if(s.indexOf('border-bottom')>-1) el.style.setProperty('border-bottom-color','rgba(212,176,94,'+bm[1]+')','important');
+            else if(s.indexOf('border:')>-1) el.style.setProperty('border-color','rgba(212,176,94,'+bm[1]+')','important');
+          }
+        }
+        // --- width:1px + background: rgba(184,...) — dikey ayırıcı çizgiler ---
+        if(s.indexOf('width: 1px')>-1&&s.indexOf('rgba(184')>-1){
+          var dm=s.match(/rgba\(184,\s*134,\s*11,\s*([\d.]+)\)/);
+          if(dm) el.style.setProperty('background','rgba(212,176,94,'+dm[1]+')','important');
+        }
+      });
+      // ── Alıntı işaretleri (" ") — büyük serif tırnak ──
+      desc.querySelectorAll('span[style*="font-size: 64px"],span[style*="font-size:64px"],span[style*="font-size: 48px"],span[style*="font-size:48px"]').forEach(function(q){
+        var qs=q.getAttribute('style')||'';
+        if(qs.indexOf('#b8860b')>-1||qs.indexOf('rgba(184')>-1){
+          q.style.setProperty('color','#d4b05e','important');
+          q.style.setProperty('opacity','0.5','important');
+        }
+      });
+      // ── SVG stroke #b8860b → warm gold ──
+      desc.querySelectorAll('svg[stroke="#b8860b"],svg path[stroke="#b8860b"],svg circle[stroke="#b8860b"],svg polygon[stroke="#b8860b"],svg polyline[stroke="#b8860b"]').forEach(function(sv){
+        if(!sv.hasAttribute('data-ml-stroke')) sv.setAttribute('data-ml-stroke',sv.getAttribute('stroke')||'');
+        sv.setAttribute('stroke','#d4b05e');
+      });
+      // SVG fill #b8860b → warm gold
+      desc.querySelectorAll('[fill="#b8860b"]').forEach(function(sv){
+        if(!sv.hasAttribute('data-ml-fill')) sv.setAttribute('data-ml-fill',sv.getAttribute('fill')||'');
+        sv.setAttribute('fill','#d4b05e');
+      });
+      // ── mn-link rehber linkleri ──
+      desc.querySelectorAll('a.mn-link,[class*="mn-link"]').forEach(function(a){
+        a.style.setProperty('color','rgba(212,176,94,.6)','important');
+        a.style.setProperty('border-color','rgba(212,176,94,.25)','important');
+      });
+      // ── mn-trio-icon arka plan sıcaklık ──
+      desc.querySelectorAll('.mn-trio-icon,[class*="mn-trio-icon"]').forEach(function(ic){
+        var s=ic.getAttribute('style')||'';
+        if(s.indexOf('rgba(184')>-1){
+          ic.style.setProperty('background','linear-gradient(145deg,rgba(212,176,94,.12) 0%,rgba(212,176,94,.04) 100%)','important');
+          ic.style.setProperty('border-color','rgba(212,176,94,.18)','important');
         }
       });
     });
