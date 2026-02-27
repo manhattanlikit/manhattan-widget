@@ -133,6 +133,13 @@ s.textContent=`@import url('https://fonts.googleapis.com/css2?family=Plus+Jakart
 .ml-surprise a{font-size:10px;font-weight:600;color:var(--mlg);text-decoration:none;display:inline-flex;align-items:center;gap:3px;opacity:.7;transition:opacity .2s}
 .ml-surprise a:hover{opacity:1}
 .ml-surprise a svg{width:11px;height:11px;stroke:var(--mlg);stroke-width:2;fill:none}
+.ml-spin-sec{background:linear-gradient(135deg,rgba(175,140,62,.06),rgba(175,140,62,.02));border:1px solid rgba(175,140,62,.15);border-radius:10px;padding:12px;margin-bottom:8px;text-align:center}
+.ml-spin-badge{font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--mlg);margin-bottom:6px;display:flex;align-items:center;justify-content:center;gap:6px}
+.ml-spin-badge::before,.ml-spin-badge::after{content:'';width:16px;height:1px;background:linear-gradient(90deg,transparent,rgba(175,140,62,.4),transparent)}
+.ml-spin-btn{width:100%;padding:10px 16px;border:none;border-radius:8px;background:linear-gradient(135deg,var(--mlg),#d4b05e);color:#fff;font:700 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer;letter-spacing:.5px;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.ml-spin-btn:hover{transform:translateY(-1px);box-shadow:0 3px 12px rgba(175,140,62,.3)}
+.ml-spin-btn svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:2}
+.ml-spin-cd{font-size:9px;color:var(--mlg);margin-top:6px;font-weight:600;opacity:.8;min-height:14px}
 .ml-bday-form{background:linear-gradient(135deg,#faf3e0,#f7f0de);border:1px solid rgba(175,140,62,.15);border-radius:8px;padding:8px 10px;margin-bottom:8px;text-align:center;animation:mlfade .2s ease}
 .ml-bday-form input{border:1px solid rgba(0,0,0,.1);border-radius:6px;padding:5px 8px;font-size:11px;font-family:inherit;text-align:center;width:130px;margin:4px 0}
 .ml-bday-form button{background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;border:none;border-radius:6px;padding:4px 12px;font-size:10px;font-weight:700;font-family:inherit;cursor:pointer;margin-left:4px}
@@ -354,8 +361,9 @@ var fh=Math.floor(rem/3600),fm=Math.floor((rem%3600)/60),fs=rem%60;
 flashHtml='<div class="ml-flash-row" onclick="event.stopPropagation()"><div class="ml-flash"><div class="ml-flash-ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="ml-flash-txt"><b>Flash Bonus +%2.5</b><br>Hafta sonu özel ek indirim</div><div class="ml-flash-timer" id="ml-ft">'+String(fh).padStart(2,'0')+':'+String(fm).padStart(2,'0')+':'+String(fs).padStart(2,'0')+'</div></div><button onclick="event.stopPropagation();mlFlashCoupon()" class="ml-flash-btn">Kodumu Oluştur</button></div><div id="ml-flash-code" onclick="event.stopPropagation()" style="margin-bottom:6px"></div>';
 try{var _fc=sessionStorage.getItem('ml_flash_code');if(_fc){var _fcd=JSON.parse(_fc);if(_fcd.end>Date.now()){window._mlCachedFlashCode=_fcd.code;}else{sessionStorage.removeItem('ml_flash_code');}}}catch(e){}
 }
+var spinHtml='<div class="ml-spin-sec" onclick="event.stopPropagation()"><div class="ml-spin-badge">Şansını Dene</div><button class="ml-spin-btn" onclick="event.stopPropagation();if(typeof openOverlay===\'function\')openOverlay();"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="2" x2="12" y2="12"/><line x1="12" y1="12" x2="19.07" y2="4.93"/></svg>Çarkı Çevir</button><div class="ml-spin-cd" id="ml-spin-cd"></div></div>';
 var btns='<button type="button" onclick="event.stopPropagation();mlClose()" class="ml-cta">Alışverişe Devam Et</button>';
-document.getElementById('ct').innerHTML=luHtml+'<div class="ml-tier '+c+'"><div class="ml-hero-row"><div class="ml-hero-side">Sadakat<br>Programı</div><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-hero-side ml-brand-txt">Manhattan</div></div><div class="ml-tier-name">'+d.tier+'</div>'+greeting+'</div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+compactStats+'<div class="ml-acc-hdr open" id="ml-acc-tiers" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-tiers\')"><div class="ml-acc-title">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div class="ml-tiers-table">'+tt+'</div></div>'+refHtml+surpriseHtml+btns;
+document.getElementById('ct').innerHTML=luHtml+'<div class="ml-tier '+c+'"><div class="ml-hero-row"><div class="ml-hero-side">Sadakat<br>Programı</div><div class="ml-tier-badge" onclick="mlSharePreview()" title="Paylaş"><div class="ml-tier-ring"></div>'+IC[d.tier]+'<div class="ml-tier-share"><svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div></div><div class="ml-hero-side ml-brand-txt">Manhattan</div></div><div class="ml-tier-name">'+d.tier+'</div>'+greeting+'</div>'+flashHtml+prog+projHtml+warnHtml+savingsHtml+compactStats+'<div class="ml-acc-hdr open" id="ml-acc-tiers" onclick="event.stopPropagation();mlAccToggle(\'ml-acc-tiers\')"><div class="ml-acc-title">Tüm Seviyeler <span style="display:inline-block;font-weight:500;font-size:8px;color:var(--mlg);border:1px solid rgba(175,140,62,.25);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:1px;letter-spacing:.3px">Son 12 ay</span></div><svg class="ml-acc-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></div><div class="ml-acc-body"><div class="ml-tiers-table">'+tt+'</div></div>'+refHtml+surpriseHtml+spinHtml+btns;
 // Show cached flash code
 if(window._mlCachedFlashCode){setTimeout(function(){window._mlShowFlashCode(window._mlCachedFlashCode);},50);}
 // Confetti
@@ -823,6 +831,23 @@ setTimeout(function(){trig.classList.add('collapsed');},1600);
 },{passive:true});
 
 document.addEventListener('keydown',function(e){if(e.key==='Escape')window.mlClose();});
+
+// ─── Spin Cooldown Timer (sidebar'da) ───
+window._mlUpdateSpinCooldown=function(){
+  var el=document.getElementById('ml-spin-cd');if(!el)return;
+  if(typeof _swGetCooldownEnd!=='function')return;
+  var cdEnd=_swGetCooldownEnd();
+  if(!cdEnd||Date.now()>=cdEnd){el.textContent='';return}
+  function upd(){
+    var ms=cdEnd-Date.now();
+    if(ms<=0){el.textContent='Çevirebilirsiniz!';return}
+    var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);
+    el.textContent=h>0?'Sonraki hak: '+h+'s '+m+'dk':'Sonraki hak: '+m+'dk';
+    setTimeout(upd,30000);
+  }
+  upd();
+};
+setTimeout(function(){if(window._mlUpdateSpinCooldown)window._mlUpdateSpinCooldown()},3000);
 }
 // Wix uyumu: body hazır olana kadar bekle
 if(document.body){_mlInit();}else{document.addEventListener('DOMContentLoaded',_mlInit);}
