@@ -124,6 +124,23 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 @media(max-width:420px){
   .seg-grid{grid-template-columns:1fr}
 }
+
+/* ─── Preset Buttons ─── */
+.preset-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.preset-btn{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s;font-family:inherit}
+.preset-btn:hover{border-color:var(--gold);transform:translateY(-2px)}
+.preset-btn.preset-active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.preset-icon{font-size:28px;margin-bottom:6px}
+.preset-name{font-size:18px;font-weight:700;color:var(--tx);margin-bottom:4px}
+.preset-desc{font-size:12px;color:var(--tx2)}
+
+/* ─── PIN Modal ─── */
+.pin-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px}
+.pin-modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:32px;width:380px;max-width:100%}
+
+@media(max-width:640px){
+  .preset-row{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -146,10 +163,16 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
     <!-- Header -->
     <div class="header">
       <h1>Çark Yönetimi <span>Ödül ayarları & istatistikler</span></h1>
-      <button class="btn btn-outline" onclick="loadStats()" style="font-size:14px;padding:10px 16px">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-11.36L1 10"/></svg>
-        Yenile
-      </button>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-outline" onclick="showPinChange()" style="font-size:14px;padding:10px 16px" title="PIN Değiştir">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          PIN
+        </button>
+        <button class="btn btn-outline" onclick="loadStats()" style="font-size:14px;padding:10px 16px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 105.64-11.36L1 10"/></svg>
+          Yenile
+        </button>
+      </div>
     </div>
 
     <!-- Status Bar -->
@@ -158,10 +181,33 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
       Yükleniyor...
     </div>
 
+    <!-- Preset Şablonlar -->
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Hazır Şablonlar
+    </div>
+    <div class="preset-row">
+      <button class="preset-btn" onclick="applyPreset('generous')">
+        <div class="preset-icon" style="color:#5ec4a0">&#9829;</div>
+        <div class="preset-name">Cömert</div>
+        <div class="preset-desc">Müşteri mutlu, sık kazanır</div>
+      </button>
+      <button class="preset-btn preset-active" onclick="applyPreset('balanced')">
+        <div class="preset-icon" style="color:var(--gold)">&#9878;</div>
+        <div class="preset-name">Dengeli</div>
+        <div class="preset-desc">Önerilen — iyi denge</div>
+      </button>
+      <button class="preset-btn" onclick="applyPreset('conservative')">
+        <div class="preset-icon" style="color:var(--red)">&#9830;</div>
+        <div class="preset-name">Tutucu</div>
+        <div class="preset-desc">Az ödül, düşük maliyet</div>
+      </button>
+    </div>
+
     <!-- Segment Cards -->
     <div class="section-title">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="12" y1="15" x2="12" y2="22"/></svg>
-      Dilim Ödülleri
+      Dilim Ödülleri <span style="font-size:12px;color:var(--tx3);font-weight:400;margin-left:6px">(ağırlık ne kadar yüksekse o kadar sık çıkar)</span>
     </div>
     <div class="seg-grid" id="seg-grid"></div>
 
@@ -178,9 +224,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
     </div>
     <div class="settings">
       <div class="setting-card">
-        <div class="setting-label">Cooldown (Bekleme Süresi)</div>
+        <div class="setting-label">Bekleme Süresi</div>
         <div class="setting-val" id="cd-val">24s</div>
-        <div class="setting-desc">Tekrar çevirme arası</div>
+        <div class="setting-desc">Her müşteri bu kadar bekler</div>
         <div class="setting-ctrl">
           <select id="cd-select" onchange="onCdChange(this)">
             <option value="6">6 saat</option>
@@ -207,9 +253,9 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
         </div>
       </div>
       <div class="setting-card">
-        <div class="setting-label">Near-Miss Şansı</div>
+        <div class="setting-label">Az Kalsın Efekti</div>
         <div class="setting-val" id="nm-val">%40</div>
-        <div class="setting-desc">"Az kalsın kazanıyordun" efekti</div>
+        <div class="setting-desc">Kaybedince "az kalsın!" hissi</div>
         <div class="slider-row">
           <input type="range" id="nm-slider" min="0" max="80" value="40" oninput="onNmChange(this)">
           <span class="slider-pct" id="nm-pct">%40</span>
@@ -255,6 +301,26 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- PIN Değiştir Modal -->
+<div class="pin-modal-overlay" id="pin-modal" style="display:none" onclick="if(event.target===this)closePinModal()">
+  <div class="pin-modal">
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:20px;color:var(--gold)">PIN Değiştir</h3>
+    <div style="margin-bottom:14px">
+      <label style="font-size:14px;color:var(--tx2);margin-bottom:6px;display:block">Yeni PIN (4 haneli)</label>
+      <input type="text" id="new-pin" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="width:100%;padding:14px;font-size:28px;text-align:center;letter-spacing:12px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--tx);font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+    </div>
+    <div style="margin-bottom:18px">
+      <label style="font-size:14px;color:var(--tx2);margin-bottom:6px;display:block">Tekrar girin</label>
+      <input type="text" id="confirm-pin" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="width:100%;padding:14px;font-size:28px;text-align:center;letter-spacing:12px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--tx);font-family:inherit;outline:none" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'">
+    </div>
+    <div id="pin-change-err" style="color:var(--red);font-size:14px;min-height:20px;margin-bottom:12px;text-align:center"></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-gold" style="flex:1;justify-content:center" onclick="doChangePin()">Değiştir</button>
+      <button class="btn btn-outline" style="flex:1;justify-content:center" onclick="closePinModal()">Vazgeç</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbxJKzibWzYOmapPvghMPxbt9u5vjGQyxCXZae4FKfUEsjCMIWEqkyI2CM_CovOGrzTbXQ/exec';
@@ -537,6 +603,80 @@ function toast(msg,type){
   t.textContent=msg;
   t.className='toast toast-'+(type||'ok')+' show';
   setTimeout(function(){t.classList.remove('show')},3000);
+}
+
+// ─── PIN DEĞİŞTİR ───
+function showPinChange(){
+  document.getElementById('pin-modal').style.display='flex';
+  document.getElementById('new-pin').value='';
+  document.getElementById('confirm-pin').value='';
+  document.getElementById('pin-change-err').textContent='';
+  document.getElementById('new-pin').focus();
+}
+function closePinModal(){
+  document.getElementById('pin-modal').style.display='none';
+}
+async function doChangePin(){
+  var np=document.getElementById('new-pin').value.trim();
+  var cp=document.getElementById('confirm-pin').value.trim();
+  var err=document.getElementById('pin-change-err');
+  if(np.length!==4||!/^\d{4}$/.test(np)){err.textContent='4 haneli rakam girin';return}
+  if(np!==cp){err.textContent='PIN\'ler eşleşmiyor';return}
+  err.textContent='';
+  try{
+    var d=await gasPost({action:'kargoChangePin',newPin:np});
+    if(d.ok){
+      PIN=np;
+      toast('PIN değiştirildi','ok');
+      closePinModal();
+    }else{
+      err.textContent=d.error||'Hata oluştu';
+    }
+  }catch(e){err.textContent='Bağlantı hatası'}
+}
+
+// ─── HAZIR ŞABLONLAR ───
+var PRESETS={
+  generous:{
+    label:'Cömert',
+    weights:[40,25,15,10,5,5,0,0],
+    cooldown:12, nearMiss:0.3, couponDays:14
+  },
+  balanced:{
+    label:'Dengeli',
+    weights:[35,25,10,15,8,7,0,0],
+    cooldown:24, nearMiss:0.4, couponDays:7
+  },
+  conservative:{
+    label:'Tutucu',
+    weights:[45,20,5,10,3,17,0,0],
+    cooldown:48, nearMiss:0.5, couponDays:3
+  }
+};
+
+function applyPreset(key){
+  if(!CFG||!CFG.segments)return;
+  var p=PRESETS[key];
+  if(!p)return;
+  // Apply weights
+  CFG.segments.forEach(function(seg,i){
+    if(i<p.weights.length){
+      seg.weight=p.weights[i];
+      seg.active=p.weights[i]>0;
+    }
+  });
+  CFG.cooldownHours=p.cooldown;
+  CFG.nearMissChance=p.nearMiss;
+  CFG.couponValidityDays=p.couponDays;
+  // Re-render
+  _loading=true;
+  renderSegments();renderSettings();renderChart();
+  _loading=false;
+  markDirty();
+  // Highlight active preset
+  document.querySelectorAll('.preset-btn').forEach(function(b){b.classList.remove('preset-active')});
+  event.currentTarget.classList.add('preset-active');
+  toast(p.label+' şablon uygulandı — Kaydet\'e basın','ok');
 }
 </script>
 </body>
