@@ -2606,12 +2606,14 @@ body.ml-dark .product-details__label-container.product-details__label--Stokta-yo
   background:#8b3a3a!important;
   color:#fff!important;
   border-radius:6px!important;
+  text-transform:none!important;
 }
 body.ml-dark [class*="Stokta-Yok"] .label__text,
 body.ml-dark [class*="Stokta-yok"] .label__text,
 body.ml-dark .grid-product__label--Stokta-Yok .label__text,
 body.ml-dark .grid-product__label--Stokta-yok .label__text{
   color:#fff!important;
+  text-transform:none!important;
 }
 /* Stokta Yok içindeki .ec-label — badge gold kuralını ez */
 body.ml-dark [class*="Stokta-Yok"] .ec-label,
@@ -2619,10 +2621,13 @@ body.ml-dark [class*="Stokta-yok"] .ec-label,
 body.ml-dark [class*="Stokta-Yok"] [class*="label--"],
 body.ml-dark [class*="Stokta-yok"] [class*="label--"],
 body.ml-dark .grid-product__label--Stokta-Yok .ec-label,
-body.ml-dark .grid-product__label--Stokta-yok .ec-label{
+body.ml-dark .grid-product__label--Stokta-yok .ec-label,
+body.ml-dark .product-details__label--Stokta-Yok .ec-label,
+body.ml-dark .product-details__label--Stokta-yok .ec-label{
   background:#8b3a3a!important;
   background-color:#8b3a3a!important;
   color:#fff!important;
+  text-transform:none!important;
 }
 
 /* ── POPUP / OVERLAY ── */
@@ -3923,7 +3928,52 @@ function cleanAll(){
     el.removeAttribute('data-ml-dk');
     delete el._mlHoverActive;
   });
+  // SVG stroke restore — post-processing'de değiştirilen stroke'ları geri al
+  document.querySelectorAll('[data-ml-stroke]').forEach(function(svg){
+    var orig=svg.getAttribute('data-ml-stroke');
+    if(orig) svg.setAttribute('stroke',orig);
+    else svg.removeAttribute('stroke');
+    svg.removeAttribute('data-ml-stroke');
+    svg.style.removeProperty('color');
+  });
   cleanStokYok();
+
+  // ═══ KATMAN 1.5: ÜRÜN AÇIKLAMA POST-PROCESSING TEMİZLİĞİ ═══
+  // Post-processing (accent banner, card outline, text lightening) kalıntıları
+  document.querySelectorAll('.product-details__product-description,.product-details__description').forEach(function(desc){
+    // Outline kalıntıları temizle (rounded cards)
+    desc.querySelectorAll('div[style*="outline"]').forEach(function(el){
+      el.style.removeProperty('outline');
+      el.style.removeProperty('outline-offset');
+    });
+    // Accent banner restore — data-ml-dk zaten Katman 1'de yapıldı ama
+    // banner içi text + SVG'ler ek temizlik isteyebilir
+    desc.querySelectorAll('div').forEach(function(el){
+      var s=el.getAttribute('style')||'';
+      // Dark mode imzası kalmış mı?
+      if(s.indexOf('#1b1a17')>-1||s.indexOf('#23221e')>-1||s.indexOf('#2c2b26')>-1||
+         s.indexOf('rgb(27')>-1||s.indexOf('rgb(35')>-1||s.indexOf('rgb(44')>-1){
+        // data-ml-dk varsa zaten restore edildi, yoksa property bazlı temizle
+        if(!el.hasAttribute('data-ml-dk')){
+          el.style.removeProperty('background');
+          el.style.removeProperty('background-color');
+          el.style.removeProperty('border-color');
+          el.style.removeProperty('box-shadow');
+        }
+      }
+    });
+    // Text color kalıntıları (rgb(255,89,89) vb. lightened colors)
+    desc.querySelectorAll('p[style],span[style],h1[style],h2[style],h3[style],h4[style],h5[style]').forEach(function(t){
+      if(!t.hasAttribute('data-ml-dk')){
+        var s=t.getAttribute('style')||'';
+        if(s.indexOf('rgb(255,89')>-1||s.indexOf('rgb(80,222')>-1||s.indexOf('#ffffff')>-1||
+           s.indexOf('#ece8df')>-1||s.indexOf('#af8c3e')>-1||s.indexOf('#b5b0a4')>-1||
+           s.indexOf('#d4b05e')>-1){
+          t.style.removeProperty('color');
+        }
+      }
+    });
+  });
 
   // ═══ KATMAN 2: KAPSAMLI TARAMA — marker'sız elementlerdeki dark mode kalıntıları ═══
   // Dark mode hex imzaları (JS inline style'larda kullanılan değerler)
@@ -3992,17 +4042,40 @@ function cleanStokYok(){
 // ─── STOKTA YOK LABEL ───
 function fixStokYok(){
   if(!document.body.classList.contains('ml-dark')){cleanStokYok();return;}
+  // Yöntem 1: Class-based (grid kartları)
   document.querySelectorAll('[class*="Stokta-Yok"],[class*="Stokta-yok"],[class*="stokta-yok"]').forEach(function(l){
     _m(l);
     l.style.setProperty('background','#8b3a3a','important');
     l.style.setProperty('background-color','#8b3a3a','important');
     l.style.setProperty('color','#fff','important');
+    l.style.setProperty('text-transform','none','important');
     l.querySelectorAll('.ec-label,[class*="label--"],.label__text').forEach(function(el){
       _m(el);
       el.style.setProperty('background','#8b3a3a','important');
       el.style.setProperty('background-color','#8b3a3a','important');
       el.style.setProperty('color','#fff','important');
+      el.style.setProperty('text-transform','none','important');
     });
+  });
+  // Yöntem 2: Text-content based (product detail — class'ta "Stokta" olmayabilir)
+  document.querySelectorAll('.product-details .ec-label,.product-details__label-container .ec-label,.details-product-purchase__place .ec-label').forEach(function(el){
+    var txt=(el.textContent||'').trim().toLowerCase();
+    if(txt.indexOf('stokta yok')>-1||txt.indexOf('stokta kalmadı')>-1||txt==='tükendi'){
+      _m(el);
+      el.style.setProperty('background','#8b3a3a','important');
+      el.style.setProperty('background-color','#8b3a3a','important');
+      el.style.setProperty('color','#fff','important');
+      el.style.setProperty('text-transform','none','important');
+      el.style.setProperty('font-size','13px','important');
+      // Parent container da bordo
+      var p=el.closest('.product-details__label-container');
+      if(p){
+        _m(p);
+        p.style.setProperty('background','#8b3a3a','important');
+        p.style.setProperty('border-radius','6px','important');
+        p.style.setProperty('overflow','hidden','important');
+      }
+    }
   });
 }
 
@@ -4228,6 +4301,8 @@ function fixLabels(){
     document.querySelectorAll('.recently-viewed[class*="recently-viewed--"],.recently-viewed[class*="recently-viewed--"] *').forEach(_m);
     // Katman 6: ML wrapper'lar
     document.querySelectorAll('[class*="ml-"][class*="-wrapper"]').forEach(_m);
+    // Katman 7: Ürün açıklama HTML'leri — tüm alt elementler
+    document.querySelectorAll('.product-details__product-description,.product-details__product-description *,.product-details__description,.product-details__description *').forEach(_m);
     document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
       el.style.setProperty('border-radius','12px','important');
     });
@@ -4389,7 +4464,7 @@ function fixLabels(){
       el.style.setProperty('border-color','rgba(175,140,62,.06)','important');
     });
     // ── STATİK SAYFA + ML-WRAPPER + ÜRÜN AÇIKLAMA — KAPSAMLI DARK FIX ──
-    var _darkScopes='.ec-page-body *, [class*="ml-"][class*="-wrapper"] *, .product-details__description, .product-details__description *';
+    var _darkScopes='.ec-page-body *, [class*="ml-"][class*="-wrapper"] *, .product-details__description, .product-details__description *, .product-details__product-description, .product-details__product-description *';
     document.querySelectorAll(_darkScopes).forEach(function(el){
       var tag=el.tagName;
       if(tag==='IMG'||tag==='VIDEO'||tag==='IFRAME') return;
@@ -4570,6 +4645,7 @@ function fixLabels(){
           });
           // SVG ikonları beyaz koru
           el.querySelectorAll('svg').forEach(function(svg){
+            if(!svg.hasAttribute('data-ml-stroke')) svg.setAttribute('data-ml-stroke',svg.getAttribute('stroke')||'');
             svg.style.setProperty('color','#ffffff','important');
             svg.setAttribute('stroke','#ffffff');
           });
@@ -4645,6 +4721,7 @@ function fixLabels(){
           var lr=Math.min(255,Math.round(sr*1.6+50));
           var lg=Math.min(255,Math.round(sg*1.6+50));
           var lb=Math.min(255,Math.round(sb*1.6+50));
+          if(!svg.hasAttribute('data-ml-stroke')) svg.setAttribute('data-ml-stroke',sk);
           svg.setAttribute('stroke','rgb('+lr+','+lg+','+lb+')');
         }
       });
