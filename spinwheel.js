@@ -643,7 +643,7 @@ function swToggleSound(){
 }
 
 // ====== GLOBAL ======
-window.swSpin=swSpin;window.swClose=swClose;window.swCopy=swCopy;window.swToggleSound=swToggleSound;
+window.swSpin=swSpin;window.swClose=swClose;window.swCopy=swCopy;window.swToggleSound=swToggleSound;window.openOverlay=openOverlay;
 
 // ====== INIT ======
 function init(){build();drawWheel(0);initDrag()}
