@@ -277,7 +277,7 @@ async function verifyPin(){
   try{
     var r=await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'kargoVerifyPin',pin:p})});
     var d=await r.json();
-    if(d.success){
+    if(d.ok){
       PIN=p;
       document.getElementById('pin-screen').style.display='none';
       document.getElementById('app').style.display='block';
