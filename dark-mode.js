@@ -2799,34 +2799,21 @@ btn.innerHTML=moonOff;
 // ─── TOGGLE FONKSİYONU ───
 
 function toggle(){
-  var wasDark=document.body.classList.contains('ml-dark');
-  if(wasDark){
-    // ═══ DARK → LIGHT: Smooth reload (132 inline style + wildcard = temizlik imkansız) ═══
-    try{localStorage.setItem('ml-dark','0');}catch(e){}
-    // Fade-out → reload → sayfa light olarak yüklenir (tertemiz Ecwid)
-    var fade=document.createElement('div');
-    fade.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:#ffbd92;opacity:0;z-index:9999999;transition:opacity .3s ease;pointer-events:none;';
-    document.body.appendChild(fade);
-    requestAnimationFrame(function(){requestAnimationFrame(function(){
-      fade.style.opacity='1';
-    });});
-    setTimeout(function(){location.reload();},350);
-    return;
-  }
-  // ═══ LIGHT → DARK: Anında geçiş (temizlik gereksiz) ═══
   _observer.disconnect();
-  document.body.classList.add('ml-dark');
-  document.documentElement.style.setProperty('background','#1b1a17','important');
-  document.body.style.backgroundColor='#1b1a17';
-  btn.innerHTML=moonOn;
-  try{localStorage.setItem('ml-dark','1');}catch(e){}
+  document.body.classList.toggle('ml-dark');
+  var dark=document.body.classList.contains('ml-dark');
+  document.documentElement.style.setProperty('background',dark?'#1b1a17':'#ffbd92','important');
+  document.body.style.backgroundColor=dark?'#1b1a17':'#ffbd92';
+  btn.innerHTML=dark?moonOn:moonOff;
+  try{localStorage.setItem('ml-dark',dark?'1':'0');}catch(e){}
   _lastFixTime=0;
   clearTimeout(_fixTimer);
   if(_fixRAF) cancelAnimationFrame(_fixRAF);
   _fixAllNow();
+  // Observer'ı cleanAll/fixAll bitiminden sonra bağla
   setTimeout(function(){
     _observer.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class','style']});
-  },50);
+  }, dark?50:300);
   setTimeout(fixAll,300);
   setTimeout(fixAll,800);
   setTimeout(fixAll,2000);
@@ -4164,8 +4151,21 @@ function fixLabels(){
   });
   // Sepet ürün görseli — border-radius + inline bg override
   if(document.body.classList.contains('ml-dark')){
-    // Marker: fixLabels'ın dark modda dokunacağı tüm elementleri işaretle
-    document.querySelectorAll('.ec-cart-item img,[class*="cart-item"] img,.ec-cart-item__picture,.ec-cart__products,.ec-cart-step,.ec-cart-step__next,.ec-radiogroup__items,.ec-radiogroup__item,.ec-radiogroup label,.ec-radiogroup input,.ec-filter input,.ec-filter label,.ec-minicart,.store .border,.dynamic-product-browser > .border,.ec-range__slider,.ec-range__runner,.ec-range__track-inner,.ec-range__track-line,.ec-cart-next__header,[class*="ec-cart-next"],.form-control__radio-view,.form-control__radio').forEach(_m);
+    // ═══ MEGA MARKER — fixLabels'ın dokunacağı TÜM elementleri önceden işaretle ═══
+    // cleanAll'daki nükleer restore bunları orijinal style'a döndürecek
+    // Katman 1: Bilinen spesifik selector'lar
+    document.querySelectorAll('.ec-cart-item img,[class*="cart-item"] img,.ec-cart-item__picture,.ec-cart__products,.ec-cart-step,.ec-cart-step__next,.ec-radiogroup__items,.ec-radiogroup__item,.ec-radiogroup label,.ec-radiogroup input,.ec-filter input,.ec-filter label,.ec-minicart,.store .border,.dynamic-product-browser > .border,.ec-range__slider,.ec-range__runner,.ec-range__track-inner,.ec-range__track-line,.ec-cart-next__header,[class*="ec-cart-next"],.form-control__radio-view,.form-control__radio,.form-control__checkbox-view,.recently-viewed-title').forEach(_m);
+    // Katman 2: Hakkında / Bize ulaşın — section + TÜM alt elementler
+    document.querySelectorAll('.tile-about,.tile-about *,.owner,.owner *,.whyus,.whyus *,.contacts,.contacts *,.tile-contactInfo,.tile-contactInfo *').forEach(_m);
+    // Katman 3: Cart/Checkout wildcard — computed style check'e bağlı elementler
+    document.querySelectorAll('.ec-cart [style],.ec-cart-step [style],.ec-cart-step *,.ec-confirmation *,[class*="checkout"] *').forEach(_m);
+    // Katman 4: Sayfa gövdesi + related/recently viewed
+    document.querySelectorAll('.ec-page-body,.ec-page-body *,[class*="ec-page"] *,[class*="page-body"] *,[class*="store-page"] *').forEach(_m);
+    document.querySelectorAll('[class*="recently"] .grid-product__wrap,[class*="recently"] .grid-product__wrap *,.ec-related-products .grid-product__wrap,.ec-related-products .grid-product__wrap *,[class*="recently"],[class*="recently"] *,.ec-related-products,.product-details__related-products').forEach(_m);
+    // Katman 5: Recently viewed kartları
+    document.querySelectorAll('.recently-viewed[class*="recently-viewed--"],.recently-viewed[class*="recently-viewed--"] *').forEach(_m);
+    // Katman 6: ML wrapper'lar
+    document.querySelectorAll('[class*="ml-"][class*="-wrapper"]').forEach(_m);
     document.querySelectorAll('.ec-cart-item img, [class*="cart-item"] img').forEach(function(el){
       el.style.setProperty('border-radius','12px','important');
     });
@@ -4650,9 +4650,11 @@ function fixLabels(){
           if(!d._mlHoverFix){
             d._mlHoverFix=true;
             d.addEventListener('mouseenter',function(){
+              if(!document.body.classList.contains('ml-dark')) return;
               this.style.setProperty('background-color','#2c2b26','important');
             });
             d.addEventListener('mouseleave',function(){
+              if(!document.body.classList.contains('ml-dark')) return;
               this.style.setProperty('background-color','#23221e','important');
             });
           }
