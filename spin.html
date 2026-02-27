@@ -116,13 +116,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .save-txt.show{display:inline}
 @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ─── Preset Row ─── */
-.preset-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
-.preset-btn{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;cursor:pointer;transition:all .2s;font-family:inherit}
-.preset-btn:hover{border-color:rgba(201,162,78,.4);transform:translateY(-1px)}
-.preset-btn.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
-.preset-name{font-size:16px;font-weight:700;color:var(--tx);margin-bottom:2px}
-.preset-desc{font-size:11px;color:var(--tx3)}
+/* ─── Segment Table ─── */
 
 /* ─── Status Bar ─── */
 .status-bar{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:20px;font-size:14px;color:var(--tx2);display:flex;align-items:center;gap:8px}
@@ -158,7 +152,6 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
   .seg-num-sm{width:48px;font-size:13px}
   .action-bar{flex-wrap:wrap}
   .btn{width:100%;justify-content:center}
-  .preset-row{grid-template-columns:1fr}
   .header{flex-direction:column;gap:12px;align-items:flex-start}
 }
 @media(max-width:480px){
@@ -224,27 +217,6 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
       </div>
     </div>
 
-    <!-- Presets -->
-    <div class="section">
-      <div class="section-head">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-        Hazır Şablonlar
-      </div>
-      <div class="preset-row">
-        <button class="preset-btn" onclick="applyPreset('generous',this)">
-          <div class="preset-name">Cömert</div>
-          <div class="preset-desc">Sık kazanır, müşteri mutlu</div>
-        </button>
-        <button class="preset-btn active" onclick="applyPreset('balanced',this)">
-          <div class="preset-name">Dengeli</div>
-          <div class="preset-desc">Önerilen — iyi denge</div>
-        </button>
-        <button class="preset-btn" onclick="applyPreset('conservative',this)">
-          <div class="preset-name">Tutucu</div>
-          <div class="preset-desc">Az ödül, düşük maliyet</div>
-        </button>
-      </div>
-    </div>
 
     <!-- Segment Table -->
     <div class="section">
@@ -746,42 +718,6 @@ async function doChangePin(){
 }
 
 // ─── HAZIR ŞABLONLAR ───
-var PRESETS={
-  generous:{
-    weights:[40,25,15,10,5,5,0,0],
-    cooldown:12, nearMiss:0.3, couponDays:14
-  },
-  balanced:{
-    weights:[35,25,10,15,8,7,0,0],
-    cooldown:24, nearMiss:0.4, couponDays:7
-  },
-  conservative:{
-    weights:[45,20,5,10,3,17,0,0],
-    cooldown:48, nearMiss:0.5, couponDays:3
-  }
-};
-
-function applyPreset(key,btnEl){
-  if(!CFG||!CFG.segments)return;
-  var p=PRESETS[key];
-  if(!p)return;
-  CFG.segments.forEach(function(seg,i){
-    if(i<p.weights.length){
-      seg.weight=p.weights[i];
-      seg.active=p.weights[i]>0;
-    }
-  });
-  CFG.cooldownHours=p.cooldown;
-  CFG.nearMissChance=p.nearMiss;
-  CFG.couponValidityDays=p.couponDays;
-  _loading=true;
-  renderSegments();renderSettings();renderChart();
-  _loading=false;
-  markDirty();
-  document.querySelectorAll('.preset-btn').forEach(function(b){b.classList.remove('active')});
-  if(btnEl)btnEl.classList.add('active');
-  toast('Şablon uygulandı — Kaydet\'e basın','ok');
-}
 </script>
 </body>
 </html>
