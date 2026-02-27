@@ -4554,12 +4554,14 @@ function fixLabels(){
           // Orijinal gradient'i restore et
           var gm=s.match(/linear-gradient\([^)]+\)/);
           if(gm) el.style.setProperty('background',gm[0],'important');
-          // İçindeki text'leri beyaz yap
-          el.querySelectorAll('h1,h2,h3,h4,h5,p,span').forEach(function(t){
-            var tOrig=t.getAttribute('data-ml-dk')||t.getAttribute('style')||'';
-            if(tOrig.indexOf('color: #ffffff')>-1||tOrig.indexOf('color:#ffffff')>-1||tOrig.indexOf('rgba(255')>-1||tOrig.indexOf('color: #fff')>-1){
-              t.style.setProperty('color','#ffffff','important');
-            }
+          // TÜM text'leri beyaz yap — parlak bg üzerinde okunabilirlik
+          el.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span,div,strong,b,li').forEach(function(t){
+            t.style.setProperty('color','#ffffff','important');
+          });
+          // SVG ikonları beyaz koru
+          el.querySelectorAll('svg').forEach(function(svg){
+            svg.style.setProperty('color','#ffffff','important');
+            svg.setAttribute('stroke','#ffffff');
           });
           el.style.removeProperty('outline');
         }
