@@ -384,7 +384,7 @@ function winSound(){
 // ======================================================================
 
 var _dragging=false,_dragEvents=[],_freeSpinId=null;
-var RESISTANCE=100,SPEED_MAX=500,DRAG_PERIOD=250;
+var RESISTANCE=100,SPEED_MAX=900,DRAG_PERIOD=250;
 var _lastTickSeg=-1;
 var _lastTickTime=0;
 
@@ -479,11 +479,11 @@ function initDrag(){
     if(dragDist===0)return;
 
     // CrazyTim: speed = dragDistance * (1000 / dragCapturePeriod) → deg/sn
-    var speed=dragDist*(1000/DRAG_PERIOD);
+    var speed=dragDist*(1000/DRAG_PERIOD)*2.5; // 2.5x çarpan — daha duyarlı çark
     speed=Math.max(-SPEED_MAX,Math.min(SPEED_MAX,speed));
 
     // Yeterli ileri hız → API spin tetikle | geri veya yavaş → serbest yavaşlama
-    if(speed>150){
+    if(speed>400){
       _momentumSpin(speed);
     }else if(speed>5){
       _freeSpin(speed);
@@ -605,7 +605,7 @@ async function swSpin(){
     var dt=now-lastR;
     if(dt<=0){requestAnimationFrame(rFrame);return}
     lastR=now;
-    rSpd=Math.min(rSpd+200*(dt/1000),400);
+    rSpd=Math.min(rSpd+300*(dt/1000),600);
     _rotation+=rSpd*(dt/1000);
     drawWheel(_rotation);_tickSeg();
     requestAnimationFrame(rFrame);
@@ -802,11 +802,17 @@ function showReady(){
   var btn=document.getElementById('sw-btn');
   gate.style.display='none';btn.style.display='';
   var blocked=_spunSession&&!_TEST_MODE;
-  btn.disabled=blocked;
-  btn.textContent=blocked?'ÇEVRİLDİ':_TEST_MODE?'TEST ÇEVİR':'ÇEVİR!';
-  if(blocked){msg(getCountdownText())}
-  else if(_TEST_MODE){msg('Test modu aktif — sınırsız çevirme')}
-  else{msg('Fırlat veya ÇEVİR butonuna bas!')}
+  btn.disabled=false;
+  if(blocked){
+    btn.textContent='Kapat';
+    btn.onclick=function(e){e.stopPropagation();swClose()};
+    msg(getCountdownText());
+  }else{
+    btn.onclick=function(e){e.stopPropagation();swSpin()};
+    btn.textContent=_TEST_MODE?'TEST ÇEVİR':'ÇEVİR!';
+    if(_TEST_MODE){msg('Test modu aktif — sınırsız çevirme')}
+    else{msg('Fırlat veya ÇEVİR butonuna bas!')}
+  }
 }
 
 function showGate(){
@@ -953,11 +959,16 @@ function syncUI(){
   var x=document.getElementById('sw-x');
   if(btn){
     var blocked=_spunSession&&!_TEST_MODE;
-    btn.disabled=blocked||_spinning;
-    if(_spinning){btn.textContent='Çevriliyor...'}
-    else if(blocked){btn.textContent='ÇEVRİLDİ'}
-    else if(_TEST_MODE){btn.textContent='TEST ÇEVİR'}
-    else{btn.textContent='ÇEVİR!'}
+    if(_spinning){
+      btn.disabled=true;btn.textContent='Çevriliyor...';
+    }else if(blocked){
+      btn.disabled=false;btn.textContent='Kapat';
+      btn.onclick=function(e){e.stopPropagation();swClose()};
+    }else{
+      btn.disabled=false;
+      btn.onclick=function(e){e.stopPropagation();swSpin()};
+      btn.textContent=_TEST_MODE?'TEST ÇEVİR':'ÇEVİR!';
+    }
   }
   if(x) x.style.display=_spinning?'none':'';
   if(!_spinning){
