@@ -3364,13 +3364,14 @@ function _loadSpinConfig() {
       if (!cfg.cooldownHours) cfg.cooldownHours = _SPIN_DEFAULT_CONFIG.cooldownHours;
       if (!cfg.couponValidityDays) cfg.couponValidityDays = _SPIN_DEFAULT_CONFIG.couponValidityDays;
       if (cfg.fontScale === undefined) cfg.fontScale = _SPIN_DEFAULT_CONFIG.fontScale || 1.0;
-      // Migration v2: label+sub split, cooldown 30dk
-      if (!cfg.configVersion || cfg.configVersion < 2) {
-        cfg.configVersion = 2;
+      // Migration v3: sub boş olanları da default'tan doldur + cooldown fix
+      if (!cfg.configVersion || cfg.configVersion < 3) {
+        cfg.configVersion = 3;
         cfg.cooldownHours = _SPIN_DEFAULT_CONFIG.cooldownHours;
         for (var si = 0; si < cfg.segments.length; si++) {
           var seg = cfg.segments[si];
-          if (seg.sub === undefined && _SPIN_DEFAULT_CONFIG.segments[si]) {
+          // sub yoksa veya boşsa, default'tan al
+          if (!seg.sub && _SPIN_DEFAULT_CONFIG.segments[si]) {
             seg.sub = _SPIN_DEFAULT_CONFIG.segments[si].sub || '';
             seg.label = _SPIN_DEFAULT_CONFIG.segments[si].label || seg.label;
           }
@@ -3381,7 +3382,7 @@ function _loadSpinConfig() {
     }
   } catch(e) { Logger.log('_loadSpinConfig error: ' + e); }
   var fresh = JSON.parse(JSON.stringify(_SPIN_DEFAULT_CONFIG));
-  fresh.configVersion = 2;
+  fresh.configVersion = 3;
   return fresh;
 }
 
@@ -3433,6 +3434,7 @@ function _spinSaveConfig(config) {
     config.cooldownHours = Math.max(0.25, Math.min(336, parseFloat(config.cooldownHours) || 0.5));
     config.couponValidityDays = Math.max(1, Math.min(90, parseInt(config.couponValidityDays) || 7));
     if (!Array.isArray(config.nearMissSegments)) config.nearMissSegments = [0, 2];
+    config.configVersion = 3;
     
     _saveSpinConfigToProps(config);
     return jsonResponse({ ok: true, message: 'Config kaydedildi.' });

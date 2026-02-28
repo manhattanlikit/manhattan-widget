@@ -422,7 +422,7 @@ body.ml-dark .ml-sb-profile-chevron{color:${TX3}}
   display:inline-flex;align-items:center;justify-content:center;
   border-radius:9px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
 }
-.ml-sb-qa-cd{font-size:9px;font-weight:600;color:#af8c3e;opacity:.8;margin-left:auto;padding-right:2px}
+.ml-sb-qa-cd{font-size:11px;font-weight:700;color:#af8c3e;margin-left:auto;padding:2px 6px;background:rgba(175,140,62,.1);border-radius:4px;white-space:nowrap}
 .ml-sb-qa-cd:empty{display:none}
 .ml-sb-chevron{color:#ccc;font-size:13px;flex-shrink:0}
 body.ml-dark .ml-sb-quick{background:rgba(255,255,255,.04);border-color:rgba(175,140,62,.12)}
