@@ -56,7 +56,7 @@ function _fetchTestMode(){
     }
     if(typeof d.fontScale==='number')_fontScale=Math.max(0.5,Math.min(2.0,d.fontScale));
     drawWheel(_rotation);
-  }).catch(function(){});
+  }).catch(function(e){console.warn('[SW] spin-check fetch error:',e)});
 }
 
 // ====== SVG İKONLAR ======
@@ -103,11 +103,11 @@ var css=`
 .sw-login-btn:hover{background:#d4b05e;color:#1a1714}
 .sw-login-msg{color:rgba(255,255,255,.7);font:500 13px 'Plus Jakarta Sans',sans-serif;margin-bottom:14px;text-align:center;padding:0 20px}
 
-.sw-controls{display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:22px}
+.sw-controls{display:flex;flex-direction:column;align-items:center;gap:16px;margin-top:24px}
 .sw-btn{padding:15px 52px;border-radius:30px;border:none;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;font:700 16px 'Plus Jakarta Sans',sans-serif;letter-spacing:1.5px;cursor:pointer;text-transform:uppercase;box-shadow:0 4px 24px rgba(175,140,62,.35),0 0 0 1px rgba(255,255,255,.08) inset;transition:all .25s}
 .sw-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(175,140,62,.45)}
 .sw-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none}
-.sw-msg{font:500 13px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.45);text-align:center;min-height:18px;transition:all .3s}
+.sw-msg{font:500 13px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.45);text-align:center;min-height:18px;transition:all .3s;margin-top:2px}
 .sw-msg.err{color:#f87171}
 .sw-msg.hot{color:#fbbf24;font-weight:700}
 
@@ -198,8 +198,8 @@ function build(){
         '<div style="display:flex;gap:12px;align-items:center">'+
           '<button class="sw-snd" id="sw-snd" onclick="event.stopPropagation();swToggleSound()">'+ICO.sndOn+' <span id="sw-snd-txt">Ses</span></button>'+
         '</div>'+
+        '<div class="sw-msg" id="sw-msg"></div>'+
       '</div>'+
-      '<div class="sw-msg" id="sw-msg"></div>'+
     '</div>';
   document.body.appendChild(ov);
 

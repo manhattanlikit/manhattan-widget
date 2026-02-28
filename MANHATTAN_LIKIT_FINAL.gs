@@ -3238,13 +3238,14 @@ function handleSpin(email) {
     
     // Sheet'e kaydet (cooldown_key artık ISO tarih)
     var cooldownKey = Utilities.formatDate(now, 'Europe/Istanbul', 'yyyy-MM-dd HH:mm');
-    sheet.appendRow([email, cooldownKey, segment, segConfig.label, couponCode, now.toISOString()]);
+    var prizeLabel = segConfig.label + (segConfig.sub ? ' ' + segConfig.sub : '');
+    sheet.appendRow([email, cooldownKey, segment, prizeLabel, couponCode, now.toISOString()]);
     
     return jsonResponse({
       ok: true,
       segment: segment,
       angleOffset: result.angleOffset,
-      prize: segConfig.label,
+      prize: prizeLabel,
       couponCode: couponCode,
       type: segConfig.type,
       discount: segConfig.discount,
@@ -3332,15 +3333,16 @@ function onOpen() {
 
 var _SPIN_DEFAULT_CONFIG = {
   segments: [
-    { id: 0, label: '%3 İndirim', type: 'percent', discount: 3, weight: 25, active: true },
-    { id: 1, label: 'Manhattan Likit HEDİYE!', type: 'grand', discount: 0, weight: 0, active: true },
-    { id: 2, label: '%2 İndirim', type: 'percent', discount: 2, weight: 25, active: true },
-    { id: 3, label: 'Ücretsiz Kargo', type: 'shipping', discount: 0, weight: 15, active: true },
-    { id: 4, label: '%5 İndirim', type: 'percent', discount: 5, weight: 15, active: true },
-    { id: 5, label: 'Tekrar Dene', type: 'none', discount: 0, weight: 10, active: true },
-    { id: 6, label: '%10 İndirim', type: 'percent', discount: 10, weight: 1, active: true },
-    { id: 7, label: '%3 İndirim', type: 'percent', discount: 3, weight: 5, active: true }
+    { id: 0, label: '%3', sub: 'İNDİRİM', type: 'percent', discount: 3, weight: 25, active: true },
+    { id: 1, label: 'HEDİYE', sub: 'Manhattan', type: 'grand', discount: 0, weight: 0, active: true },
+    { id: 2, label: '%2', sub: 'İNDİRİM', type: 'percent', discount: 2, weight: 25, active: true },
+    { id: 3, label: 'KARGO', sub: 'ÜCRETSİZ', type: 'shipping', discount: 0, weight: 15, active: true },
+    { id: 4, label: '%5', sub: 'İNDİRİM', type: 'percent', discount: 5, weight: 15, active: true },
+    { id: 5, label: 'TEKRAR', sub: 'DENE', type: 'none', discount: 0, weight: 10, active: true },
+    { id: 6, label: '%10', sub: 'İNDİRİM', type: 'percent', discount: 10, weight: 1, active: true },
+    { id: 7, label: '%3', sub: 'İNDİRİM', type: 'percent', discount: 3, weight: 5, active: true }
   ],
+  fontScale: 1.0,
   nearMissChance: 0.40,
   nearMissSegments: [0, 2],
   cooldownHours: 24,
@@ -3361,6 +3363,13 @@ function _loadSpinConfig() {
       if (!cfg.nearMissSegments) cfg.nearMissSegments = _SPIN_DEFAULT_CONFIG.nearMissSegments;
       if (!cfg.cooldownHours) cfg.cooldownHours = _SPIN_DEFAULT_CONFIG.cooldownHours;
       if (!cfg.couponValidityDays) cfg.couponValidityDays = _SPIN_DEFAULT_CONFIG.couponValidityDays;
+      if (cfg.fontScale === undefined) cfg.fontScale = _SPIN_DEFAULT_CONFIG.fontScale || 1.0;
+      // Segment sub backfill — eski config'te sub yoksa default'tan al
+      for (var si = 0; si < cfg.segments.length; si++) {
+        if (cfg.segments[si].sub === undefined && _SPIN_DEFAULT_CONFIG.segments[si]) {
+          cfg.segments[si].sub = _SPIN_DEFAULT_CONFIG.segments[si].sub || '';
+        }
+      }
       return cfg;
     }
   } catch(e) { Logger.log('_loadSpinConfig error: ' + e); }
