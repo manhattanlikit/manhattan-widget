@@ -291,18 +291,22 @@ function drawWheel(rotDeg){
     c.lineTo(cx+R*Math.cos(a0),cy+R*Math.sin(a0));
     c.strokeStyle='rgba(212,176,94,.2)';c.lineWidth=1;c.stroke();
 
-    // Text — _fontScale ile ayarlanabilir
+    // Text — _fontScale ile ayarlanabilir, sol yarıda ters çevrilir
     c.save();c.translate(cx,cy);c.rotate(mid);
     var textR=R*.66;
+    // Sol yarıdaki segmentlerde yazı ters dönmemeli
+    var normA=((mid%(2*Math.PI))+(2*Math.PI))%(2*Math.PI);
+    var flip=normA>Math.PI/2&&normA<Math.PI*1.5;
+    if(flip){c.rotate(Math.PI);textR=-textR;}
     c.fillStyle=seg.text;
     c.font='800 '+Math.round(W*.042*_fontScale)+'px "Plus Jakarta Sans",sans-serif';
     c.textAlign='center';c.textBaseline='middle';
-    c.shadowColor='rgba(0,0,0,.5)';c.shadowBlur=6;c.shadowOffsetY=2;
-    c.fillText(seg.label,textR,-(W*.012));
+    c.shadowColor='rgba(0,0,0,.5)';c.shadowBlur=6;c.shadowOffsetY=flip?-2:2;
+    c.fillText(seg.label,textR,flip?(W*.012):-(W*.012));
     c.shadowBlur=0;c.shadowOffsetY=0;
     c.font='600 '+Math.round(W*.022*_fontScale)+'px "Plus Jakarta Sans",sans-serif';
     c.fillStyle=seg.text;c.globalAlpha=.6;
-    c.fillText(seg.sub,textR,W*.024);
+    c.fillText(seg.sub,textR,flip?-(W*.024):(W*.024));
     c.globalAlpha=1;
     c.restore();
   }
@@ -479,7 +483,7 @@ function initDrag(){
     speed=Math.max(-SPEED_MAX,Math.min(SPEED_MAX,speed));
 
     // Yeterli ileri hız → API spin tetikle | geri veya yavaş → serbest yavaşlama
-    if(speed>60){
+    if(speed>150){
       _momentumSpin(speed);
     }else if(speed>5){
       _freeSpin(speed);
@@ -578,7 +582,7 @@ async function _momentumSpin(speed){
     if(err&&err.name==='AbortError')msg('Sunucu yanıt vermiyor','err');
     else msg('Bağlantı hatası','err');
   }
-  syncUI();_spinning=false;
+  _spinning=false;syncUI();
 }
 
 // ====== BUTON İLE SPIN ======
@@ -629,7 +633,7 @@ async function swSpin(){
     if(err&&err.name==='AbortError')msg('Sunucu yanıt vermiyor','err');
     else msg('Bağlantı hatası','err');
   }
-  syncUI();_spinning=false;
+  _spinning=false;syncUI();
 }
 
 // ====== HEDEF ANİMASYON — CrazyTim spinToItem + easeSinOut ======
@@ -652,11 +656,13 @@ function _spinToTarget(seg,offset,handoff){
     // Süre: easeSinOut başlangıç hızı = dist*π/(2*dur_s)
     // Handoff ile eşleştir: dur = dist*π/(2*handoff) sn
     var dur;
-    if(handoff>10){
+    if(handoff>50){
       dur=Math.max(3500,Math.min(9000,dist*Math.PI*1000/(2*handoff)));
     }else{
-      dur=4000+Math.random()*2000;
+      // Düşük hız veya buton spin — sabit süre (hız atlama riski yok)
+      dur=5000+Math.random()*2000;
     }
+    if(!dur||isNaN(dur)||dur<1000)dur=5000; // NaN koruması
 
     var t0=null;
     function frame(ts){
@@ -711,7 +717,7 @@ function handleSpinError(data,btn){
   }else{
     msg(data.error||'Bir hata oluştu','err');
   }
-  syncUI();_spinning=false;
+  _spinning=false;syncUI();
 }
 
 function delay(ms){return new Promise(function(r){setTimeout(r,ms)})}
@@ -860,6 +866,7 @@ function showPrize(data){
   var pct=document.getElementById('sw-pct');
   var pex=document.getElementById('sw-pex');
   var pcd=document.getElementById('sw-pcd');
+  if(!el||!ico||!t||!s||!pc)return; // Null guard
 
   if(data.type==='none'){
     ico.innerHTML=ICO.retry;t.textContent='Tekrar Dene!';
@@ -876,9 +883,15 @@ function showPrize(data){
     s.textContent='Siparişinizde kargo bedava!';
     if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}else{pc.style.display='none'}
     pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
-  }else if(data.type==='percent'){
+  }else if(data.type==='grand'){
+    ico.innerHTML=ICO.trophy;t.textContent='Tebrikler!';
+    s.textContent=data.prize||'Manhattan Likit HEDİYE!';
+    if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}else{pc.style.display='none'}
+    pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
+  }else{
+    // percent veya bilinmeyen tip
     ico.innerHTML=data.discount>=10?ICO.trophy:ICO.win;
-    t.textContent='%'+data.discount+' İndirim!';
+    t.textContent='%'+(data.discount||0)+' İndirim!';
     s.textContent=data.couponCode?'Tebrikler! Kuponunuz hazır.':'Ödülünüz kaydedildi.';
     if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}else{pc.style.display='none'}
     pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
