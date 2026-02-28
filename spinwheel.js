@@ -47,6 +47,15 @@ function _fetchTestMode(){
     if(d.ok&&d.testMode!==undefined)_applyTestMode(d.testMode);
     if(d.tickSound)_tickPreset=d.tickSound;
     if(d.celebSound)_celebPreset=d.celebSound;
+    // Segment metinlerini GAS config'den güncelle
+    if(d.segTexts&&Array.isArray(d.segTexts)){
+      for(var i=0;i<Math.min(d.segTexts.length,SEGS.length);i++){
+        if(d.segTexts[i].label)SEGS[i].label=d.segTexts[i].label;
+        if(d.segTexts[i].sub!==undefined)SEGS[i].sub=d.segTexts[i].sub;
+      }
+    }
+    if(typeof d.fontScale==='number')_fontScale=Math.max(0.5,Math.min(2.0,d.fontScale));
+    drawWheel(_rotation);
   }).catch(function(){});
 }
 
