@@ -501,6 +501,7 @@ function readAllFromUI(){
     if(i>=CFG.segments.length)return;
     var seg=CFG.segments[i];
     seg.label=row.querySelector('.seg-label-input').value.trim()||seg.label;
+    seg.sub=row.querySelector('.seg-sub-input')?row.querySelector('.seg-sub-input').value.trim():(seg.sub||'');
     seg.type=row.querySelector('.seg-type-select').value;
     seg.discount=parseFloat(row.querySelector('.seg-discount-input').value)||0;
     seg.weight=Math.max(0,Math.min(100,parseInt(row.querySelector('.seg-weight-input').value)||0));
@@ -516,7 +517,7 @@ function renderSegments(){
     var tr=document.createElement('tr');
     if(isOff) tr.className='off';
     tr.innerHTML=
-      '<td><div class="seg-label-cell"><span class="seg-color" style="background:'+SEG_COLORS[i%SEG_COLORS.length]+'"></span><input class="seg-input seg-label-input" type="text" value="'+escHtml(seg.label)+'" onchange="markDirty()" onclick="this.select()"></div></td>'+
+      '<td><div class="seg-label-cell"><span class="seg-color" style="background:'+SEG_COLORS[i%SEG_COLORS.length]+'"></span><div style="flex:1"><input class="seg-input seg-label-input" type="text" value="'+escHtml(seg.label)+'" onchange="markDirty()" onclick="this.select()" placeholder="Ana metin"><input class="seg-input seg-sub-input" type="text" value="'+escHtml(seg.sub||'')+'" onchange="markDirty()" onclick="this.select()" placeholder="Alt metin" style="font-size:11px;color:var(--tx2);margin-top:2px;font-weight:500"></div></div></td>'+
       '<td><select class="seg-select seg-type-select" onchange="onTypeChange('+i+',this);markDirty()">'+
         '<option value="percent"'+(seg.type==='percent'?' selected':'')+'>İndirim</option>'+
         '<option value="shipping"'+(seg.type==='shipping'?' selected':'')+'>Kargo</option>'+
