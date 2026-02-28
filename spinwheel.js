@@ -116,7 +116,7 @@ var css=`
 .sw-msg.hot{color:#fbbf24;font-weight:700}
 
 /* ─── Prize Card (çark konteynerı içinde) ─── */
-.sw-prize-wrap{position:absolute;inset:8%;display:flex;align-items:center;justify-content:center;z-index:20;opacity:0;visibility:hidden;transition:all .35s;border-radius:50%;overflow:hidden;pointer-events:none}
+.sw-prize-wrap{position:absolute;inset:2.5%;display:flex;align-items:center;justify-content:center;z-index:20;opacity:0;visibility:hidden;transition:all .35s;border-radius:50%;overflow:hidden;pointer-events:none}
 .sw-prize-wrap.show{opacity:1;visibility:visible;pointer-events:auto}
 .sw-prize-bg{position:absolute;inset:0;background:radial-gradient(circle,rgba(26,23,20,.97) 40%,rgba(26,23,20,.94) 70%,rgba(26,23,20,.88));backdrop-filter:blur(16px)}
 .sw-prize-card{position:relative;z-index:2;text-align:center;padding:16px 14px;max-width:82%;animation:sw-prizeIn .5s cubic-bezier(.34,1.56,.64,1)}
@@ -611,26 +611,24 @@ function _showForwardHint(){
   h.id='sw-fwd-hint';
   h.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:25;text-align:center;animation:sw-hintIn .4s cubic-bezier(.34,1.56,.64,1)';
   h.innerHTML=
-    '<div style="background:rgba(26,23,20,.92);border:1px solid rgba(212,176,94,.3);border-radius:16px;padding:18px 24px;backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,.4)">'+
-      '<svg width="56" height="56" viewBox="0 0 56 56" fill="none" style="display:block;margin:0 auto 8px">'+
-        '<circle cx="28" cy="28" r="26" stroke="rgba(212,176,94,.2)" stroke-width="1.5"/>'+
-        '<g transform="translate(12,16)">'+
-          '<path d="M8 14c0-3 2-5.5 5-6.5 1-.3 2-.3 3 0 2 .6 3.5 2 4.2 3.8.3-.2.7-.3 1.1-.3 1.7 0 3 1.3 3 3v1c.6-.3 1.3-.5 2-.5 1.7 0 3 1.3 3 3v6c0 4-3.2 7-7.2 7H15c-3.8 0-7-3-7-7V14z" fill="rgba(212,176,94,.15)" stroke="#d4b05e" stroke-width="1.5"/>'+
-          '<animateTransform attributeName="transform" type="translate" values="0,0;8,0;0,0" dur="1.5s" repeatCount="indefinite"/>'+
-        '</g>'+
-        '<path d="M38 28l4 0" stroke="#d4b05e" stroke-width="2" stroke-linecap="round" opacity=".6">'+
-          '<animate attributeName="opacity" values=".2;.8;.2" dur="1.5s" repeatCount="indefinite"/>'+
+    '<div style="background:rgba(26,23,20,.94);border:1px solid rgba(212,176,94,.35);border-radius:20px;padding:24px 32px;backdrop-filter:blur(16px);box-shadow:0 12px 48px rgba(0,0,0,.5)">'+
+      '<svg width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;margin:0 auto 12px">'+
+        '<circle cx="40" cy="40" r="36" stroke="rgba(212,176,94,.12)" stroke-width="1" stroke-dasharray="4 4"/>'+
+        '<path d="M56 24 A24 24 0 1 1 24 24" stroke="url(#sw-hint-g)" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".9">'+
+          '<animate attributeName="stroke-dasharray" values="0 200;120 200" dur="1.2s" fill="freeze"/>'+
         '</path>'+
-        '<path d="M40 25l3 3-3 3" stroke="#d4b05e" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".6">'+
-          '<animate attributeName="opacity" values=".2;.8;.2" dur="1.5s" repeatCount="indefinite"/>'+
-        '</path>'+
+        '<defs><linearGradient id="sw-hint-g" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#af8c3e" stop-opacity=".3"/><stop offset="100%" stop-color="#f5e6c8"/></linearGradient></defs>'+
+        '<polygon points="58,18 64,28 52,26" fill="#f5e6c8" opacity=".9">'+
+          '<animate attributeName="opacity" values=".5;1;.5" dur="1.5s" repeatCount="indefinite"/>'+
+        '</polygon>'+
+        '<circle cx="40" cy="40" r="4" fill="rgba(212,176,94,.2)"/>'+
       '</svg>'+
-      '<div style="color:#d4b05e;font:700 13px \'Plus Jakarta Sans\',sans-serif;letter-spacing:.5px">İleri Fırlat</div>'+
-      '<div style="color:rgba(255,255,255,.4);font:400 10px \'Plus Jakarta Sans\',sans-serif;margin-top:3px">Çevirmek için saat yönünde fırlat</div>'+
+      '<div style="color:#f5e6c8;font:800 15px \'Plus Jakarta Sans\',sans-serif;letter-spacing:.8px">Saat Yönünde Fırlat</div>'+
+      '<div style="color:rgba(255,255,255,.35);font:400 11px \'Plus Jakarta Sans\',sans-serif;margin-top:5px">Parmağınızla sürükleyip bırakın</div>'+
     '</div>';
   var box=document.getElementById('sw-box');
   if(box){box.style.position='relative';box.appendChild(h)}
-  setTimeout(function(){if(h.parentNode){h.style.transition='opacity .4s';h.style.opacity='0';setTimeout(function(){if(h.parentNode)h.parentNode.removeChild(h)},400)}},2500);
+  setTimeout(function(){if(h.parentNode){h.style.transition='opacity .5s';h.style.opacity='0';setTimeout(function(){if(h.parentNode)h.parentNode.removeChild(h)},500)}},3000);
 }
 
 // ====== MOMENTUM → API → HEDEF ANİMASYON ======
@@ -654,7 +652,7 @@ async function _momentumSpin(speed){
     lastM=now;
     // Lineer sürtünme
     mSpd-=RESISTANCE*(dt/1000);
-    if(mSpd<15)mSpd=15; // API beklerken minimum hız
+    if(mSpd<120)mSpd=120; // API beklerken görsel hız korunsun
     _rotation+=mSpd*(dt/1000);
     drawWheel(_rotation);_tickSeg();
     requestAnimationFrame(mFrame);
@@ -740,7 +738,7 @@ async function swSpin(){
 function _spinToTarget(seg,offset,handoff){
   return new Promise(function(resolve){
     handoff=Math.abs(handoff||0);
-    if(handoff<30)handoff=300; // Buton spin fallback
+    if(handoff<400)handoff=400; // Min hız: yumuşak animasyon garantisi
 
     // Hedef açı: segment merkezi + GAS offset
     var target=360-seg*SA-SA/2+(offset||0);
