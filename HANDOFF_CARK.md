@@ -528,3 +528,40 @@ Tümü Web Audio API oscillator tabanlı — harici dosya yok.
 | widget.js | 906 | 519/519 |
 | widgetwix.js | 859 | 481/481 |
 | MANHATTAN_LIKIT_FINAL.gs | 3497 | 702/702 |
+
+### [2026-02-28] — 6 Sorun Toplu Düzeltme (2 Parça)
+
+#### PARÇA 1 — Yapısal düzeltmeler
+
+| # | Sorun | Kök Neden | Çözüm |
+|---|-------|-----------|-------|
+| 1 | "24 saat" görünüyordu | GAS default `cooldownHours:24` + spin.html `selected` 24 saat | Default 0.5 (30dk), migration v2 eski config'leri düzeltir |
+| 3 | Sidebar geri sayım yok | widget.js'te `ml-spin-cd` elementi vardı ama widget overlay'inde, sidebar'da değil | dark-mode.js QA butonuna `ml-sb-spin-cd` badge + `_mlUpdateSpinCooldown` eklendi |
+| 4 | widget.js floating icon'a çark eklenmişti | `spinHtml` + spin CSS + cooldown timer widget.js overlay'ine konmuştu | Tüm spin HTML/CSS/JS widget.js'ten kaldırıldı |
+| 5 | widgetwix.js aynı sorun | Aynı spin kodu widgetwix.js'te de vardı | Tamamen kaldırıldı |
+| 6 | Çark verileri hardcoded | spinwheel.js SEGS fallback + GAS config label format uyumsuzluğu | GAS default split format (label+sub ayrı), v2 migration eski config'leri dönüştürür |
+
+- dark-mode.js nav links'ten duplicate "Çarkı Çevir" kaldırıldı
+- Çark QA buton action: artık `openOverlay()` direkt çağırır (`.sw-trigger` arama kaldırıldı)
+
+#### PARÇA 2 — spin.html Baba-Dostu UX
+
+Tüm değişiklikler cerrahi CSS (rewrite yok):
+- Section: border 1→2px, spacing +8px, heading 800 weight
+- Section-hint: 14px, gold arka plan kutu (önceki gri metin → belirgin info kutusu)
+- Master toggle açıklama: 14px, daha okunur renk
+- Ayar kartları: etiket 15px bold, açıklama 13px
+- Alt metin inputu: dashed→solid, gold arka plan (baba görebilsin)
+- Tablo header: 13px, daha koyu renk
+- İstatistik/son ödül/ses: font +1-2px
+- Action bar: border-top eklendi, save uyarısı daha belirgin
+
+#### Değişen Dosyalar
+| Dosya | Satır | Brace |
+|-------|-------|-------|
+| widget.js | 875 | 501/501 |
+| widgetwix.js | 831 | 464/464 |
+| dark-mode.js | 5243 | 1666/1666 |
+| MANHATTAN_LIKIT_FINAL.gs | 3506 | 703/703 |
+| spin.html | 938 | 283/283 |
+| spinwheel.js | 1140 | 323/323 (değişmedi) |
