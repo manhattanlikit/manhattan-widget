@@ -6,18 +6,32 @@
 
 var GAS_URL='https://script.google.com/macros/s/AKfycbxJKzibWzYOmapPvghMPxbt9u5vjGQyxCXZae4FKfUEsjCMIWEqkyI2CM_CovOGrzTbXQ/exec';
 
+
 // ====== SEGMENT GÖRSEL (ödül mantığı GAS'ta) ======
+// Varsayılan — spin.html config'den GAS üzerinden yönetilir
 var SEGS=[
-  {label:'%3',   sub:'İNDİRİM',        bg:'#1e1a14',text:'#d4b05e',glow:'rgba(212,176,94,.15)'},
-  {label:'HEDİYE',sub:'Manhattan',      bg:'#3d0a12',text:'#ffd700',grand:true,glow:'rgba(255,215,0,.12)'},
-  {label:'%2',   sub:'İNDİRİM',        bg:'#141820',text:'#7eb8da',glow:'rgba(126,184,218,.12)'},
-  {label:'KARGO',sub:'ÜCRETSİZ',       bg:'#0f1f1a',text:'#5ec4a0',glow:'rgba(94,196,160,.12)'},
-  {label:'%5',   sub:'İNDİRİM',        bg:'#221a10',text:'#e8c36a',glow:'rgba(232,195,106,.12)'},
-  {label:'TEKRAR',sub:'DENE',          bg:'#1a1a1a',text:'#888',glow:'rgba(136,136,136,.08)'},
-  {label:'%10',  sub:'İNDİRİM',        bg:'#1e1510',text:'#ffc857',glow:'rgba(255,200,87,.12)'},
-  {label:'%3',   sub:'İNDİRİM',        bg:'#181420',text:'#b08ed4',glow:'rgba(176,142,212,.12)'}
+  {label:'%3',   sub:'İNDİRİM',   bg:'#1e1a14',text:'#d4b05e',glow:'rgba(212,176,94,.15)'},
+  {label:'HEDİYE',sub:'Manhattan', bg:'#3d0a12',text:'#ffd700',grand:true,glow:'rgba(255,215,0,.12)'},
+  {label:'%2',   sub:'İNDİRİM',   bg:'#141820',text:'#7eb8da',glow:'rgba(126,184,218,.12)'},
+  {label:'KARGO',sub:'ÜCRETSİZ',  bg:'#0f1f1a',text:'#5ec4a0',glow:'rgba(94,196,160,.12)'},
+  {label:'%5',   sub:'İNDİRİM',   bg:'#221a10',text:'#e8c36a',glow:'rgba(232,195,106,.12)'},
+  {label:'TEKRAR',sub:'DENE',     bg:'#1a1a1a',text:'#888',glow:'rgba(136,136,136,.08)'},
+  {label:'%10',  sub:'İNDİRİM',   bg:'#1e1510',text:'#ffc857',glow:'rgba(255,200,87,.12)'},
+  {label:'%3',   sub:'İNDİRİM',   bg:'#181420',text:'#b08ed4',glow:'rgba(176,142,212,.12)'}
 ];
 var N=8,SA=360/N,SAR=Math.PI*2/N;
+
+// Font ölçek — spin.html'den ayarlanabilir (0.5 — 2.0)
+var _fontScale=1.0;
+
+// Dış erişim: segment güncelleme + font ölçek
+window._swSetSegments=function(segs,scale){
+  if(segs&&Array.isArray(segs)&&segs.length>=2){
+    SEGS=segs;N=SEGS.length;SA=360/N;SAR=Math.PI*2/N;
+  }
+  if(typeof scale==='number')_fontScale=Math.max(0.5,Math.min(2.0,scale));
+  drawWheel(_rotation);
+};
 
 // ====== DURUM ======
 var _spinning=false,_spunSession=false,_rotation=0,_audioCtx=null,_muted=false;
@@ -266,20 +280,16 @@ function drawWheel(rotDeg){
     c.lineTo(cx+R*Math.cos(a0),cy+R*Math.sin(a0));
     c.strokeStyle='rgba(212,176,94,.2)';c.lineWidth=1;c.stroke();
 
-    // Text
+    // Text — _fontScale ile ayarlanabilir
     c.save();c.translate(cx,cy);c.rotate(mid);
     var textR=R*.66;
     c.fillStyle=seg.text;
-    c.font='800 '+Math.round(W*.042)+'px "Plus Jakarta Sans",sans-serif';
+    c.font='800 '+Math.round(W*.042*_fontScale)+'px "Plus Jakarta Sans",sans-serif';
     c.textAlign='center';c.textBaseline='middle';
-
-    // Shadow for text
     c.shadowColor='rgba(0,0,0,.5)';c.shadowBlur=6;c.shadowOffsetY=2;
     c.fillText(seg.label,textR,-(W*.012));
     c.shadowBlur=0;c.shadowOffsetY=0;
-
-    // Sub text
-    c.font='600 '+Math.round(W*.022)+'px "Plus Jakarta Sans",sans-serif';
+    c.font='600 '+Math.round(W*.022*_fontScale)+'px "Plus Jakarta Sans",sans-serif';
     c.fillStyle=seg.text;c.globalAlpha=.6;
     c.fillText(seg.sub,textR,W*.024);
     c.globalAlpha=1;
@@ -351,95 +361,112 @@ function winSound(){
   }catch(e){}
 }
 
-// ====== DRAG / SWIPE — Fizik Tabanlı ======
-var _dragging=false,_dragAngle=0,_angularVel=0,_lastAngle=0,_lastTime=0;
-var _velSamples=[],_freeSpinId=null;
+
+// ======================================================================
+// DRAG / SPIN — CrazyTim/spin-wheel v5.0.2 Mekaniği (MIT Lisans)
+// Kaynak: https://github.com/CrazyTim/spin-wheel
+// Constants: rotationResistance=-100, rotationSpeedMax=500, dragCapturePeriod=250ms
+// ======================================================================
+
+var _dragging=false,_dragEvents=[],_freeSpinId=null;
+var RESISTANCE=100,SPEED_MAX=500,DRAG_PERIOD=250;
+var _lastTickSeg=-1;
+
+// ── CrazyTim util.getAngle (birebir) ──
+function _ctAngle(ox,oy,tx,ty){
+  var dx=ox-tx,dy=oy-ty;
+  var theta=Math.atan2(-dy,-dx)*180/Math.PI;
+  if(theta<0) theta+=360;
+  return theta;
+}
+
+// ── CrazyTim util.addAngle (birebir) ──
+function _ctAdd(a,b){
+  var s=a+b;
+  var r=s>0?s%360:360+(s%360);
+  if(r===360)r=0;
+  return r;
+}
+
+// ── CrazyTim util.diffAngle (birebir) ──
+function _ctDiff(a,b){
+  var off=180-b;
+  var aOff=_ctAdd(a,off);
+  return 180-aOff;
+}
+
+// Segment geçişinde tek tick
+function _tickSeg(){
+  var s=Math.floor(((_rotation%360+360)%360)/SA)%N;
+  if(s!==_lastTickSeg){tick();_lastTickSeg=s}
+}
+
+// Serbest animasyonu durdur
+function _stopSpin(){
+  if(_freeSpinId){cancelAnimationFrame(_freeSpinId);_freeSpinId=null}
+}
 
 function initDrag(){
   var box=document.getElementById('sw-box');if(!box)return;
   var cv=box.querySelector('.sw-canvas');if(!cv)return;
 
-  function getAngle(e){
-    var r=cv.getBoundingClientRect();
-    var ccx=r.left+r.width/2,ccy=r.top+r.height/2;
-    var pt=e.touches?e.touches[0]:e;
-    return Math.atan2(pt.clientY-ccy,pt.clientX-ccx)*180/Math.PI;
-  }
-
-  function normDelta(d){
-    while(d>180)d-=360;
-    while(d<-180)d+=360;
-    return d;
-  }
-
+  // ── dragStart (CrazyTim birebir) ──
   function onStart(e){
     if(_spinning)return;
     if(_spunSession&&!_TEST_MODE)return;
     if(!_TEST_MODE&&!isLoggedIn())return;
     e.preventDefault();
     initAudio();
-    // Stop any free spin
-    if(_freeSpinId){cancelAnimationFrame(_freeSpinId);_freeSpinId=null}
+    _stopSpin();
     _dragging=true;
-    _dragAngle=getAngle(e);
-    _lastAngle=_dragAngle;
-    _lastTime=performance.now();
-    _velSamples=[];
-    _angularVel=0;
+    var pt=e.touches?e.touches[0]:e;
+    _dragEvents=[{distance:0,x:pt.clientX,y:pt.clientY,now:performance.now()}];
   }
 
+  // ── dragMove (CrazyTim birebir) ──
   function onMove(e){
     if(!_dragging||_spinning)return;
     e.preventDefault();
-    var now=performance.now();
-    var a=getAngle(e);
-    var delta=normDelta(a-_dragAngle);
+    var pt=e.touches?e.touches[0]:e;
+    var r=cv.getBoundingClientRect();
+    var cx=r.left+r.width/2,cy=r.top+r.height/2;
 
-    // Doğrudan çarkı döndür
+    var a=_ctAngle(cx,cy,pt.clientX,pt.clientY);
+    var last=_dragEvents[0];
+    var la=_ctAngle(cx,cy,last.x,last.y);
+    var delta=_ctDiff(la,a); // İşaretli fark: + saat yönü, - ters
+
+    _dragEvents.unshift({distance:delta,x:pt.clientX,y:pt.clientY,now:performance.now()});
+    if(_dragEvents.length>=40)_dragEvents.pop();
+
+    // Parmak takip — delta hangi yöndeyse o yöne döner
     _rotation+=delta;
     drawWheel(_rotation);
-
-    // Hız hesapla (derece/ms)
-    var dt=now-_lastTime;
-    if(dt>0){
-      var vel=normDelta(a-_lastAngle)/dt;
-      _velSamples.push({v:vel,t:now});
-      // Son 80ms'lik örnekleri tut
-      while(_velSamples.length>0&&now-_velSamples[0].t>80) _velSamples.shift();
-    }
-
-    // Tick ses — sadece ileri yönde segment geçişlerinde
-    var segBefore=Math.floor((((_rotation-delta)%360+360)%360)/SA)%N;
-    var segAfter=Math.floor(((_rotation%360+360)%360)/SA)%N;
-    if(segBefore!==segAfter&&delta>0)tick();
-
-    _lastAngle=a;_lastTime=now;
-    _dragAngle=a;
+    _tickSeg();
   }
 
-  function onEnd(e){
+  // ── dragEnd (CrazyTim birebir) ──
+  function onEnd(){
     if(!_dragging)return;
     _dragging=false;
 
-    // Ağırlıklı ortalama hız
-    if(_velSamples.length<2){return}
-    var totalW=0,totalV=0,now=performance.now();
-    for(var i=0;i<_velSamples.length;i++){
-      var age=now-_velSamples[i].t;
-      var w=Math.max(0,1-age/100); // Yeni örneklere daha çok ağırlık
-      totalV+=_velSamples[i].v*w;
-      totalW+=w;
+    // Son DRAG_PERIOD ms içindeki toplam açısal mesafe
+    var dragDist=0,now=performance.now();
+    for(var i=0;i<_dragEvents.length;i++){
+      if(now-_dragEvents[i].now>DRAG_PERIOD)break;
+      dragDist+=_dragEvents[i].distance;
     }
-    var avgVel=totalW>0?totalV/totalW:0;
+    if(dragDist===0)return;
 
-    // Minimum hız eşiği — sert bir fırlatma gerekli
-    if(Math.abs(avgVel)>0.25){
-      // Hız yeterli → GAS'a spin isteği gönder
-      // Serbest dönüşü hızla başlat, API cevabı gelince hedefe yönlendir
-      startMomentumThenSpin(avgVel);
-    }else{
-      // Yavaş bırakıldı → serbest yavaşlama
-      startFreeSpin(avgVel);
+    // CrazyTim: speed = dragDistance * (1000 / dragCapturePeriod) → deg/sn
+    var speed=dragDist*(1000/DRAG_PERIOD);
+    speed=Math.max(-SPEED_MAX,Math.min(SPEED_MAX,speed));
+
+    // Yeterli hız → API spin tetikle, yoksa serbest yavaşlama
+    if(Math.abs(speed)>60){
+      _momentumSpin(speed);
+    }else if(Math.abs(speed)>5){
+      _freeSpin(speed);
     }
   }
 
@@ -451,57 +478,66 @@ function initDrag(){
   window.addEventListener('touchend',onEnd);
 }
 
-// ====== SERBEST DÖNÜŞ (spin tetiklemedi) ======
-// CrazyTim/spin-wheel mekaniği: lineer yavaşlama (fiziksel sürtünme)
-var RESISTANCE=100; // deg/sn² yavaşlama (workout theme: 100)
-function startFreeSpin(vel){
-  if(Math.abs(vel)<0.01)return;
-  // vel = deg/ms (drag'dan geliyor) → deg/sn
-  var speed=Math.abs(vel)*1000;
-  speed=Math.min(speed,500); // rotationSpeedMax
+// ====== SERBEST DÖNÜŞ — CrazyTim spin() + getRotationSpeedPlusDrag() ======
+// Lineer sürtünme, her iki yön desteklenir, hız sıfıra inince durur
+function _freeSpin(speed){
+  if(Math.abs(speed)<1)return;
+  var dir=speed>=0?1:-1;
+  var spd=speed;
   var lastT=performance.now();
+
   function frame(){
     var now=performance.now();
-    var dt=(now-lastT)/1000;
+    var dt=now-lastT; // ms
+    if(dt<=0){_freeSpinId=requestAnimationFrame(frame);return}
     lastT=now;
-    speed-=RESISTANCE*dt; // Lineer sürtünme
-    if(speed<=0){_freeSpinId=null;return}
-    _rotation+=speed*dt;
-    drawWheel(_rotation);
-    var segNow=Math.floor(((_rotation%360+360)%360)/SA)%N;
-    if(speed>20)tick();
+
+    // CrazyTim animateRotation: rotation += (delta/1000) * rotationSpeed
+    _rotation+=(dt/1000)*spd;
+
+    // CrazyTim getRotationSpeedPlusDrag: lineer sürtünme
+    var next=spd+((RESISTANCE*(dt/1000))*dir*-1);
+
+    // Sıfırı geçerse dur — ters yöne gitmeyi engelle
+    if((dir===1&&next<0)||(dir===-1&&next>=0)){
+      _freeSpinId=null;
+      drawWheel(_rotation);_tickSeg();
+      return;
+    }
+    spd=next;
+    drawWheel(_rotation);_tickSeg();
     _freeSpinId=requestAnimationFrame(frame);
   }
   _freeSpinId=requestAnimationFrame(frame);
 }
 
 // ====== MOMENTUM → API → HEDEF ANİMASYON ======
-async function startMomentumThenSpin(vel){
+async function _momentumSpin(speed){
   if(_spinning)return;
   _spinning=true;
   var btn=document.getElementById('sw-btn');
   btn.disabled=true;btn.textContent='Çevriliyor...';msg('');
   document.getElementById('sw-x').style.display='none';
 
-  // Lineer yavaşlama momentum (CrazyTim mekaniği)
-  // vel = deg/ms → deg/sn
-  var speed=Math.abs(vel)*1000;
-  speed=Math.min(speed,500); // rotationSpeedMax
-  var momentumActive=true;
-  var lastMT=performance.now();
-  function momentumFrame(){
-    if(!momentumActive)return;
+  // İleri yön momentum, API cevabı gelene kadar dönmeye devam
+  var mSpd=Math.min(Math.abs(speed),SPEED_MAX);
+  var active=true;
+  var lastM=performance.now();
+
+  function mFrame(){
+    if(!active)return;
     var now=performance.now();
-    var dt=(now-lastMT)/1000;
-    lastMT=now;
-    speed-=RESISTANCE*dt; // Lineer sürtünme
-    if(speed<15) speed=15; // API beklerken minimum hız koru
-    _rotation+=speed*dt;
-    drawWheel(_rotation);
-    tick();
-    if(momentumActive) requestAnimationFrame(momentumFrame);
+    var dt=now-lastM;
+    if(dt<=0){requestAnimationFrame(mFrame);return}
+    lastM=now;
+    // Lineer sürtünme
+    mSpd-=RESISTANCE*(dt/1000);
+    if(mSpd<15)mSpd=15; // API beklerken minimum hız
+    _rotation+=mSpd*(dt/1000);
+    drawWheel(_rotation);_tickSeg();
+    requestAnimationFrame(mFrame);
   }
-  requestAnimationFrame(momentumFrame);
+  requestAnimationFrame(mFrame);
 
   try{
     var email=getEmail();
@@ -512,30 +548,19 @@ async function startMomentumThenSpin(vel){
     clearTimeout(tout);
     var data=await resp.json();
 
-    // Handoff: mevcut hızı yakala (deg/sn), momentum durdur
-    var handoffSpeed=speed;
-    momentumActive=false;
+    var handoff=mSpd; // Handoff hızı (deg/sn)
+    active=false;
+    if(data.testMode!==undefined)_applyTestMode(data.testMode);
+    if(!data.ok){handleSpinError(data,btn);return}
 
-    // Test mode senkron
-    if(data.testMode!==undefined) _applyTestMode(data.testMode);
-
-    if(!data.ok){
-      handleSpinError(data,btn);
-      return;
-    }
-
-    // Hızı devret — duraksamasız geçiş
-    await animateToTarget(data.segment,data.angleOffset||0,handoffSpeed);
+    await _spinToTarget(data.segment,data.angleOffset||0,handoff);
     await showResult(data);
-
   }catch(err){
-    momentumActive=false;
-    if(err&&err.name==='AbortError') msg('Sunucu yanıt vermiyor','err');
+    active=false;
+    if(err&&err.name==='AbortError')msg('Sunucu yanıt vermiyor','err');
     else msg('Bağlantı hatası','err');
   }
-
-  syncUI();
-  _spinning=false;
+  syncUI();_spinning=false;
 }
 
 // ====== BUTON İLE SPIN ======
@@ -550,22 +575,20 @@ async function swSpin(){
   btn.disabled=true;btn.textContent='Çevriliyor...';msg('');
   document.getElementById('sw-x').style.display='none';
 
-  // Lineer hızlanma (CrazyTim mekaniği, time-based)
-  var rampActive=true;
-  var rampSpeed=0; // deg/sn
-  var lastRT=performance.now();
-  function rampFrame(){
-    if(!rampActive)return;
+  // Time-based hızlanma: 0 → 400 deg/sn
+  var rampOn=true,rSpd=0,lastR=performance.now();
+  function rFrame(){
+    if(!rampOn)return;
     var now=performance.now();
-    var dt=(now-lastRT)/1000;
-    lastRT=now;
-    rampSpeed=Math.min(rampSpeed+200*dt,400); // 200 deg/sn² hızlanma, max 400
-    _rotation+=rampSpeed*dt;
-    drawWheel(_rotation);
-    tick();
-    requestAnimationFrame(rampFrame);
+    var dt=now-lastR;
+    if(dt<=0){requestAnimationFrame(rFrame);return}
+    lastR=now;
+    rSpd=Math.min(rSpd+200*(dt/1000),400);
+    _rotation+=rSpd*(dt/1000);
+    drawWheel(_rotation);_tickSeg();
+    requestAnimationFrame(rFrame);
   }
-  requestAnimationFrame(rampFrame);
+  requestAnimationFrame(rFrame);
 
   try{
     var email=getEmail();
@@ -576,82 +599,56 @@ async function swSpin(){
     clearTimeout(tout);
     var data=await resp.json();
 
-    // Handoff: ramp hızını yakala (deg/sn), durdur
-    var handoffSpeed=rampSpeed;
-    rampActive=false;
+    var handoff=rSpd;
+    rampOn=false;
+    if(data.testMode!==undefined)_applyTestMode(data.testMode);
+    if(!data.ok){handleSpinError(data,btn);return}
 
-    // Test mode senkron
-    if(data.testMode!==undefined) _applyTestMode(data.testMode);
-
-    if(!data.ok){
-      handleSpinError(data,btn);
-      return;
-    }
-
-    await animateToTarget(data.segment,data.angleOffset||0,handoffSpeed);
+    await _spinToTarget(data.segment,data.angleOffset||0,handoff);
     await showResult(data);
-
   }catch(err){
-    rampActive=false;
-    if(err&&err.name==='AbortError') msg('Sunucu yanıt vermiyor','err');
+    rampOn=false;
+    if(err&&err.name==='AbortError')msg('Sunucu yanıt vermiyor','err');
     else msg('Bağlantı hatası','err');
   }
-
-  syncUI();
-  _spinning=false;
+  syncUI();_spinning=false;
 }
 
-// ====== DOĞAL HEDEF ANİMASYON (CrazyTim easeSinOut) ======
-function easeSinOut(t){return Math.sin(t*Math.PI/2)}
+// ====== HEDEF ANİMASYON — CrazyTim spinToItem + easeSinOut ======
+function _easeSinOut(t){return Math.sin(t*Math.PI/2)}
 
-function animateToTarget(segment,angleOffset,handoffSpeed){
+function _spinToTarget(seg,offset,handoff){
   return new Promise(function(resolve){
-    var cv=document.getElementById('sw-cv');if(!cv)return resolve();
+    handoff=Math.abs(handoff||0);
 
-    // handoffSpeed: deg/sn at handoff
-    handoffSpeed=Math.abs(handoffSpeed||0);
+    // Hedef açı: segment merkezi + GAS offset
+    var target=360-seg*SA-SA/2+(offset||0);
+    var start=_rotation;
+    var cur=(start%360+360)%360;
+    var end=start+((target-cur+360)%360);
 
-    // Hedef açıyı hesapla
-    var target=360-segment*SA-SA/2+(angleOffset||0);
-    var startRot=_rotation;
-    var currentAngle=(startRot%360+360)%360;
-    var end=startRot+((target-currentAngle+360)%360);
+    // CrazyTim spinToItem: numberOfRevolutions=4
+    while(end-start<1440)end+=360;
+    var dist=end-start;
 
-    // Forward-only: en az 4 tur ekle (CrazyTim spinToItem: numberOfRevolutions)
-    while(end-startRot<1440)end+=360;
-
-    var totalDist=end-startRot;
-
-    // Süre: CrazyTim workout teması — handoff hızına göre uyarlanır
-    var duration;
-    if(handoffSpeed>10){
-      // Hızlı handoff: mesafe/ortalama-hız mantığı
-      var avgSpeed=handoffSpeed*0.45; // easeSinOut ortalaması ≈ %45
-      duration=Math.max(3500,Math.min(8000,(totalDist/avgSpeed)*1000));
+    // Süre: handoff hızına göre (CrazyTim mantığı)
+    var dur;
+    if(handoff>10){
+      // Ortalama hız ≈ handoff * 0.45 (easeSinOut integral ortalaması)
+      dur=Math.max(3500,Math.min(8000,(dist/(handoff*0.45))*1000));
     }else{
-      // Buton spin — sabit 4-6sn
-      duration=4000+Math.random()*2000;
+      dur=4000+Math.random()*2000;
     }
 
-    var startTime=null;
-    var lastSeg=-1;
-
+    var t0=null;
     function frame(ts){
-      if(!startTime)startTime=ts;
-      var t=Math.min((ts-startTime)/duration,1);
-
-      // CrazyTim easeSinOut: Math.sin(t * π/2)
-      var ease=easeSinOut(t);
-
-      _rotation=startRot+totalDist*ease;
-      drawWheel(_rotation);
-
-      // Tick ses
-      var curSeg=Math.floor(((_rotation%360+360)%360)/SA)%N;
-      if(curSeg!==lastSeg){tick();lastSeg=curSeg}
-
+      if(!t0)t0=ts;
+      var t=Math.min((ts-t0)/dur,1);
+      // CrazyTim easeSinOut: sin(t * π/2)
+      _rotation=start+dist*_easeSinOut(t);
+      drawWheel(_rotation);_tickSeg();
       if(t<1)requestAnimationFrame(frame);
-      else{_rotation=end;drawWheel(_rotation);resolve()}
+      else{_rotation=end;drawWheel(_rotation);_tickSeg();resolve()}
     }
     frame(performance.now()); // Senkron ilk frame — handoff boşluğu yok
   });
@@ -666,11 +663,9 @@ async function showResult(data){
     showToast('Tekrar Dene!','Bir sonraki sefere!',2500);
     showPrize(data);
   }else{
-    // Flash efekti
     var ring=document.querySelector('.sw-ring');
     if(ring)ring.classList.add('sw-flash');
     setTimeout(function(){if(ring)ring.classList.remove('sw-flash')},600);
-
     winSound();confetti();
     await delay(700);
     showPrize(data);
@@ -680,8 +675,6 @@ async function showResult(data){
 
   if(!_TEST_MODE)_spunSession=true;
   if(data.cooldownHours) setCooldown(data.cooldownHours*3600000);
-
-  // Tüm UI state senkron
   syncUI();
 
   if(isNearMiss&&data.type!=='none'){
@@ -700,8 +693,7 @@ function handleSpinError(data,btn){
   }else{
     msg(data.error||'Bir hata oluştu','err');
   }
-  syncUI();
-  _spinning=false;
+  syncUI();_spinning=false;
 }
 
 function delay(ms){return new Promise(function(r){setTimeout(r,ms)})}
@@ -898,56 +890,17 @@ function setCooldown(remainMs){
   if(remainMs>0) _cooldownEnd=Date.now()+remainMs;
 }
 function getCountdownText(){
-  if(!_cooldownEnd) return'';
+  if(!_cooldownEnd) return'Tekrar çevirebilirsiniz!';
   var ms=_cooldownEnd-Date.now();
-  if(ms<=0){_cooldownEnd=null;return'';}
+  if(ms<=0){_cooldownEnd=null;return'Tekrar çevirebilirsiniz!';}
   var hrs=Math.floor(ms/3600000);
   var mins=Math.floor((ms%3600000)/60000);
   if(hrs>0) return'Sonraki hak: '+hrs+'s '+mins+'dk';
   return'Sonraki hak: '+mins+'dk';
 }
+// Sidebar erişimi
 function getCooldownEnd(){return _cooldownEnd}
 function isSpunSession(){return _spunSession}
-
-// ====== TEST MODE ======
-function _applyTestMode(on){
-  _TEST_MODE=!!on;
-  if(_TEST_MODE) _spunSession=false; // test modda blok yok
-}
-
-function _fetchTestMode(){
-  try{
-    fetch(GAS_URL+'?action=spin-check').then(function(r){return r.json()}).then(function(d){
-      if(d&&d.ok) _applyTestMode(d.testMode);
-      syncUI();
-    }).catch(function(){});
-  }catch(e){}
-}
-
-// ====== UI STATE SENKRON (tek kaynak) ======
-function syncUI(){
-  var btn=document.getElementById('sw-btn');
-  var x=document.getElementById('sw-x');
-  if(btn){
-    var blocked=_spunSession&&!_TEST_MODE;
-    btn.disabled=blocked||_spinning;
-    if(_spinning){btn.textContent='Çevriliyor...'}
-    else if(blocked){btn.textContent='ÇEVRİLDİ'}
-    else if(_TEST_MODE){btn.textContent='TEST ÇEVİR'}
-    else{btn.textContent='ÇEVİR!'}
-  }
-  if(x) x.style.display=_spinning?'none':'';
-
-  // Overlay mesaj
-  if(!_spinning){
-    var blocked2=_spunSession&&!_TEST_MODE;
-    if(blocked2){msg(getCountdownText()||'Çevrildi')}
-    else if(_TEST_MODE){msg('Test modu aktif — sınırsız çevirme')}
-  }
-
-  // Sidebar countdown güncelle
-  if(window._mlUpdateSpinCooldown) window._mlUpdateSpinCooldown();
-}
 
 // ====== SES TOGGLE ======
 function swToggleSound(){
@@ -972,13 +925,11 @@ window._swSyncUI=syncUI;
 
 // ====== INIT ======
 function init(){build();drawWheel(0);initDrag();
-  // Sidebar countdown: 30sn aralıkla canlı güncelleme
   setInterval(function(){
-    if(window._mlUpdateSpinCooldown) window._mlUpdateSpinCooldown();
-    // Cooldown bitince otomatik sıfırla
+    if(window._mlUpdateSpinCooldown)window._mlUpdateSpinCooldown();
     if(_cooldownEnd&&Date.now()>=_cooldownEnd){
       _cooldownEnd=null;
-      if(!_TEST_MODE){}else{_spunSession=false}
+      if(_TEST_MODE)_spunSession=false;
       syncUI();
     }
   },30000);
