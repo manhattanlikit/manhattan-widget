@@ -3208,14 +3208,18 @@ function handleSpin(email) {
     var expFormatted = '';
     
     // Kupon oluştur (couponCreationEnabled kapalıysa atlanır)
-    if (cfg.couponCreationEnabled !== false && (segConfig.type === 'percent' || segConfig.type === 'shipping')) {
+    if (cfg.couponCreationEnabled !== false && (segConfig.type === 'percent' || segConfig.type === 'shipping' || segConfig.type === 'grand' || segConfig.type === 'absolute')) {
       var code = 'SPIN-' + generateCouponCode().substring(0, 8);
       var expDate = new Date(now.getTime() + cfg.couponValidityDays * 86400000);
+      
+      var ecwidType = 'PERCENT';
+      if (segConfig.type === 'shipping') ecwidType = 'SHIPPING';
+      else if (segConfig.type === 'absolute' || segConfig.type === 'grand') ecwidType = 'ABSOLUTE';
       
       var payload = {
         name: 'Çark Çevir - ' + email,
         code: code,
-        discountType: segConfig.type === 'shipping' ? 'SHIPPING' : 'PERCENT',
+        discountType: ecwidType,
         status: 'ACTIVE',
         discount: segConfig.discount || 0,
         launchDate: formatEcwidDate(now),
@@ -3252,7 +3256,7 @@ function handleSpin(email) {
       expiry: expFormatted,
       cooldownHours: cfg.cooldownHours,
       isNearMiss: isNearMiss,
-      couponError: (segConfig.type === 'percent' || segConfig.type === 'shipping') && !couponCode,
+      couponError: (segConfig.type !== 'none') && !couponCode,
       testMode: !!cfg.testMode
     });
     } finally {
@@ -3368,11 +3372,10 @@ function _loadSpinConfig() {
       if (cfg.fontScale === undefined) cfg.fontScale = _SPIN_DEFAULT_CONFIG.fontScale || 1.0;
       if (!cfg.fontFamily) cfg.fontFamily = _SPIN_DEFAULT_CONFIG.fontFamily;
       if (cfg.labelGap === undefined) cfg.labelGap = _SPIN_DEFAULT_CONFIG.labelGap;
-      // Migration v4: fontScale reset + fontFamily/labelGap ekle
-      if (!cfg.configVersion || cfg.configVersion < 4) {
-        cfg.configVersion = 4;
+      // Migration v5: grand/absolute kupon + fontScale reset kaldırıldı
+      if (!cfg.configVersion || cfg.configVersion < 5) {
+        cfg.configVersion = 5;
         cfg.cooldownHours = cfg.cooldownHours || _SPIN_DEFAULT_CONFIG.cooldownHours;
-        cfg.fontScale = 1.0;
         cfg.fontFamily = cfg.fontFamily || _SPIN_DEFAULT_CONFIG.fontFamily;
         cfg.labelGap = (cfg.labelGap !== undefined) ? cfg.labelGap : _SPIN_DEFAULT_CONFIG.labelGap;
         for (var si = 0; si < cfg.segments.length; si++) {
@@ -3388,7 +3391,7 @@ function _loadSpinConfig() {
     }
   } catch(e) { Logger.log('_loadSpinConfig error: ' + e); }
   var fresh = JSON.parse(JSON.stringify(_SPIN_DEFAULT_CONFIG));
-  fresh.configVersion = 4;
+  fresh.configVersion = 5;
   return fresh;
 }
 
@@ -3440,7 +3443,7 @@ function _spinSaveConfig(config) {
     config.cooldownHours = Math.max(0.25, Math.min(336, parseFloat(config.cooldownHours) || 0.5));
     config.couponValidityDays = Math.max(1, Math.min(90, parseInt(config.couponValidityDays) || 7));
     if (!Array.isArray(config.nearMissSegments)) config.nearMissSegments = [0, 2];
-    config.configVersion = 4;
+    config.configVersion = 5;
     config.fontFamily = config.fontFamily || _SPIN_DEFAULT_CONFIG.fontFamily;
     config.labelGap = Math.max(0, Math.min(30, parseInt(config.labelGap) || _SPIN_DEFAULT_CONFIG.labelGap));
     

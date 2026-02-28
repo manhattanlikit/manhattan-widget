@@ -116,24 +116,25 @@ var css=`
 .sw-msg.hot{color:#fbbf24;font-weight:700}
 
 /* ─── Prize Card (çark konteynerı içinde) ─── */
-.sw-prize-wrap{position:absolute;inset:2.5%;display:flex;align-items:center;justify-content:center;z-index:20;opacity:0;visibility:hidden;transition:all .35s;border-radius:50%;overflow:hidden;pointer-events:none}
+.sw-prize-wrap{position:absolute;inset:2.5%;display:flex;align-items:center;justify-content:center;z-index:20;opacity:0;visibility:hidden;transition:opacity .6s ease,visibility .6s ease;border-radius:50%;overflow:hidden;pointer-events:none}
 .sw-prize-wrap.show{opacity:1;visibility:visible;pointer-events:auto}
 .sw-prize-bg{position:absolute;inset:0;background:radial-gradient(circle,rgba(26,23,20,.97) 40%,rgba(26,23,20,.94) 70%,rgba(26,23,20,.88));backdrop-filter:blur(16px)}
-.sw-prize-card{position:relative;z-index:2;text-align:center;padding:16px 14px;max-width:82%;animation:sw-prizeIn .5s cubic-bezier(.34,1.56,.64,1)}
+.sw-prize-card{position:relative;z-index:2;text-align:center;padding:20px 16px;max-width:92%;animation:sw-prizeIn .5s cubic-bezier(.34,1.56,.64,1)}
 @keyframes sw-prizeIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes sw-hintIn{from{transform:translate(-50%,-50%) scale(.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
-.sw-prize-ico{margin-bottom:4px;animation:sw-bounce .6s ease}
+.sw-prize-ico{margin-bottom:10px;animation:sw-bounce .6s ease}
+.sw-prize-ico svg{width:48px;height:48px}
 @keyframes sw-bounce{0%{transform:scale(0)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
-.sw-prize-t{font:800 16px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;margin-bottom:2px;text-shadow:0 2px 12px rgba(212,176,94,.3)}
-.sw-prize-s{font:500 10px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.5);margin-bottom:8px;line-height:1.5}
-.sw-prize-code{background:rgba(212,176,94,.08);border:2px dashed rgba(212,176,94,.4);border-radius:10px;padding:8px 14px;font:700 14px monospace;color:#d4b05e;letter-spacing:2px;cursor:pointer;transition:all .2s;position:relative;display:inline-block}
-.sw-prize-code:hover{background:rgba(212,176,94,.14);transform:scale(1.03)}
-.sw-prize-code .sw-cop{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(26,23,20,.95);border-radius:10px;color:#4ade80;font:600 13px 'Plus Jakarta Sans',sans-serif;letter-spacing:0;opacity:0;transition:opacity .2s}
+.sw-prize-t{font:800 26px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;margin-bottom:4px;text-shadow:0 2px 12px rgba(212,176,94,.3)}
+.sw-prize-s{font:500 15px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.55);margin-bottom:12px;line-height:1.5}
+.sw-prize-code{background:rgba(212,176,94,.1);border:2px dashed rgba(212,176,94,.45);border-radius:12px;padding:12px 20px;font:700 20px monospace;color:#d4b05e;letter-spacing:3px;cursor:pointer;transition:all .2s;position:relative;display:inline-block}
+.sw-prize-code:hover{background:rgba(212,176,94,.16);transform:scale(1.03)}
+.sw-prize-code .sw-cop{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(26,23,20,.95);border-radius:12px;color:#4ade80;font:600 15px 'Plus Jakarta Sans',sans-serif;letter-spacing:0;opacity:0;transition:opacity .2s}
 .sw-prize-code .sw-cop.show{opacity:1}
-.sw-prize-exp{font:400 11px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.3);margin-top:6px}
-.sw-prize-cd{font:600 12px 'Plus Jakarta Sans',sans-serif;color:rgba(212,176,94,.7);margin-top:4px}
-.sw-prize-close{margin-top:8px;padding:7px 24px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.5);font:500 12px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s}
-.sw-prize-close:hover{background:rgba(255,255,255,.06);color:#fff}
+.sw-prize-exp{font:400 13px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.35);margin-top:8px}
+.sw-prize-cd{font:600 14px 'Plus Jakarta Sans',sans-serif;color:rgba(212,176,94,.7);margin-top:6px}
+.sw-prize-close{margin-top:10px;padding:10px 30px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.55);font:600 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s}
+.sw-prize-close:hover{background:rgba(255,255,255,.08);color:#fff}
 
 /* ─── Toast ─── */
 .sw-toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(150deg,#1c1917,#292118);border:2px solid #d4b05e;border-radius:20px;padding:20px 32px;text-align:center;z-index:1000010;transition:all .4s cubic-bezier(.34,1.56,.64,1);box-shadow:0 20px 60px rgba(0,0,0,.5)}
@@ -156,9 +157,9 @@ var css=`
   .sw-btn{padding:13px 40px;font-size:15px}
   .sw-x{top:10px;right:10px;width:36px;height:36px;font-size:18px}
   .sw-badge{font-size:10px}
-  .sw-prize-t{font-size:17px}
-  .sw-prize-code{font-size:16px;padding:10px 16px}
-  .sw-prize-s{font-size:11px}
+  .sw-prize-t{font-size:30px}
+  .sw-prize-code{font-size:24px;padding:14px 24px}
+  .sw-prize-s{font-size:16px}
 }
 `;
 
@@ -611,24 +612,28 @@ function _showForwardHint(){
   h.id='sw-fwd-hint';
   h.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:25;text-align:center;animation:sw-hintIn .4s cubic-bezier(.34,1.56,.64,1)';
   h.innerHTML=
-    '<div style="background:rgba(26,23,20,.94);border:1px solid rgba(212,176,94,.35);border-radius:20px;padding:24px 32px;backdrop-filter:blur(16px);box-shadow:0 12px 48px rgba(0,0,0,.5)">'+
-      '<svg width="80" height="80" viewBox="0 0 80 80" fill="none" style="display:block;margin:0 auto 12px">'+
-        '<circle cx="40" cy="40" r="36" stroke="rgba(212,176,94,.12)" stroke-width="1" stroke-dasharray="4 4"/>'+
-        '<path d="M56 24 A24 24 0 1 1 24 24" stroke="url(#sw-hint-g)" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".9">'+
-          '<animate attributeName="stroke-dasharray" values="0 200;120 200" dur="1.2s" fill="freeze"/>'+
+    '<div style="background:rgba(26,23,20,.95);border:1px solid rgba(212,176,94,.3);border-radius:22px;padding:28px 36px;backdrop-filter:blur(18px);box-shadow:0 16px 56px rgba(0,0,0,.55),0 0 0 1px rgba(212,176,94,.06) inset">'+
+      '<svg width="96" height="96" viewBox="0 0 96 96" fill="none" style="display:block;margin:0 auto 14px">'+
+        // Yay ok — saat yönünde
+        '<path d="M68 26 A30 30 0 1 1 26 30" stroke="url(#sw-h-g)" stroke-width="2.5" stroke-linecap="round" fill="none" stroke-dasharray="0 200">'+
+          '<animate attributeName="stroke-dasharray" values="0 200;150 200" dur="1s" fill="freeze"/>'+
         '</path>'+
-        '<defs><linearGradient id="sw-hint-g" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#af8c3e" stop-opacity=".3"/><stop offset="100%" stop-color="#f5e6c8"/></linearGradient></defs>'+
-        '<polygon points="58,18 64,28 52,26" fill="#f5e6c8" opacity=".9">'+
-          '<animate attributeName="opacity" values=".5;1;.5" dur="1.5s" repeatCount="indefinite"/>'+
+        '<polygon points="70,20 74,30 64,29" fill="#f5e6c8" opacity="0">'+
+          '<animate attributeName="opacity" values="0;0;1" dur="1s" fill="freeze"/>'+
         '</polygon>'+
-        '<circle cx="40" cy="40" r="4" fill="rgba(212,176,94,.2)"/>'+
+        '<defs><linearGradient id="sw-h-g" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#af8c3e" stop-opacity=".2"/><stop offset="100%" stop-color="#f5e6c8"/></linearGradient></defs>'+
+        // El — saat yönünde swipe
+        '<g opacity=".9">'+
+          '<path d="M42 52c-1-4 0-8 3-10.5 1.5-1.2 3.2-1.5 4.8-.8 2.2.8 3.6 2.8 4 5 .5-.4 1.2-.6 2-.5 2 .2 3.2 2 3 4l-.1 1.2c.8-.2 1.6-.1 2.3.3 1.6.8 2.2 2.6 2 4.4l-.5 4c-.8 4.5-4 7.5-8.2 7.5h-3.6c-4.2 0-7.5-3.2-7.5-7.5L42 52z" fill="rgba(212,176,94,.12)" stroke="#d4b05e" stroke-width="1.5" stroke-linejoin="round"/>'+
+          '<animateTransform attributeName="transform" type="translate" values="0,0;14,-8;14,-8" dur="1.4s" repeatCount="indefinite"/>'+
+        '</g>'+
       '</svg>'+
-      '<div style="color:#f5e6c8;font:800 15px \'Plus Jakarta Sans\',sans-serif;letter-spacing:.8px">Saat Yönünde Fırlat</div>'+
-      '<div style="color:rgba(255,255,255,.35);font:400 11px \'Plus Jakarta Sans\',sans-serif;margin-top:5px">Parmağınızla sürükleyip bırakın</div>'+
+      '<div style="color:#f5e6c8;font:800 14px \'Plus Jakarta Sans\',sans-serif;letter-spacing:.6px">Saat Yönünde Fırlat</div>'+
+      '<div style="color:rgba(255,255,255,.3);font:400 11px \'Plus Jakarta Sans\',sans-serif;margin-top:4px">Sürükleyip bırakın</div>'+
     '</div>';
   var box=document.getElementById('sw-box');
   if(box){box.style.position='relative';box.appendChild(h)}
-  setTimeout(function(){if(h.parentNode){h.style.transition='opacity .5s';h.style.opacity='0';setTimeout(function(){if(h.parentNode)h.parentNode.removeChild(h)},500)}},3000);
+  setTimeout(function(){if(h.parentNode){h.style.transition='opacity .5s';h.style.opacity='0';setTimeout(function(){if(h.parentNode)h.parentNode.removeChild(h)},500)}},3500);
 }
 
 // ====== MOMENTUM → API → HEDEF ANİMASYON ======
@@ -652,7 +657,7 @@ async function _momentumSpin(speed){
     lastM=now;
     // Lineer sürtünme
     mSpd-=RESISTANCE*(dt/1000);
-    if(mSpd<120)mSpd=120; // API beklerken görsel hız korunsun
+    if(mSpd<200)mSpd=200; // API beklerken görsel hız korunsun
     _rotation+=mSpd*(dt/1000);
     drawWheel(_rotation);_tickSeg();
     requestAnimationFrame(mFrame);
@@ -750,43 +755,28 @@ function _spinToTarget(seg,offset,handoff){
     while(end-start<1440)end+=360;
     var dist=end-start;
 
-    // Fizik: v²=v0²-2*a*d → a=v0²/(2*d) → tam hedefe durur
-    var v0=handoff;
-    var friction=v0*v0/(2*dist); // deg/s² — hedefe tam uyan sürtünme
-    if(friction<5)friction=5; // Min sürtünme — çok yavaş dönmesini engelle
-    var spd=v0;
-    var pos=start;
-    var lastT=performance.now();
+    // Easing tabanlı animasyon — easeOutQuart: dramatik son yavaşlama
+    var totalTime=2*dist/handoff; // sn (lineer modelden türetilmiş süre)
+    totalTime=Math.max(3,Math.min(8,totalTime)); // 3-8sn arası
+    var startTime=performance.now();
+
+    function easeOutQuart(t){return 1-Math.pow(1-t,4)}
 
     function frame(){
-      var now=performance.now();
-      var dt=now-lastT;
-      if(dt<=0||dt>100){lastT=now;requestAnimationFrame(frame);return}
-      lastT=now;
-      var dtSec=dt/1000;
+      var elapsed=(performance.now()-startTime)/1000;
+      var t=Math.min(1,elapsed/totalTime);
+      var eased=easeOutQuart(t);
+      var pos=start+dist*eased;
 
-      // Lineer sürtünme — _freeSpin ile aynı model
-      spd-=friction*dtSec;
+      _rotation=pos;
+      drawWheel(_rotation);_tickSeg();
 
-      if(spd<=0){
-        // Hedefe ulaştı — tam pozisyona yerleş
+      if(t>=1){
         _rotation=end;
         drawWheel(_rotation);_tickSeg();
         resolve();
         return;
       }
-
-      pos+=spd*dtSec;
-      _rotation=pos;
-      drawWheel(_rotation);_tickSeg();
-
-      // Güvenlik: hedefe çok yakın + çok yavaş → snap
-      if(pos>=end-2&&spd<10){
-        _rotation=end;drawWheel(_rotation);_tickSeg();
-        resolve();
-        return;
-      }
-
       requestAnimationFrame(frame);
     }
     frame();
@@ -798,17 +788,23 @@ async function showResult(data){
   var isNearMiss=!!data.isNearMiss;
 
   if(data.type==='none'){
-    await delay(400);
+    await delay(600);
     showToast('Tekrar Dene!','Bir sonraki sefere!',2500);
+    await delay(400);
     showPrize(data);
   }else{
+    // 1. Kısa bekleme — çark durdu hissi
+    await delay(500);
+    // 2. Flash + ses
     var ring=document.querySelector('.sw-ring');
     if(ring)ring.classList.add('sw-flash');
     setTimeout(function(){if(ring)ring.classList.remove('sw-flash')},600);
     winSound();confetti();
-    await delay(700);
+    // 3. Uzun geçiş — prize fade-in
+    await delay(1000);
     showPrize(data);
-    await delay(500);
+    // 4. İkinci confetti dalga
+    await delay(600);
     confetti();
   }
 
@@ -977,7 +973,6 @@ function _hidePrize(){
   var p=document.getElementById('sw-prize');
   if(!p)return;
   p.classList.remove('show');
-  p.style.opacity='';p.style.visibility='';p.style.pointerEvents='';
 }
 
 function swClosePrize(){
@@ -1015,8 +1010,14 @@ function showPrize(data){
     if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
     if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
   }else if(data.type==='grand'){
-    if(ico)ico.innerHTML=ICO.trophy;if(t)t.textContent='Tebrikler!';
+    if(ico)ico.innerHTML=ICO.trophy;if(t)t.textContent=data.discount?data.discount+' TL Hediye!':'Tebrikler!';
     if(s)s.textContent=data.prize||'Manhattan Likit HEDİYE!';
+    if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
+    if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
+  }else if(data.type==='absolute'){
+    if(ico)ico.innerHTML=data.discount>=50?ICO.trophy:ICO.win;
+    if(t)t.textContent=(data.discount||0)+' TL İndirim!';
+    if(s)s.textContent=data.couponCode?'Tebrikler! Kuponunuz hazır.':'Ödülünüz kaydedildi.';
     if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
     if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
   }else{
@@ -1034,11 +1035,8 @@ function showPrize(data){
   }
   }catch(err){console.error('[SW] showPrize error:',err)}
 
-  // Chrome CSS transition bypass — inline style ile zorla
+  // CSS transition ile smooth fade-in — inline style yok
   el.classList.add('show');
-  el.style.opacity='1';
-  el.style.visibility='visible';
-  el.style.pointerEvents='auto';
 }
 
 // ====== KOPYALA ======

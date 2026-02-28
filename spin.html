@@ -584,12 +584,13 @@ function renderSegments(){
     tr.innerHTML=
       '<td><div class="seg-label-cell"><span class="seg-color" style="background:'+SEG_COLORS[i%SEG_COLORS.length]+'"></span><div style="flex:1"><input class="seg-input seg-label-input" type="text" value="'+escHtml(seg.label)+'" onchange="markDirty()" onclick="this.select()" placeholder="Ana metin (ör: %5)"><input class="seg-input seg-sub-input" type="text" value="'+escHtml(seg.sub||'')+'" onchange="markDirty()" onclick="this.select()" placeholder="Alt metin (ör: İNDİRİM)"></div></div></td>'+
       '<td><select class="seg-select seg-type-select" onchange="onTypeChange('+i+',this);markDirty()">'+
-        '<option value="percent"'+(seg.type==='percent'?' selected':'')+'>İndirim</option>'+
+        '<option value="percent"'+(seg.type==='percent'?' selected':'')+'>İndirim (%)</option>'+
+        '<option value="absolute"'+(seg.type==='absolute'?' selected':'')+'>Tutar İndirimi (TL)</option>'+
         '<option value="shipping"'+(seg.type==='shipping'?' selected':'')+'>Kargo</option>'+
-        '<option value="grand"'+(seg.type==='grand'?' selected':'')+'>Hediye</option>'+
+        '<option value="grand"'+(seg.type==='grand'?' selected':'')+'>Hediye (TL)</option>'+
         '<option value="none"'+(seg.type==='none'?' selected':'')+'>Boş</option>'+
       '</select></td>'+
-      '<td><input class="seg-input seg-num-sm seg-discount-input" type="number" min="0" max="100" value="'+(seg.discount||0)+'" onchange="markDirty()" onclick="this.select()"'+(seg.type==='shipping'||seg.type==='none'||seg.type==='grand'?' disabled style="opacity:.3"':'')+'><span style="font-size:12px;color:var(--tx3)">%</span></td>'+
+      '<td><input class="seg-input seg-num-sm seg-discount-input" type="number" min="0" max="10000" value="'+(seg.discount||0)+'" onchange="markDirty()" onclick="this.select()"'+(seg.type==='shipping'||seg.type==='none'?' disabled style="opacity:.3"':'')+'><span class="seg-unit-label" style="font-size:12px;color:var(--tx3)">'+((seg.type==='absolute'||seg.type==='grand')?'TL':'%')+'</span></td>'+
       '<td><input class="seg-input seg-num seg-weight-input" type="number" min="0" max="100" value="'+seg.weight+'" onchange="onWeightChange()" onclick="this.select()"></td>'+
       '<td class="seg-pct-cell"><span class="seg-pct">'+calcPct(i)+'</span></td>'+
       '<td><div class="toggle'+(isOff?'':' on')+'" onclick="toggleSeg('+i+')"></div></td>';
@@ -601,12 +602,14 @@ function onTypeChange(i,sel){
   var v=sel.value;
   var row=sel.closest('tr');
   var discInput=row.querySelector('.seg-discount-input');
-  if(v==='shipping'||v==='none'||v==='grand'){
+  var unitLabel=row.querySelector('.seg-unit-label');
+  if(v==='shipping'||v==='none'){
     discInput.disabled=true;discInput.style.opacity='.3';
-    if(v==='shipping'||v==='none') discInput.value='0';
+    discInput.value='0';
   }else{
     discInput.disabled=false;discInput.style.opacity='1';
   }
+  if(unitLabel) unitLabel.textContent=(v==='absolute'||v==='grand')?'TL':'%';
 }
 
 function calcPct(idx){
