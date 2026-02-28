@@ -3225,6 +3225,12 @@ function _buildNavbar(){
   var navSection=document.createElement('div');
   navSection.className='ml-sb-nav-bottom';
   var navLinks=[
+    {text:'Çarkı Çevir',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="2" x2="12" y2="12"/><line x1="12" y1="12" x2="19.07" y2="4.93"/></svg>',action:function(){
+      _closeSidebar();
+      setTimeout(function(){
+        if(typeof openOverlay==='function') openOverlay();
+      },300);
+    }},
     {text:'Hakkında',action:function(){
       _closeSidebar();
       setTimeout(function(){
@@ -3253,7 +3259,7 @@ function _buildNavbar(){
   navLinks.forEach(function(nl){
     var item=document.createElement('span');
     item.className='ml-sb-nav-link';
-    item.textContent=nl.text;
+    if(nl.icon){item.innerHTML=nl.icon+nl.text;}else{item.textContent=nl.text;}
     item.addEventListener('click',function(e){
       e.stopPropagation();
       nl.action();
