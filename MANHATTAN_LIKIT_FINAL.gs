@@ -1,4 +1,3 @@
-// Auto-deploy test: 14:50:34
 // ============================================================
 // Manhattan Likit — Sadakat Programı Otomasyon
 // Google Apps Script + Ecwid API (Batch Processing)

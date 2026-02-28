@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'MANHATTAN_LIKIT_FINAL.gs'
+      - 'appsscript.json'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,8 +13,17 @@ jobs:
         with:
           node-version: 20
       - run: npm install -g @google/clasp
-      - run: |
-          echo '${{ secrets.CLASPRC }}' > ~/.clasprc.json
-          mkdir -p gas-tmp && cp MANHATTAN_LIKIT_FINAL.gs gas-tmp/
+      - name: Deploy to GAS
+        env:
+          CLASPRC: ${{ secrets.CLASPRC }}
+        run: |
+          echo "$CLASPRC" > ~/.clasprc.json
+          cat ~/.clasprc.json | head -c 50
+          echo "..."
+          mkdir -p gas-tmp
+          cp MANHATTAN_LIKIT_FINAL.gs gas-tmp/
+          cp appsscript.json gas-tmp/
           echo '{"scriptId":"1eY5Rh8AYTroa1QB3gqHLeXSo7yenQFMjPcawbfC0bLMjH9LGBD65cah3","rootDir":"."}' > gas-tmp/.clasp.json
-          cd gas-tmp && clasp push --force
+          cd gas-tmp
+          ls -la
+          clasp push --force
