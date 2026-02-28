@@ -1,0 +1,19 @@
+name: GAS Auto Deploy
+on:
+  push:
+    paths:
+      - 'MANHATTAN_LIKIT_FINAL.gs'
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm install -g @google/clasp
+      - run: |
+          echo '${{ secrets.CLASPRC }}' > ~/.clasprc.json
+          mkdir -p gas-tmp && cp MANHATTAN_LIKIT_FINAL.gs gas-tmp/
+          echo '{"scriptId":"1eY5Rh8AYTroa1QB3gqHLeXSo7yenQFMjPcawbfC0bLMjH9LGBD65cah3","rootDir":"."}' > gas-tmp/.clasp.json
+          cd gas-tmp && clasp push --force
