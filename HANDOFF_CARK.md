@@ -565,3 +565,43 @@ Tüm değişiklikler cerrahi CSS (rewrite yok):
 | MANHATTAN_LIKIT_FINAL.gs | 3506 | 703/703 |
 | spin.html | 938 | 283/283 |
 | spinwheel.js | 1140 | 323/323 (değişmedi) |
+
+### [2026-02-28] — v3 Migration Fix
+
+**Kök neden**: v2 migration `seg.sub === undefined` kontrol ediyordu ama stored config'te `sub: ""` (boş string) vardı → koşul hiç `true` olmadı → eski birleşik label'lar kaldı.
+
+**Kanıt**: GAS spin-check response (migration öncesi):
+```
+[1] label="Manhattan Likit HEDİYE" sub=""
+[2] label="%2 İndirim" sub=""
+```
+
+**Çözüm**: v3 migration — `!seg.sub` (falsy check) kullanır:
+```javascript
+if (!cfg.configVersion || cfg.configVersion < 3) {
+    cfg.configVersion = 3;
+    cfg.cooldownHours = 0.5; // default'tan
+    for (seg with !sub) → label+sub = default'tan al
+}
+```
+
+**Migration sonrası GAS response** (doğrulanmış):
+```
+[0] label="%3 !" sub="İNDİRİM!" (Tamer düzenlemesi korundu)
+[1] label="HEDİYE" sub="Manhattan" ✓
+[2] label="%2" sub="İNDİRİM" ✓
+[3-7] Hepsi düzgün split ✓
+```
+
+**Ek**: spinSaveConfig'e `config.configVersion = 3` eklendi — save sonrası migration tekrar çalışmaz.
+**Ek**: Cooldown badge CSS: 9px→11px, gold background, border-radius — baba-okunabilir.
+
+#### Dosya Durumu
+| Dosya | Satır | Brace |
+|-------|-------|-------|
+| MANHATTAN_LIKIT_FINAL.gs | 3508 | 703/703 |
+| dark-mode.js | 5243 | 1666/1666 |
+| spin.html | 938 | 283/283 |
+| widget.js | 875 | 501/501 |
+| widgetwix.js | 831 | 464/464 |
+| spinwheel.js | 1140 | 323/323 |
