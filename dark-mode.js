@@ -422,6 +422,8 @@ body.ml-dark .ml-sb-profile-chevron{color:${TX3}}
   display:inline-flex;align-items:center;justify-content:center;
   border-radius:9px;background:linear-gradient(135deg,#af8c3e,#d4b05e);color:#fff;
 }
+.ml-sb-qa-cd{font-size:9px;font-weight:600;color:#af8c3e;opacity:.8;margin-left:auto;padding-right:2px}
+.ml-sb-qa-cd:empty{display:none}
 .ml-sb-chevron{color:#ccc;font-size:13px;flex-shrink:0}
 body.ml-dark .ml-sb-quick{background:rgba(255,255,255,.04);border-color:rgba(175,140,62,.12)}
 body.ml-dark .ml-sb-qa{color:${TX1};border-color:rgba(255,255,255,.03)}
@@ -3225,12 +3227,6 @@ function _buildNavbar(){
   var navSection=document.createElement('div');
   navSection.className='ml-sb-nav-bottom';
   var navLinks=[
-    {text:'Çarkı Çevir',icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="2" x2="12" y2="12"/><line x1="12" y1="12" x2="19.07" y2="4.93"/></svg>',action:function(){
-      _closeSidebar();
-      setTimeout(function(){
-        if(typeof openOverlay==='function') openOverlay();
-      },300);
-    }},
     {text:'Hakkında',action:function(){
       _closeSidebar();
       setTimeout(function(){
@@ -3320,6 +3316,9 @@ function _buildNavbar(){
             btn.innerHTML+=('<span class="ml-sb-qa-count">'+cEl.textContent.trim()+'</span>');
           }
         }
+        if(qa.isCark){
+          btn.innerHTML+='<span class="ml-sb-qa-cd" id="ml-sb-spin-cd"></span>';
+        }
         btn.innerHTML+='<span class="ml-sb-chevron">›</span>';
         btn.addEventListener('click',function(e){
           e.stopPropagation();
@@ -3327,9 +3326,7 @@ function _buildNavbar(){
           _closeSidebar();
           if(qa.isCark){
             setTimeout(function(){
-              var swBtn=document.querySelector('.sw-trigger,#sw-trigger');
-              if(swBtn){swBtn.click();}
-              else if(typeof openOverlay==='function') openOverlay();
+              if(typeof openOverlay==='function') openOverlay();
               else if(typeof window.openOverlay==='function') window.openOverlay();
             },200);
           } else {
@@ -3339,6 +3336,19 @@ function _buildNavbar(){
         qaDiv.appendChild(btn);
       });
       sbUser.appendChild(qaDiv);
+      // ─ Çark Cooldown Timer (sidebar QA badge) ─
+      window._mlUpdateSpinCooldown=function(){
+        var el=document.getElementById('ml-sb-spin-cd');if(!el)return;
+        var cdEnd=null;
+        if(typeof _swGetCooldownEnd==='function'){cdEnd=_swGetCooldownEnd();}
+        else{try{var s=localStorage.getItem('sw_cooldown');if(s){var v=parseInt(s);if(v>Date.now())cdEnd=v;}}catch(e){}}
+        if(!cdEnd||Date.now()>=cdEnd){el.textContent='';return}
+        var ms=cdEnd-Date.now();
+        var h=Math.floor(ms/3600000),m=Math.floor((ms%3600000)/60000);
+        el.textContent=h>0?h+'s '+m+'dk':m+'dk';
+      };
+      window._mlUpdateSpinCooldown();
+      setInterval(function(){if(window._mlUpdateSpinCooldown)window._mlUpdateSpinCooldown()},15000);
     } else {
       sbUser.innerHTML='<div class="ml-sb-login-label">Giriş yapın</div>'+
         '<div class="ml-sb-login-row">'+

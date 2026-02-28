@@ -44,15 +44,17 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .toggle.on::after{transform:translateX(24px)}
 
 /* ─── Section ─── */
-.section{margin-bottom:28px}
-.section-head{font-size:15px;font-weight:700;color:var(--goldL);margin-bottom:14px;display:flex;align-items:center;gap:8px;letter-spacing:.3px}
-.section-head svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0}
+.section{margin-bottom:32px;padding-top:24px;border-top:1px solid var(--border)}
+.section:first-child{border-top:none;padding-top:0}
+.section-head{font-size:18px;font-weight:700;color:var(--goldL);margin-bottom:6px;display:flex;align-items:center;gap:8px;letter-spacing:.3px}
+.section-head svg{width:20px;height:20px;stroke:var(--gold);fill:none;stroke-width:2;flex-shrink:0}
+.section-hint{font-size:13px;color:var(--tx3);margin-bottom:16px;line-height:1.5}
 
 /* ─── Master Toggles Row ─── */
 .master-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
 .master-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.master-info h3{font-size:16px;font-weight:700;color:var(--tx)}
-.master-info p{font-size:12px;color:var(--tx3);margin-top:2px}
+.master-info h3{font-size:17px;font-weight:700;color:var(--tx)}
+.master-info p{font-size:13px;color:var(--tx3);margin-top:3px;line-height:1.4}
 @media(max-width:640px){.master-row{grid-template-columns:1fr}}
 
 /* ─── Segment Table ─── */
@@ -73,6 +75,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .seg-input{background:transparent;border:1px solid transparent;border-radius:6px;padding:6px 8px;color:var(--tx);font-family:inherit;font-size:15px;font-weight:600;outline:none;width:100%;transition:all .15s}
 .seg-input:hover{border-color:var(--border)}
 .seg-input:focus{border-color:var(--gold);background:var(--bg)}
+.seg-input.seg-sub-input{font-size:13px;color:var(--tx2);margin-top:4px;font-weight:500;background:var(--bg);border:1px dashed var(--border);border-radius:5px}
 .seg-num{width:64px;text-align:center;font-weight:800;font-size:16px}
 .seg-num-sm{width:56px;text-align:center;font-size:15px}
 .seg-select{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:6px 24px 6px 8px;color:var(--tx);font-family:inherit;font-size:13px;font-weight:600;outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23a1a1a6' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;transition:border-color .15s}
@@ -87,11 +90,11 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
 
 /* ─── Settings Grid ─── */
-.settings-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
-.s-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
-.s-label{font-size:13px;color:var(--tx2);font-weight:600;margin-bottom:10px}
+.settings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}
+.s-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.s-label{font-size:14px;color:var(--tx2);font-weight:600;margin-bottom:10px}
 .s-val{font-size:26px;font-weight:800;color:var(--goldL);margin-bottom:2px}
-.s-desc{font-size:11px;color:var(--tx3);margin-bottom:10px}
+.s-desc{font-size:12px;color:var(--tx3);margin-bottom:10px;line-height:1.4}
 .s-ctrl select,.s-ctrl input[type=number]{padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--tx);font-family:inherit;font-size:16px;font-weight:600;outline:none;width:100%;transition:border-color .15s}
 .s-ctrl select:focus,.s-ctrl input:focus{border-color:var(--gold)}
 .s-ctrl select{-webkit-appearance:none;appearance:none;padding-right:32px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a1a1a6' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;cursor:pointer}
@@ -142,7 +145,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 
 /* ─── Responsive ─── */
 @media(max-width:768px){
-  .settings-grid{grid-template-columns:repeat(2,1fr)}
+  .settings-grid{grid-template-columns:1fr}
   .stats-grid{grid-template-columns:1fr}
   .chart-wrap{flex-direction:column;align-items:center}
   .seg-table{font-size:13px}
@@ -238,14 +241,14 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
       <div class="master-card">
         <div class="master-info">
           <h3>Kupon Oluşturma</h3>
-          <p>Kapalıyken kupon kodu üretilmez</p>
+          <p>Kapalıyken müşteri kazansa bile kupon kodu verilmez</p>
         </div>
         <div class="toggle on" id="tgl-coupon" onclick="toggleMaster('coupon')"></div>
       </div>
       <div class="master-card">
         <div class="master-info">
           <h3>Test Modu</h3>
-          <p>Açıkken cooldown devre dışı</p>
+          <p>Açıkken bekleme süresi olmadan sınırsız test yapabilirsiniz</p>
         </div>
         <div class="toggle" id="tgl-test" onclick="toggleMaster('test')"></div>
       </div>
@@ -257,13 +260,13 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
       <div class="section-head">
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 010 20M12 2a15 15 0 000 20M2 12h20"/></svg>
         Çark Dilimleri
-        <span style="font-size:11px;color:var(--tx3);font-weight:400;margin-left:4px">(ağırlık = olasılık oranı)</span>
       </div>
+      <div class="section-hint">Her dilimde iki satır yazı var: ana metin ve alt metin. Ağırlık yüksek olan dilime düşme ihtimali daha fazladır.</div>
       <div class="seg-table-wrap">
         <table class="seg-table">
           <thead>
             <tr>
-              <th style="width:28%">Dilim Adı</th>
+              <th style="width:28%">Çarkta Yazanlar</th>
               <th style="width:13%">Tür</th>
               <th style="width:12%">İndirim</th>
               <th style="width:12%">Ağırlık</th>
@@ -288,19 +291,20 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
         Genel Ayarlar
       </div>
+      <div class="section-hint">Müşterinin çarkı ne sıklıkla çevireceği, kupon süresi ve özel efektler burada ayarlanır.</div>
       <div class="settings-grid">
         <div class="s-card">
           <div class="s-label">Bekleme Süresi</div>
-          <div class="s-val" id="cd-val">24s</div>
-          <div class="s-desc">Her müşteri bu kadar bekler</div>
+          <div class="s-val" id="cd-val">30dk</div>
+          <div class="s-desc">Müşteri çarkı çevirdikten sonra tekrar çevirebilmek için bu kadar bekler</div>
           <div class="s-ctrl">
             <select id="cd-select" onchange="onCdChange()">
-              <option value="0.5">30 dakika</option>
+              <option value="0.5" selected>30 dakika</option>
               <option value="1">1 saat</option>
               <option value="2">2 saat</option>
               <option value="6">6 saat</option>
               <option value="12">12 saat</option>
-              <option value="24" selected>24 saat</option>
+              <option value="24">24 saat</option>
               <option value="48">2 gün</option>
               <option value="72">3 gün</option>
               <option value="168">7 gün</option>
@@ -311,7 +315,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
         <div class="s-card">
           <div class="s-label">Kupon Geçerlilik</div>
           <div class="s-val" id="cpn-val">7g</div>
-          <div class="s-desc">Kupon sona erme süresi</div>
+          <div class="s-desc">Kazanılan kupon bu süre sonunda geçersiz olur</div>
           <div class="s-ctrl">
             <select id="cpn-select" onchange="onCpnChange()">
               <option value="1">1 gün</option>
@@ -325,7 +329,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
         <div class="s-card">
           <div class="s-label">Az Kalsın Efekti</div>
           <div class="s-val" id="nm-val">%40</div>
-          <div class="s-desc">"Az kalsın!" hissi olasılığı</div>
+          <div class="s-desc">Çark büyük ödüle yakın durup geçerse heyecan yaratır</div>
           <div class="slider-row">
             <input type="range" id="nm-slider" min="0" max="80" value="40" oninput="onNmChange()">
             <span class="slider-pct" id="nm-pct">%40</span>
@@ -334,7 +338,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
         <div class="s-card">
           <div class="s-label">Yazı Boyutu</div>
           <div class="s-val" id="fs-val">1.0x</div>
-          <div class="s-desc">Çark üzerindeki yazı ölçeği</div>
+          <div class="s-desc">Çark üzerindeki yazıları büyütüp küçültür</div>
           <div class="slider-row">
             <input type="range" id="fs-slider" min="50" max="200" value="100" step="10" oninput="onFsChange()">
             <span class="slider-pct" id="fs-pct">1.0x</span>
@@ -349,6 +353,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14"/><path d="M15.54 8.46a5 5 0 010 7.07"/></svg>
         Ses Ayarları
       </div>
+      <div class="section-hint">Çark dönerken ve ödül kazanıldığında çalacak sesler. Kartlara tıklayıp dinleyebilirsiniz.</div>
       <div class="snd-sub">Çark Dönme Sesi</div>
       <div class="snd-grid" id="tick-grid"></div>
       <div class="snd-sub">Kutlama Sesi</div>
@@ -361,6 +366,7 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
         İstatistikler
       </div>
+      <div class="section-hint">Müşterilerin çarkı kaç kez çevirdiği ve son ödüller.</div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-val" id="s-total">—</div><div class="stat-label">Toplam Çevirme</div></div>
         <div class="stat-card"><div class="stat-val" id="s-7d">—</div><div class="stat-label">Son 7 Gün</div></div>
@@ -537,7 +543,7 @@ function renderSegments(){
     var tr=document.createElement('tr');
     if(isOff) tr.className='off';
     tr.innerHTML=
-      '<td><div class="seg-label-cell"><span class="seg-color" style="background:'+SEG_COLORS[i%SEG_COLORS.length]+'"></span><div style="flex:1"><input class="seg-input seg-label-input" type="text" value="'+escHtml(seg.label)+'" onchange="markDirty()" onclick="this.select()" placeholder="Ana metin"><input class="seg-input seg-sub-input" type="text" value="'+escHtml(seg.sub||'')+'" onchange="markDirty()" onclick="this.select()" placeholder="Alt metin" style="font-size:11px;color:var(--tx2);margin-top:2px;font-weight:500"></div></div></td>'+
+      '<td><div class="seg-label-cell"><span class="seg-color" style="background:'+SEG_COLORS[i%SEG_COLORS.length]+'"></span><div style="flex:1"><input class="seg-input seg-label-input" type="text" value="'+escHtml(seg.label)+'" onchange="markDirty()" onclick="this.select()" placeholder="Ana metin (ör: %5)"><input class="seg-input seg-sub-input" type="text" value="'+escHtml(seg.sub||'')+'" onchange="markDirty()" onclick="this.select()" placeholder="Alt metin (ör: İNDİRİM)"></div></div></td>'+
       '<td><select class="seg-select seg-type-select" onchange="onTypeChange('+i+',this);markDirty()">'+
         '<option value="percent"'+(seg.type==='percent'?' selected':'')+'>İndirim</option>'+
         '<option value="shipping"'+(seg.type==='shipping'?' selected':'')+'>Kargo</option>'+
@@ -679,7 +685,7 @@ function renderChart(){
 
 // ─── SETTINGS ───
 function renderSettings(){
-  var cdVal=CFG.cooldownHours||24;
+  var cdVal=CFG.cooldownHours||0.5;
   document.getElementById('cd-select').value=cdVal;
   onCdChange();
   document.getElementById('cpn-select').value=CFG.couponValidityDays||7;

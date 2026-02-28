@@ -3345,7 +3345,7 @@ var _SPIN_DEFAULT_CONFIG = {
   fontScale: 1.0,
   nearMissChance: 0.40,
   nearMissSegments: [0, 2],
-  cooldownHours: 24,
+  cooldownHours: 0.5,
   couponValidityDays: 7
 };
 
@@ -3364,16 +3364,25 @@ function _loadSpinConfig() {
       if (!cfg.cooldownHours) cfg.cooldownHours = _SPIN_DEFAULT_CONFIG.cooldownHours;
       if (!cfg.couponValidityDays) cfg.couponValidityDays = _SPIN_DEFAULT_CONFIG.couponValidityDays;
       if (cfg.fontScale === undefined) cfg.fontScale = _SPIN_DEFAULT_CONFIG.fontScale || 1.0;
-      // Segment sub backfill — eski config'te sub yoksa default'tan al
-      for (var si = 0; si < cfg.segments.length; si++) {
-        if (cfg.segments[si].sub === undefined && _SPIN_DEFAULT_CONFIG.segments[si]) {
-          cfg.segments[si].sub = _SPIN_DEFAULT_CONFIG.segments[si].sub || '';
+      // Migration v2: label+sub split, cooldown 30dk
+      if (!cfg.configVersion || cfg.configVersion < 2) {
+        cfg.configVersion = 2;
+        cfg.cooldownHours = _SPIN_DEFAULT_CONFIG.cooldownHours;
+        for (var si = 0; si < cfg.segments.length; si++) {
+          var seg = cfg.segments[si];
+          if (seg.sub === undefined && _SPIN_DEFAULT_CONFIG.segments[si]) {
+            seg.sub = _SPIN_DEFAULT_CONFIG.segments[si].sub || '';
+            seg.label = _SPIN_DEFAULT_CONFIG.segments[si].label || seg.label;
+          }
         }
+        _saveSpinConfigToProps(cfg);
       }
       return cfg;
     }
   } catch(e) { Logger.log('_loadSpinConfig error: ' + e); }
-  return JSON.parse(JSON.stringify(_SPIN_DEFAULT_CONFIG));
+  var fresh = JSON.parse(JSON.stringify(_SPIN_DEFAULT_CONFIG));
+  fresh.configVersion = 2;
+  return fresh;
 }
 
 /**
@@ -3421,7 +3430,7 @@ function _spinSaveConfig(config) {
     
     // Sayısal değerleri zorla
     config.nearMissChance = Math.max(0, Math.min(1, parseFloat(config.nearMissChance) || 0.4));
-    config.cooldownHours = Math.max(0.25, Math.min(336, parseInt(config.cooldownHours) || 24));
+    config.cooldownHours = Math.max(0.25, Math.min(336, parseFloat(config.cooldownHours) || 0.5));
     config.couponValidityDays = Math.max(1, Math.min(90, parseInt(config.couponValidityDays) || 7));
     if (!Array.isArray(config.nearMissSegments)) config.nearMissSegments = [0, 2];
     
