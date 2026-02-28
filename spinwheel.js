@@ -45,6 +45,8 @@ function _applyTestMode(tm){
 function _fetchTestMode(){
   fetch(GAS_URL+'?action=spin-check').then(function(r){return r.json()}).then(function(d){
     if(d.ok&&d.testMode!==undefined)_applyTestMode(d.testMode);
+    if(d.tickSound)_tickPreset=d.tickSound;
+    if(d.celebSound)_celebPreset=d.celebSound;
   }).catch(function(){});
 }
 
@@ -348,30 +350,52 @@ function initAudio(){
   try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}
 }
 
+// ── Ses Preset Tanımları ──
+var _TICK_MAP={
+  classic:{freq:2800,type:'sine',dur:0.035,gain:0.06},
+  soft:{freq:1200,type:'sine',dur:0.05,gain:0.04},
+  deep:{freq:600,type:'triangle',dur:0.04,gain:0.08},
+  mechanic:{freq:3200,type:'square',dur:0.025,gain:0.04},
+  casino:{freq:4000,type:'sine',dur:0.02,gain:0.05},
+  roulette:{freq:1800,type:'triangle',dur:0.04,gain:0.06},
+  wood:{freq:400,type:'sine',dur:0.06,gain:0.1},
+  crystal:{freq:5000,type:'sine',dur:0.03,gain:0.03}
+};
+var _CELEB_MAP={
+  fanfare:{notes:[523,659,784,1047,1318],dur:0.25,type:'sine'},
+  confetti:{notes:[800,1200,600,1400,900,1600],dur:0.12,type:'sine'},
+  jackpot:{notes:[440,554,659,880,880,880],dur:0.15,type:'square'},
+  elegant:{notes:[659,784,988,784,988,1319],dur:0.3,type:'sine'}
+};
+var _tickPreset='classic';
+var _celebPreset='fanfare';
+
 function tick(){
   if(!_audioCtx||_muted)return;
   try{
+    var p=_TICK_MAP[_tickPreset]||_TICK_MAP.classic;
     var o=_audioCtx.createOscillator(),g=_audioCtx.createGain();
     o.connect(g);g.connect(_audioCtx.destination);
-    o.frequency.value=1200+Math.random()*200;o.type='sine';
-    g.gain.setValueAtTime(.06,_audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(.001,_audioCtx.currentTime+.035);
-    o.start();o.stop(_audioCtx.currentTime+.035);
+    o.frequency.value=p.freq+Math.random()*100;o.type=p.type;
+    g.gain.setValueAtTime(p.gain,_audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,_audioCtx.currentTime+p.dur);
+    o.start();o.stop(_audioCtx.currentTime+p.dur);
   }catch(e){}
 }
 
 function winSound(){
   if(!_audioCtx||_muted)return;
   try{
-    [523,659,784,1047,1318].forEach(function(f,i){
+    var p=_CELEB_MAP[_celebPreset]||_CELEB_MAP.fanfare;
+    p.notes.forEach(function(f,i){
       setTimeout(function(){
         var o=_audioCtx.createOscillator(),g=_audioCtx.createGain();
         o.connect(g);g.connect(_audioCtx.destination);
-        o.frequency.value=f;o.type='sine';
+        o.frequency.value=f;o.type=p.type;
         g.gain.setValueAtTime(.1,_audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(.001,_audioCtx.currentTime+.3);
-        o.start();o.stop(_audioCtx.currentTime+.3);
-      },i*100);
+        g.gain.exponentialRampToValueAtTime(.001,_audioCtx.currentTime+p.dur);
+        o.start();o.stop(_audioCtx.currentTime+p.dur);
+      },i*(p.dur*1000*0.7));
     });
   }catch(e){}
 }
