@@ -916,6 +916,27 @@ function swToggleSound(){
 }
 
 // ====== GLOBAL ======
+// ====== UI STATE SENKRON (tek kaynak) ======
+function syncUI(){
+  var btn=document.getElementById('sw-btn');
+  var x=document.getElementById('sw-x');
+  if(btn){
+    var blocked=_spunSession&&!_TEST_MODE;
+    btn.disabled=blocked||_spinning;
+    if(_spinning){btn.textContent='Çevriliyor...'}
+    else if(blocked){btn.textContent='ÇEVRİLDİ'}
+    else if(_TEST_MODE){btn.textContent='TEST ÇEVİR'}
+    else{btn.textContent='ÇEVİR!'}
+  }
+  if(x) x.style.display=_spinning?'none':'';
+  if(!_spinning){
+    var b2=_spunSession&&!_TEST_MODE;
+    if(b2){msg(getCountdownText()||'Çevrildi')}
+    else if(_TEST_MODE){msg('Test modu aktif — sınırsız çevirme')}
+  }
+  if(window._mlUpdateSpinCooldown) window._mlUpdateSpinCooldown();
+}
+
 window.swSpin=swSpin;window.swClose=swClose;window.swCopy=swCopy;window.swToggleSound=swToggleSound;
 window.openOverlay=openOverlay;window.swClosePrize=swClosePrize;
 window._swGetCooldownEnd=getCooldownEnd;
