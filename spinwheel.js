@@ -636,12 +636,13 @@ async function swSpin(){
   _spinning=false;syncUI();
 }
 
-// ====== HEDEF ANİMASYON — CrazyTim spinToItem + easeSinOut ======
+// ====== HEDEF ANİMASYON — CrazyTim spinToItem + easing ======
 function _easeSinOut(t){
   if(t>=1)return 1;
-  var base=Math.sin(t*Math.PI/2);
-  // Son %8'de hafif wobble — doğal duruş hissi
-  if(t>0.92){var w=(t-0.92)/0.08;base+=Math.sin(w*Math.PI*2)*0.004*(1-w)}
+  // Power ease-out: daha uzun hızlı faz, daha yumuşak yavaşlama
+  var base=1-Math.pow(1-t,3.2);
+  // Son %10'da hafif wobble — fiziksel duruş hissi
+  if(t>0.90){var w=(t-0.90)/0.10;base+=Math.sin(w*Math.PI*2.5)*0.008*(1-w)}
   return base;
 }
 
@@ -869,50 +870,53 @@ function swClosePrize(){
 // ====== ÖDÜL KARTI (çark içinde) ======
 function showPrize(data){
   var el=document.getElementById('sw-prize');
-  if(!el)return;
-  var ico=document.getElementById('sw-pico');
-  var t=document.getElementById('sw-pt');
-  var s=document.getElementById('sw-ps');
-  var pc=document.getElementById('sw-pc');
-  var pct=document.getElementById('sw-pct');
-  var pex=document.getElementById('sw-pex');
-  var pcd=document.getElementById('sw-pcd');
+  if(!el){console.warn('[SW] sw-prize not found');return}
+  var card=document.getElementById('sw-prize-card');
+  // Elementleri card içinden ara — global ID çakışma koruması
+  var ico=card?card.querySelector('#sw-pico'):document.getElementById('sw-pico');
+  var t=card?card.querySelector('#sw-pt'):document.getElementById('sw-pt');
+  var s=card?card.querySelector('#sw-ps'):document.getElementById('sw-ps');
+  var pc=card?card.querySelector('#sw-pc'):document.getElementById('sw-pc');
+  var pct=card?card.querySelector('#sw-pct'):document.getElementById('sw-pct');
+  var pex=card?card.querySelector('#sw-pex'):document.getElementById('sw-pex');
+  var pcd=card?card.querySelector('#sw-pcd'):document.getElementById('sw-pcd');
 
+  try{
   if(data.type==='none'){
-    ico.innerHTML=ICO.retry;t.textContent='Tekrar Dene!';
-    s.textContent='Bu sefer olmadı — tekrar dene!';
+    if(ico)ico.innerHTML=ICO.retry;if(t)t.textContent='Tekrar Dene!';
+    if(s)s.textContent='Bu sefer olmadı — tekrar dene!';
     if(pc)pc.style.display='none';if(pex)pex.textContent='';
   }else if(data.type==='repeat'){
-    ico.innerHTML=ICO.ticket;t.textContent='Mevcut Ödülünüz';
-    s.textContent=data.prize||'';
+    if(ico)ico.innerHTML=ICO.ticket;if(t)t.textContent='Mevcut Ödülünüz';
+    if(s)s.textContent=data.prize||'';
     if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}
     else{if(pc)pc.style.display='none'}
     if(pex)pex.textContent='';
   }else if(data.type==='shipping'){
-    ico.innerHTML=ICO.ship;t.textContent='Ücretsiz Kargo!';
-    s.textContent='Siparişinizde kargo bedava!';
+    if(ico)ico.innerHTML=ICO.ship;if(t)t.textContent='Ücretsiz Kargo!';
+    if(s)s.textContent='Siparişinizde kargo bedava!';
     if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
     if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
   }else if(data.type==='grand'){
-    ico.innerHTML=ICO.trophy;t.textContent='Tebrikler!';
-    s.textContent=data.prize||'Manhattan Likit HEDİYE!';
+    if(ico)ico.innerHTML=ICO.trophy;if(t)t.textContent='Tebrikler!';
+    if(s)s.textContent=data.prize||'Manhattan Likit HEDİYE!';
     if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
     if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
   }else{
-    // percent veya bilinmeyen tip
-    ico.innerHTML=data.discount>=10?ICO.trophy:ICO.win;
-    t.textContent='%'+(data.discount||0)+' İndirim!';
-    s.textContent=data.couponCode?'Tebrikler! Kuponunuz hazır.':'Ödülünüz kaydedildi.';
+    if(ico)ico.innerHTML=data.discount>=10?ICO.trophy:ICO.win;
+    if(t)t.textContent='%'+(data.discount||0)+' İndirim!';
+    if(s)s.textContent=data.couponCode?'Tebrikler! Kuponunuz hazır.':'Ödülünüz kaydedildi.';
     if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
     if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
   }
-
   if(pcd)pcd.textContent=getCountdownText();
   if(pex)pex.style.color='';
   if(data.couponError&&pex){
     pex.textContent='Kupon oluşturulamadı — destek@manhattanlikit.com';
     pex.style.color='#f87171';
   }
+  }catch(err){console.error('[SW] showPrize error:',err)}
+
   el.classList.add('show');
 }
 
