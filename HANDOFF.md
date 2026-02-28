@@ -4,6 +4,15 @@
 > Kritik kurallar ve deploy yöntemi → System Instruction'da (her zaman aktif).
 > Domain detayları → HANDOFF_DARKMODE.md, HANDOFF_KARGO.md, HANDOFF_WIDGET.md, HANDOFF_CARK.md
 
+## Otomatik Deploy Akışı
+Claude her oturum başında `git pull` ile güncel kodu çeker. Değişiklik sonrası:
+- **HTML/JS dosyaları:** `git push` → GitHub Pages otomatik deploy (Ctrl+Shift+R ile test)
+- **GAS dosyası:** `git push` → GitHub Actions `clasp push --force` → Apps Script otomatik güncellenir
+- **Manuel müdahale gerekmez.** Tamer sadece test eder.
+- GAS Actions workflow: `.github/workflows/gas-deploy.yml`
+- GitHub Secret `CLASPRC`: clasp OAuth token
+- Script ID: `1eY5Rh8AYTroa1QB3gqHLeXSo7yenQFMjPcawbfC0bLMjH9LGBD65cah3`
+
 ## Güncel Dosya Durumları (Brace Tablosu)
 | Dosya | Satır | Brace |
 |-------|-------|-------|
