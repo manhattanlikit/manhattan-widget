@@ -126,15 +126,15 @@ var css=`
 .sw-prize-ico{margin-bottom:10px;animation:sw-bounce .6s ease}
 .sw-prize-ico svg{width:48px;height:48px}
 @keyframes sw-bounce{0%{transform:scale(0)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
-.sw-prize-t{font:800 26px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;margin-bottom:4px;text-shadow:0 2px 12px rgba(212,176,94,.3)}
-.sw-prize-s{font:500 15px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.55);margin-bottom:12px;line-height:1.5}
-.sw-prize-code{background:rgba(212,176,94,.1);border:2px dashed rgba(212,176,94,.45);border-radius:12px;padding:12px 20px;font:700 20px monospace;color:#d4b05e;letter-spacing:3px;cursor:pointer;transition:all .2s;position:relative;display:inline-block}
+.sw-prize-t{font:800 40px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;margin-bottom:6px;text-shadow:0 2px 12px rgba(212,176,94,.3)}
+.sw-prize-s{font:500 22px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.55);margin-bottom:14px;line-height:1.5}
+.sw-prize-code{background:rgba(212,176,94,.1);border:2px dashed rgba(212,176,94,.45);border-radius:14px;padding:14px 24px;font:700 30px monospace;color:#d4b05e;letter-spacing:3px;cursor:pointer;transition:all .2s;position:relative;display:inline-block}
 .sw-prize-code:hover{background:rgba(212,176,94,.16);transform:scale(1.03)}
 .sw-prize-code .sw-cop{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(26,23,20,.95);border-radius:12px;color:#4ade80;font:600 15px 'Plus Jakarta Sans',sans-serif;letter-spacing:0;opacity:0;transition:opacity .2s}
 .sw-prize-code .sw-cop.show{opacity:1}
-.sw-prize-exp{font:400 13px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.35);margin-top:8px}
-.sw-prize-cd{font:600 14px 'Plus Jakarta Sans',sans-serif;color:rgba(212,176,94,.7);margin-top:6px}
-.sw-prize-close{margin-top:10px;padding:10px 30px;border-radius:22px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.55);font:600 14px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s}
+.sw-prize-exp{font:400 20px 'Plus Jakarta Sans',sans-serif;color:rgba(255,255,255,.35);margin-top:10px}
+.sw-prize-cd{font:600 21px 'Plus Jakarta Sans',sans-serif;color:rgba(212,176,94,.7);margin-top:8px}
+.sw-prize-close{margin-top:12px;padding:12px 36px;border-radius:24px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.55);font:600 18px 'Plus Jakarta Sans',sans-serif;cursor:pointer;transition:all .2s}
 .sw-prize-close:hover{background:rgba(255,255,255,.08);color:#fff}
 
 /* ─── Toast ─── */
@@ -158,9 +158,9 @@ var css=`
   .sw-btn{padding:13px 40px;font-size:15px}
   .sw-x{top:10px;right:10px;width:36px;height:36px;font-size:18px}
   .sw-badge{font-size:10px}
-  .sw-prize-t{font-size:30px}
-  .sw-prize-code{font-size:24px;padding:14px 24px}
-  .sw-prize-s{font-size:16px}
+  .sw-prize-t{font-size:44px}
+  .sw-prize-code{font-size:34px;padding:16px 28px}
+  .sw-prize-s{font-size:24px}
 }
 `;
 
@@ -218,9 +218,13 @@ function build(){
   var cc=document.createElement('canvas');cc.className='sw-confetti';cc.id='sw-confetti';
   document.body.appendChild(cc);
 
-  // Backdrop kapatma
+  // Backdrop kapatma — prize açıkken engelle
   ov.addEventListener('click',function(e){
-    if(e.target===ov&&!_spinning)swClose();
+    if(e.target===ov&&!_spinning){
+      var prize=document.getElementById('sw-prize');
+      if(prize&&prize.classList.contains('show'))return; // Kupon kodu görünürken kapatma
+      swClose();
+    }
   });
 
   // Ambient sparkles
@@ -684,24 +688,17 @@ function _showForwardHint(){
   h.id='sw-fwd-hint';
   h.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:25;text-align:center;animation:sw-hintIn .4s cubic-bezier(.34,1.56,.64,1)';
   h.innerHTML=
-    '<div style="background:rgba(26,23,20,.95);border:1px solid rgba(212,176,94,.3);border-radius:22px;padding:28px 36px;backdrop-filter:blur(18px);box-shadow:0 16px 56px rgba(0,0,0,.55),0 0 0 1px rgba(212,176,94,.06) inset">'+
-      '<svg width="96" height="96" viewBox="0 0 96 96" fill="none" style="display:block;margin:0 auto 14px">'+
-        // Yay ok — saat yönünde
-        '<path d="M68 26 A30 30 0 1 1 26 30" stroke="url(#sw-h-g)" stroke-width="2.5" stroke-linecap="round" fill="none" stroke-dasharray="0 200">'+
-          '<animate attributeName="stroke-dasharray" values="0 200;150 200" dur="1s" fill="freeze"/>'+
-        '</path>'+
-        '<polygon points="70,20 74,30 64,29" fill="#f5e6c8" opacity="0">'+
-          '<animate attributeName="opacity" values="0;0;1" dur="1s" fill="freeze"/>'+
-        '</polygon>'+
-        '<defs><linearGradient id="sw-h-g" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#af8c3e" stop-opacity=".2"/><stop offset="100%" stop-color="#f5e6c8"/></linearGradient></defs>'+
-        // El — saat yönünde swipe
-        '<g opacity=".9">'+
-          '<path d="M42 52c-1-4 0-8 3-10.5 1.5-1.2 3.2-1.5 4.8-.8 2.2.8 3.6 2.8 4 5 .5-.4 1.2-.6 2-.5 2 .2 3.2 2 3 4l-.1 1.2c.8-.2 1.6-.1 2.3.3 1.6.8 2.2 2.6 2 4.4l-.5 4c-.8 4.5-4 7.5-8.2 7.5h-3.6c-4.2 0-7.5-3.2-7.5-7.5L42 52z" fill="rgba(212,176,94,.12)" stroke="#d4b05e" stroke-width="1.5" stroke-linejoin="round"/>'+
-          '<animateTransform attributeName="transform" type="translate" values="0,0;14,-8;14,-8" dur="1.4s" repeatCount="indefinite"/>'+
+    '<div style="background:rgba(26,23,20,.95);border:1px solid rgba(212,176,94,.25);border-radius:22px;padding:24px 36px;backdrop-filter:blur(18px);box-shadow:0 16px 56px rgba(0,0,0,.55)">'+
+      '<svg width="80" height="44" viewBox="0 0 80 44" fill="none" style="display:block;margin:0 auto 10px">'+
+        '<g>'+
+          '<path d="M10 26c0-3 1.8-5.5 4.5-7l20-2c2.8 0 5 1.3 6.5 3.5l7.5 1c2.3.3 4 1.8 4.5 4 .3 1.4-.2 2.8-1 3.6l-2.8 2.8c-1.8 1.8-4.5 2.8-7.2 2.8H22c-3.6 0-7.2-1.8-10-4.5l-1.8-2.2c-.8-1-.7-2.5.2-3.4" fill="rgba(212,176,94,.1)" stroke="#d4b05e" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>'+
+          '<path d="M40 20l16-1c2.3 0 4 1.3 4.5 3.4.3 1.4-.4 2.8-1.8 3.5l-19 1" fill="none" stroke="#d4b05e" stroke-width="1.6" stroke-linecap="round"/>'+
+          '<path d="M54 16l7 5-7 5" fill="none" stroke="#f5e6c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'+
+          '<animateTransform attributeName="transform" type="translate" values="-8,0;12,0;-8,0" dur="1.5s" repeatCount="indefinite"/>'+
         '</g>'+
       '</svg>'+
-      '<div style="color:#f5e6c8;font:800 14px \'Plus Jakarta Sans\',sans-serif;letter-spacing:.6px">Saat Yönünde Fırlat</div>'+
-      '<div style="color:rgba(255,255,255,.3);font:400 11px \'Plus Jakarta Sans\',sans-serif;margin-top:4px">Sürükleyip bırakın</div>'+
+      '<div style="color:#f5e6c8;font:700 13px Plus Jakarta Sans,sans-serif;letter-spacing:.5px">Saat Yönünde Fırlat</div>'+
+      '<div style="color:rgba(255,255,255,.28);font:400 11px Plus Jakarta Sans,sans-serif;margin-top:3px">Sürükleyip bırakın</div>'+
     '</div>';
   var box=document.getElementById('sw-box');
   if(box){box.style.position='relative';box.appendChild(h)}
@@ -727,9 +724,9 @@ async function _momentumSpin(speed){
     var dt=now-lastM;
     if(dt<=0){requestAnimationFrame(mFrame);return}
     lastM=now;
-    // Lineer sürtünme
+    // CrazyTim lineer sürtünme — RESISTANCE * dt, doğal yavaşlama
     mSpd-=RESISTANCE*(dt/1000);
-    if(mSpd<200)mSpd=200; // API beklerken görsel hız korunsun
+    if(mSpd<40)mSpd=40; // Minimal döngü — API beklerken çark durmasın
     _rotation+=mSpd*(dt/1000);
     drawWheel(_rotation);_tickSeg();
     requestAnimationFrame(mFrame);
@@ -815,7 +812,7 @@ async function swSpin(){
 function _spinToTarget(seg,offset,handoff){
   return new Promise(function(resolve){
     handoff=Math.abs(handoff||0);
-    if(handoff<400)handoff=400; // Min hız: yumuşak animasyon garantisi
+    if(handoff<60)handoff=60; // Çok yavaşsa minimum animasyon hızı
 
     // Hedef açı: segment merkezi + GAS offset
     var target=360-seg*SA-SA/2+(offset||0);
@@ -827,28 +824,43 @@ function _spinToTarget(seg,offset,handoff){
     while(end-start<1440)end+=360;
     var dist=end-start;
 
-    // Easing tabanlı animasyon — easeOutQuart: dramatik son yavaşlama
-    var totalTime=2*dist/handoff; // sn (lineer modelden türetilmiş süre)
-    totalTime=Math.max(3,Math.min(8,totalTime)); // 3-8sn arası
-    var startTime=performance.now();
-
-    function easeOutQuart(t){return 1-Math.pow(1-t,4)}
+    // CrazyTim physics: v²=v₀²-2*a*d → friction = v₀²/(2*d)
+    // Handoff hızından başla, tam hedefe ulaşınca sıfıra in — hız sürekliliği korunur
+    var v0=handoff;
+    var friction=v0*v0/(2*dist);
+    if(friction<3)friction=3; // Aşırı uzun dönüşü engelle
+    var spd=v0;
+    var pos=start;
+    var lastT=performance.now();
 
     function frame(){
-      var elapsed=(performance.now()-startTime)/1000;
-      var t=Math.min(1,elapsed/totalTime);
-      var eased=easeOutQuart(t);
-      var pos=start+dist*eased;
+      var now=performance.now();
+      var dt=now-lastT;
+      if(dt<=0||dt>100){lastT=now;requestAnimationFrame(frame);return}
+      lastT=now;
+      var dtSec=dt/1000;
 
-      _rotation=pos;
-      drawWheel(_rotation);_tickSeg();
+      // Lineer sürtünme — _freeSpin ile aynı model
+      spd-=friction*dtSec;
 
-      if(t>=1){
+      if(spd<=0){
         _rotation=end;
         drawWheel(_rotation);_tickSeg();
         resolve();
         return;
       }
+
+      pos+=spd*dtSec;
+      _rotation=pos;
+      drawWheel(_rotation);_tickSeg();
+
+      // Güvenlik: hedefe çok yakın + çok yavaş → snap
+      if(pos>=end-2&&spd<10){
+        _rotation=end;drawWheel(_rotation);_tickSeg();
+        resolve();
+        return;
+      }
+
       requestAnimationFrame(frame);
     }
     frame();
