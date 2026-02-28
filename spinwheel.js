@@ -110,9 +110,6 @@ var css=`
 .sw-flash{animation:sw-fl .6s ease}
 @keyframes sw-fl{0%{box-shadow:0 0 0 0 rgba(212,176,94,.6)}50%{box-shadow:0 0 60px 20px rgba(212,176,94,.3)}100%{box-shadow:0 0 0 0 rgba(212,176,94,0)}}
 
-.sw-test-badge{position:fixed;top:16px;left:16px;z-index:1000002;padding:6px 14px;border-radius:8px;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);color:#fbbf24;font:700 11px 'Plus Jakarta Sans',sans-serif;letter-spacing:1px;display:none}
-.sw-test-badge.show{display:block}
-
 @media(max-width:640px){
   .sw-wheel-container{width:88vw;height:88vw}
   .sw-btn{padding:13px 40px;font-size:15px}
@@ -177,10 +174,6 @@ function build(){
   // Confetti canvas
   var cc=document.createElement('canvas');cc.className='sw-confetti';cc.id='sw-confetti';
   document.body.appendChild(cc);
-
-  // Test mode badge
-  var tb=document.createElement('div');tb.className='sw-test-badge';tb.id='sw-test-badge';tb.textContent='TEST MODU';
-  document.body.appendChild(tb);
 
   // Backdrop kapatma
   ov.addEventListener('click',function(e){
@@ -415,10 +408,10 @@ function initDrag(){
       while(_velSamples.length>0&&now-_velSamples[0].t>80) _velSamples.shift();
     }
 
-    // Tick ses — her 45 derece
+    // Tick ses — sadece ileri yönde segment geçişlerinde
     var segBefore=Math.floor((((_rotation-delta)%360+360)%360)/SA)%N;
     var segAfter=Math.floor(((_rotation%360+360)%360)/SA)%N;
-    if(segBefore!==segAfter)tick();
+    if(segBefore!==segAfter&&delta>0)tick();
 
     _lastAngle=a;_lastTime=now;
     _dragAngle=a;
@@ -491,7 +484,7 @@ async function startMomentumThenSpin(vel){
     if(!momentumActive)return;
     _rotation+=momentumVel;
     momentumVel*=0.995;
-    if(momentumVel<0.5) momentumVel=2; // Minimum hız koru
+    if(momentumVel<1.5) momentumVel=1.5; // Sabit minimum — sawtooth yok
     drawWheel(_rotation);
     tick();
     if(momentumActive) requestAnimationFrame(momentumFrame);
@@ -664,7 +657,7 @@ function animateToTarget(segment,angleOffset,handoffVel){
       if(t<1)requestAnimationFrame(frame);
       else{_rotation=end;drawWheel(_rotation);resolve()}
     }
-    requestAnimationFrame(frame);
+    frame(performance.now()); // Senkron ilk frame — handoff boşluğu yok
   });
 }
 
@@ -923,11 +916,6 @@ function isSpunSession(){return _spunSession}
 // ====== TEST MODE ======
 function _applyTestMode(on){
   _TEST_MODE=!!on;
-  var badge=document.getElementById('sw-test-badge');
-  if(badge){
-    if(_TEST_MODE) badge.classList.add('show');
-    else badge.classList.remove('show');
-  }
   if(_TEST_MODE) _spunSession=false; // test modda blok yok
 }
 
