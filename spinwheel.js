@@ -37,6 +37,17 @@ window._swSetSegments=function(segs,scale){
 var _spinning=false,_spunSession=false,_rotation=0,_audioCtx=null,_muted=false;
 var _TEST_MODE=false;
 
+function _applyTestMode(tm){
+  _TEST_MODE=!!tm;
+  if(_TEST_MODE)_spunSession=false;
+  syncUI();
+}
+function _fetchTestMode(){
+  fetch(GAS_URL+'?action=spin-check').then(function(r){return r.json()}).then(function(d){
+    if(d.ok&&d.testMode!==undefined)_applyTestMode(d.testMode);
+  }).catch(function(){});
+}
+
 // ====== SVG İKONLAR ======
 var ICO={
   win:'<svg viewBox="0 0 24 24" fill="none" stroke="#d4b05e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:48px;height:48px"><path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16.4l-6.4 4.8L8 14l-6-4.8h7.6z"/></svg>',
@@ -371,6 +382,7 @@ function winSound(){
 var _dragging=false,_dragEvents=[],_freeSpinId=null;
 var RESISTANCE=100,SPEED_MAX=500,DRAG_PERIOD=250;
 var _lastTickSeg=-1;
+var _lastTickTime=0;
 
 // ── CrazyTim util.getAngle (birebir) ──
 function _ctAngle(ox,oy,tx,ty){
@@ -395,10 +407,14 @@ function _ctDiff(a,b){
   return 180-aOff;
 }
 
-// Segment geçişinde tek tick
+// Segment geçişinde tek tick (50ms debounce — geri sürüklemede buzzing engeli)
 function _tickSeg(){
   var s=Math.floor(((_rotation%360+360)%360)/SA)%N;
-  if(s!==_lastTickSeg){tick();_lastTickSeg=s}
+  if(s!==_lastTickSeg){
+    _lastTickSeg=s;
+    var now=performance.now();
+    if(now-_lastTickTime>50){_lastTickTime=now;tick()}
+  }
 }
 
 // Serbest animasyonu durdur
@@ -462,11 +478,13 @@ function initDrag(){
     var speed=dragDist*(1000/DRAG_PERIOD);
     speed=Math.max(-SPEED_MAX,Math.min(SPEED_MAX,speed));
 
-    // Yeterli hız → API spin tetikle, yoksa serbest yavaşlama
-    if(Math.abs(speed)>60){
+    // Yeterli ileri hız → API spin tetikle | geri veya yavaş → serbest yavaşlama
+    if(speed>60){
       _momentumSpin(speed);
-    }else if(Math.abs(speed)>5){
+    }else if(speed>5){
       _freeSpin(speed);
+    }else if(speed<-5){
+      _freeSpin(speed); // Geri fırlatma: doğal yavaşlama, API çağırmaz
     }
   }
 
@@ -631,11 +649,11 @@ function _spinToTarget(seg,offset,handoff){
     while(end-start<1440)end+=360;
     var dist=end-start;
 
-    // Süre: handoff hızına göre (CrazyTim mantığı)
+    // Süre: easeSinOut başlangıç hızı = dist*π/(2*dur_s)
+    // Handoff ile eşleştir: dur = dist*π/(2*handoff) sn
     var dur;
     if(handoff>10){
-      // Ortalama hız ≈ handoff * 0.45 (easeSinOut integral ortalaması)
-      dur=Math.max(3500,Math.min(8000,(dist/(handoff*0.45))*1000));
+      dur=Math.max(3500,Math.min(9000,dist*Math.PI*1000/(2*handoff)));
     }else{
       dur=4000+Math.random()*2000;
     }
@@ -959,4 +977,3 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 else init();
 
 })();
-// deploy 1772242281
