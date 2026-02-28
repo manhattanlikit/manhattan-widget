@@ -101,7 +101,7 @@ var css=`
 .sw-msg.hot{color:#fbbf24;font-weight:700}
 
 /* ─── Prize Card (çark konteynerı içinde) ─── */
-.sw-prize-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20;opacity:0;visibility:hidden;transition:all .35s;border-radius:50%;overflow:hidden;pointer-events:none}
+.sw-prize-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:20;opacity:0;visibility:hidden;transition:all .35s;border-radius:16px;overflow:visible;pointer-events:none}
 .sw-prize-wrap.show{opacity:1;visibility:visible;pointer-events:auto}
 .sw-prize-bg{position:absolute;inset:0;background:radial-gradient(circle,rgba(26,23,20,.97) 40%,rgba(26,23,20,.92) 70%,rgba(26,23,20,.85));backdrop-filter:blur(16px)}
 .sw-prize-card{position:relative;z-index:2;text-align:center;padding:24px 20px;max-width:88%;animation:sw-prizeIn .5s cubic-bezier(.34,1.56,.64,1)}
@@ -637,7 +637,13 @@ async function swSpin(){
 }
 
 // ====== HEDEF ANİMASYON — CrazyTim spinToItem + easeSinOut ======
-function _easeSinOut(t){return Math.sin(t*Math.PI/2)}
+function _easeSinOut(t){
+  if(t>=1)return 1;
+  var base=Math.sin(t*Math.PI/2);
+  // Son %8'de hafif wobble — doğal duruş hissi
+  if(t>0.92){var w=(t-0.92)/0.08;base+=Math.sin(w*Math.PI*2)*0.004*(1-w)}
+  return base;
+}
 
 function _spinToTarget(seg,offset,handoff){
   return new Promise(function(resolve){
@@ -656,9 +662,9 @@ function _spinToTarget(seg,offset,handoff){
     // Süre: handoff hızına göre (CrazyTim mantığı)
     var dur;
     if(handoff>10){
-      dur=Math.max(4500,Math.min(8000,(dist/(handoff*0.45))*1000));
+      dur=Math.max(5500,Math.min(8500,(dist/(handoff*0.45))*1000));
     }else{
-      dur=5000+Math.random()*2000;
+      dur=6000+Math.random()*2000;
     }
     if(!dur||isNaN(dur))dur=5500;
 
