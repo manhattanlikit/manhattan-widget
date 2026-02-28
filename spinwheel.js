@@ -49,6 +49,7 @@ function _fetchTestMode(){
     if(d.ok&&d.testMode!==undefined)_applyTestMode(d.testMode);
     if(d.tickSound)_tickPreset=d.tickSound;
     if(d.celebSound)_celebPreset=d.celebSound;
+    if(d.voovSound)_voovPreset=d.voovSound;
     // Segment metinlerini GAS config'den güncelle
     if(d.segTexts&&Array.isArray(d.segTexts)){
       for(var i=0;i<Math.min(d.segTexts.length,SEGS.length);i++){
@@ -364,53 +365,69 @@ function initAudio(){
 
 // ── Ses Preset Tanımları ──
 var _TICK_MAP={
-  original:{freq:1300,type:'sine',dur:0.035,gain:0.06},
-  classic:{freq:2800,type:'sine',dur:0.035,gain:0.06},
   soft:{freq:1200,type:'sine',dur:0.05,gain:0.04},
-  deep:{freq:600,type:'triangle',dur:0.04,gain:0.08},
-  mechanic:{freq:3200,type:'square',dur:0.025,gain:0.04},
-  casino:{freq:4000,type:'sine',dur:0.02,gain:0.05},
-  roulette:{freq:1800,type:'triangle',dur:0.04,gain:0.06},
   wood:{freq:400,type:'sine',dur:0.06,gain:0.1},
-  crystal:{freq:5000,type:'sine',dur:0.03,gain:0.03},
-  bell:{freq:3400,type:'sine',dur:0.08,gain:0.05},
-  marble:{freq:2200,type:'triangle',dur:0.03,gain:0.07},
-  click:{freq:6000,type:'square',dur:0.012,gain:0.03},
-  pop:{freq:900,type:'sine',dur:0.045,gain:0.09},
-  chime:{freq:4200,type:'sine',dur:0.06,gain:0.04},
-  retro:{freq:1600,type:'square',dur:0.03,gain:0.05},
-  glass:{freq:3800,type:'sine',dur:0.07,gain:0.04}
+  velvet:{freq:800,type:'sine',dur:0.065,gain:0.05,freq2:1600},
+  bamboo:{freq:340,type:'triangle',dur:0.045,gain:0.09,freq2:680},
+  leather:{freq:180,type:'sine',dur:0.03,gain:0.12,freq2:520},
+  walnut:{freq:280,type:'sine',dur:0.055,gain:0.1,freq2:560},
+  silk:{freq:2200,type:'sine',dur:0.07,gain:0.03,freq2:3300},
+  mahogany:{freq:200,type:'triangle',dur:0.06,gain:0.11,freq2:400}
 };
 var _CELEB_MAP={
-  fanfare:{notes:[523,659,784,1047,1318],dur:0.25,type:'sine'},
-  confetti:{notes:[800,1200,600,1400,900,1600],dur:0.12,type:'sine'},
-  jackpot:{notes:[440,554,659,880,880,880],dur:0.15,type:'square'},
-  elegant:{notes:[659,784,988,784,988,1319],dur:0.3,type:'sine'},
-  triumph:{notes:[392,494,587,784,988,784,988],dur:0.2,type:'sine'},
   sparkle:{notes:[1047,1319,1568,1319,1568,2093],dur:0.15,type:'sine'},
   royal:{notes:[330,392,494,659,784,1047],dur:0.28,type:'triangle'},
-  arcade:{notes:[523,659,784,523,659,784,1047],dur:0.1,type:'square'}
+  arcade:{notes:[523,659,784,523,659,784,1047],dur:0.1,type:'square'},
+  golden:{notes:[440,554,659,880,1047,1319,1568],dur:0.2,type:'sine'},
+  majestic:{notes:[262,330,392,523,659,784,1047,1319],dur:0.22,type:'sine'},
+  luxe:{notes:[1568,1319,1568,2093,1568,2093,2637],dur:0.18,type:'sine'},
+  victory:{notes:[392,392,523,659,784,784,1047],dur:0.16,type:'triangle'},
+  bliss:{notes:[659,784,988,1319,988,1319,1568],dur:0.25,type:'sine'}
 };
-var _tickPreset='original';
-var _celebPreset='fanfare';
+// ── Voov Presets (kalabalık tepki) ──
+var _VOOV_MAP={
+  studio1:{pitch:0.8,crowd:12,dur:0.9,rise:0.3},
+  studio2:{pitch:1.0,crowd:16,dur:1.1,rise:0.4},
+  studio3:{pitch:0.7,crowd:20,dur:1.0,rise:0.25},
+  talkshow:{pitch:0.9,crowd:24,dur:1.2,rise:0.35},
+  sitcom1:{pitch:1.1,crowd:10,dur:0.8,rise:0.2},
+  sitcom2:{pitch:0.85,crowd:14,dur:1.0,rise:0.3},
+  arena:{pitch:0.6,crowd:30,dur:1.4,rise:0.5},
+  gasp:{pitch:1.2,crowd:8,dur:0.7,rise:0.15},
+  cheer:{pitch:0.75,crowd:22,dur:1.3,rise:0.4},
+  wow:{pitch:0.95,crowd:18,dur:1.1,rise:0.35}
+};
+var _tickPreset='wood';
+var _celebPreset='sparkle';
+var _voovPreset='studio2';
 
 function tick(){
   if(!_audioCtx||_muted)return;
   try{
-    var p=_TICK_MAP[_tickPreset]||_TICK_MAP.classic;
+    var p=_TICK_MAP[_tickPreset]||_TICK_MAP.wood;
+    var t=_audioCtx.currentTime;
     var o=_audioCtx.createOscillator(),g=_audioCtx.createGain();
     o.connect(g);g.connect(_audioCtx.destination);
-    o.frequency.value=p.freq+Math.random()*100;o.type=p.type;
-    g.gain.setValueAtTime(p.gain,_audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(.001,_audioCtx.currentTime+p.dur);
-    o.start();o.stop(_audioCtx.currentTime+p.dur);
+    o.frequency.value=p.freq+Math.random()*80;o.type=p.type;
+    g.gain.setValueAtTime(p.gain,t);
+    g.gain.exponentialRampToValueAtTime(.001,t+p.dur);
+    o.start();o.stop(t+p.dur);
+    // Dual oscillator — harmonik katman
+    if(p.freq2){
+      var o2=_audioCtx.createOscillator(),g2=_audioCtx.createGain();
+      o2.connect(g2);g2.connect(_audioCtx.destination);
+      o2.frequency.value=p.freq2+Math.random()*60;o2.type='sine';
+      g2.gain.setValueAtTime(p.gain*0.3,t);
+      g2.gain.exponentialRampToValueAtTime(.001,t+p.dur*0.8);
+      o2.start();o2.stop(t+p.dur);
+    }
   }catch(e){}
 }
 
 function winSound(){
   if(!_audioCtx||_muted)return;
   try{
-    var p=_CELEB_MAP[_celebPreset]||_CELEB_MAP.fanfare;
+    var p=_CELEB_MAP[_celebPreset]||_CELEB_MAP.sparkle;
     p.notes.forEach(function(f,i){
       setTimeout(function(){
         var o=_audioCtx.createOscillator(),g=_audioCtx.createGain();
@@ -422,6 +439,61 @@ function winSound(){
       },i*(p.dur*1000*0.7));
     });
   }catch(e){}
+}
+
+// ── Voov: Kalabalık Tepki Sentezi ──
+function voovSound(){
+  if(!_audioCtx||_muted)return;
+  try{
+    var p=_VOOV_MAP[_voovPreset]||_VOOV_MAP.studio2;
+    var t=_audioCtx.currentTime;
+    var voices=p.crowd||16;
+    // Noise buffer — kalabalık sesi temeli
+    var bufLen=_audioCtx.sampleRate*p.dur;
+    var buf=_audioCtx.createBuffer(1,bufLen,_audioCtx.sampleRate);
+    var data=buf.getChannelData(0);
+    for(var i=0;i<bufLen;i++) data[i]=(Math.random()*2-1);
+
+    for(var v=0;v<Math.min(voices,6);v++){
+      var src=_audioCtx.createBufferSource();
+      src.buffer=buf;
+      src.playbackRate.value=p.pitch+(Math.random()-.5)*.3;
+      // Bandpass — insan sesi formant (~400-800Hz)
+      var bp=_audioCtx.createBiquadFilter();
+      bp.type='bandpass';
+      bp.frequency.value=400+v*80+Math.random()*200;
+      bp.Q.value=2+Math.random()*3;
+      // İkinci formant — "oo" → "aah" geçişi
+      var bp2=_audioCtx.createBiquadFilter();
+      bp2.type='bandpass';
+      bp2.frequency.value=800+v*60+Math.random()*300;
+      bp2.Q.value=1.5+Math.random()*2;
+      // Envelope
+      var env=_audioCtx.createGain();
+      var vGain=0.04+Math.random()*0.02;
+      env.gain.setValueAtTime(0,t);
+      env.gain.linearRampToValueAtTime(vGain,t+p.rise);
+      env.gain.setValueAtTime(vGain,t+p.rise+0.1);
+      env.gain.exponentialRampToValueAtTime(0.001,t+p.dur);
+      src.connect(bp);bp.connect(bp2);bp2.connect(env);env.connect(_audioCtx.destination);
+      src.start(t+Math.random()*0.08);
+      src.stop(t+p.dur+0.1);
+    }
+    // Tonal "ooo" katmanı — birkaç sine osc
+    for(var j=0;j<3;j++){
+      var osc=_audioCtx.createOscillator();
+      var og=_audioCtx.createGain();
+      osc.type='sine';
+      osc.frequency.setValueAtTime(150+j*50+Math.random()*40,t);
+      osc.frequency.linearRampToValueAtTime(250+j*60+Math.random()*50,t+p.rise);
+      osc.frequency.linearRampToValueAtTime(180+j*40,t+p.dur);
+      og.gain.setValueAtTime(0,t);
+      og.gain.linearRampToValueAtTime(0.025,t+p.rise);
+      og.gain.exponentialRampToValueAtTime(0.001,t+p.dur);
+      osc.connect(og);og.connect(_audioCtx.destination);
+      osc.start(t);osc.stop(t+p.dur+0.05);
+    }
+  }catch(e){console.warn('[SW] voov error:',e)}
 }
 
 
@@ -793,17 +865,20 @@ async function showResult(data){
     await delay(400);
     showPrize(data);
   }else{
-    // 1. Kısa bekleme — çark durdu hissi
-    await delay(500);
-    // 2. Flash + ses
+    // 1. Çark durdu → kısa bekleme
+    await delay(400);
+    // 2. VOOV — kalabalık tepkisi
+    voovSound();
     var ring=document.querySelector('.sw-ring');
     if(ring)ring.classList.add('sw-flash');
     setTimeout(function(){if(ring)ring.classList.remove('sw-flash')},600);
-    winSound();confetti();
-    // 3. Uzun geçiş — prize fade-in
-    await delay(1000);
+    // 3. Voov süresince bekleme
+    await delay(900);
+    // 4. Prize fade-in
     showPrize(data);
-    // 4. İkinci confetti dalga
+    // 5. Kupon göründükten sonra — kutlama sesi + confetti patlaması
+    await delay(500);
+    winSound();confetti();
     await delay(600);
     confetti();
   }

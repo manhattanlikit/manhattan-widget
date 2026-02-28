@@ -903,7 +903,7 @@ function doGet(e) {
         _segTexts.push({ label: _chkCfg.segments[si].label || '', sub: _chkCfg.segments[si].sub || '' });
       }
     }
-    return jsonResponse({ ok: true, testMode: !!_chkCfg.testMode, tickSound: _chkCfg.tickSound || 'original', celebSound: _chkCfg.celebSound || 'fanfare', segTexts: _segTexts, fontScale: _chkCfg.fontScale || 1.0, fontFamily: _chkCfg.fontFamily || 'Plus Jakarta Sans', labelGap: _chkCfg.labelGap !== undefined ? _chkCfg.labelGap : 6 });
+    return jsonResponse({ ok: true, testMode: !!_chkCfg.testMode, tickSound: _chkCfg.tickSound || 'wood', celebSound: _chkCfg.celebSound || 'sparkle', voovSound: _chkCfg.voovSound || 'studio2', segTexts: _segTexts, fontScale: _chkCfg.fontScale || 1.0, fontFamily: _chkCfg.fontFamily || 'Plus Jakarta Sans', labelGap: _chkCfg.labelGap !== undefined ? _chkCfg.labelGap : 6 });
   }
   
   // Ücretsiz kargo eşiği — Ecwid shipping settings'ten dinamik çek
