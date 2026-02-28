@@ -940,7 +940,7 @@ function openOverlay(){
   initAudio();
   var ov=document.getElementById('sw-ov');
   ov.classList.add('open');
-  document.getElementById('sw-prize').classList.remove('show');
+  _hidePrize();
 
   // Test mode config fetch (non-blocking)
   _fetchTestMode();
@@ -971,11 +971,18 @@ function openOverlay(){
 function swClose(){
   if(_spinning)return;
   document.getElementById('sw-ov').classList.remove('open');
-  document.getElementById('sw-prize').classList.remove('show');
+  _hidePrize();
+}
+
+function _hidePrize(){
+  var p=document.getElementById('sw-prize');
+  if(!p)return;
+  p.classList.remove('show');
+  p.style.opacity='';p.style.visibility='';p.style.pointerEvents='';
 }
 
 function swClosePrize(){
-  var p=document.getElementById('sw-prize');if(p)p.classList.remove('show');
+  _hidePrize();
 }
 
 // ====== ÖDÜL KARTI (çark içinde) ======
@@ -1032,8 +1039,12 @@ function showPrize(data){
   }catch(err){console.error('[SW] showPrize error:',err)}
 
   console.log('[SW] Prize card show. pc display:',pc?pc.style.display:'N/A','pct text:',pct?pct.textContent:'N/A','el has show:',el.classList.contains('show'));
+  // Chrome CSS transition bypass — inline style ile zorla
   el.classList.add('show');
-  console.log('[SW] el.show added. el visible:',getComputedStyle(el).visibility,'opacity:',getComputedStyle(el).opacity);
+  el.style.opacity='1';
+  el.style.visibility='visible';
+  el.style.pointerEvents='auto';
+  console.log('[SW] el.show added + inline forced');
 }
 
 // ====== KOPYALA ======
