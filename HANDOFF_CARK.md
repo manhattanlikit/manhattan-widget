@@ -483,9 +483,7 @@ Tümü Web Audio API oscillator tabanlı — harici dosya yok.
 | MANHATTAN_LIKIT_FINAL.gs | 3488 | 700/700 |
 
 #### Kalan İşler
-| # | İş | Öncelik |
-|---|-----|---------|
-| 1 | Wix versiyonu (widgetwix.js'e spinwheel entegrasyonu) | Gelecek |
+> Wix spinwheel entegrasyonu iptal — çark sadece manhattandan.com'da çalışacak. widgetwix.js'teki sidebar cooldown bridge mevcut haliyle kalıyor (spinwheel.js yüklenmezse sessizce pas geçer).
 
 #### Test Checklist (Güncellenmiş)
 - [ ] İleri çevirme: fizik tabanlı doğal yavaşlama (geri ile aynı his)
