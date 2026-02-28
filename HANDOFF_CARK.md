@@ -501,3 +501,30 @@ Tümü Web Audio API oscillator tabanlı — harici dosya yok.
 - [ ] spin.html: 8 kutlama ses preview + seçim
 - [ ] GAS auto-deploy: GitHub push → Actions yeşil tik
 - [ ] Sidebar countdown: cooldown süresi görünüyor
+
+### [2026-02-28] — 4 Kritik Bug: Sidebar Cooldown, GAS Sub Sync, Layout, Debug
+
+#### Kök Nedenler ve Çözümler
+
+**1. Sidebar cooldown gösterilmiyordu**
+- **Kök:** `_mlUpdateSpinCooldown()` widget.js yüklenince (2sn) çağrılıyordu ama `ml-spin-cd` elementi sidebar açılınca (`go()`) render ediliyor. Element yok → fonksiyon pas geçiyor.
+- **Çözüm:** `go()` sonrası 100ms setTimeout ile `_mlUpdateSpinCooldown()` çağrısı (widget.js + widgetwix.js)
+
+**2. spin.html'den çark yazıları değişmiyordu**
+- **Kök:** GAS `_SPIN_DEFAULT_CONFIG` tek string label (`'%3 İndirim'`) kullanıyordu, spinwheel.js split format (`label:'%3'`, `sub:'İNDİRİM'`). GAS config'te `sub` alanı yoktu → spin-check boş sub döndürüyordu → spinwheel.js hardcoded değerleri koruyordu.
+- **Çözüm:** GAS defaults split format'a geçti + `_loadSpinConfig` sub backfill + fontScale default
+
+**3. KAPAT/Ses/Sonraki hak iç içe**
+- **Kök:** `sw-msg` div `sw-controls` dışındaydı, gap uygulanmıyordu.
+- **Çözüm:** `sw-msg` controls içine taşındı, gap 14→16px, margin-top 22→24px
+
+**4. Prize loglama**
+- GAS `handleSpin` artık `label+sub` birleştirip sheet'e yazar (`'%3 İNDİRİM'` formatında)
+
+#### Değişen Dosyalar
+| Dosya | Satır | Brace |
+|-------|-------|-------|
+| spinwheel.js | 1140 | 323/323 |
+| widget.js | 906 | 519/519 |
+| widgetwix.js | 859 | 481/481 |
+| MANHATTAN_LIKIT_FINAL.gs | 3497 | 702/702 |
