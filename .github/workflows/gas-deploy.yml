@@ -4,6 +4,7 @@ on:
     paths:
       - 'MANHATTAN_LIKIT_FINAL.gs'
       - 'appsscript.json'
+      - '.github/workflows/gas-deploy.yml'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -27,3 +28,5 @@ jobs:
           cd gas-tmp
           ls -la
           clasp push --force
+          echo "Updating existing deployment..."
+          clasp deploy -i AKfycbxJKzibWzYOmapPvghMPxbt9u5vjGQyxCXZae4FKfUEsjCMIWEqkyI2CM_CovOGrzTbXQ -d "auto-deploy $(date +%Y-%m-%d)"
