@@ -23,6 +23,8 @@ var N=8,SA=360/N,SAR=Math.PI*2/N;
 
 // Font ölçek — spin.html'den ayarlanabilir (0.5 — 2.0)
 var _fontScale=1.0;
+var _fontFamily='Plus Jakarta Sans';
+var _labelGap=6;
 
 // Dış erişim: segment güncelleme + font ölçek
 window._swSetSegments=function(segs,scale){
@@ -55,6 +57,8 @@ function _fetchTestMode(){
       }
     }
     if(typeof d.fontScale==='number')_fontScale=Math.max(0.5,Math.min(2.0,d.fontScale));
+    if(d.fontFamily)_fontFamily=d.fontFamily;
+    if(typeof d.labelGap==='number')_labelGap=Math.max(0,Math.min(30,d.labelGap));
     drawWheel(_rotation);
   }).catch(function(e){console.warn('[SW] spin-check fetch error:',e)});
 }
@@ -303,18 +307,19 @@ function drawWheel(rotDeg){
     c.lineTo(cx+R*Math.cos(a0),cy+R*Math.sin(a0));
     c.strokeStyle='rgba(212,176,94,.2)';c.lineWidth=1;c.stroke();
 
-    // Text — _fontScale ile ayarlanabilir, segmente sabit (flip yok)
+    // Text — _fontScale, _fontFamily, _labelGap ile ayarlanabilir
     c.save();c.translate(cx,cy);c.rotate(mid);
     var textR=R*.66;
+    var gOff=W*_labelGap/500;
     c.fillStyle=seg.text;
-    c.font='800 '+Math.round(W*.042*_fontScale)+'px "Plus Jakarta Sans",sans-serif';
+    c.font='800 '+Math.round(W*.042*_fontScale)+'px "'+_fontFamily+'",sans-serif';
     c.textAlign='center';c.textBaseline='middle';
     c.shadowColor='rgba(0,0,0,.5)';c.shadowBlur=6;c.shadowOffsetY=2;
-    c.fillText(seg.label,textR,-(W*.012));
+    c.fillText(seg.label,textR,-gOff);
     c.shadowBlur=0;c.shadowOffsetY=0;
-    c.font='600 '+Math.round(W*.022*_fontScale)+'px "Plus Jakarta Sans",sans-serif';
+    c.font='600 '+Math.round(W*.022*_fontScale)+'px "'+_fontFamily+'",sans-serif';
     c.fillStyle=seg.text;c.globalAlpha=.6;
-    c.fillText(seg.sub,textR,W*.024);
+    c.fillText(seg.sub,textR,gOff*2);
     c.globalAlpha=1;
     c.restore();
   }
@@ -1056,6 +1061,7 @@ function setCooldown(remainMs){
   if(remainMs>0){
     _cooldownEnd=Date.now()+remainMs;
     try{localStorage.setItem('sw_cooldown',String(_cooldownEnd))}catch(e){}
+    if(typeof window._mlUpdateSpinCooldown==='function')window._mlUpdateSpinCooldown();
   }
 }
 function getCountdownText(){

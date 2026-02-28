@@ -113,7 +113,8 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
 .recent-item:last-child{border-bottom:none}
 
 /* ─── Action Bar ─── */
-.action-bar{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 80%,transparent);padding:18px 0 24px;display:flex;gap:10px;align-items:center;z-index:10;border-top:1px solid var(--border)}
+.action-bar{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 80%,transparent);padding:18px 0 24px;display:flex;gap:10px;align-items:center;z-index:10;border-top:1px solid var(--border);transition:all .3s}
+.action-bar.dirty{background:linear-gradient(to top,var(--bg) 60%,transparent);border-top:2px solid var(--goldL);box-shadow:0 -4px 24px rgba(175,140,62,.15)}
 .save-dot{display:none;width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse-dot 1.5s infinite;margin-left:8px}
 .save-dot.show{display:inline-block}
 .save-txt{display:none;font-size:14px;color:var(--gold);font-weight:700;margin-left:4px}
@@ -255,6 +256,104 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
     </div>
 
 
+    <!-- Settings -->
+    <div class="section">
+      <div class="section-head">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Genel Ayarlar
+      </div>
+      <div class="section-hint">Müşterinin çarkı ne sıklıkla çevireceği, kupon süresi ve özel efektler burada ayarlanır.</div>
+      <div class="settings-grid">
+        <div class="s-card">
+          <div class="s-label">Bekleme Süresi</div>
+          <div class="s-val" id="cd-val">30dk</div>
+          <div class="s-desc">Müşteri çarkı çevirdikten sonra tekrar çevirebilmek için bu kadar bekler</div>
+          <div class="s-ctrl">
+            <select id="cd-select" onchange="onCdChange()">
+              <option value="0.0166">1 dakika</option>
+              <option value="0.0833">5 dakika</option>
+              <option value="0.25">15 dakika</option>
+              <option value="0.5">30 dakika</option>
+              <option value="1">1 saat</option>
+              <option value="2">2 saat</option>
+              <option value="6">6 saat</option>
+              <option value="12">12 saat</option>
+              <option value="24">24 saat</option>
+              <option value="48">2 gün</option>
+              <option value="72">3 gün</option>
+              <option value="168">7 gün</option>
+              <option value="custom">Elle gir...</option>
+            </select>
+            <div id="cd-custom" style="display:none;margin-top:8px">
+              <div style="display:flex;gap:6px;align-items:center">
+                <input type="number" id="cd-custom-val" min="1" max="20160" value="30" style="flex:1" onchange="onCdCustom()">
+                <select id="cd-custom-unit" style="width:auto;flex:0 0 auto" onchange="onCdCustom()">
+                  <option value="min" selected>dakika</option>
+                  <option value="hour">saat</option>
+                  <option value="day">gün</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-label">Kupon Geçerlilik</div>
+          <div class="s-val" id="cpn-val">7g</div>
+          <div class="s-desc">Kazanılan kupon bu süre sonunda geçersiz olur</div>
+          <div class="s-ctrl">
+            <select id="cpn-select" onchange="onCpnChange()">
+              <option value="1">1 gün</option>
+              <option value="3">3 gün</option>
+              <option value="7" selected>7 gün</option>
+              <option value="14">14 gün</option>
+              <option value="30">30 gün</option>
+            </select>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-label">Yazı Boyutu</div>
+          <div class="s-val" id="fs-val">1.0x</div>
+          <div class="s-desc">Çark üzerindeki yazıları büyütüp küçültür</div>
+          <div class="slider-row">
+            <input type="range" id="fs-slider" min="50" max="200" value="100" step="10" oninput="onFsChange()">
+            <span class="slider-pct" id="fs-pct">1.0x</span>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-label">Yazı Tipi</div>
+          <div class="s-val" id="ff-val">Jakarta</div>
+          <div class="s-desc">Çark dilimlerindeki yazının fontu</div>
+          <div class="s-ctrl">
+            <select id="ff-select" onchange="onFfChange()">
+              <option value="Plus Jakarta Sans">Plus Jakarta Sans</option>
+              <option value="Inter">Inter</option>
+              <option value="Montserrat">Montserrat</option>
+              <option value="Poppins">Poppins</option>
+              <option value="system-ui">Sistem Fontu</option>
+            </select>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-label">Satır Aralığı</div>
+          <div class="s-val" id="lg-val">6</div>
+          <div class="s-desc">Çark üzerindeki üst ve alt yazı arasındaki boşluk</div>
+          <div class="slider-row">
+            <input type="range" id="lg-slider" min="0" max="20" value="6" oninput="onLgChange()">
+            <span class="slider-pct" id="lg-pct">6</span>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-label">Az Kalsın Efekti</div>
+          <div class="s-val" id="nm-val">%40</div>
+          <div class="s-desc">Çark büyük ödüle yakın durup geçerse heyecan yaratır</div>
+          <div class="slider-row">
+            <input type="range" id="nm-slider" min="0" max="80" value="40" oninput="onNmChange()">
+            <span class="slider-pct" id="nm-pct">%40</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Segment Table -->
     <div class="section">
       <div class="section-head">
@@ -283,68 +382,6 @@ body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);c
     <div class="chart-wrap" id="chart-wrap">
       <svg class="chart-svg" id="donut-chart" viewBox="0 0 200 200"></svg>
       <div class="chart-legend" id="chart-legend"></div>
-    </div>
-
-    <!-- Settings -->
-    <div class="section">
-      <div class="section-head">
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        Genel Ayarlar
-      </div>
-      <div class="section-hint">Müşterinin çarkı ne sıklıkla çevireceği, kupon süresi ve özel efektler burada ayarlanır.</div>
-      <div class="settings-grid">
-        <div class="s-card">
-          <div class="s-label">Bekleme Süresi</div>
-          <div class="s-val" id="cd-val">30dk</div>
-          <div class="s-desc">Müşteri çarkı çevirdikten sonra tekrar çevirebilmek için bu kadar bekler</div>
-          <div class="s-ctrl">
-            <select id="cd-select" onchange="onCdChange()">
-              <option value="0.5" selected>30 dakika</option>
-              <option value="1">1 saat</option>
-              <option value="2">2 saat</option>
-              <option value="6">6 saat</option>
-              <option value="12">12 saat</option>
-              <option value="24">24 saat</option>
-              <option value="48">2 gün</option>
-              <option value="72">3 gün</option>
-              <option value="168">7 gün</option>
-              <option value="336">14 gün</option>
-            </select>
-          </div>
-        </div>
-        <div class="s-card">
-          <div class="s-label">Kupon Geçerlilik</div>
-          <div class="s-val" id="cpn-val">7g</div>
-          <div class="s-desc">Kazanılan kupon bu süre sonunda geçersiz olur</div>
-          <div class="s-ctrl">
-            <select id="cpn-select" onchange="onCpnChange()">
-              <option value="1">1 gün</option>
-              <option value="3">3 gün</option>
-              <option value="7" selected>7 gün</option>
-              <option value="14">14 gün</option>
-              <option value="30">30 gün</option>
-            </select>
-          </div>
-        </div>
-        <div class="s-card">
-          <div class="s-label">Az Kalsın Efekti</div>
-          <div class="s-val" id="nm-val">%40</div>
-          <div class="s-desc">Çark büyük ödüle yakın durup geçerse heyecan yaratır</div>
-          <div class="slider-row">
-            <input type="range" id="nm-slider" min="0" max="80" value="40" oninput="onNmChange()">
-            <span class="slider-pct" id="nm-pct">%40</span>
-          </div>
-        </div>
-        <div class="s-card">
-          <div class="s-label">Yazı Boyutu</div>
-          <div class="s-val" id="fs-val">1.0x</div>
-          <div class="s-desc">Çark üzerindeki yazıları büyütüp küçültür</div>
-          <div class="slider-row">
-            <input type="range" id="fs-slider" min="50" max="200" value="100" step="10" oninput="onFsChange()">
-            <span class="slider-pct" id="fs-pct">1.0x</span>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Ses Ayarları -->
@@ -511,7 +548,7 @@ function restoreSaveBtn(){
 
 function readAllFromUI(){
   // Settings
-  CFG.cooldownHours=parseFloat(document.getElementById('cd-select').value);
+  CFG.cooldownHours=getCdHours();
   CFG.couponValidityDays=parseInt(document.getElementById('cpn-select').value);
   CFG.nearMissChance=parseInt(document.getElementById('nm-slider').value)/100;
   // Sound
@@ -519,8 +556,10 @@ function readAllFromUI(){
   var activeCeleb=document.querySelector('#celeb-grid .snd-card.active');
   if(activeTick){var idx=[].indexOf.call(document.querySelectorAll('#tick-grid .snd-card'),activeTick);if(idx>=0&&TICK_PRESETS[idx])CFG.tickSound=TICK_PRESETS[idx].id}
   if(activeCeleb){var idx2=[].indexOf.call(document.querySelectorAll('#celeb-grid .snd-card'),activeCeleb);if(idx2>=0&&CELEB_PRESETS[idx2])CFG.celebSound=CELEB_PRESETS[idx2].id}
-  // Font scale
+  // Font scale + family + gap
   CFG.fontScale=parseInt(document.getElementById('fs-slider').value)/100;
+  CFG.fontFamily=document.getElementById('ff-select').value;
+  CFG.labelGap=parseInt(document.getElementById('lg-slider').value);
   // Segments — read from table inputs
   var rows=document.querySelectorAll('#seg-tbody tr');
   rows.forEach(function(row,i){
@@ -685,27 +724,84 @@ function renderChart(){
 
 // ─── SETTINGS ───
 function renderSettings(){
+  // Cooldown — select'te yoksa custom moda geç
   var cdVal=CFG.cooldownHours||0.5;
-  document.getElementById('cd-select').value=cdVal;
-  onCdChange();
+  var sel=document.getElementById('cd-select');
+  var matched=false;
+  for(var i=0;i<sel.options.length;i++){
+    if(sel.options[i].value!=='custom'&&Math.abs(parseFloat(sel.options[i].value)-cdVal)<0.001){
+      sel.value=sel.options[i].value;matched=true;break;
+    }
+  }
+  if(!matched){
+    sel.value='custom';
+    document.getElementById('cd-custom').style.display='block';
+    if(cdVal>=24){document.getElementById('cd-custom-val').value=Math.round(cdVal/24);document.getElementById('cd-custom-unit').value='day'}
+    else if(cdVal>=1){document.getElementById('cd-custom-val').value=Math.round(cdVal*10)/10;document.getElementById('cd-custom-unit').value='hour'}
+    else{document.getElementById('cd-custom-val').value=Math.round(cdVal*60);document.getElementById('cd-custom-unit').value='min'}
+  }
+  document.getElementById('cd-val').textContent=formatCdText(cdVal);
+  // Kupon
   document.getElementById('cpn-select').value=CFG.couponValidityDays||7;
   onCpnChange();
+  // Near miss
   var nm=Math.round((CFG.nearMissChance||0.4)*100);
   document.getElementById('nm-slider').value=nm;
   onNmChange();
+  // Font scale
   var fs=Math.round((CFG.fontScale||1.0)*100);
   document.getElementById('fs-slider').value=fs;
   onFsChange();
+  // Font family
+  var ff=CFG.fontFamily||'Plus Jakarta Sans';
+  document.getElementById('ff-select').value=ff;
+  onFfChange();
+  // Label gap
+  var lg=CFG.labelGap!==undefined?CFG.labelGap:6;
+  document.getElementById('lg-slider').value=lg;
+  onLgChange();
 }
 
 function onCdChange(){
-  var h=parseFloat(document.getElementById('cd-select').value);
-  var txt;
-  if(h<1) txt=Math.round(h*60)+'dk';
-  else if(h>=24) txt=(h/24)+'g';
-  else txt=h+'s';
-  document.getElementById('cd-val').textContent=txt;
+  var sel=document.getElementById('cd-select');
+  var cust=document.getElementById('cd-custom');
+  if(sel.value==='custom'){
+    cust.style.display='block';
+    onCdCustom();
+    return;
+  }
+  cust.style.display='none';
+  var h=parseFloat(sel.value);
+  document.getElementById('cd-val').textContent=formatCdText(h);
   markDirty();
+}
+function onCdCustom(){
+  var v=parseFloat(document.getElementById('cd-custom-val').value)||1;
+  var u=document.getElementById('cd-custom-unit').value;
+  var h;
+  if(u==='min') h=v/60;
+  else if(u==='day') h=v*24;
+  else h=v;
+  h=Math.max(0.0166,Math.min(336,h));
+  document.getElementById('cd-val').textContent=formatCdText(h);
+  markDirty();
+}
+function formatCdText(h){
+  if(h<1/60+0.001) return '1dk';
+  if(h<1) return Math.round(h*60)+'dk';
+  if(h>=24) return Math.round(h/24)+'g';
+  return (Math.round(h*10)/10)+'s';
+}
+function getCdHours(){
+  var sel=document.getElementById('cd-select');
+  if(sel.value==='custom'){
+    var v=parseFloat(document.getElementById('cd-custom-val').value)||1;
+    var u=document.getElementById('cd-custom-unit').value;
+    if(u==='min') return v/60;
+    if(u==='day') return v*24;
+    return v;
+  }
+  return parseFloat(sel.value);
 }
 function onCpnChange(){
   document.getElementById('cpn-val').textContent=document.getElementById('cpn-select').value+'g';
@@ -722,6 +818,18 @@ function onFsChange(){
   var s=(v/100).toFixed(1);
   document.getElementById('fs-val').textContent=s+'x';
   document.getElementById('fs-pct').textContent=s+'x';
+  markDirty();
+}
+function onFfChange(){
+  var v=document.getElementById('ff-select').value;
+  var short=v.replace('Plus Jakarta Sans','Jakarta').replace('system-ui','Sistem');
+  document.getElementById('ff-val').textContent=short;
+  markDirty();
+}
+function onLgChange(){
+  var v=parseInt(document.getElementById('lg-slider').value);
+  document.getElementById('lg-val').textContent=v;
+  document.getElementById('lg-pct').textContent=v;
   markDirty();
 }
 
@@ -753,11 +861,12 @@ async function loadStats(){
 // ─── UI HELPERS ───
 function markDirty(){
   if(_loading)return;
-  if(!_dirty){_dirty=true;document.getElementById('save-dot').classList.add('show');document.getElementById('save-txt').classList.add('show')}
+  if(!_dirty){_dirty=true;document.getElementById('save-dot').classList.add('show');document.getElementById('save-txt').classList.add('show');document.querySelector('.action-bar').classList.add('dirty')}
 }
 function markClean(){
   document.getElementById('save-dot').classList.remove('show');
   document.getElementById('save-txt').classList.remove('show');
+  document.querySelector('.action-bar').classList.remove('dirty');
 }
 function setStatus(msg){
   document.getElementById('status-bar').innerHTML='<div class="status-dot"></div>'+msg;

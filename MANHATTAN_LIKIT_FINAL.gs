@@ -903,7 +903,7 @@ function doGet(e) {
         _segTexts.push({ label: _chkCfg.segments[si].label || '', sub: _chkCfg.segments[si].sub || '' });
       }
     }
-    return jsonResponse({ ok: true, testMode: !!_chkCfg.testMode, tickSound: _chkCfg.tickSound || 'original', celebSound: _chkCfg.celebSound || 'fanfare', segTexts: _segTexts, fontScale: _chkCfg.fontScale || 1.0 });
+    return jsonResponse({ ok: true, testMode: !!_chkCfg.testMode, tickSound: _chkCfg.tickSound || 'original', celebSound: _chkCfg.celebSound || 'fanfare', segTexts: _segTexts, fontScale: _chkCfg.fontScale || 1.0, fontFamily: _chkCfg.fontFamily || 'Plus Jakarta Sans', labelGap: _chkCfg.labelGap !== undefined ? _chkCfg.labelGap : 6 });
   }
   
   // Ücretsiz kargo eşiği — Ecwid shipping settings'ten dinamik çek
@@ -3343,6 +3343,8 @@ var _SPIN_DEFAULT_CONFIG = {
     { id: 7, label: '%3', sub: 'İNDİRİM', type: 'percent', discount: 3, weight: 5, active: true }
   ],
   fontScale: 1.0,
+  fontFamily: 'Plus Jakarta Sans',
+  labelGap: 6,
   nearMissChance: 0.40,
   nearMissSegments: [0, 2],
   cooldownHours: 0.5,
@@ -3364,13 +3366,17 @@ function _loadSpinConfig() {
       if (!cfg.cooldownHours) cfg.cooldownHours = _SPIN_DEFAULT_CONFIG.cooldownHours;
       if (!cfg.couponValidityDays) cfg.couponValidityDays = _SPIN_DEFAULT_CONFIG.couponValidityDays;
       if (cfg.fontScale === undefined) cfg.fontScale = _SPIN_DEFAULT_CONFIG.fontScale || 1.0;
-      // Migration v3: sub boş olanları da default'tan doldur + cooldown fix
-      if (!cfg.configVersion || cfg.configVersion < 3) {
-        cfg.configVersion = 3;
-        cfg.cooldownHours = _SPIN_DEFAULT_CONFIG.cooldownHours;
+      if (!cfg.fontFamily) cfg.fontFamily = _SPIN_DEFAULT_CONFIG.fontFamily;
+      if (cfg.labelGap === undefined) cfg.labelGap = _SPIN_DEFAULT_CONFIG.labelGap;
+      // Migration v4: fontScale reset + fontFamily/labelGap ekle
+      if (!cfg.configVersion || cfg.configVersion < 4) {
+        cfg.configVersion = 4;
+        cfg.cooldownHours = cfg.cooldownHours || _SPIN_DEFAULT_CONFIG.cooldownHours;
+        cfg.fontScale = 1.0;
+        cfg.fontFamily = cfg.fontFamily || _SPIN_DEFAULT_CONFIG.fontFamily;
+        cfg.labelGap = (cfg.labelGap !== undefined) ? cfg.labelGap : _SPIN_DEFAULT_CONFIG.labelGap;
         for (var si = 0; si < cfg.segments.length; si++) {
           var seg = cfg.segments[si];
-          // sub yoksa veya boşsa, default'tan al
           if (!seg.sub && _SPIN_DEFAULT_CONFIG.segments[si]) {
             seg.sub = _SPIN_DEFAULT_CONFIG.segments[si].sub || '';
             seg.label = _SPIN_DEFAULT_CONFIG.segments[si].label || seg.label;
@@ -3382,7 +3388,7 @@ function _loadSpinConfig() {
     }
   } catch(e) { Logger.log('_loadSpinConfig error: ' + e); }
   var fresh = JSON.parse(JSON.stringify(_SPIN_DEFAULT_CONFIG));
-  fresh.configVersion = 3;
+  fresh.configVersion = 4;
   return fresh;
 }
 
@@ -3434,7 +3440,9 @@ function _spinSaveConfig(config) {
     config.cooldownHours = Math.max(0.25, Math.min(336, parseFloat(config.cooldownHours) || 0.5));
     config.couponValidityDays = Math.max(1, Math.min(90, parseInt(config.couponValidityDays) || 7));
     if (!Array.isArray(config.nearMissSegments)) config.nearMissSegments = [0, 2];
-    config.configVersion = 3;
+    config.configVersion = 4;
+    config.fontFamily = config.fontFamily || _SPIN_DEFAULT_CONFIG.fontFamily;
+    config.labelGap = Math.max(0, Math.min(30, parseInt(config.labelGap) || _SPIN_DEFAULT_CONFIG.labelGap));
     
     _saveSpinConfigToProps(config);
     return jsonResponse({ ok: true, message: 'Config kaydedildi.' });
