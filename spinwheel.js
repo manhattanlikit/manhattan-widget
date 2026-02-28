@@ -1120,7 +1120,8 @@ window._swSyncUI=syncUI;
 
 // ====== INIT ======
 function init(){build();drawWheel(0);initDrag();
-  // localStorage'dan cooldown restore edildiyse sidebar'a bildir
+  // GAS config'i hemen çek — overlay açılmadan yazılar/fontScale hazır olur
+  _fetchTestMode();
   if(_cooldownEnd&&_cooldownEnd>Date.now()){
     setTimeout(function(){if(window._mlUpdateSpinCooldown)window._mlUpdateSpinCooldown()},500);
   }
@@ -1131,7 +1132,7 @@ function init(){build();drawWheel(0);initDrag();
       try{localStorage.removeItem('sw_cooldown')}catch(e){}
       syncUI();
     }
-  },15000); // 15sn — sidebar countdown daha sık güncellenir
+  },15000);
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);
 else init();
