@@ -790,6 +790,7 @@ function _getAudioCtx(){
 }
 
 var TICK_PRESETS=[
+  {id:'original',name:'Orijinal',desc:'Varsayılan ses',freq:1300,type:'sine',dur:0.035,gain:0.06},
   {id:'classic',name:'Klasik',desc:'Keskin tıklama',freq:2800,type:'sine',dur:0.035,gain:0.06},
   {id:'soft',name:'Yumuşak',desc:'Hafif dokunuş',freq:1200,type:'sine',dur:0.05,gain:0.04},
   {id:'deep',name:'Derin',desc:'Bas tıklama',freq:600,type:'triangle',dur:0.04,gain:0.08},
@@ -797,14 +798,25 @@ var TICK_PRESETS=[
   {id:'casino',name:'Casino',desc:'Hızlı tık',freq:4000,type:'sine',dur:0.02,gain:0.05},
   {id:'roulette',name:'Rulet',desc:'Orta ton',freq:1800,type:'triangle',dur:0.04,gain:0.06},
   {id:'wood',name:'Ahşap',desc:'Sıcak ton',freq:400,type:'sine',dur:0.06,gain:0.1},
-  {id:'crystal',name:'Kristal',desc:'Parlak ton',freq:5000,type:'sine',dur:0.03,gain:0.03}
+  {id:'crystal',name:'Kristal',desc:'Parlak ton',freq:5000,type:'sine',dur:0.03,gain:0.03},
+  {id:'bell',name:'Çan',desc:'Çınlama',freq:3400,type:'sine',dur:0.08,gain:0.05},
+  {id:'marble',name:'Mermer',desc:'Yuvarlak tık',freq:2200,type:'triangle',dur:0.03,gain:0.07},
+  {id:'click',name:'Tıkla',desc:'Kısa tık',freq:6000,type:'square',dur:0.012,gain:0.03},
+  {id:'pop',name:'Pop',desc:'Dolgun tık',freq:900,type:'sine',dur:0.045,gain:0.09},
+  {id:'chime',name:'Chime',desc:'Melodik tık',freq:4200,type:'sine',dur:0.06,gain:0.04},
+  {id:'retro',name:'Retro',desc:'8-bit tık',freq:1600,type:'square',dur:0.03,gain:0.05},
+  {id:'glass',name:'Cam',desc:'Şeffaf ton',freq:3800,type:'sine',dur:0.07,gain:0.04}
 ];
 
 var CELEB_PRESETS=[
-  {id:'fanfare',name:'Fanfar',desc:'Yükselen notalar',notes:[523,659,784,1047],dur:0.25,type:'sine'},
+  {id:'fanfare',name:'Fanfar',desc:'Yükselen notalar',notes:[523,659,784,1047,1318],dur:0.25,type:'sine'},
   {id:'confetti',name:'Konfeti',desc:'Rastgele parıltı',notes:[800,1200,600,1400,900,1600],dur:0.12,type:'sine'},
   {id:'jackpot',name:'Jackpot',desc:'Slot makinesi',notes:[440,554,659,880,880,880],dur:0.15,type:'square'},
-  {id:'elegant',name:'Zarif',desc:'Şık melodi',notes:[659,784,988,784,988,1319],dur:0.3,type:'sine'}
+  {id:'elegant',name:'Zarif',desc:'Şık melodi',notes:[659,784,988,784,988,1319],dur:0.3,type:'sine'},
+  {id:'triumph',name:'Zafer',desc:'Güçlü final',notes:[392,494,587,784,988,784,988],dur:0.2,type:'sine'},
+  {id:'sparkle',name:'Işıltı',desc:'Parlak arpej',notes:[1047,1319,1568,1319,1568,2093],dur:0.15,type:'sine'},
+  {id:'royal',name:'Royal',desc:'Asil melodi',notes:[330,392,494,659,784,1047],dur:0.28,type:'triangle'},
+  {id:'arcade',name:'Arcade',desc:'Oyun skoru',notes:[523,659,784,523,659,784,1047],dur:0.1,type:'square'}
 ];
 
 function playTickPreview(id){
@@ -844,7 +856,7 @@ function renderSounds(){
   var tg=document.getElementById('tick-grid');
   var cg=document.getElementById('celeb-grid');
   if(!tg||!cg)return;
-  var selTick=(CFG&&CFG.tickSound)||'classic';
+  var selTick=(CFG&&CFG.tickSound)||'original';
   var selCeleb=(CFG&&CFG.celebSound)||'fanfare';
 
   tg.innerHTML='';

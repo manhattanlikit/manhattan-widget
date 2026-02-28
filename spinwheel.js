@@ -108,6 +108,7 @@ var css=`
 .sw-prize-bg{position:absolute;inset:0;background:radial-gradient(circle,rgba(26,23,20,.97) 40%,rgba(26,23,20,.92) 70%,rgba(26,23,20,.85));backdrop-filter:blur(16px)}
 .sw-prize-card{position:relative;z-index:2;text-align:center;padding:24px 20px;max-width:88%;animation:sw-prizeIn .5s cubic-bezier(.34,1.56,.64,1)}
 @keyframes sw-prizeIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes sw-hintIn{from{transform:translate(-50%,-50%) scale(.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
 .sw-prize-ico{margin-bottom:8px;animation:sw-bounce .6s ease}
 @keyframes sw-bounce{0%{transform:scale(0)}50%{transform:scale(1.25)}100%{transform:scale(1)}}
 .sw-prize-t{font:800 20px 'Plus Jakarta Sans',sans-serif;color:#d4b05e;margin-bottom:4px;text-shadow:0 2px 12px rgba(212,176,94,.3)}
@@ -352,6 +353,7 @@ function initAudio(){
 
 // ── Ses Preset Tanımları ──
 var _TICK_MAP={
+  original:{freq:1300,type:'sine',dur:0.035,gain:0.06},
   classic:{freq:2800,type:'sine',dur:0.035,gain:0.06},
   soft:{freq:1200,type:'sine',dur:0.05,gain:0.04},
   deep:{freq:600,type:'triangle',dur:0.04,gain:0.08},
@@ -359,15 +361,26 @@ var _TICK_MAP={
   casino:{freq:4000,type:'sine',dur:0.02,gain:0.05},
   roulette:{freq:1800,type:'triangle',dur:0.04,gain:0.06},
   wood:{freq:400,type:'sine',dur:0.06,gain:0.1},
-  crystal:{freq:5000,type:'sine',dur:0.03,gain:0.03}
+  crystal:{freq:5000,type:'sine',dur:0.03,gain:0.03},
+  bell:{freq:3400,type:'sine',dur:0.08,gain:0.05},
+  marble:{freq:2200,type:'triangle',dur:0.03,gain:0.07},
+  click:{freq:6000,type:'square',dur:0.012,gain:0.03},
+  pop:{freq:900,type:'sine',dur:0.045,gain:0.09},
+  chime:{freq:4200,type:'sine',dur:0.06,gain:0.04},
+  retro:{freq:1600,type:'square',dur:0.03,gain:0.05},
+  glass:{freq:3800,type:'sine',dur:0.07,gain:0.04}
 };
 var _CELEB_MAP={
   fanfare:{notes:[523,659,784,1047,1318],dur:0.25,type:'sine'},
   confetti:{notes:[800,1200,600,1400,900,1600],dur:0.12,type:'sine'},
   jackpot:{notes:[440,554,659,880,880,880],dur:0.15,type:'square'},
-  elegant:{notes:[659,784,988,784,988,1319],dur:0.3,type:'sine'}
+  elegant:{notes:[659,784,988,784,988,1319],dur:0.3,type:'sine'},
+  triumph:{notes:[392,494,587,784,988,784,988],dur:0.2,type:'sine'},
+  sparkle:{notes:[1047,1319,1568,1319,1568,2093],dur:0.15,type:'sine'},
+  royal:{notes:[330,392,494,659,784,1047],dur:0.28,type:'triangle'},
+  arcade:{notes:[523,659,784,523,659,784,1047],dur:0.1,type:'square'}
 };
-var _tickPreset='classic';
+var _tickPreset='original';
 var _celebPreset='fanfare';
 
 function tick(){
@@ -512,7 +525,7 @@ function initDrag(){
     }else if(speed>5){
       _freeSpin(speed);
     }else if(speed<-5){
-      _freeSpin(speed); // Geri fırlatma: doğal yavaşlama, API çağırmaz
+      _reverseNudge(speed); // Geri: kısa geri + ileri çevir uyarısı
     }
   }
 
@@ -557,6 +570,44 @@ function _freeSpin(speed){
   _freeSpinId=requestAnimationFrame(frame);
 }
 
+// ====== GERİ ÇEVİRME — Kısa fren + ileri yönlendir popup ======
+function _reverseNudge(speed){
+  // Yüksek sürtünme ile kısa geri dönüş
+  var spd=speed;
+  var lastT=performance.now();
+  var HIGH_RESIST=400; // Hızlı dur
+
+  function frame(){
+    var now=performance.now();
+    var dt=now-lastT;
+    if(dt<=0){requestAnimationFrame(frame);return}
+    lastT=now;
+    _rotation+=(dt/1000)*spd;
+    spd+=HIGH_RESIST*(dt/1000); // Geri giderken pozitif sürtünme → yavaşlatır
+    drawWheel(_rotation);_tickSeg();
+    if(spd>=0){
+      drawWheel(_rotation);
+      _showForwardHint();
+      return;
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+}
+
+function _showForwardHint(){
+  // Mevcut hint varsa gösterme
+  if(document.getElementById('sw-fwd-hint'))return;
+  var h=document.createElement('div');
+  h.id='sw-fwd-hint';
+  h.innerHTML='<div class="sw-fwd-ico"><svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke="#d4b05e" stroke-width="2.5" stroke-linecap="round"><path d="M8 24c8-4 16-4 24 0"><animateTransform attributeName="transform" type="translate" values="0,0;6,0;0,0" dur="1.2s" repeatCount="indefinite"/></path><polyline points="26 18 32 24 26 30"><animateTransform attributeName="transform" type="translate" values="0,0;6,0;0,0" dur="1.2s" repeatCount="indefinite"/></polyline><circle cx="12" cy="30" r="6" stroke-width="2" opacity=".5"><animate attributeName="opacity" values=".5;.8;.5" dur="1.2s" repeatCount="indefinite"/></circle><path d="M10 28c1-2 3-3 5-2" stroke-width="1.5" opacity=".5"/></svg></div><div class="sw-fwd-txt">Çevirmek için ileri fırlat</div>';
+  h.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:25;text-align:center;animation:sw-hintIn .4s cubic-bezier(.34,1.56,.64,1);pointer-events:none';
+  h.querySelector('.sw-fwd-txt').style.cssText='color:#d4b05e;font:700 14px "Plus Jakarta Sans",sans-serif;margin-top:8px;text-shadow:0 2px 8px rgba(0,0,0,.6)';
+  var box=document.getElementById('sw-box');
+  if(box){box.style.position='relative';box.appendChild(h)}
+  setTimeout(function(){if(h.parentNode)h.parentNode.removeChild(h)},2200);
+}
+
 // ====== MOMENTUM → API → HEDEF ANİMASYON ======
 async function _momentumSpin(speed){
   if(_spinning)return;
@@ -593,6 +644,7 @@ async function _momentumSpin(speed){
     var resp=await fetch(url,{signal:ctrl.signal});
     clearTimeout(tout);
     var data=await resp.json();
+    console.log("[SW] API response (momentum):",JSON.stringify(data));
 
     var handoff=mSpd; // Handoff hızı (deg/sn)
     active=false;
@@ -644,6 +696,7 @@ async function swSpin(){
     var resp=await fetch(url,{signal:ctrl.signal});
     clearTimeout(tout);
     var data=await resp.json();
+    console.log("[SW] API response (button):",JSON.stringify(data));
 
     var handoff=rSpd;
     rampOn=false;
@@ -660,19 +713,11 @@ async function swSpin(){
   _spinning=false;syncUI();
 }
 
-// ====== HEDEF ANİMASYON — CrazyTim spinToItem + easing ======
-function _easeSinOut(t){
-  if(t>=1)return 1;
-  // Power ease-out: daha uzun hızlı faz, daha yumuşak yavaşlama
-  var base=1-Math.pow(1-t,3.2);
-  // Son %10'da hafif wobble — fiziksel duruş hissi
-  if(t>0.90){var w=(t-0.90)/0.10;base+=Math.sin(w*Math.PI*2.5)*0.008*(1-w)}
-  return base;
-}
-
+// ====== HEDEF ANİMASYON — Fizik tabanlı sürtünme (freeSpin hissi) ======
 function _spinToTarget(seg,offset,handoff){
   return new Promise(function(resolve){
     handoff=Math.abs(handoff||0);
+    if(handoff<30)handoff=300; // Buton spin fallback
 
     // Hedef açı: segment merkezi + GAS offset
     var target=360-seg*SA-SA/2+(offset||0);
@@ -684,31 +729,52 @@ function _spinToTarget(seg,offset,handoff){
     while(end-start<1440)end+=360;
     var dist=end-start;
 
-    // Süre: handoff hızına göre (CrazyTim mantığı)
-    var dur;
-    if(handoff>10){
-      dur=Math.max(5500,Math.min(8500,(dist/(handoff*0.45))*1000));
-    }else{
-      dur=6000+Math.random()*2000;
-    }
-    if(!dur||isNaN(dur))dur=5500;
+    // Fizik: v²=v0²-2*a*d → a=v0²/(2*d) → tam hedefe durur
+    var v0=handoff;
+    var friction=v0*v0/(2*dist); // deg/s² — hedefe tam uyan sürtünme
+    if(friction<5)friction=5; // Min sürtünme — çok yavaş dönmesini engelle
+    var spd=v0;
+    var pos=start;
+    var lastT=performance.now();
 
-    var t0=null;
-    function frame(ts){
-      if(!t0)t0=ts;
-      var t=Math.min((ts-t0)/dur,1);
-      // CrazyTim easeSinOut: sin(t * π/2)
-      _rotation=start+dist*_easeSinOut(t);
+    function frame(){
+      var now=performance.now();
+      var dt=now-lastT;
+      if(dt<=0||dt>100){lastT=now;requestAnimationFrame(frame);return}
+      lastT=now;
+      var dtSec=dt/1000;
+
+      // Lineer sürtünme — _freeSpin ile aynı model
+      spd-=friction*dtSec;
+
+      if(spd<=0){
+        // Hedefe ulaştı — tam pozisyona yerleş
+        _rotation=end;
+        drawWheel(_rotation);_tickSeg();
+        resolve();
+        return;
+      }
+
+      pos+=spd*dtSec;
+      _rotation=pos;
       drawWheel(_rotation);_tickSeg();
-      if(t<1)requestAnimationFrame(frame);
-      else{_rotation=end;drawWheel(_rotation);_tickSeg();resolve()}
+
+      // Güvenlik: hedefe çok yakın + çok yavaş → snap
+      if(pos>=end-2&&spd<10){
+        _rotation=end;drawWheel(_rotation);_tickSeg();
+        resolve();
+        return;
+      }
+
+      requestAnimationFrame(frame);
     }
-    frame(performance.now()); // Senkron ilk frame — handoff boşluğu yok
+    frame();
   });
 }
 
 // ====== SONUÇ İŞLE ======
 async function showResult(data){
+  console.log('[SW] showResult:',JSON.stringify({type:data.type,couponCode:data.couponCode,prize:data.prize}));
   var isNearMiss=!!data.isNearMiss;
 
   if(data.type==='none'){
@@ -738,6 +804,7 @@ async function showResult(data){
 }
 
 function handleSpinError(data,btn){
+  console.log('[SW] handleSpinError:',JSON.stringify(data));
   if(data.error==='already_spun'){
     if(!_TEST_MODE)_spunSession=true;
     if(data.remainMs) setCooldown(data.remainMs);
@@ -893,9 +960,11 @@ function swClosePrize(){
 
 // ====== ÖDÜL KARTI (çark içinde) ======
 function showPrize(data){
+  console.log('[SW] showPrize called:',JSON.stringify(data));
   var el=document.getElementById('sw-prize');
-  if(!el){console.warn('[SW] sw-prize not found');return}
+  if(!el){console.warn('[SW] sw-prize NOT FOUND in DOM');return}
   var card=document.getElementById('sw-prize-card');
+  console.log('[SW] card found:',!!card);
   // Elementleri card içinden ara — global ID çakışma koruması
   var ico=card?card.querySelector('#sw-pico'):document.getElementById('sw-pico');
   var t=card?card.querySelector('#sw-pt'):document.getElementById('sw-pt');
@@ -904,6 +973,7 @@ function showPrize(data){
   var pct=card?card.querySelector('#sw-pct'):document.getElementById('sw-pct');
   var pex=card?card.querySelector('#sw-pex'):document.getElementById('sw-pex');
   var pcd=card?card.querySelector('#sw-pcd'):document.getElementById('sw-pcd');
+  console.log('[SW] elements: ico=',!!ico,'t=',!!t,'s=',!!s,'pc=',!!pc,'pct=',!!pct);
 
   try{
   if(data.type==='none'){
@@ -941,7 +1011,9 @@ function showPrize(data){
   }
   }catch(err){console.error('[SW] showPrize error:',err)}
 
+  console.log('[SW] Prize card show. pc display:',pc?pc.style.display:'N/A','pct text:',pct?pct.textContent:'N/A','el has show:',el.classList.contains('show'));
   el.classList.add('show');
+  console.log('[SW] el.show added. el visible:',getComputedStyle(el).visibility,'opacity:',getComputedStyle(el).opacity);
 }
 
 // ====== KOPYALA ======
