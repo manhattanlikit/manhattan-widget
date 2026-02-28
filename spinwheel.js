@@ -653,16 +653,14 @@ function _spinToTarget(seg,offset,handoff){
     while(end-start<1440)end+=360;
     var dist=end-start;
 
-    // Süre: easeSinOut başlangıç hızı = dist*π/(2*dur_s)
-    // Handoff ile eşleştir: dur = dist*π/(2*handoff) sn
+    // Süre: handoff hızına göre (CrazyTim mantığı)
     var dur;
-    if(handoff>50){
-      dur=Math.max(3500,Math.min(9000,dist*Math.PI*1000/(2*handoff)));
+    if(handoff>10){
+      dur=Math.max(4500,Math.min(8000,(dist/(handoff*0.45))*1000));
     }else{
-      // Düşük hız veya buton spin — sabit süre (hız atlama riski yok)
       dur=5000+Math.random()*2000;
     }
-    if(!dur||isNaN(dur)||dur<1000)dur=5000; // NaN koruması
+    if(!dur||isNaN(dur))dur=5500;
 
     var t0=null;
     function frame(ts){
@@ -859,12 +857,13 @@ function swClose(){
 }
 
 function swClosePrize(){
-  document.getElementById('sw-prize').classList.remove('show');
+  var p=document.getElementById('sw-prize');if(p)p.classList.remove('show');
 }
 
 // ====== ÖDÜL KARTI (çark içinde) ======
 function showPrize(data){
   var el=document.getElementById('sw-prize');
+  if(!el)return;
   var ico=document.getElementById('sw-pico');
   var t=document.getElementById('sw-pt');
   var s=document.getElementById('sw-ps');
@@ -872,40 +871,39 @@ function showPrize(data){
   var pct=document.getElementById('sw-pct');
   var pex=document.getElementById('sw-pex');
   var pcd=document.getElementById('sw-pcd');
-  if(!el||!ico||!t||!s||!pc)return; // Null guard
 
   if(data.type==='none'){
     ico.innerHTML=ICO.retry;t.textContent='Tekrar Dene!';
     s.textContent='Bu sefer olmadı — tekrar dene!';
-    pc.style.display='none';pex.textContent='';
+    if(pc)pc.style.display='none';if(pex)pex.textContent='';
   }else if(data.type==='repeat'){
     ico.innerHTML=ICO.ticket;t.textContent='Mevcut Ödülünüz';
     s.textContent=data.prize||'';
-    if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}
-    else{pc.style.display='none'}
-    pex.textContent='';
+    if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}
+    else{if(pc)pc.style.display='none'}
+    if(pex)pex.textContent='';
   }else if(data.type==='shipping'){
     ico.innerHTML=ICO.ship;t.textContent='Ücretsiz Kargo!';
     s.textContent='Siparişinizde kargo bedava!';
-    if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}else{pc.style.display='none'}
-    pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
+    if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
+    if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
   }else if(data.type==='grand'){
     ico.innerHTML=ICO.trophy;t.textContent='Tebrikler!';
     s.textContent=data.prize||'Manhattan Likit HEDİYE!';
-    if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}else{pc.style.display='none'}
-    pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
+    if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
+    if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
   }else{
     // percent veya bilinmeyen tip
     ico.innerHTML=data.discount>=10?ICO.trophy:ICO.win;
     t.textContent='%'+(data.discount||0)+' İndirim!';
     s.textContent=data.couponCode?'Tebrikler! Kuponunuz hazır.':'Ödülünüz kaydedildi.';
-    if(data.couponCode){pc.style.display='inline-block';pct.textContent=data.couponCode}else{pc.style.display='none'}
-    pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
+    if(data.couponCode){if(pc)pc.style.display='inline-block';if(pct)pct.textContent=data.couponCode}else{if(pc)pc.style.display='none'}
+    if(pex)pex.textContent=data.expiry?'Geçerlilik: '+data.expiry:'';
   }
 
-  pcd.textContent=getCountdownText();
-  pex.style.color='';
-  if(data.couponError){
+  if(pcd)pcd.textContent=getCountdownText();
+  if(pex)pex.style.color='';
+  if(data.couponError&&pex){
     pex.textContent='Kupon oluşturulamadı — destek@manhattanlikit.com';
     pex.style.color='#f87171';
   }
