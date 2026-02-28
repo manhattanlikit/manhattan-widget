@@ -664,7 +664,6 @@ async function _momentumSpin(speed){
     var resp=await fetch(url,{signal:ctrl.signal});
     clearTimeout(tout);
     var data=await resp.json();
-    console.log("[SW] API response (momentum):",JSON.stringify(data));
 
     var handoff=mSpd; // Handoff hızı (deg/sn)
     active=false;
@@ -716,7 +715,6 @@ async function swSpin(){
     var resp=await fetch(url,{signal:ctrl.signal});
     clearTimeout(tout);
     var data=await resp.json();
-    console.log("[SW] API response (button):",JSON.stringify(data));
 
     var handoff=rSpd;
     rampOn=false;
@@ -794,7 +792,6 @@ function _spinToTarget(seg,offset,handoff){
 
 // ====== SONUÇ İŞLE ======
 async function showResult(data){
-  console.log('[SW] showResult:',JSON.stringify({type:data.type,couponCode:data.couponCode,prize:data.prize}));
   var isNearMiss=!!data.isNearMiss;
 
   if(data.type==='none'){
@@ -824,7 +821,6 @@ async function showResult(data){
 }
 
 function handleSpinError(data,btn){
-  console.log('[SW] handleSpinError:',JSON.stringify(data));
   if(data.error==='already_spun'){
     if(!_TEST_MODE)_spunSession=true;
     if(data.remainMs) setCooldown(data.remainMs);
@@ -987,11 +983,9 @@ function swClosePrize(){
 
 // ====== ÖDÜL KARTI (çark içinde) ======
 function showPrize(data){
-  console.log('[SW] showPrize called:',JSON.stringify(data));
   var el=document.getElementById('sw-prize');
   if(!el){console.warn('[SW] sw-prize NOT FOUND in DOM');return}
   var card=document.getElementById('sw-prize-card');
-  console.log('[SW] card found:',!!card);
   // Elementleri card içinden ara — global ID çakışma koruması
   var ico=card?card.querySelector('#sw-pico'):document.getElementById('sw-pico');
   var t=card?card.querySelector('#sw-pt'):document.getElementById('sw-pt');
@@ -1000,7 +994,6 @@ function showPrize(data){
   var pct=card?card.querySelector('#sw-pct'):document.getElementById('sw-pct');
   var pex=card?card.querySelector('#sw-pex'):document.getElementById('sw-pex');
   var pcd=card?card.querySelector('#sw-pcd'):document.getElementById('sw-pcd');
-  console.log('[SW] elements: ico=',!!ico,'t=',!!t,'s=',!!s,'pc=',!!pc,'pct=',!!pct);
 
   try{
   if(data.type==='none'){
@@ -1038,13 +1031,11 @@ function showPrize(data){
   }
   }catch(err){console.error('[SW] showPrize error:',err)}
 
-  console.log('[SW] Prize card show. pc display:',pc?pc.style.display:'N/A','pct text:',pct?pct.textContent:'N/A','el has show:',el.classList.contains('show'));
   // Chrome CSS transition bypass — inline style ile zorla
   el.classList.add('show');
   el.style.opacity='1';
   el.style.visibility='visible';
   el.style.pointerEvents='auto';
-  console.log('[SW] el.show added + inline forced');
 }
 
 // ====== KOPYALA ======

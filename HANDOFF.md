@@ -12,7 +12,7 @@
 | dark-mode.js | 5233 | 1659/1659 |
 | widget.js | 904 | 518/518 |
 | widgetwix.js | 857 | 480/480 |
-| spinwheel.js | 1148 | 324/324 |
+| spinwheel.js | 1139 | 323/323 |
 | spin.html | 932 | 280/280 |
 
 > ⚠️ Bu tablo her oturumda düzenlenecek tek brace referansıdır.

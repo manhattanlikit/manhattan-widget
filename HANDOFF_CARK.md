@@ -243,22 +243,11 @@ Olasılıklar tamamen GAS `_pickSpinPrize()` fonksiyonunda hesaplanır. JS sadec
 
 **nearMiss:** %40 şansla segment 0 veya 2'ye düşürür (HEDİYE'nin yanları) — "az kaldı" hissi verir.
 
-#### Sidebar Çark Butonu — Devre Dışı
+#### Sidebar Çark Butonu — AKTİF
 
-**widget.js + widgetwix.js:** `spinHtml=''` yapıldı. CSS ve `_mlUpdateSpinCooldown` fonksiyonu yerinde (zarar vermez).
+**widget.js + widgetwix.js:** `spinHtml` restore edildi. CSS, `_mlUpdateSpinCooldown` ve localStorage bridge çalışır durumda.
 
-**GERİ AKTİFLEŞTİRME TALİMATI:**
-Her iki dosyada da şu satırı bul:
-```
-var spinHtml=''; // DEVRE DIŞI
-```
-Şununla değiştir:
-```
-var spinHtml='<div class="ml-spin-sec" onclick="event.stopPropagation()"><div class="ml-spin-badge">Şansını Dene</div><button class="ml-spin-btn" onclick="event.stopPropagation();if(typeof openOverlay===\'function\')openOverlay();"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2.5"/><line x1="12" y1="2" x2="12" y2="12"/><line x1="12" y1="12" x2="19.07" y2="4.93"/></svg>Çarkı Çevir</button><div class="ml-spin-cd" id="ml-spin-cd"></div></div>';
-```
-
-#### Kupon/Test Mode Notu
-- `couponCreationEnabled` spin.html'den toggle edilir → Kaydet butonuna basılmalı
+Cooldown timer: `ml-spin-cd` elementinde "Xs Ydk" formatında gösterilir. spinwheel.js yüklenmemişse localStorage'dan direkt okunur.
 - `testMode` açıkken cooldown atlanır ama kupon oluşmaz (couponCreationEnabled ayrı kontrol)
 - Kupon kodu ekranda çıkması için: couponCreationEnabled=ON + GAS Ecwid API erişimi aktif
 
@@ -489,17 +478,14 @@ Tümü Web Audio API oscillator tabanlı — harici dosya yok.
 #### Güncel Dosya Durumları
 | Dosya | Satır | Brace |
 |-------|-------|-------|
-| spinwheel.js | 1148 | 324/324 |
+| spinwheel.js | 1139 | 323/323 |
 | spin.html | 932 | 280/280 |
 | MANHATTAN_LIKIT_FINAL.gs | 3488 | 700/700 |
 
 #### Kalan İşler
 | # | İş | Öncelik |
 |---|-----|---------|
-| 1 | Debug loglarını temizle (`[SW]` console.log) — production öncesi | Yüksek |
-| 2 | spin.html UX iyileştirme (daha kullanıcı dostu redesign) | Orta |
-| 3 | Sidebar çark butonu yeniden aktifleştirme kararı | Düşük |
-| 4 | Wix versiyonu (widgetwix.js'e spinwheel entegrasyonu) | Gelecek |
+| 1 | Wix versiyonu (widgetwix.js'e spinwheel entegrasyonu) | Gelecek |
 
 #### Test Checklist (Güncellenmiş)
 - [ ] İleri çevirme: fizik tabanlı doğal yavaşlama (geri ile aynı his)
