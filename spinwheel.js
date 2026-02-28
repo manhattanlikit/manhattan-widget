@@ -452,19 +452,25 @@ function initDrag(){
 }
 
 // ====== SERBEST DÖNÜŞ (spin tetiklemedi) ======
+// CrazyTim/spin-wheel mekaniği: lineer yavaşlama (fiziksel sürtünme)
+var RESISTANCE=100; // deg/sn² yavaşlama (workout theme: 100)
 function startFreeSpin(vel){
   if(Math.abs(vel)<0.01)return;
-  var v=Math.abs(vel)*16; // Forward-only, frame-based velocity
+  // vel = deg/ms (drag'dan geliyor) → deg/sn
+  var speed=Math.abs(vel)*1000;
+  speed=Math.min(speed,500); // rotationSpeedMax
+  var lastT=performance.now();
   function frame(){
-    v*=0.96; // Sürtünme
-    _rotation+=v;
+    var now=performance.now();
+    var dt=(now-lastT)/1000;
+    lastT=now;
+    speed-=RESISTANCE*dt; // Lineer sürtünme
+    if(speed<=0){_freeSpinId=null;return}
+    _rotation+=speed*dt;
     drawWheel(_rotation);
-    if(v>0.3)tick();
-    if(v>0.15){
-      _freeSpinId=requestAnimationFrame(frame);
-    }else{
-      _freeSpinId=null;
-    }
+    var segNow=Math.floor(((_rotation%360+360)%360)/SA)%N;
+    if(speed>20)tick();
+    _freeSpinId=requestAnimationFrame(frame);
   }
   _freeSpinId=requestAnimationFrame(frame);
 }
@@ -477,14 +483,20 @@ async function startMomentumThenSpin(vel){
   btn.disabled=true;btn.textContent='Çevriliyor...';msg('');
   document.getElementById('sw-x').style.display='none';
 
-  // Forward-only: hız her zaman pozitif
-  var momentumVel=Math.abs(vel)*16;
+  // Lineer yavaşlama momentum (CrazyTim mekaniği)
+  // vel = deg/ms → deg/sn
+  var speed=Math.abs(vel)*1000;
+  speed=Math.min(speed,500); // rotationSpeedMax
   var momentumActive=true;
+  var lastMT=performance.now();
   function momentumFrame(){
     if(!momentumActive)return;
-    _rotation+=momentumVel;
-    momentumVel*=0.995;
-    if(momentumVel<1.5) momentumVel=1.5; // Sabit minimum — sawtooth yok
+    var now=performance.now();
+    var dt=(now-lastMT)/1000;
+    lastMT=now;
+    speed-=RESISTANCE*dt; // Lineer sürtünme
+    if(speed<15) speed=15; // API beklerken minimum hız koru
+    _rotation+=speed*dt;
     drawWheel(_rotation);
     tick();
     if(momentumActive) requestAnimationFrame(momentumFrame);
@@ -500,8 +512,8 @@ async function startMomentumThenSpin(vel){
     clearTimeout(tout);
     var data=await resp.json();
 
-    // Handoff: mevcut hızı yakala, momentum durdur
-    var handoffDegPerMs=momentumVel/16;
+    // Handoff: mevcut hızı yakala (deg/sn), momentum durdur
+    var handoffSpeed=speed;
     momentumActive=false;
 
     // Test mode senkron
@@ -513,7 +525,7 @@ async function startMomentumThenSpin(vel){
     }
 
     // Hızı devret — duraksamasız geçiş
-    await animateToTarget(data.segment,data.angleOffset||0,handoffDegPerMs);
+    await animateToTarget(data.segment,data.angleOffset||0,handoffSpeed);
     await showResult(data);
 
   }catch(err){
@@ -538,13 +550,17 @@ async function swSpin(){
   btn.disabled=true;btn.textContent='Çevriliyor...';msg('');
   document.getElementById('sw-x').style.display='none';
 
-  // Hızlanma animasyonu başlat (API beklerken)
+  // Lineer hızlanma (CrazyTim mekaniği, time-based)
   var rampActive=true;
-  var rampSpeed=0;
+  var rampSpeed=0; // deg/sn
+  var lastRT=performance.now();
   function rampFrame(){
     if(!rampActive)return;
-    rampSpeed=Math.min(rampSpeed+0.3,12);
-    _rotation+=rampSpeed;
+    var now=performance.now();
+    var dt=(now-lastRT)/1000;
+    lastRT=now;
+    rampSpeed=Math.min(rampSpeed+200*dt,400); // 200 deg/sn² hızlanma, max 400
+    _rotation+=rampSpeed*dt;
     drawWheel(_rotation);
     tick();
     requestAnimationFrame(rampFrame);
@@ -560,8 +576,8 @@ async function swSpin(){
     clearTimeout(tout);
     var data=await resp.json();
 
-    // Handoff: ramp hızını yakala, durdur
-    var handoffDegPerMs=rampSpeed/16;
+    // Handoff: ramp hızını yakala (deg/sn), durdur
+    var handoffSpeed=rampSpeed;
     rampActive=false;
 
     // Test mode senkron
@@ -572,7 +588,7 @@ async function swSpin(){
       return;
     }
 
-    await animateToTarget(data.segment,data.angleOffset||0,handoffDegPerMs);
+    await animateToTarget(data.segment,data.angleOffset||0,handoffSpeed);
     await showResult(data);
 
   }catch(err){
@@ -585,13 +601,15 @@ async function swSpin(){
   _spinning=false;
 }
 
-// ====== DOĞAL HEDEF ANİMASYON (handoff-aware) ======
-function animateToTarget(segment,angleOffset,handoffVel){
+// ====== DOĞAL HEDEF ANİMASYON (CrazyTim easeSinOut) ======
+function easeSinOut(t){return Math.sin(t*Math.PI/2)}
+
+function animateToTarget(segment,angleOffset,handoffSpeed){
   return new Promise(function(resolve){
     var cv=document.getElementById('sw-cv');if(!cv)return resolve();
 
-    // handoffVel: deg/ms at handoff. Always forward.
-    handoffVel=Math.abs(handoffVel||0);
+    // handoffSpeed: deg/sn at handoff
+    handoffSpeed=Math.abs(handoffSpeed||0);
 
     // Hedef açıyı hesapla
     var target=360-segment*SA-SA/2+(angleOffset||0);
@@ -599,29 +617,21 @@ function animateToTarget(segment,angleOffset,handoffVel){
     var currentAngle=(startRot%360+360)%360;
     var end=startRot+((target-currentAngle+360)%360);
 
-    // Forward-only: en az 4 tur ekle
+    // Forward-only: en az 4 tur ekle (CrazyTim spinToItem: numberOfRevolutions)
     while(end-startRot<1440)end+=360;
 
     var totalDist=end-startRot;
 
-    // Süre: hızlı handoff → daha uzun coast; buton → 5-7sn
+    // Süre: CrazyTim workout teması — handoff hızına göre uyarlanır
     var duration;
-    if(handoffVel>0.01){
-      duration=Math.max(4000,Math.min(9000,totalDist/(handoffVel*60)));
+    if(handoffSpeed>10){
+      // Hızlı handoff: mesafe/ortalama-hız mantığı
+      var avgSpeed=handoffSpeed*0.45; // easeSinOut ortalaması ≈ %45
+      duration=Math.max(3500,Math.min(8000,(totalDist/avgSpeed)*1000));
     }else{
-      duration=5000+Math.random()*2000;
+      // Buton spin — sabit 4-6sn
+      duration=4000+Math.random()*2000;
     }
-
-    // Normalized handoff velocity: v0 = handoffVel * duration / totalDist
-    var v0=handoffVel>0?(handoffVel*duration/totalDist):0;
-
-    // Monotonluk garantisi: v0 ≤ 3 (cubic Hermite sınırı)
-    // Gerekirse mesafe artır
-    while(v0>2.8&&totalDist<36000){
-      end+=360;totalDist=end-startRot;
-      v0=handoffVel*duration/totalDist;
-    }
-    v0=Math.min(v0,2.8);
 
     var startTime=null;
     var lastSeg=-1;
@@ -630,24 +640,10 @@ function animateToTarget(segment,angleOffset,handoffVel){
       if(!startTime)startTime=ts;
       var t=Math.min((ts-startTime)/duration,1);
 
-      // Cubic Hermite: h(0)=0, h(1)=1, h'(0)=v0, h'(1)=0
-      // h(t) = v0*t + (3-2*v0)*t² + (v0-2)*t³
-      var ease;
-      if(v0>0.1){
-        ease=v0*t+(3-2*v0)*t*t+(v0-2)*t*t*t;
-      }else{
-        // Buton spin — standart ease-out
-        ease=1-Math.pow(1-t,3.8);
-      }
+      // CrazyTim easeSinOut: Math.sin(t * π/2)
+      var ease=easeSinOut(t);
 
-      // Son %8: hafif titreme (doğal duruş)
-      var wobble=0;
-      if(t>0.92){
-        var wt=(t-0.92)/0.08;
-        wobble=Math.sin(wt*Math.PI*3)*1.2*(1-wt);
-      }
-
-      _rotation=startRot+totalDist*ease+wobble;
+      _rotation=startRot+totalDist*ease;
       drawWheel(_rotation);
 
       // Tick ses
