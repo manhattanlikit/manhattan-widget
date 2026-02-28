@@ -2709,15 +2709,44 @@ body.ml-dark .ml-overlay .ml-prog-hint b{
   color:${GOLD}!important;
 }
 /* Tier tablosu */
+body.ml-dark .ml-overlay .ml-tiers-table{
+  background:transparent!important;
+}
+body.ml-dark .ml-overlay .ml-tier-row{
+  background:transparent!important;
+}
 body.ml-dark .ml-overlay .ml-tier-row.current{
   background:rgba(175,140,62,.1)!important;
   border-color:rgba(175,140,62,.2)!important;
+}
+body.ml-dark .ml-overlay .ml-tier-row.locked:hover{
+  background:${BG3}!important;
+}
+body.ml-dark .ml-overlay .ml-tier-row.passed{
+  opacity:.5;
+}
+body.ml-dark .ml-overlay .ml-tier-tip{
+  background:linear-gradient(135deg,rgba(175,140,62,.12),rgba(175,140,62,.06))!important;
+  border-color:rgba(175,140,62,.18)!important;
+  color:#d4cfc4!important;
+}
+body.ml-dark .ml-overlay .ml-tier-tip b{
+  color:${GOLD}!important;
 }
 body.ml-dark .ml-overlay .ml-tr-name{
   color:#d4cfc4!important;
 }
 body.ml-dark .ml-overlay .ml-tr-info{
   color:#b5ae9e!important;
+}
+body.ml-dark .ml-overlay .ml-tr-discount{
+  color:${GOLD}!important;
+}
+body.ml-dark .ml-overlay .ml-tr-ico svg{
+  stroke:#d4cfc4!important;
+}
+body.ml-dark .ml-overlay .ml-tier-row.passed .ml-tr-ico svg{
+  stroke:#706c62!important;
 }
 body.ml-dark .ml-overlay .ml-label{
   color:#b5ae9e!important;
